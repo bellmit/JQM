@@ -1,0 +1,577 @@
+package com.cjhxfund.ats.sm.comm;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.cjhxfund.commonUtil.ParamConfig;
+import com.cjhxfund.commonUtil.ProductCombiRightUtil;
+import com.eos.foundation.data.DataObjectUtil;
+import com.eos.foundation.database.DatabaseUtil;
+import com.eos.system.annotation.Bizlet;
+import com.eos.workflow.api.BPSServiceClientFactory;
+import com.eos.workflow.api.IBPSServiceClient;
+import com.eos.workflow.api.IWFActivityInstManager;
+import com.eos.workflow.data.WFActivityInst;
+import com.eos.workflow.omservice.WFParticipant;
+import com.primeton.workflow.api.WFServiceException;
+
+import commonj.sdo.DataObject;
+
+/**
+ * 
+ * @author 侯志勇
+ * 分支规则，用于判断流程路线
+ *
+ */
+public class ConditionRule {
+	/** 投资经理确认是否自动确认：ZHFWPT_AUTO_FIX_TO_O32 */
+	public static String AUTO_INVEST_MANAGER_PARAM_KEY = "ZHFWPT_AUTO_FIX_TO_O32";
+	
+	/**
+	 * adviser 是否有投顾复核人（投资建议复核）
+	 * entrust 是否有委托人复核（投资建议确认）
+	 * 
+	 * 根据产品code，判断是否需要投顾复核，投顾风控复核，是否有委托人复核 ，
+	 * @param productID 传入的产品code
+	 * @param type 传入的类型（投顾，投顾风控，委托人）
+	 * @return
+	 */
+	@Bizlet("")
+	public String investAdviserCondition(String createUserID,String productID,String vcCombiCode,String type, String vcInstructSource)throws Exception{
+		String result="false";
+		String userID=null;
+		String creator=null;
+		if(createUserID!=null && !"".equals(createUserID)){
+			DataObject criteriaType=DataObjectUtil.createDataObject("com.primeton.das.criteria.criteriaType");
+			criteriaType.set("_entity", "com.cjhxfund.commonUtil.dataBase.OrgEmployee");
+			criteriaType.set("_expr[1]/empid", createUserID);
+			criteriaType.set("_expr[1]/_op", "=");
+			DataObject[] capUsers=DatabaseUtil.queryEntitiesByCriteriaEntity("default", criteriaType);
+			creator=capUsers[0].getString("userid");
+		}else{
+			throw new Exception("流程创建者，入参为空！");
+		}
+		
+		if("adviser".equals(type)){//判断是否需要投顾确认，以下三种情况不需要投顾复核：①招行接口数据、②流程创建者为投资经理、③本地投顾创建流程且未配置投顾确认、④交易员(询价有交易员改单的情况)
+			if("2".equals(vcInstructSource) || "true".equals(checkInvestManager(createUserID,productID)) || "true".equals(checkTradeInputConfirmUser(createUserID,productID))){
+				return result;
+			}
+			userID=ProductCombiRightUtil.getInvestAdviserConfirmUserIds(creator,productID,vcCombiCode);
+		}else if("entrust".equals(type)){//委托人复核判断：对应产品组合配置了委托人确认权限，在投顾复核后需要委托人确认
+			userID=ProductCombiRightUtil.getEntrustConfirmUserIds(null,productID,vcCombiCode);
+		}
+		if(userID==null ||"".equals(userID)){
+			result="false";
+		}else if(ProductCombiRightUtil.NO_PERSON.equals(userID)){
+			result="false";
+		}else if(ProductCombiRightUtil.NO_PERMISSION.equals(userID)){
+			result="false";
+		}else if(ProductCombiRightUtil.HAS_SET_PERSON_BUT_NO_PERMISSION.equals(userID)){
+			result="false";
+		}else{
+			result="true";
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * adviser 是否有投顾复核人
+	 * risk 是否有投顾风控复核人
+	 * entrust 是否有委托人复核
+	 * 
+	 * 根据产品code，判断是否需要投顾确认，投顾风控复核或者委托人复核 ，
+	 * @param creatorId 流程创建者或预创建流程者，
+	 * @return
+	 * @throws Exception 
+	 */
+	@Bizlet("判断是否存在投顾复核，应用于指令判断")
+	public static  String checkAdviserConditionExist(String creatorId, String productCode, String vcCombiCode) throws Exception{
+		String result="false";
+		String userID=null;
+		boolean userResult=false;
+		String type="adviser";
+		String creator=null;
+		if(creatorId!=null && !"".equals(creatorId)){
+			DataObject criteriaType=DataObjectUtil.createDataObject("com.primeton.das.criteria.criteriaType");
+			criteriaType.set("_entity", "com.cjhxfund.commonUtil.dataBase.OrgEmployee");
+			criteriaType.set("_expr[1]/empid", creatorId);
+			criteriaType.set("_expr[1]/_op", "=");
+			DataObject[] users=DatabaseUtil.queryEntitiesByCriteriaEntity("default", criteriaType);
+			creator=users[0].getString("userid");
+		}else{
+			throw new Exception("流程创建者，入参为空！");
+		}
+		if("true".equals(checkInvestManager(creatorId,productCode))){
+			return result;
+		}
+		if("adviser".equals(type)){
+			userID=ProductCombiRightUtil.getInvestAdviserConfirmUserIds(creator,productCode,vcCombiCode);
+			userResult=investAdviserCommon(userID);
+			if(!userResult){
+				type="entrust";
+			}else{
+				result="true";
+			}
+		}
+		if("entrust".equals(type)){
+			userID=ProductCombiRightUtil.getEntrustConfirmUserIds(null,productCode,vcCombiCode);
+			userResult=investAdviserCommon(userID);
+			if(userResult){
+				result="true";
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 判断根据产品权限查询出来的信息，是否存在用户信息
+	 * @param userID 
+	 * @return
+	 */
+	private static boolean investAdviserCommon(String userID){
+		boolean result=false;
+		if(userID==null ||"".equals(userID)){
+			result=false;
+		}else if(ProductCombiRightUtil.NO_PERSON.equals(userID)){
+			result=false;
+		}else if(ProductCombiRightUtil.NO_PERMISSION.equals(userID)){
+			result=false;
+		}else if(ProductCombiRightUtil.HAS_SET_PERSON_BUT_NO_PERMISSION.equals(userID)){
+			result=false;
+		}else{
+			result=true;
+		}
+		return result;
+	}
+	
+	/**
+	 * 判断投资经理是否为自动完成
+	 * 当流程创建者为投资经理时，投资经理确认环节自动通过，当流程创建者为交易员时，投资经理确认必须投资经理手工确认，投顾录入时根据系统参数"ZHFWPT_AUTO_FIX_TO_O32"的值判断投资经理为自动还是手工
+	 * @param createUserID 流程创建者  productCode 产品代码    vcCombiCode 组合代码
+	 * @return Boolean 为true时表示投资经理自动完成 为false时表示投资经理手工确认
+	 * @throws ParseException 
+	 */
+	@Bizlet("投资经理分支走向规则")
+	public static Boolean investManageAutoFinished(String createUserID,String productCode, String vcCombiCode) throws ParseException{
+		if("true".equals(checkInvestManager(createUserID,productCode))){//流程创建者为投资经理
+			return true;
+		}else{
+			if("1".equals(ParamConfig.getValue(AUTO_INVEST_MANAGER_PARAM_KEY))){//投资经理确认环节模式为手工确认
+				return false;
+			}else{
+				return true;
+			}
+		}
+	}
+	
+	
+	/**
+	 * 投资经理分支走向规则
+	 * 根据交易日期判断是当日指令还是预置指令，根据系统参数"ZHFWPT_AUTO_FIX_TO_O32"的值判断投资经理为自动还是手工
+	 * @param lTradeDate 传入指令交易日期, lResultDate 询价结果录入日期, route 规则线路：auto-自动线路、manual-人工环节
+	 * @return 
+	 * @throws ParseException 
+	 */
+	@Bizlet("投资经理分支走向规则")
+	public static String investManagerComfirmCondition(String lResultDate, String lTradeDate, String route) throws ParseException{
+		String result="false";
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		//判断交易日期是否在于当天的日期
+		if(dateFormat.parse(lTradeDate).compareTo(dateFormat.parse(lResultDate))>0){//交易日大于询价结果日期
+			result="true";
+			return result;
+		}
+		if(route=="manaul"){
+			System.out.println(ParamConfig.getValue(AUTO_INVEST_MANAGER_PARAM_KEY));
+			if("1".equals(ParamConfig.getValue(AUTO_INVEST_MANAGER_PARAM_KEY))){//投资经理确认环节模式为手工确认
+				result="true";
+			}
+		}
+		if(route=="auto"){
+			if("0".equals(ParamConfig.getValue(AUTO_INVEST_MANAGER_PARAM_KEY))){//投资经理确认环节模式为自动确认
+				result="true";
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 待办已办查询条件拼装
+	 * @param bizCriteria 业务实体查询条件，业务实体对应公共中间待办表T_ATS_BIZ_PROCESS
+	 * @param workCiriteria 工作项实体查询条件，用于关联工作项表
+	 * @param task 前端传入的查询条件对象
+	 * @param sortField 排序字段
+	 * @param sortOrder 排序方式
+	 */
+	@Bizlet("待办已办查询条件拼装")
+	public static void setTaskQueryCondtion(DataObject bizCriteria,DataObject workCiriteria,DataObject task,String sortField,String sortOrder){
+		bizCriteria.set("_entity", "com.cjhxfund.ats.sm.comm.atsSmData.TAtsBizProcess");
+		workCiriteria.set("_entity", "com.eos.workflow.data.WFWorkItem");
+		
+		//业务查询条件
+		if(!StringUtils.isEmpty(task.getString("vcProductCode"))){
+			bizCriteria.set("_expr[1]/vcProductCode", task.getString("vcProductCode"));
+			bizCriteria.set("_expr[1]/_op", "=");
+		}
+		if(!StringUtils.isEmpty(task.getString("vcCombiNo"))){
+			bizCriteria.set("_expr[2]/vcCombiNo", task.getString("vcCombiNo"));
+			bizCriteria.set("_expr[2]/_op", "=");
+		}
+		if(!StringUtils.isEmpty(task.getString("vcProcessType"))){
+			bizCriteria.set("_expr[3]/vcProcessType", task.getString("vcProcessType"));
+			bizCriteria.set("_expr[3]/_op", "=");
+		}else{
+			bizCriteria.set("_expr[3]/vcProcessType","101,102,103");
+			bizCriteria.set("_expr[3]/_op", "in");
+		}
+		if(!StringUtils.isEmpty(task.getString("workItemName"))){
+			workCiriteria.set("_expr[1]/workItemName", task.getString("workItemName"));
+			workCiriteria.set("_expr[1]/_op", "like");
+			workCiriteria.set("_expr[1]/_likeRule", "all");
+		}
+		if(!StringUtils.isEmpty(task.getString("stockCode"))){
+			bizCriteria.set("_expr[5]/vcStockCode", task.getString("stockCode"));
+			bizCriteria.set("_expr[5]/_op", "=");
+		}
+		if(!StringUtils.isEmpty(task.getString("stockName"))){
+			bizCriteria.set("_expr[6]/vcStockName", task.getString("stockName"));
+			bizCriteria.set("_expr[6]/_op", "like");
+			bizCriteria.set("_expr[6]/_likeRule", "all");
+		}
+		if(!StringUtils.isEmpty(task.getString("vcAbstract"))){
+			bizCriteria.set("_expr[7]/vcAbstract", task.getString("vcAbstract"));
+			bizCriteria.set("_expr[7]/_op", "like");
+			bizCriteria.set("_expr[7]/_likeRule", "all");
+		}
+		
+		if(sortField.startsWith("bizObject")){
+			bizCriteria.set("_orderby[1]/_property", sortField.substring(sortField.indexOf(".")+1));
+			bizCriteria.set("_orderby[1]/_sort", sortOrder);
+		}else{
+			workCiriteria.set("_orderby[1]/_property", sortField);
+			workCiriteria.set("_orderby[1]/_sort", sortOrder);
+		}
+	}
+	
+	/**
+	 * 跟据描述信息获取业务流程状态
+	 * @param activityDesc 流程定义图的描述信息
+	 * @param triggerTime 指令表中流程状态修改时机，分三种，C为创建，F为完成，B为复核不通过对应的状 态码，A为审批类风控状态
+	 * @return
+	 */
+	@Bizlet("跟据描述信息获取业务流程状态")
+	public static String getProcessState(String activityDesc,String triggerTime){
+		String stateResult=null;
+		if(activityDesc!=null && !"".equals(activityDesc)){
+			String[] states=activityDesc.split("\\|");
+			if(triggerTime!=null && !"".equals(triggerTime)){
+				if(states.length>0){
+					for(int i=0;i<states.length;i++){
+//						String[] actAprroveState=states[i].split("&");
+//						if(actAprroveState!=null && actAprroveState.length>1){
+//							String[] approveState=actAprroveState[i].split("=");
+//						}
+						String[] actInstState=states[i].split("=");
+						if(triggerTime.equals(actInstState[0])){
+							stateResult=actInstState[1];
+						}
+					}
+				}
+			}
+		}
+		return stateResult;
+	}
+	
+	/**
+	 * 跟据描述信息解析业务流程退回原因
+	 * @param activityDesc 流程定义图的描述信息
+	 * @param triggerTime 指令表中流程状态修改时机，分三种，C为创建，F为完成，B为复核不通过对应的状 态码，A为审批类风控状态
+	 * @return
+	 */
+	@Bizlet("跟据描述信息解析业务流程退回原因")
+	public static String instructBackReson(String activityDesc, String triggerTime, String checkComments, String checkUser){
+		String stateResult=null;
+		if(activityDesc!=null && !"".equals(activityDesc)){
+			String[] states=activityDesc.split("\\|");
+			if(triggerTime!=null && !"".equals(triggerTime)){
+				if(states.length>0){
+					for(int i=0;i<states.length;i++){
+						String[] actInstState=states[i].split("=");
+						if(triggerTime.equals(actInstState[0])){
+							stateResult=actInstState[1];
+						}
+					}
+				}
+			}
+		}
+		if(checkComments!=null && !"".equals(checkComments)){
+			checkComments="原因："+checkComments;
+		}else{
+			checkComments="";
+		}
+		if("0".equals(stateResult)){
+			stateResult = "【"+checkUser+"】【投顾复核退回】;"+checkComments;
+		}else if("1".equals(stateResult)){
+			stateResult = "【"+checkUser+"】【委托人复核退回】;"+checkComments;
+		}else if("2".equals(stateResult)){
+			stateResult = "【"+checkUser+"】【投资经理复核退回】;"+checkComments;
+		}else if("3".equals(stateResult)){
+			stateResult = "【"+checkUser+"】【风控审批退回】;"+checkComments;
+		}
+		return stateResult;
+	}
+	
+	
+	/**
+	 * 根据产品ID获取对应投资经理，并检验流程实例创建者是否为该产品的投资经理
+	 * @param createUserID 流程实例创建者，productID指令对应产品ID
+	 * @return Boolean true：流程实例创建者为产品经理  false：流程实例创建者不是产品经理
+	 */
+	@Bizlet("判断流程实例创建者是否为对应产品的投资经理")
+	public static String checkInvestManager(String createUserID,String productCode){
+		String isInvestmanager = "false";
+		List<WFParticipant> investmanagers =  ParticipantRule.investManagerParticipant(productCode);
+		for(WFParticipant investmanager:investmanagers){
+			if(createUserID.equals(investmanager.getId())){
+				isInvestmanager = "true";
+				break;
+			}
+		}
+		return isInvestmanager;
+	}
+	
+	/**
+	 * 投资经理确认环节（人工或自动）的启动策略
+	 * 通过交易日期与询价结果录入日期比较，看是否为预置指令
+	 * @param instructInfo 指令对象
+	 * @return 当交易日期大于询价结果录入日期时环节处理待激活状态，否直接启动
+	 * @throws ParseException 
+	 */
+	@Bizlet("判断是否为预置指令")
+	public boolean compareDate(DataObject instructInfo) throws ParseException{
+		int dateInt=0;
+		boolean result=false;
+		//获取交易日期
+		String lTradeDate=instructInfo.getString("lTradeDate");
+		String lResultDate=instructInfo.getString("lResultDate");
+		if(lTradeDate!=null &&!"".equals(lTradeDate)){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+			Date dateTime1 = dateFormat.parse(lTradeDate);
+			Date dateTime2 = dateFormat.parse(lResultDate);
+			//判断交易日期是否大于询价结果录入日期
+			dateInt = dateTime1.compareTo(dateTime2);
+		}
+		if(dateInt==1){
+			result=true;
+		}else{
+			result=false;
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * 通过交易日期与当天的日期比较，看是否为预置指令
+	 * @param lTradeDate 交易日期
+	 * @return 当交易日期大于当前日期时环节处理待激活状态，否直接启动
+	 * @throws ParseException 
+	 */
+	@Bizlet("判断是否为预置指令")
+	public static int compareDate(String lTradeDate) throws ParseException{
+		int resultInt=0;
+		//获取交易日期
+		if(lTradeDate!=null &&!"".equals(lTradeDate)){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+			Date dateTime1 = dateFormat.parse(lTradeDate);
+			//获取当前天的日期
+			Date dateTime2 = dateFormat.parse(dateFormat.format(new Date()));
+			//判断交易日期是否在于当天的日期
+			resultInt = dateTime1.compareTo(dateTime2);
+		}
+		//如果交易日期等于当天的日期，自动启动下发O32指令环节，否则环节处于待激活状态
+		
+		return resultInt;
+	}
+	
+	/**
+	 * 投资建议录入时判断预下指令是否直接下往O32
+	 * @param creatorId：投资建议录入人     productCode：指令产品代码    vcCombiCode：指令组合代码
+	 * @return false-不存在人工复核（直接下单到O32）， true-存在人工复核（不直接下单到O32）
+	 * @throws Exception 
+	 */
+	@Bizlet("判断是否存在复核")
+	public static Boolean checkInstructNeedReview(String creatorId, String productCode, String vcCombiCode) throws Exception{
+		boolean result=true;
+		String creator=null;
+		if(creatorId!=null && !"".equals(creatorId)){
+			DataObject criteriaType=DataObjectUtil.createDataObject("com.primeton.das.criteria.criteriaType");
+			criteriaType.set("_entity", "com.cjhxfund.commonUtil.dataBase.OrgEmployee");
+			criteriaType.set("_expr[1]/empid", creatorId);
+			criteriaType.set("_expr[1]/_op", "=");
+			DataObject[] users=DatabaseUtil.queryEntitiesByCriteriaEntity("default", criteriaType);
+			creator=users[0].getString("userid");
+		}else{
+			throw new Exception("流程创建者，入参为空！");
+		}
+		//投资经理录入投资建议直接下单到O32
+		if("true".equals(checkInvestManager(creatorId,productCode))){
+			result=false;
+		}else{//非投资经理进行投资建议录入（即投顾录入投资建议）时，判断是否存在投顾复核（投顾复核不存在时，委托人也不需要进行确认）
+			String userID=ProductCombiRightUtil.getInvestAdviserConfirmUserIds(creator,productCode,vcCombiCode);
+			Boolean userResult=investAdviserCommon(userID);
+			if(!userResult){//不存在复核
+				if("0".equals(ParamConfig.getValue(AUTO_INVEST_MANAGER_PARAM_KEY))){//投资经理确认环节模式为自动确认
+					result=false;
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 根据流程实例Id获取流程当前运行节点在“风控审批”、“交易录单”或“交易复核”的活动实例ID
+	 * @param lProcessinstId 流程实例Id
+	 * @param userId 用户Id
+	 * @param userName 用户名称
+	 * @return 流程中当前
+	 * @throws ParseException 
+	 */
+	@Bizlet("获取流程当前活动实例Id")
+	public static long getCurrentActivityInstId(long lProcessinstId, String userId, String userName){
+		BPSServiceClientFactory.getLoginManager().setCurrentUser(userId, userName); 
+		long activityInstId = -1;
+		IBPSServiceClient client;
+		try {
+			client = BPSServiceClientFactory.getDefaultClient();
+			if(client.getProcessInstManager().getProcessInstState(lProcessinstId)==2){//流程为运行状态
+				IWFActivityInstManager activityInstManager = client.getActivityInstManager(); 
+				List<WFActivityInst> activityInsts = activityInstManager.queryActivityInstsByProcessInstID(lProcessinstId, null);
+				for(WFActivityInst activityInst:activityInsts){
+					if(activityInst.getCurrentState()==2 || activityInst.getCurrentState()==10){
+						String activityDefID = activityInst.getActivityDefID();
+						//返回流程当前待执行的活动实例为“风控审批”或“交易录单”或“交易复核”的活动实例ID
+						if("riskApprove".equals(activityDefID) || "dealEnter".equals(activityDefID) || "enterCheck".equals(activityDefID)){
+							activityInstId = activityInst.getActivityInstID();
+						}else if("frontDeal".equals(activityDefID)){
+							activityInstId=-2;
+						}else if("finishActivity".equals(activityDefID)){
+							activityInstId = -3;
+						}
+					}
+			 	}
+			}else if(client.getProcessInstManager().getProcessInstState(lProcessinstId)==7){//流程为完成状态
+				activityInstId = -3;
+			}
+		} catch (WFServiceException e) {
+			e.printStackTrace();
+		} 
+		return activityInstId;
+	}
+	
+	/**
+	 * 根据流程实例Id获取流程当前运行的节点
+	 * @param lProcessinstId 流程实例Id
+	 * @param userId 用户Id
+	 * @param userName 用户名称
+	 * @return 流程中当前
+	 * @throws ParseException 
+	 */
+	@Bizlet("获取流程当前活动实例Id")
+	public static Long getCurrentActivityInstIdByProcessInst(long lProcessinstId, String userId, String userName){
+		BPSServiceClientFactory.getLoginManager().setCurrentUser(userId, userName); 
+		try {
+			IBPSServiceClient client = BPSServiceClientFactory.getDefaultClient();
+			IWFActivityInstManager activityInstManager = client.getActivityInstManager(); 
+			List<WFActivityInst> activityInsts = activityInstManager.queryActivityInstsByProcessInstID(lProcessinstId, null);
+			for(WFActivityInst activityInst:activityInsts){  
+				int activityInstState = activityInst.getCurrentState();
+				if(activityInstState==2){//1-未启动 ,2-运行 ,3-挂起 ,7-完成 ,8-终止 
+					return activityInst.getActivityInstID();
+				}
+		 	}  
+		} catch (WFServiceException e) {
+			e.printStackTrace();
+		} 
+		return null;
+	}
+	
+	/**
+	 * 获取指令流程中
+	 * @param lProcessinstId 流程实例Id
+	 * @param userId 用户Id
+	 * @param userName 用户名称
+	 * @return 流程中当前
+	 * @throws ParseException 
+	 */
+	@Bizlet("获取流程当前活动实例Id")
+	public static WFActivityInst getWaitActivityInstIdByProcessInst(long lProcessinstId){
+		BPSServiceClientFactory.getLoginManager().setCurrentUser("sysadmin", "sysadmin"); 
+		try {
+			IBPSServiceClient client = BPSServiceClientFactory.getDefaultClient();
+			IWFActivityInstManager activityInstManager = client.getActivityInstManager(); 
+			List<WFActivityInst> activityInsts = activityInstManager.queryActivityInstsByProcessInstID(lProcessinstId, null);
+			for(WFActivityInst activityInst:activityInsts){
+				int activityInstState = activityInst.getCurrentState();
+				////1-未启动 ,2-运行 ,3-挂起 ,7-完成 ,8-终止 , 10-待激活     manualActivity1-投顾待复核   manualActivity2A-投资经理待确认
+				if(activityInstState==10 &&("manualActivity1".equals(activityInst.getActivityDefID()) || "manualActivity2A".equals(activityInst.getActivityDefID()))){
+					return activityInst;
+				}
+		 	}  
+		} catch (WFServiceException e) {
+			e.printStackTrace();
+		} 
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param createUserID 创建用户id
+	 * @param productCode	产品代码
+	 * @return
+	 */
+	@Bizlet("判断userId串中是否包含参数id")
+	public static String checkTradeInputConfirmUser(String createUserID, String productID){
+		String result="false";
+		List<WFParticipant> userIds =  ParticipantRule.inquiryInputParticipant(productID);
+		for(WFParticipant user:userIds){
+			if(createUserID.equals(user.getId())){
+				result = "true";
+				break;
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 判断投资经理是否为自动完成
+	 * 当流程创建者为投资经理时，投资经理确认环节自动通过，当流程创建者为交易员时，投资经理确认必须投资经理手工确认，投顾录入时根据系统参数"ZHFWPT_AUTO_FIX_TO_O32"的值判断投资经理为自动还是手工（询价结果永远需要投资经理手动确认）
+	 * @param createUserID 流程创建者  productCode 产品代码    vcCombiCode 组合代码
+	 * @return Boolean 为true时表示投资经理自动完成 为false时表示投资经理手工确认
+	 * @throws ParseException 
+	 */
+	@Bizlet("询价结果投资经理分支走向规则")
+	public static Boolean inquiryResultInvestManageAutoFinished(String createUserID,String productCode, String vcCombiCode, String vcInstructType) throws ParseException{
+		if("true".equals(checkInvestManager(createUserID,productCode))){//流程创建者为投资经理
+			return true;
+		}else{
+			if("1".equals(ParamConfig.getValue(AUTO_INVEST_MANAGER_PARAM_KEY)) || "2".equals(vcInstructType)){//投资经理确认环节模式为手工确认
+				return false;
+			}else{
+				return true;
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws ParseException {
+		//String test=getProcessState("C:3", "C");
+		//System.out.println(test);
+		System.out.println(compareDate("20170903"));
+	}
+	
+}

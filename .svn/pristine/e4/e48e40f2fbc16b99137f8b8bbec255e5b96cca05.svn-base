@@ -1,0 +1,42 @@
+package com.cjhxfund.jy.DataProcess;
+
+import java.lang.reflect.Proxy;
+import java.sql.Connection;
+import java.util.List;
+
+import com.cjhxfund.commonUtil.JDBCUtil;
+
+public class SqlSession {
+	
+	private Connection conn;	
+	private Excutor excutor;
+	
+	public SqlSession(String dataSource){
+		this.conn = JDBCUtil.getConnByDataSourceId(dataSource);
+	}
+	
+	public SqlSession(String dataSource,Excutor excutor){
+		this.conn = JDBCUtil.getConnByDataSourceId(dataSource);
+		this.excutor = excutor;
+	}
+	
+	public Connection getConnect(){
+		return this.conn;
+	}
+	
+	public List<?> select(String statement,List<Object> parameter){  
+        return excutor.query(conn,statement, parameter);  
+    }
+	
+	public void insertOrUpdate(String statement,List<Object> parameter){
+		excutor.insertOrUpdate(conn,statement, parameter);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getMapper(Class<T> clazz){
+		
+		return (T)Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new MapperProxy(this));
+		
+	}
+	
+}

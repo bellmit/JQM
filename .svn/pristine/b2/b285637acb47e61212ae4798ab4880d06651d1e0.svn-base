@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="UpFileByProcess" detailDescription="1、上传方法返回值：&#xD;&#xA;FdataName：上传是的文件名(文件本来的名字)&#xD;&#xA;FdataUrl：文件存放路径，包含临时文件名&#xD;&#xA;&#xD;&#xA;2、关于回调逻辑流&#xD;&#xA;UpSuccessBizParm：回调时回传参数(参数名称必须和被回调的逻辑参数对应)&#xD;&#xA;UpSuccessBiz：回调的逻辑流全称（路径+名字）&#xD;&#xA;&#xD;&#xA;3、Fdata：如果需要回调逻辑流，那么回调逻辑流中参数必须具备Fdata(com.primeton.ext.access.http.UploadFile)这个参数" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="1、上传方法返回值：&#xD;&#xA;FdataName：上传是的文件名(文件本来的名字)&#xD;&#xA;FdataUrl：文件存放路径，包含临时文件名&#xD;&#xA;&#xD;&#xA;2、关于回调逻辑流&#xD;&#xA;UpSuccessBizParm：回调时回传参数(参数名称必须和被回调的逻辑参数对应)&#xD;&#xA;UpSuccessBiz：回调的逻辑流全称（路径+名字）&#xD;&#xA;&#xD;&#xA;3、Fdata：如果需要回调逻辑流，那么回调逻辑流中参数必须具备Fdata(com.primeton.ext.access.http.UploadFile)这个参数" title="杨敏&#x9;16-12-1 下午4:28">
+    <location x="90" y="390"/>
+    <size height="226" width="346"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <location x="100" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link2</targetConnections>
+    <location x="480" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns>
+      <process:return id="0" language="String" name="FdataName" type="query" valueType="Primitive">FdataName</process:return>
+      <process:return id="1" language="String" name="FdataUrl" type="query" valueType="Primitive">FdataUrl</process:return>
+      <process:return id="2" language="java.lang.Object[]" name="result" type="query" valueType="Java">result</process:return>
+    </process:returns>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="102" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="482" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="赋值" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link7" name="link7" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>invokePojo0</targetNode>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="228" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">/home/ats/FileUploadPath/fm/LiuCheng</process:from>
+      <process:to type="query">FdataUrl</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">Fdata/clientFileName</process:from>
+      <process:to type="query">FdataName</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="230" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo1" name="执行回调逻辑流" displayName="callBackBiz" type="invoke" index="3" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link2" name="link2" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo1</sourceNode>
+      <targetNode>end0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link8</targetConnections>
+    <location x="352" y="150"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo1label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.cjhxfund.ats.fm.comm.ExcelHelper.callBackBiz</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="UpSuccessBiz" type="query" value="java.lang.String" valueType="Java" pattern="reference">UpSuccessBiz</process:inputVariable>
+      <process:inputVariable id="1" name="UpSuccessBizParm" type="query" value="java.lang.Object[]" valueType="Java" pattern="reference">UpSuccessBizParm</process:inputVariable>
+      <process:inputVariable id="2" name="Fdata" type="query" value="com.primeton.ext.access.http.UploadFile" valueType="Java" pattern="reference">Fdata</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.Object[]" valueType="Java">result</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo1label" name="label" nodeType="label">
+    <location x="321" y="186"/>
+    <figSize height="17" width="85"/>
+    <node>invokePojo1</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo0" name="移动文件" displayName="moveAndRenameFileUtil" type="invoke" index="4" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link8" name="link8" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo0</sourceNode>
+      <targetNode>invokePojo1</targetNode>
+    </sourceConnections>
+    <targetConnections>link7</targetConnections>
+    <location x="232" y="255"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo0label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.cjhxfund.ats.fm.comm.commonUtil.moveAndRenameFileUtil</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="filePath" type="query" value="java.lang.String" valueType="Java" pattern="reference">Fdata/filePath</process:inputVariable>
+      <process:inputVariable id="1" name="fileName" type="query" value="java.lang.String" valueType="Java" pattern="reference">Fdata/clientFileName</process:inputVariable>
+      <process:inputVariable id="2" name="newfilePath" type="query" value="java.lang.String" valueType="Java" pattern="reference">FdataUrl</process:inputVariable>
+      <process:inputVariable id="3" name="newfileName" type="query" value="java.lang.String" valueType="Java" pattern="reference">Fdata/clientFileName</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.String" valueType="Java">Fdata/filePath</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo0label" name="label" nodeType="label">
+    <location x="219" y="291"/>
+    <figSize height="17" width="49"/>
+    <node>invokePojo0</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="杨敏" createTime="2016-12-01 16:04:11" date="2016-12-01Z" description="" name="通用单个文件上传" version="7.0.0.0"/>
+  <process:variables/>
+  <process:inputs varArgs="false">
+    <process:input anyType="com.primeton.ext.access.http.UploadFile" description="上传的文件流" isArray="false" name="Fdata"/>
+    <process:input anyType="java.lang.Object" description="回调时回传参数(参数名称必须和被回调的逻辑参数对应)" isArray="true" name="UpSuccessBizParm"/>
+    <process:input description="回调的逻辑流全称（路径+名字）" isArray="false" name="UpSuccessBiz" primitiveType="String"/>
+  </process:inputs>
+  <process:outputs>
+    <process:output description="上传是的文件名(文件本来的名字)" isArray="false" name="FdataName" primitiveType="String"/>
+    <process:output description="文件存放路径，包含临时文件名" isArray="false" name="FdataUrl" primitiveType="String"/>
+    <process:output anyType="java.lang.Object" description="回调逻辑流返回值" isArray="true" name="result"/>
+  </process:outputs>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

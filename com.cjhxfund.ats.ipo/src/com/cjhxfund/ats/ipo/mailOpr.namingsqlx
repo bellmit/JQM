@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:侯志勇 -->
+<sqlMap>
+
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="EMPID" javaType="long" property="empId"/>
+        <result column="EMPNAME" javaType="string" property="empName"/>
+        <result column="OEMAIL" javaType="string" property="oEmail"/>
+        <result column="PEMAIL" javaType="string" property="pEmail"/>
+    </resultMap>
+    
+    <select id="querySinglePerson" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+    	select empid,empname,oemail,pemail from org_employee where empid=#empId#
+	</select>
+	
+	<select id="queryPersonByRole" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String">
+    	select wm_concat(oemail) as pemail from org_employee t where t.empid in 
+       	(select p.party_id from cap_partyauth p where role_id=#roleId#)
+	</select>
+	
+	<select id="queryEmailByMorePerson" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String">
+		select wm_concat(oemail) as pemail from org_employee t where t.empid in ($empId$)
+	</select>
+</sqlMap>

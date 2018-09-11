@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<businessCatalog>
+  <id>1</id>
+  <name>领域业务目录</name>
+  <order>2</order>
+  <sequence>1.</sequence>
+  <isLeaf>0</isLeaf>
+  <description>根据实际业务分类进行管理的一系列具备业务含义的业务目录和业务资源的集合</description>
+  <subCatalogs>
+    <businessCatalog>
+      <id>d772943cd4e04483a5ea861c473656a0</id>
+      <name>二级债流程</name>
+      <parentID>1</parentID>
+      <order>2</order>
+      <sequence>1.d772943cd4e04483a5ea861c473656a0.</sequence>
+      <isLeaf>0</isLeaf>
+      <description>二级债业务流程</description>
+      <subCatalogs/>
+    </businessCatalog>
+    <businessCatalog>
+      <id>6d9f4eb3c1bc4bd0ba411401b51d75ed</id>
+      <name>新股申购交易</name>
+      <parentID>1</parentID>
+      <order>3</order>
+      <sequence>1.6d9f4eb3c1bc4bd0ba411401b51d75ed.</sequence>
+      <isLeaf>0</isLeaf>
+      <description>新股申购交易</description>
+      <subCatalogs/>
+    </businessCatalog>
+    <businessCatalog>
+      <id>3e595dc82edb4e74b88b6e1ba07d5bf7</id>
+      <name>一级债</name>
+      <parentID>1</parentID>
+      <order>1</order>
+      <sequence>1.3e595dc82edb4e74b88b6e1ba07d5bf7.</sequence>
+      <isLeaf>0</isLeaf>
+      <description>一级债</description>
+      <subCatalogs/>
+    </businessCatalog>
+  </subCatalogs>
+</businessCatalog>

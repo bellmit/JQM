@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tPageFlow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="goldExcle.flowx" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0" state="stateless">
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" collapsed="false" type="start">
+    <sourceConnections xsi:type="process:tActionLink" description="" id="link1" name="link1" displayName="link3" lineType="reference" isDefault="true" type="action" actionName="export" dataConvertClass="">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign1</targetNode>
+      <process:validateRules errorPage="" onError="default"/>
+      <process:inputParameters>
+        <process:parameter anyType="commonj.sdo.DataObject" description="导出条件对象" historyStateLocation="client" isArray="false" name="paramObject"/>
+      </process:inputParameters>
+    </sourceConnections>
+    <location x="140" y="190"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" nodeType="label">
+    <location x="142" y="226"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="process:tEnd" description="" id="end0" name="结束" displayName="结束" collapsed="false" type="end" contextPath="" method="forward" uri="/ProductProcess/PledgedRepoExport.jsp">
+    <targetConnections>link0</targetConnections>
+    <location x="940" y="197"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:inputVariables/>
+    <process:returns/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" nodeType="label">
+    <location x="942" y="233"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo0" name="导出excel" displayName="导出excel" collapsed="false" type="invoke" index="0" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="link2" isDefault="true" type="transition">
+      <sourceNode>invokePojo0</sourceNode>
+      <targetNode>end0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="835" y="197"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo0label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true">
+      <process:partner type="literal">com.cjhxfund.jy.ProductProcess.ZhxxcxExport.zhxxcxExport</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="exportData" type="query" value="java.util.List&lt;commonj.sdo.DataObject>" valueType="Java" pattern="reference">list</process:inputVariable>
+      <process:inputVariable id="1" name="paramObject" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">paramObject</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.String" valueType="Java">pageUrl</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo0label" name="label" nodeType="label">
+    <location x="819" y="233"/>
+    <figSize height="17" width="54"/>
+    <node>invokePojo0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="赋值" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link4" name="link4" displayName="link6" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>subprocess0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link6</targetConnections>
+    <location x="460" y="197"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">DISCGOLD</process:from>
+      <process:to type="query">paramObject/queryType</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">出入金指令</process:from>
+      <process:to type="query">paramObject/sheetName</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportTradeDateMin</process:from>
+      <process:to type="query">paramObject/lTradeDateMin</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportTradeDateMax</process:from>
+      <process:to type="query">paramObject/lTradeDateMax</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportQueryType</process:from>
+      <process:to type="query">paramObject/exportType</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportProductCode</process:from>
+      <process:to type="query">paramObject/vcProductCode</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportEntrustDir</process:from>
+      <process:to type="query">paramObject/vcEntrustDirection</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportIselect</process:from>
+      <process:to type="query">paramObject/iselect</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportGoldId</process:from>
+      <process:to type="query">paramObject/lGoldId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportAgentBank</process:from>
+      <process:to type="query">paramObject/vcAgentBank</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="462" y="233"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign1" name="赋值1" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link3" name="link3" displayName="link5" isDefault="true" type="transition">
+      <sourceNode>assign1</sourceNode>
+      <targetNode>invokePojo1</targetNode>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="235" y="190"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign1label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">paramObject/exportProductCode</process:from>
+      <process:to type="query">map/exportProductCode</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign1label" name="label" nodeType="label">
+    <location x="233" y="226"/>
+    <figSize height="17" width="32"/>
+    <node>assign1</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo1" name="changeToStr" displayName="changeToStr" collapsed="false" type="invoke" index="1" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="link9" isDefault="true" type="transition">
+      <sourceNode>invokePojo1</sourceNode>
+      <targetNode>assign2</targetNode>
+    </sourceConnections>
+    <targetConnections>link3</targetConnections>
+    <location x="329" y="190"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo1label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true">
+      <process:partner type="literal">com.cjhxfund.ats.instruction.Util.StrUtil.changeToStr</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="strMap" type="query" value="java.util.Map&lt;java.lang.String,java.lang.String>" valueType="Java" pattern="reference">map</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.util.Map&lt;java.lang.String,java.lang.String>" valueType="Java">resultMap</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo1label" name="label" nodeType="label">
+    <location x="303" y="226"/>
+    <figSize height="17" width="74"/>
+    <node>invokePojo1</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign2" name="赋值2" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link6" name="link6" displayName="link8" isDefault="true" type="transition">
+      <sourceNode>assign2</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <targetConnections>link5</targetConnections>
+    <location x="390" y="120"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign2label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">resultMap/exportProductCode</process:from>
+      <process:to type="query">paramObject/exportProductCode</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign2label" name="label" nodeType="label">
+    <location x="388" y="156"/>
+    <figSize height="17" width="32"/>
+    <node>assign2</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess0" name="queryGoldInfo" displayName="queryGoldInfo" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link7" name="link7" displayName="link1" isDefault="true" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>invokePojo3</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link4</targetConnections>
+    <location x="590" y="197"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess0label</nodeLabel>
+    <process:flow index="6" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.instruction.InterestSwap.InterestSwapInstruction.queryGoldInfo</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="paramObject" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">paramObject</process:inputVariable>
+        <process:inputVariable id="1" name="page" type="expression" value="com.eos.foundation.PageCond" valueType="DataObject" pattern="reference">null</process:inputVariable>
+        <process:inputVariable id="2" name="pageIndex" type="literal" value="Int" valueType="Primitive" pattern="reference">0</process:inputVariable>
+        <process:inputVariable id="3" name="pageSize" type="literal" value="Int" valueType="Primitive" pattern="reference">65536</process:inputVariable>
+        <process:inputVariable id="4" name="sortField" type="expression" value="String" valueType="Primitive" pattern="reference">null</process:inputVariable>
+        <process:inputVariable id="5" name="sortOrder" type="expression" value="String" valueType="Primitive" pattern="reference">null</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="insructInfos" type="query" value="commonj.sdo.DataObject[]" valueType="Java">instructInfos</process:outputVariable>
+        <process:outputVariable id="1" name="total" type="query" value="Int" valueType="Primitive">total</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess0label" name="label" nodeType="label">
+    <location x="561" y="232"/>
+    <figSize height="17" width="85"/>
+    <node>subprocess0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo3" name="转换格式" displayName="goldReplaceList" type="invoke" index="1" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link2" name="link2" displayName="link0" isDefault="true" type="transition">
+      <sourceNode>invokePojo3</sourceNode>
+      <targetNode>invokePojo0</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>1==2</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link7</targetConnections>
+    <location x="707" y="197"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo3label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true">
+      <process:partner type="literal">com.cjhxfund.ats.instruction.Util.StrUtil.goldReplaceList</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="data" type="query" value="commonj.sdo.DataObject[]" valueType="Java" pattern="reference">instructInfos</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.util.List&lt;commonj.sdo.DataObject>" valueType="Java">list</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo3label" name="label" nodeType="label">
+    <location x="694" y="233"/>
+    <figSize height="17" width="49"/>
+    <node>invokePojo3</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="jiangkanqian" createTime="2018-06-20 10:21:40" date="2018-06-20Z" description="" name="出入金导出" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable anyType="java.util.HashMap" description="" historyStateLocation="client" isArray="false" name="map"/>
+  </process:variables>
+  <process:inputParameters/>
+</process:tPageFlow>

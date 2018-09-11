@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:liangjilong -->
+<sqlMap>
+    
+ 
+ <resultMap class="commonj.sdo.DataObject" id="resultMapForReportCode">
+ 	<result column="VC_REPORT_CODE" javaType="string" property="vcReportCode"/>
+ </resultMap>
+ 
+  <!--根据传入的天数查询回购期限(天)对应的申报代码-->
+  <select id="queryReportCode" parameterClass="java.util.Map" resultMap="resultMapForReportCode">
+ 		select b.VC_REPORT_CODE  from trade.thgratio a, trade.tstockinfo b  where a.vc_inter_code = b.vc_inter_code
+		and b.c_market_no = '5' and a.c_parameter_type = '1' and a.l_ratio = #days#
+ </select>
+ <!--查找满足在人员表中、投顾组、拥有产品权限、并且人名-->
+ <select id="queryUserIdByName" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select emp.userid,emp.empname from org_employee emp
+		 where emp.orgid  in (select orgid from org_organization org where org.orgname like '%投顾%') 
+		 and emp.empname = #empname#
+		 and emp.userid in (select a.vc_user_id from t_ats_product_handle a  where a.vc_relate_type in('01') 
+		 and a.vc_product_code = #pcode#)
+ </select>
+ <!--查找满足在人员表中、投顾组、拥有产品权限第一个人-->
+  <select id="queryUserId" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select emp.userid,emp.empname from org_employee emp
+ 		where emp.orgid  in (select orgid from org_organization org where org.orgname like '%投顾%') 
+   		and emp.userid in (select a.vc_user_id from t_ats_product_handle a  where a.vc_relate_type in('01')  
+   		and a.vc_product_code = #pcode#)
+ </select>
+ <!-- 根据员工账号查询员工ID -->
+ <select id="queryEmpIdByUserid" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select emp.empid, emp.userid, emp.empname, eo.orgid
+		  from org_employee emp
+		  left join org_emporg eo
+		    on emp.empid = eo.empid
+		 where emp.userid = #EXTEND_USER_ID#
+		   and rownum = 1
+ </select>
+ <!--根据产品组合代码获取产品资产单元组合信息-->
+ <select id="getOrgCombPrdInfo" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select p.l_product_id,
+		       p.vc_product_code,
+		       p.vc_product_name,
+		       p.vc_product_caption,
+		       a.l_asset_id,
+		       a.vc_asset_no,
+		       a.vc_asset_name,
+		       c.l_combi_id,
+		       c.vc_combi_no,
+		       c.vc_combi_name
+		  from t_ats_product_info p, t_ats_asset_info a, t_ats_combi_info c
+		 where c.l_asset_id = a.l_asset_id
+		   and c.l_product_id = p.l_product_id
+		   and c.vc_combi_no = #vcCombiNo#
+		   and p.vc_product_code = #vcProductCode#
+ </select>
+ <!--一级市场指令表查询  产品代码-->
+  <select id="queryPProdcode" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select t.VC_PRODUCT_CODE from T_ATS_CJAPI_P_MARKET t where t.vc_clord_id=#vcOrigOrdId#
+ </select>
+		
+ <!--银行间二级市场指令表	 产品代码-->
+  <select id="queryBSProdcode" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select t.VC_PRODUCT_CODE from T_ATS_CJAPI_B_S_MARKET t where t.vc_clord_id=#vcOrigOrdId#
+ </select>
+ 
+  <!--交易所二级市场指令表	 产品代码-->
+  <select id="queryESProdcode" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select t.VC_PRODUCT_CODE from T_ATS_CJAPI_E_S_MARKET t where t.vc_clord_id=#vcOrigOrdId#
+ </select>
+
+  <!--银行间质押式回购指令表   产品代码-->
+  <select id="queryBPProdcode" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select t.VC_PRODUCT_CODE from T_ATS_CJAPI_B_P_REPO t where t.vc_clord_id=#vcOrigOrdId#
+ </select>
+
+ <!--交易所质押式回购指令表	   产品代码-->
+  <select id="queryEPProdcode" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+ 		select t.VC_PRODUCT_CODE from T_ATS_CJAPI_E_P_REPO t where t.vc_clord_id=#vcOrigOrdId#
+ </select>
+
+ 
+</sqlMap>

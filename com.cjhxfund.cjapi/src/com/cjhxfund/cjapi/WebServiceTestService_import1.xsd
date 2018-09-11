@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.2.4-b01. -->
+<xs:schema xmlns:tns="http://service.cjhxfund.org.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://service.cjhxfund.org.com/" version="1.0">
+
+<xs:element name="getDate" type="tns:getDate"/>
+
+<xs:element name="getDateResponse" type="tns:getDateResponse"/>
+
+<xs:complexType name="getDate">
+<xs:sequence>
+<xs:element minOccurs="0" name="arg0" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getDateResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="return" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

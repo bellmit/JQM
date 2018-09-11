@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Require-Bundle: com.primeton.eos.richweb,com.eos.foundation,com.eos.wo
+ rkflow
+Bundle-Vendor: 王沐寰
+eos-webCtxPath: fm/comm
+Bundle-Version: 1.0.0
+Bundle-Name: 公共构件包
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.fm.comm
+

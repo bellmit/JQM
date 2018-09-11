@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.sm.comm,com.cjhxfund.commonUtil,com.c
+ jhxfund.foundation.fix,com.primeton.eos.richweb,com.eos.foundation,co
+ m.eos.workflow,org.gocom.components.coframe.auth,org.gocom.components
+ .coframe.rights,org.gocom.components.coframe.tools,org.gocom.componen
+ ts.coframe.org,org.gocom.components.coframe.framework
+Bundle-Vendor: 童伟
+eos-webCtxPath: inquiry
+Bundle-Version: 1.0.0
+Bundle-Name: 询价构建包
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.sm.inquiry
+

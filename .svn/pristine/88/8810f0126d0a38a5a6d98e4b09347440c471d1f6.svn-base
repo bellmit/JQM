@@ -1,0 +1,48 @@
+package com.cjhxfund.jy.DataProcess;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.cjhxfund.commonUtil.JDBCUtil;
+import com.eos.system.annotation.Bizlet;
+
+public class Test {
+	
+	@Bizlet("")
+	public void test(){
+				
+		SqlSession sqlSession = new SqlSession(JDBCUtil.DATA_SOURCE_DEFAULT);
+		PbMapper mapper = sqlSession.getMapper(PbMapper.class);
+		Excutor pbExc  = new PbExcutor();
+		List<PositionBasic> list = mapper.getPosition("zhxxcx_pqb.sql", null, pbExc);
+		System.out.println("list:" + list.size());
+		
+		SqlSession sqlSession1 = new SqlSession(JDBCUtil.DATA_SOURCE_SJZX);
+		final PbMapper mapper1 = sqlSession1.getMapper(PbMapper.class);
+		Map<String,Bond> bondMap = new HashMap<String,Bond>();
+//		Excutor bdExc = new BondExcutor(list,bondMap);
+//		mapper1.getBond("zhxxcx_bond.sql", null, bdExc);
+//		System.out.println("bond:" + bondMap.size());
+		
+		final BondPrallelExcutor bpExc = new BondPrallelExcutor(list,bondMap);
+		final List<String> split = bpExc.splitCodition(1000);
+		int num = split.size();
+		ExecutorService threadPool = Executors.newFixedThreadPool(num); 
+		for(int i=0;i<num;i++){
+			final int index = i;
+			threadPool.execute(new Runnable() { 
+				// 提交多个线程任务，并执行
+				public void run() { 					
+					System.out.println(Thread.currentThread().getName() + " is running .."); 
+					mapper1.getBondParllel("zhxxcx_bond.sql", split, bpExc, index); 
+					} 
+				}); 
+		}
+		
+		
+	}
+	
+}

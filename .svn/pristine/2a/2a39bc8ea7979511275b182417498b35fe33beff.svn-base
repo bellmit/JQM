@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:jiangkanqian -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="businClassMap">
+        <result column="c_lemma_item" javaType="string" property="lemmaItem"/>
+        <result column="vc_item_name" javaType="string" property="itemName"/>
+    </resultMap>
+    <select id="queryBusinClass" parameterClass="commonj.sdo.DataObject" resultMap="businClassMap">
+    <![CDATA[
+    	select td.c_lemma_item,td.vc_item_name
+        from trade.tdictionary td
+        where td.l_dictionary_no = '40396'
+        and td.c_lemma_item <> '!'
+     ]]>   	
+    </select>
+</sqlMap>

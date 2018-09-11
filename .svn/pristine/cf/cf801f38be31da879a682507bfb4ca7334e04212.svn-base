@@ -1,0 +1,121 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@include file="/JQMHistory/common/commscripts.jsp" %>
+<html>
+<!-- 
+  - Author(s): jiangkanqian
+  - Date: 2018-05-30 18:42:40
+  - Description:
+-->
+<head>
+<title>新增出入金</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link id="css_icon" rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/coframe/org/css/org.css"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/JQMHistory/common/common.js"></script>   
+</head>
+<body>
+<div id="newChargeForm" style="padding-top:5px;width: 100%;">
+	<table class="instructTable" border="0" style="width: 100%;">
+		<tr>
+			<td align="right" width="60px">
+				产品名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				组合名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				委托方向:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-radiobuttonlist" name="vcProductCode" 
+				emptyText="全部" showClose="true" oncloseclick="onCloseClick" 
+				data="[{id: '0', text: '出金'}, {id: '1', text: '入金'}]"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				金额（万元）:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				交易日期:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				代理行:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				代理行账号:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				代理行账户名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			</td>
+		</tr>
+	</table>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>附件:</strong></div>
+	<div colspan="3" class="td">
+		<iframe id="prodIfm" name="prodIfm" width="98%"  height="120px" frameborder="no" border="0" marginwidth="0" marginheight="0" scolling="no"></iframe>
+	</div>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>备注:</strong></div>
+	<div colspan="5">
+        <input class="nui-textarea"  name="newInterestswapInstruct.vcRemark" id="vcRemark" width="100%" height="90px"/>
+    </div>
+	
+	<div class="nui-toolbar" borderStyle="border:0;">
+		<div align="center" class="submitDiv">
+			<!-- <a class="nui-button"  iconCls="icon-tip" plain="true"  id="exactrisk" enabled="false">风控试算</a> --> 
+			<a class="nui-button"  iconCls="icon-ok" plain="true"  id="exactCommit" onclick="commit(this,1)">提交</a>  
+			<a class="nui-button"  iconCls="icon-cancel" plain="true"  onclick="onCancel()">取消</a>
+		</div>
+	</div>
+</div>	
+
+
+	<script type="text/javascript">
+    	nui.parse();
+    	var data = null;
+    	showFile(data);
+    	
+    	function showFile(data){
+           		//var bizId=data.lStockInvestNo;
+           		var uuid = guid();
+           		console.log(uuid);
+           		$("#prodIfm").attr("src", nui.context + "/fm/baseinfo/fileuploadComm/any_upload.jsp?attachType=77&attachBusType=1");
+           }
+        
+        
+        
+          
+    </script>
+</body>
+</html>

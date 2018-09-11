@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Require-Bundle: org.gocom.components.coframe.auth,org.gocom.components
+ .coframe.org,com.primeton.eos.richweb,com.eos.foundation,com.eos.work
+ flow
+eos-webCtxPath: commonUtil
+Bundle-Vendor: huangmizhi
+Bundle-Version: 1.0.0
+Bundle-Name: 创金合信公共调用资源包
+Bundle-Description: 创金合信公共调用资源包
+Bundle-SymbolicName: com.cjhxfund.commonUtil
+

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:杨敏 -->
+<sqlMap>
+   <!--查询产品 下拉列表使用-->
+    <select id="queryProductInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.vc_product_code as id,t1.vc_product_name as text,t1.* from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  vc_relate_type in ('01','02')
+		<isNotNull property="user_id">
+		and vc_user_id=#user_id#
+		</isNotNull>
+		)
+    </select>
+    <!--模糊查询产品 下拉列表使用-->
+    <select id="queryProductInfoMatch"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.vc_product_code as id,t1.vc_product_name as text,t1.VC_PRODUCT_NAME_PINYIN as pinyin,t1.VC_PRODUCT_CODE,t1.L_PRODUCT_ID from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  1=1 
+		<isNotNull property="queryType">
+		and vc_relate_type in ($queryType$) 
+		</isNotNull>
+		<isNotNull property="user_id">
+		and vc_user_id=#user_id#
+		</isNotNull>
+		<isNotNull property="productCode">
+		and (VC_PRODUCT_CODE like '%'||#productCode#||'%'  or 
+			 vc_product_name like '%'||#productCode#||'%' or
+			 VC_PRODUCT_NAME_PINYIN like '%'||#productCode#||'%')
+		</isNotNull>
+		)
+    </select>
+    <!--模糊查询产品 下拉列表使用 根据中文-->
+    <select id="queryProductInfoMatchCn"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.vc_product_code as id,t1.vc_product_name as text,t1.VC_PRODUCT_NAME_PINYIN as pinyin,t1.VC_PRODUCT_CODE,t1.L_PRODUCT_ID from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  1=1 
+		<isNotNull property="queryType">
+		and vc_relate_type in ($queryType$) 
+		</isNotNull>
+		<isNotNull property="user_id">
+		and vc_user_id=#user_id#
+		</isNotNull>
+		<isNotNull property="productCode">
+		and (vc_product_name like '%'||#productCode#||'%')
+		</isNotNull>
+		)
+    </select>
+    <!--模糊查询产品 下拉列表使用 根据英文-->
+    <select id="queryProductInfoMatchEn"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.vc_product_code as id,t1.vc_product_name as text,t1.VC_PRODUCT_NAME_PINYIN as pinyin,t1.VC_PRODUCT_CODE,t1.L_PRODUCT_ID from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  1=1 
+		<isNotNull property="queryType">
+		and vc_relate_type in ($queryType$) 
+		</isNotNull>
+		<isNotNull property="user_id">
+		and vc_user_id=#user_id#
+		</isNotNull>
+		<isNotNull property="productCode">
+		and (VC_PRODUCT_NAME_PINYIN like '%'||#productCode#||'%' or
+		VC_PRODUCT_CODE like '%'||#productCode#||'%')
+		</isNotNull>
+		)
+    </select>
+    <!--模糊查询产品 下拉列表使用 根据代码-->
+    <select id="queryProductInfoMatchNum"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.vc_product_code as id,t1.vc_product_name as text,t1.VC_PRODUCT_NAME_PINYIN as pinyin,t1.VC_PRODUCT_CODE,t1.L_PRODUCT_ID from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  1=1 
+		<isNotNull property="queryType">
+		and vc_relate_type in ($queryType$) 
+		</isNotNull>
+		<isNotNull property="user_id">
+		and vc_user_id=#user_id#
+		</isNotNull>
+		<isNotNull property="productCode">
+		and (VC_PRODUCT_CODE like '%'||#productCode#||'%')
+		</isNotNull>
+		)
+    </select>
+    <!--查询组合 下拉列表使用-->
+    <select id="queryCombiInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select l_combi_id, vc_combi_no as ID ,vc_combi_name as TEXT ,t.*,t2.l_asset_id,t2.vc_asset_name,t2.vc_asset_no from T_ATS_COMBI_INFO t left join T_ATS_ASSET_INFO t2 on t.l_asset_id=t2.l_asset_id where L_COMBI_ID in 
+       (select  L_COMBI_ID from T_ATS_PRODUCT_HANDLE  where  vc_relate_type in ('01','02') and VC_PRODUCT_CODE=#vcProductCode#  
+       <isNotNull property="user_id">
+       and vc_user_id=#user_id#
+       </isNotNull>
+       )
+    </select>
+	<!--根据权限类型查询组合 下拉列表使用-->
+    <select id="queryCombiInfobyRelate"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select l_combi_id, vc_combi_no as ID ,vc_combi_name as TEXT ,t.*,t2.l_asset_id,t2.vc_asset_name,t2.vc_asset_no from T_ATS_COMBI_INFO t left join T_ATS_ASSET_INFO t2 on t.l_asset_id=t2.l_asset_id where L_COMBI_ID in 
+       (select  L_COMBI_ID from T_ATS_PRODUCT_HANDLE  where  vc_relate_type in $vcRelate$ and VC_PRODUCT_CODE=#vcProductCode#  
+       <isNotNull property="user_id">
+       and vc_user_id=#user_id#
+       </isNotNull>
+       )
+    </select>
+        
+    <!--查询产品资产单元信息-->
+    <select id="queryAssetInfo"  parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject" >
+	    select a.vc_asset_name, a.l_asset_id, a.vc_asset_no
+		  from trade.TCOMBI c
+		 inner join trade.TASSET a
+		    on (a.l_asset_id = c.l_asset_id)
+		 where c.vc_combi_no = #vcCombiCode# 
+    </select>
+    
+    <!--查询产品资产单元未下单到O32的指令金额(元) 一级债券部分-->
+    <select id="queryAssetInfoApplyInfoMoney"  parameterClass="java.lang.String" resultClass="Double">
+		select sum((nvl(ai.en_payment_money, 0) * 10000)) en_payment_money
+		  from wfworkitem        wf,
+		       t_ats_apply_inst  ai,
+		       t_ats_biz_process bp,
+		       t_ats_asset_info  aset
+		 where ai.l_biz_id = bp.l_biz_id
+		   and bp.l_process_inst_id = wf.processinstid
+		   and ai.l_asset_id = aset.l_asset_id
+		   and wf.currentstate in (4, 8, 10)
+		   and ai.l_valid_status = '0'
+		   and ai.l_fix_valid_status in ('0', '4')
+		   and bp.vc_process_type in ('1', '5', '8')
+		   and wf.activitydefid in ('ATS_FM_CZ_ZBQR',
+		                            'ATS_FM_CZ_ZBFH',
+		                            'ATS_FM_CZ_XYFH1',
+		                            'ATS_FM_CZ_XYYY1',
+		                            'ATS_FM_CZ_SCXY',
+		                            'ATS_FM_CZ_XYFH2',
+		                            'ATS_FM_CZ_XYYY2',
+		                            'ATS_FM_CZ_ZJQS',
+		                            'ATS_FM_CZ_SFFXYYY',
+		                            'ATS_FM_CZ_JYYFH2',
+		                            'ATS_FM_CZ_FXYYY',
+		                            'ATS_FM_XYYYPD',
+		                            'ATS_FM_XYYY1',
+		                            'ATS_FM_XYYY2',
+		                            'ATS_FM_SCSFYYXY',
+		                            'ATS_FM_ZJQS',
+		                            'ATS_FM_PDFXYYY',
+		                            'ATS_FM_FXYYYFH',
+		                            'ATS_FM_FXYYY')
+		   and ai.vc_asset_no = #vcAssetCode#
+    </select>
+    
+    <resultMap class="com.cjhxfund.commonUtil.model.TProductHandle" id="getProducrHandleListSql">
+        <result column="l_product_id" javaType="string" property="lProductId"/><!-- 产品序号，如：1001 -->
+        <result column="vc_user_id" javaType="string" property="vcUserId"/><!-- 用户账号ID，如：huangmizhi -->
+        <result column="vc_user_name" javaType="string" property="vcUserName"/><!-- 用户名称，如：黄秘志 -->
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/><!-- 产品代码，如：001199 -->
+        <result column="vc_product_name" javaType="string" property="vcProductName"/><!-- 产品名称，如：创金合信聚利债券（工行） -->
+	</resultMap>
+    <!--查询产品 根据用户类型和权限类型-->
+    <select id="queryProductInfoByRealType" parameterClass="java.util.HashMap" resultMap="getProducrHandleListSql" >
+		select 
+    		distinct a.l_product_id, <!--产品序号 -->
+		       a.vc_user_id, <!--用户账号id -->
+		       a.vc_user_name, <!--用户名称 -->
+		       a.vc_product_code, <!--产品代码 -->
+		       a.vc_product_name <!--产品名称 -->
+		  from t_ats_product_handle a
+		 where 1 = 1
+		<isNotNull property="userId">
+			and a.vc_user_id = #userId#
+		</isNotNull>
+		<isNotNull property="realType">
+			and a.vc_relate_type in ($realType$)
+		</isNotNull>
+		<isNotNull property="productCode">
+			and (a.vc_product_code like '%'||#productCode#||'%'  or a.vc_product_name like '%'||#productCode#||'%')
+		</isNotNull>
+    </select>
+    
+    <!--查询产品 根据用户id和权限类型-->
+    <select id="queryUsersByRealTypeAndProductCode" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select distinct a.vc_user_id
+		          from t_ats_product_handle a
+		         where 1 = 1
+		<isNotNull property="productCode">
+			and a.vc_product_code = #productCode#
+		</isNotNull>
+		<isNotNull property="realType">
+			and a.vc_relate_type in ($realType$)
+		</isNotNull>
+				
+    </select>
+    
+    <!--根据产品权限和产品代码查询产品组合-->
+    <select id="queryCombiInfoByProductCodeAndRealType"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select vc_combi_no as ID ,vc_combi_name as TEXT ,t.*,t2.l_asset_id,t2.vc_asset_name,t2.vc_asset_no from T_ATS_COMBI_INFO t left join T_ATS_ASSET_INFO t2 on t.l_asset_id=t2.l_asset_id where L_COMBI_ID in 
+       (
+		   select  L_COMBI_ID from T_ATS_PRODUCT_HANDLE where 1 = 1
+			<!--<isNotNull property="vcProductCode">-->
+				and VC_PRODUCT_CODE=#vcProductCode#  
+			<!--</isNotNull>-->
+		   <isNotNull property="user_id">
+		   		and vc_user_id=#user_id#
+		   </isNotNull>
+		   <isNotNull property="lAssetId">
+		   		and l_asset_id=#lAssetId#
+		   </isNotNull>
+		   <isNotNull property="queryType">
+				and vc_relate_type in ($queryType$)
+			</isNotNull>
+       )
+    </select>
+    <!--根据产品权限和产品代码查询产品组合-->
+    <select id="queryAllProduct"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select * from T_ATS_PRODUCT_INFO
+    </select>
+    
+</sqlMap>

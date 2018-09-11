@@ -1,0 +1,72 @@
+SELECT TFINFO.L_FUND_ID AS VC_BOND_ID, 
+       TFINFO.VC_FUND_CODE AS VC_BOND_CODE,
+       TFINFO.VC_FUND_NAME AS VC_BOND_NAME,
+       FAINFO.D_CREATE AS D_PRODUCT_ESTABLISH, 
+       FAINFO.D_DQRQ AS D_PRODUCT_CLEAR, 
+       TFINFO.C_FUND_STATUS,
+       DETAIL.VC_CHECK_SUPERVISOR_NAME AS VC_VALUATION_MANAGER,
+       DBMS_LOB.SUBSTR(SUB.PARTY_NAME) AS VC_TRUSTEESHIP, 
+       DBMS_LOB.SUBSTR(SUB1.PARTY_NAME) AS VC_INVESTMENT_ADVISER, 
+       DBMS_LOB.SUBSTR(SUB2.PARTY_NAME) AS VC_CUSTODIAN 
+  FROM STAGE.FM_TFUNDINFO TFINFO
+  LEFT JOIN STAGE.FA_TFUNDINFO FAINFO
+    ON TFINFO.VC_FUND_CODE = FAINFO.VC_CODE
+  LEFT JOIN STAGE.OMS_T_OMS_PRODUCT_DETAIL DETAIL
+    ON TFINFO.VC_FUND_CODE = DETAIL.VC_PRODUCT_CODE
+  LEFT JOIN (SELECT WM_CONCAT(INFO.PARTY_NAME) AS PARTY_NAME,
+                    CASE
+                      WHEN INSTR(CINFO.FUND_CODE, ',', 1, 1) = 0 THEN
+                       CINFO.FUND_CODE
+                      ELSE
+                       SUBSTR(CINFO.FUND_CODE,
+                              1,
+                              INSTR(CINFO.FUND_CODE, ',', 1, 1) - 1)
+                    END AS FUND_CODE,
+                    CONTACT.PARTY_TYPE
+               FROM STAGE.PLMS_PM_OPEN_PARTY_INFO    INFO,
+                    STAGE.PLMS_PM_PROD_PARTY_CONTACT CONTACT,
+                    STAGE.PLMS_PM_PROD_COMM_INFO     CINFO
+              WHERE CONTACT.PARTY_ID = INFO.PARTY_ID
+                AND CONTACT.PROD_ID = CINFO.SYSID
+                AND CONTACT.PARTY_TYPE = '02'
+                AND CINFO.FUND_CODE IS NOT NULL
+              GROUP BY CINFO.FUND_CODE, CONTACT.PARTY_TYPE) SUB
+    ON SUB.FUND_CODE = TFINFO.VC_FUND_CODE
+  LEFT JOIN (SELECT WM_CONCAT(INFO.PARTY_NAME) AS PARTY_NAME,
+                    CASE
+                      WHEN INSTR(CINFO.FUND_CODE, ',', 1, 1) = 0 THEN
+                       CINFO.FUND_CODE
+                      ELSE
+                       SUBSTR(CINFO.FUND_CODE,
+                              1,
+                              INSTR(CINFO.FUND_CODE, ',', 1, 1) - 1)
+                    END AS FUND_CODE,
+                    CONTACT.PARTY_TYPE
+               FROM STAGE.PLMS_PM_OPEN_PARTY_INFO    INFO,
+                    STAGE.PLMS_PM_PROD_PARTY_CONTACT CONTACT,
+                    STAGE.PLMS_PM_PROD_COMM_INFO     CINFO
+              WHERE CONTACT.PARTY_ID = INFO.PARTY_ID
+                AND CONTACT.PROD_ID = CINFO.SYSID
+                AND CONTACT.PARTY_TYPE = '06'
+                AND CINFO.FUND_CODE IS NOT NULL
+              GROUP BY CINFO.FUND_CODE, CONTACT.PARTY_TYPE) SUB1
+    ON SUB1.FUND_CODE = TFINFO.VC_FUND_CODE
+  LEFT JOIN (SELECT WM_CONCAT(INFO.PARTY_NAME) AS PARTY_NAME,
+                    CASE
+                      WHEN INSTR(CINFO.FUND_CODE, ',', 1, 1) = 0 THEN
+                       CINFO.FUND_CODE
+                      ELSE
+                       SUBSTR(CINFO.FUND_CODE,
+                              1,
+                              INSTR(CINFO.FUND_CODE, ',', 1, 1) - 1)
+                    END AS FUND_CODE,
+                    CONTACT.PARTY_TYPE
+               FROM STAGE.PLMS_PM_OPEN_PARTY_INFO    INFO,
+                    STAGE.PLMS_PM_PROD_PARTY_CONTACT CONTACT,
+                    STAGE.PLMS_PM_PROD_COMM_INFO     CINFO
+              WHERE CONTACT.PARTY_ID = INFO.PARTY_ID
+                AND CONTACT.PROD_ID = CINFO.SYSID
+                AND CONTACT.PARTY_TYPE = '20'
+                AND CINFO.FUND_CODE IS NOT NULL
+              GROUP BY CINFO.FUND_CODE, CONTACT.PARTY_TYPE) SUB2
+    ON SUB2.FUND_CODE = TFINFO.VC_FUND_CODE

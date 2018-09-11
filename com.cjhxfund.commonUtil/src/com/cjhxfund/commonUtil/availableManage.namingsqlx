@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈迪 -->
+<sqlMap>
+	<!--查询查询重复组可用数量 start-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapAvailableQuantity">
+        <result column="L_MSG_ID" javaType="String" property="lMsgId"/>
+        <result column="VC_EXDESTINATION" javaType="String" property="vcExdestination"/>
+        <result column="VC_SYMBOL" javaType="String" property="vcSymbol"/>
+        <result column="VC_SOUTPUTTEXT" javaType="String" property="vcSoutputtext"/>
+    </resultMap>
+    <select id="queryAvailQty" parameterClass="java.lang.String" resultMap="resultMapAvailableQuantity">
+        SELECT L_MSG_ID,
+        	VC_EXDESTINATION,
+        	VC_SYMBOL,
+        	VC_SOUTPUTTEXT
+        FROM T_ATS_FIX_RECEIVE_REPEAT_GROUP
+        WHERE L_MSG_ID = #lMsgId#
+     ORDER BY L_RECEIVE_REPEAT_GROUP_ID ASC
+    </select>
+    <!--查询查询重复组可用数量  end-->
+    <!--查询锁定券数量 start-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapLockBondQuantity">
+        <result column="VC_MARKET" javaType="String" property="vcMarket"/>
+        <result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+        <result column="L_LOCK_QTY" javaType="String" property="lLockQty"/>
+    </resultMap>
+    <select id="queryLockBondQty" parameterClass="commonj.sdo.DataObject" resultMap="resultMapLockBondQuantity">
+        SELECT VC_MARKET,
+        	VC_STOCK_CODE,
+            SUM(L_LOCK_QTY) AS L_LOCK_QTY
+        FROM T_ATS_TBOND_LOCK T
+        WHERE T.VC_MARKET = #VC_EXDESTINATION#
+          AND T.VC_STOCK_CODE = #VC_SYMBOL#
+     GROUP BY VC_MARKET,VC_STOCK_CODE,L_LOCK_QTY
+    </select>
+    <!--查询锁定券数量  end-->
+    <!--查询查询重复组可用金额 start-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapAvail">
+        <result column="L_MSG_ID" javaType="String" property="lMsgId"/>
+        <result column="VC_SOUTPUTTEXT" javaType="String" property="vcSoutputtext"/>
+    </resultMap>
+    <select id="queryAvailMnt" parameterClass="java.lang.String" resultMap="resultMapAvail">
+        SELECT L_MSG_ID,
+        VC_SOUTPUTTEXT
+        FROM T_ATS_FIX_RECEIVE_REPEAT_GROUP
+        WHERE L_MSG_ID = #lMsgId#
+    </select>
+    <!--查询查询重复组可用金额  end-->
+    <!--可用数量需要的重复组数据，用于可用数量不足邮件提醒-->
+    <resultMap class="java.util.HashMap" id="resultMapAvailQtyCombis">
+        <result column="VC_ACCOUNT" javaType="String" property="vcAccount"/>
+        <result column="VC_COMBI_NAME" javaType="String" property="vcCombiName"/>
+        <result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+        <result column="VC_STOCK_NAME" javaType="String" property="vcStockName"/>
+        <result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="String" property="vcProductName"/>
+        <result column="VC_MORTAGAGE_QTY" javaType="String" property="vcMortagageQty"/>
+        <result column="VC_EXCHANGE" javaType="String" property="vcMarket"/>
+        <result column="VC_BUSIN_TYPE" javaType="String" property="vcBusinType"/>
+        <result column="VC_INVEST_TYPE" javaType="String" property="vcInvestType"/>
+    </resultMap>
+    <select id="queryAvailQtyCombis" parameterClass="java.lang.String" resultMap="resultMapAvailQtyCombis">
+        select a.vc_combi_code as vc_account,
+		       a.vc_combi_name,
+		       a.vc_stock_code,
+		       a.vc_stock_name,
+		       a.vc_product_code,
+		       a.vc_product_name,
+		       sum(a.en_face_amount * 100) as vc_mortagage_qty,
+		       'OTC' as vc_exchange,
+		       '04' as vc_busin_type,
+		       '1' as vc_invest_type
+		  from t_ats_inquiry_result_mortagage a,
+		       t_ats_inquiry_result_instruct  b
+		 where a.l_result_id = b.l_result_id
+		   and b.vc_entrust_direction = '04'
+		   and b.l_maturity_settle_date = to_number(to_char(sysdate + 1, 'yyyyMMdd'))
+	  group by (a.vc_combi_code, a.vc_combi_name, a.vc_stock_code,a.vc_stock_name, a.vc_product_code, a.vc_product_name)
+      order by a.vc_combi_code asc
+    </select>
+    <!--可用数量需要的重复组数据，用于可用数量不足邮件提醒-->
+    <resultMap class="java.util.HashMap" id="resultMapAvailQtyCombiCodes">
+        <result column="VC_ACCOUNT" javaType="String" property="vcAccount"/>
+        <result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+    </resultMap>
+    <select id="queryAvailQtyCombiCodes" parameterClass="java.lang.String" resultMap="resultMapAvailQtyCombiCodes">
+        select a.vc_combi_code as vc_account, a.vc_product_code
+		  from t_ats_inquiry_result_mortagage a, t_ats_inquiry_result_instruct b
+		 where a.l_result_id = b.l_result_id
+		   and b.vc_entrust_direction = '04'
+		   and b.l_maturity_settle_date = to_number(to_char(sysdate + 1, 'yyyyMMdd'))
+		 group by a.vc_combi_code, a.vc_product_code
+		 order by a.vc_combi_code asc
+    </select>
+    <!--查询交易部所有人员邮箱信息串-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapTradersEmail">
+        <result column="USER_ID" javaType="String" property="userId"/>
+        <result column="EMAIL" javaType="String" property="email"/>
+    </resultMap>
+    <select id="queryTradersEmail"  resultMap="resultMapTradersEmail">
+        SELECT T.USER_ID,
+        	   T.EMAIL
+		  FROM CAP_USER T
+		 WHERE EXISTS (SELECT A.USERID
+		          FROM ORG_EMPLOYEE A
+		         WHERE EXISTS (SELECT B.ORGID
+		                  FROM ORG_ORGANIZATION B
+		                 WHERE B.ORGID = A.ORGID
+		                   AND B.ORGID = 2)
+		           AND T.OPERATOR_ID = A.OPERATORID)
+    </select>
+    
+    <!--查询质押券数量(流程还没走到O32的卖出业务质押券) start-->
+    <select id="queryMortagageSell" parameterClass="commonj.sdo.DataObject" resultClass="Long">
+    	select sum(t.en_face_amount * 100) vc_stock_sell_qty
+		  from t_ats_inquiry_result_instruct t
+		 where t.vc_process_status in ('1', '2', '2A', '3')
+		   and t.vc_entrust_direction = '4'
+		   and t.c_is_valid='1'
+		   and t.vc_combi_code = #vcCombiCode#
+		   and t.vc_stock_code = #vcStockCode#
+		   and t.vc_market = #vcMarket#
+		   and t.l_trade_date &gt;= to_number(to_char(sysdate, 'yyyyMMdd'))
+		   and t.l_result_date = t.l_trade_date 
+    	<!--select sum(t.en_face_amount*100) vc_mortagage_sell_qty
+		  from t_ats_inquiry_result_mortagage t
+		 where t.l_result_id in (select l_result_no
+		                         from t_ats_inquiry_result_instruct
+		                        where vc_process_status in ('2', '3')
+		                          and vc_entrust_direction ='02'
+		                          and c_is_valid = '1'
+		                          and vc_combi_code = #vcCombiCode#
+						          and vc_stock_code = #vcStockCode#
+		                          and vc_market = #vcMarket#)-->
+    </select>
+    <!--查询质押券数量(流程还没走到O32的卖出业务质押券)  end-->
+    
+    <!--查询质押券数量(流程还没走到O32的融券业务质押券) start-->
+    <select id="queryMortagageSellRepo" parameterClass="commonj.sdo.DataObject" resultClass="Long">
+    	select sum(mtg.en_face_amount * 100) vc_stock_pledge_qty
+		  from t_ats_inquiry_result_instruct t, t_ats_inquiry_result_mortagage mtg
+		 where t.l_result_id = mtg.l_result_id
+		   and t.vc_process_status in ('1', '2', '2A', '3')
+		   and t.vc_entrust_direction in ('5','15','26')
+		   and t.c_is_valid = '1'
+		   and mtg.vc_combi_code = #vcCombiCode#
+		   and mtg.vc_stock_code = #vcStockCode#
+		   and mtg.vc_exchange = #vcMarket#
+		   and t.l_trade_date >= to_number(to_char(sysdate, 'yyyyMMdd'))
+		   and t.l_result_date = t.l_trade_date 
+		   <!--select sum(t.en_face_amount*100) vc_mortagage_sell_repo_qty
+		  from t_ats_inquiry_result_mortagage t
+		 where t.l_result_id in (select l_result_no
+		                         from t_ats_inquiry_result_instruct
+		                        where vc_process_status in ('2', '3')
+		                          and vc_entrust_direction ='03'
+		                          and c_is_valid = '1'
+		                          and vc_combi_code = #vcCombiCode#
+						          and vc_stock_code = #vcStockCode#
+		                          and vc_market = #vcMarket#)-->
+    </select>
+    <!--查询质押券数量(流程还没走到O32的融券业务质押券)  end-->
+    
+    <!--查询质押券数量(流程走到O32且为修改审核中的卖出业务卖出量) start-->
+    <select id="queryUpdateSell" parameterClass="commonj.sdo.DataObject" resultClass="Long">
+    	select sum(t.en_face_amount * 100) vc_update_stock_sell_qty
+		  from t_ats_inquiry_result_instruct t
+		 where t.vc_process_status in ('4', '5')
+		   and t.vc_entrust_direction = '4'
+		   and t.c_is_valid='5'<!-- 修改-审核中 -->
+		   and t.vc_combi_code = #vcCombiCode#
+		   and t.vc_stock_code = #vcStockCode#
+		   and t.vc_market = #vcMarket#
+		   and t.l_trade_date &gt;= to_number(to_char(sysdate, 'yyyyMMdd'))
+    	   and t.l_result_date = t.l_trade_date 
+    	<!--select sum(t.en_face_amount*100) vc_update_sell_qty
+		  from t_ats_inquiry_result_mortagage t
+		 where t.l_result_id in (select l_result_no
+		                         from t_ats_inquiry_result_instruct
+		                        where vc_process_status in ('4', '5')
+		                          and vc_entrust_direction ='02'
+		                          and c_is_valid = '5'
+		                          and vc_combi_code = #vcCombiCode#
+						          and vc_stock_code = #vcStockCode#
+		                          and vc_market = #vcMarket#)-->
+    </select>
+    <!--查询质押券数量(流程走到O32且修改审核中的卖出业务质押券)  end-->
+    
+    <!--查询质押券数量(流程走到O32且修改审核中的融资业务质押券) start-->
+    <select id="queryUpdateSellRepo" parameterClass="commonj.sdo.DataObject" resultClass="Long">
+    	select sum(mtg.en_face_amount * 100) vc_update_stock_pledge_qty
+		  from t_ats_inquiry_result_instruct t, t_ats_inquiry_result_mortagage mtg
+		 where t.l_result_id = mtg.l_result_id
+		   and t.vc_process_status in ('4', '5')
+		   and t.vc_entrust_direction in ('5','15','26')
+		   and t.c_is_valid = '5'
+		   and mtg.vc_combi_code = #vcCombiCode#
+		   and mtg.vc_stock_code = #vcStockCode#
+		   and mtg.vc_exchange = #vcMarket#
+		   and t.l_trade_date >= to_number(to_char(sysdate, 'yyyyMMdd'))
+		   and t.l_result_date = t.l_trade_date 
+    	<!--select sum(t.en_face_amount*100) vc_update_sell_repo_qty
+		  from t_ats_inquiry_result_mortagage t
+		 where t.l_result_id in (select l_result_no
+		                         from t_ats_inquiry_result_instruct
+		                        where vc_process_status in ('4', '5')
+		                          and vc_entrust_direction ='03'
+		                          and c_is_valid = '5'
+		                          and vc_combi_code = #vcCombiCode#
+						          and vc_stock_code = #vcStockCode#
+		                          and vc_market = #vcMarket#)-->
+    </select>
+    <!--查询质押券数量(流程走到O32且修改审核中的融资业务质押券)  end-->
+    
+    
+    <!--可用金额(流程还没走到O32) start-->
+    <!-- (交易日为当天或交易日为明天的T+0)或者(交易日为当天的T+1)买入下单总额 -->
+    <select id="queryBuyAmt" parameterClass="commonj.sdo.DataObject" resultClass="Double">
+    	select sum(t.en_face_amount * t.en_full_price * 100)
+		  from t_ats_inquiry_result_instruct t
+		 where vc_process_status in ('1', '2', '2A', '3')
+		   and vc_entrust_direction = '3'
+		   and c_is_valid = '1'
+		   and ((to_char(t.l_trade_date) = to_char(sysdate, 'yyyyMMdd') and
+		       (t.vc_settle_speed = '0' or t.vc_settle_speed = '1')) or
+		       (to_char(t.l_trade_date) = #nextTradeDate# and
+		       t.vc_settle_speed = '0'))
+		   and t.vc_asset_code = #vcAssetCode#
+    </select>
+    <!-- (交易日为当天或交易日为明天T+0)或者(交易日为当天的T+1)逆回购下单总额 -->
+    <select id="queryRepoAmt" parameterClass="commonj.sdo.DataObject" resultClass="Double">
+    	select sum(case when t.vc_biz_type = '6' then t.en_full_price_amount
+		            else t.en_face_amount*10000
+		            end)
+		  from t_ats_inquiry_result_instruct t
+		 where vc_process_status in ('1', '2', '2A', '3')
+		   and vc_entrust_direction in ('6','16','17')
+		   and c_is_valid = '1'
+		   and ((to_char(t.l_trade_date) = to_char(sysdate, 'yyyyMMdd') and
+		       (t.vc_settle_speed = '0' or t.vc_settle_speed = '1')) or
+		       (to_char(t.l_trade_date) = #nextTradeDate# and
+		       t.vc_settle_speed = '0'))
+		   and t.vc_asset_code = #vcAssetCode#
+    </select>
+    <!--查询可用金额(流程还没走到O32)  end-->
+    
+    <!--查询指令金额(流程走到O32且修改审核中的买入下单总额) start-->
+    <select id="queryUpdateBuyAmt" parameterClass="commonj.sdo.DataObject" resultClass="Double">
+    	select sum(t.en_face_amount*t.en_full_price*100)
+		  from t_ats_inquiry_result_instruct t
+		 where vc_process_status in ('4', '5')
+           and vc_entrust_direction ='3'
+           and c_is_valid = '5'
+           and to_char(l_trade_date) = to_char(sysdate, 'yyyyMMdd')
+           and t.vc_asset_code = #vcAssetCode#
+           
+    </select>
+    <!--查询指令金额(流程走到O32且修改审核中的买入下单总额)  end-->
+    
+    <!--查询指令金额(流程走到O32且修改审核中的逆回购下单总额) start-->
+    <select id="queryUpdateRepoAmt" parameterClass="commonj.sdo.DataObject" resultClass="Double">
+    	select sum(case when a.vc_biz_type = '6' then a.en_full_price_amount
+		            else a.en_face_amount*10000
+		            end) vc_update_sell_repo_amt
+		  from t_ats_inquiry_result_mortagage t ,t_ats_inquiry_result_instruct a
+		 where a.l_result_id = t.l_result_id
+		   and a.vc_process_status in ('4', '5')
+		   and a.vc_entrust_direction in ('6','16','17')
+		   and a.c_is_valid = '5'
+		   and to_char(l_trade_date) = to_char(sysdate, 'yyyyMMdd')
+		   and t.vc_asset_code = #vcAssetCode#
+    </select>
+    <!--查询指令金额(流程走到O32且修改审核中的逆回购下单总额)  end-->
+    
+    <!--查询产品资产单元未下单到O32的指令金额(元) 一级债券部分-->
+    <select id="queryAssetInfoApplyInfoMoney"  parameterClass="commonj.sdo.DataObject" resultClass="Double">
+		select sum(ai.en_payment_money * 10000) en_payment_money
+		  from wfworkitem        wf,
+		       t_ats_apply_inst  ai,
+		       t_ats_biz_process bp,
+		       t_ats_asset_info  aset
+		 where ai.l_biz_id = bp.l_biz_id
+		   and bp.l_process_inst_id = wf.processinstid
+		   and ai.l_asset_id = aset.l_asset_id
+		   and wf.currentstate in (4, 8, 10)
+		   and ai.l_valid_status = '0'
+		   and ai.l_fix_valid_status in ('0', '4')
+		   and bp.vc_process_type in ('1', '5', '8')
+		   and wf.activitydefid in ('ATS_FM_CZ_ZBQR',
+		                            'ATS_FM_CZ_ZBFH',
+		                            'ATS_FM_CZ_XYFH1',
+		                            'ATS_FM_CZ_XYYY1',
+		                            'ATS_FM_CZ_SCXY',
+		                            'ATS_FM_CZ_XYFH2',
+		                            'ATS_FM_CZ_XYYY2',
+		                            'ATS_FM_CZ_ZJQS',
+		                            'ATS_FM_CZ_SFFXYYY',
+		                            'ATS_FM_CZ_JYYFH2',
+		                            'ATS_FM_CZ_FXYYY',
+		                            'ATS_FM_XYYYPD',
+		                            'ATS_FM_XYYY1',
+		                            'ATS_FM_XYYY2',
+		                            'ATS_FM_SCSFYYXY',
+		                            'ATS_FM_ZJQS',
+		                            'ATS_FM_PDFXYYY',
+		                            'ATS_FM_FXYYYFH',
+		                            'ATS_FM_FXYYY')
+		   and ai.vc_asset_no = #vcAssetCode#
+    </select>
+    
+    <!--查询单条锁定券锁定数量 start-->
+    <resultMap class="commonj.sdo.DataObject" id="singleBondLockMap">
+        <result column="cnMortgage" javaType="Long" property="cnMortgage"/>
+        <result column="cnSell" javaType="Long" property="cnSell"/>
+        <result column="cnMortgageSell" javaType="Long" property="cnMortgageSell"/>
+        <result column="t1CnMortgageSell" javaType="Long" property="t1CnMortgageSell"/>
+    </resultMap>
+    <select id="querySingleBondLockSql" parameterClass="commonj.sdo.DataObject" resultMap="singleBondLockMap">
+    	select cn_mortgage cnMortgage,
+		       cn_sell cnSell,
+		       cn_mortgage_sell cnMortgageSell,
+		       (select nvl(sum(L_LOCK_QTY),0)
+		          from t_ats_tbond_lock tlock
+		         where nvl(tlock.c_is_valid,'1') &lt;&gt;'0'
+		           and tlock.vc_lock_type = '3'
+		           and tlock.vc_combi_code = #vcCombiCode#
+		           and tlock.vc_stock_code = #vcStockCode#
+		           and tlock.vc_market = #vcMarket#
+		           and DECODE(tlock.vc_lock_source, '1', tlock.l_maturity_settle_date, 1) &gt;
+		               DECODE(tlock.vc_lock_source, '1',#nextTradeDate#, 0)
+		           and DECODE(tlock.vc_lock_source, '3', tlock.l_maturity_settle_date, 1) &gt;= 
+		               DECODE(tlock.vc_lock_source, '3', to_char(sysdate, 'yyyymmdd'), 0)) t1CnMortgageSell
+		  from vw_tbond_lock_count
+		 where VC_COMBI_CODE = #vcCombiCode#
+		   and VC_STOCK_CODE = #vcStockCode#
+		   and VC_MARKET = #vcMarket#
+    	<!--select cn_mortgage      cnMortgage,
+               cn_sell          cnSell,
+               cn_mortgage_sell cnMortgageSell,
+               t1_cn_mortgage_sell t1CnMortgageSell
+          from vw_tbond_lock_count
+         where VC_STOCK_CODE = #vcStockCode#
+           and VC_MARKET = #vcMarket#
+           and VC_COMBI_CODE = #vcCombiCode#-->
+    </select>
+    <!--查询单条锁定券锁定数量  end-->
+    
+    <!--根据投资编号查询流程走到O32且修改审核中的指令信息  start-->
+    <select id="getUpdateSell" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+    	select t.*
+		  from t_ats_inquiry_result_instruct t
+		 where t.vc_entrust_direction = #vcEntrustDirection#
+		   and t.vc_process_status in ('4', '5', '6', '7')
+		   and t.c_is_valid = '5'
+		   and t.l_result_no = #lResultNo#
+    </select>
+    <!--根据投资编号查询流程走到O32且修改审核中的指令信息  end-->
+    
+    <!--根据投资编号查询流程走到O32且修改审核中的回购质押券信息  start-->
+    <select id="getUpdateSellQty" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+    	select t.*
+		  from t_ats_inquiry_result_mortagage t, t_ats_inquiry_result_instruct a
+		 where t.l_result_id = a.l_result_id
+		   and a.vc_entrust_direction = #vcEntrustDirection#
+		   and a.vc_process_status in ('4', '5', '6', '7')
+		   and a.c_is_valid = '5'
+		   and a.l_result_no = #lResultNo#
+		   and t.vc_combi_code = #vcCombiCode#
+	       and t.vc_stock_code = #vcStockCode#
+	       and t.vc_exchange = #vcExchange#
+    </select>
+    <!--根据投资编号查询流程走到O32且修改审核中的回购质押券信息  end--> 
+		   
+	<!--查询询价结果质押券数量(已提交投资经理未确认)((交易日为当天或交易日为明天的T+0或者交易日为当天的T+1)和(t+1数量)) start-->
+    <select id="queryInquiryMortagageSellRepo" parameterClass="commonj.sdo.DataObject" resultClass="Long">
+    	select sum(mtg.en_face_amount * 100) vc_inquiry_qty
+		  from 
+		  	t_ats_inquiry_result_instruct t, t_ats_inquiry_result_mortagage mtg
+		 where 
+		 	t.l_result_id = mtg.l_result_id
+		   and t.vc_process_status in ('-1')
+		   and t.vc_entrust_direction in ('5')
+		   and t.c_is_valid = '1'
+		   and t.vc_instruct_type = '2'
+		   and mtg.vc_combi_code = #vcCombiCode#
+		   and mtg.vc_stock_code = #vcStockCode#
+		   and mtg.vc_exchange = #vcMarket#
+		   and t.l_trade_date &gt;= to_number(to_char(sysdate, 'yyyyMMdd'))
+		   and (((to_char(t.l_trade_date) = to_char(sysdate, 'yyyyMMdd') and
+		       (t.vc_settle_speed = '0' or t.vc_settle_speed = '1')) or
+		       (to_char(t.l_trade_date) = #nextTradeDate# and t.vc_settle_speed = '0')) 
+		       or (t.vc_settle_speed = '1' and to_char(t.l_trade_date) = #nextTradeDate# and to_char(t.l_result_date) = to_char(sysdate, 'yyyyMMdd')))
+    </select>
+    <!--查询询价结果质押券数量(已提交投资经理未确认)  end-->
+    
+    <!--查询询价结果卖出数量(已提交投资经理未确认)((交易日为当天或交易日为明天的T+0或者交易日为当天的T+1)和(t+1数量)) start-->
+    <select id="queryInquirySellQuantity" parameterClass="commonj.sdo.DataObject" resultClass="Long">
+    	select sum(t.en_face_amount * 100) inquirySellQuantity
+		  from 
+		  	t_ats_inquiry_result_instruct t
+		 where 
+		 	1 = 1
+		   and t.vc_process_status in ('-1')
+		   and t.vc_entrust_direction in ('4')
+		   and t.c_is_valid = '1'
+		   and t.vc_instruct_type = '2'
+		   and t.vc_combi_code = #vcCombiCode#
+		   and t.vc_stock_code = #vcStockCode#
+		   and t.vc_market = #vcMarket#
+		   and t.l_trade_date &gt;= to_number(to_char(sysdate, 'yyyyMMdd'))
+		   and (((to_char(t.l_trade_date) = to_char(sysdate, 'yyyyMMdd') and
+		       (t.vc_settle_speed = '0' or t.vc_settle_speed = '1')) or
+		       (to_char(t.l_trade_date) = #nextTradeDate# and t.vc_settle_speed = '0')) 
+		       or (t.vc_settle_speed = '1' and to_char(t.l_trade_date) = #nextTradeDate# and to_char(t.l_result_date) = to_char(sysdate, 'yyyyMMdd')))
+    </select>
+    <!--查询询价结果卖出数量(已提交投资经理未确认)  end-->
+</sqlMap>

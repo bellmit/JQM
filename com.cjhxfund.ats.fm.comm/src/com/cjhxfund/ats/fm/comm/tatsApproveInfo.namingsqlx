@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:石浩 
+
+-->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+    	<result column="l_approve_id" javaType="Long" property="lApproveId"/>
+    	
+    	<result column="l_process_inst_id" javaType="Long" property="lProcessInstId"/>
+    	
+    	<result column="l_work_item_id" javaType="Long" property="lWorkItemId"/>
+    	<result column="vc_activity_def_id" javaType="string" property="vcActivityDefId"/>
+    	<result column="l_activity_inst_id" javaType="Long" property="lActivityInstId"/>
+    	
+    	<result column="l_user_id" javaType="Long" property="lUserId"/>
+    	<result column="vc_user_code" javaType="string" property="vcUserCode"/>
+    	<result column="vc_user_name" javaType="string" property="vcUserName"/>
+    	
+    	<result column="vc_operate_type" javaType="string" property="vcOperateType"/>
+    	<result column="vc_comments" javaType="string" property="vcComments"/>
+    	<result column="d_start_time" javaType="DATE" property="dStartTime"/>
+    	
+    	<result column="d_end_time" javaType="DATE" property="dEndTime"/>
+    	<result column="d_create_time" javaType="DATE" property="dCreateTime"/>
+    	<result column="vc_work_item_name" javaType="string" property="vcWorkItemName"/>
+    	
+    	<result column="vc_operate_people" javaType="string" property="vcOperatePeople"/>
+    	<result column="l_rollback_flag" javaType="Long" property="lRollbackFlag"/>
+    	<result column="vc_rollback_emp" javaType="string" property="vcRollbackEmp"/>
+    	<result column="vc_rollback_item_id" javaType="string" property="vcRollbackItemId"/>
+    </resultMap>
+    <select id="isRollBack" parameterClass="Long" resultMap="resultMap">
+    	<![CDATA[
+    		SELECT l_approve_id,
+		    		l_process_inst_id,
+					l_work_item_id,
+					vc_activity_def_id,
+					l_activity_inst_id,
+					l_user_id,
+					vc_user_code,
+					vc_user_name,
+					vc_operate_type,
+					vc_comments,
+					d_start_time,
+					d_end_time,
+					d_create_time,
+					vc_work_item_name,
+					vc_operate_people,
+					l_rollback_flag,
+					vc_rollback_emp,
+					vc_rollback_item_id
+			   from t_ats_approve_info 
+    		   where 1 = 1
+    		  		and l_process_inst_id= #processinstid#
+    		  		and vc_activity_def_id='JYY2FH'
+    	]]>
+    </select>
+    
+     <select id="selectApproveInfos" parameterClass="Long" resultMap="resultMap">
+    	<![CDATA[
+    		SELECT l_approve_id,
+		    		l_process_inst_id,
+					l_work_item_id,
+					vc_activity_def_id,
+					l_activity_inst_id,
+					l_user_id,
+					vc_user_code,
+					vc_user_name,
+					vc_operate_type,
+					vc_comments,
+					d_start_time,
+					d_end_time,
+					d_create_time,
+					vc_work_item_name,
+					vc_operate_people,
+					l_rollback_flag,
+					vc_rollback_emp,
+					vc_rollback_item_id
+			   from t_ats_approve_info 
+    		   where 1 = 1
+    		  		and l_process_inst_id= #processinstid# 
+    		  	order by l_approve_id
+    	]]>
+    </select>
+    
+    <select id="selectApproveInfosByPid" parameterClass="Long" resultMap="resultMap">
+    	<![CDATA[
+    		SELECT l_approve_id,
+		    		l_process_inst_id,
+					l_work_item_id,
+					vc_activity_def_id,
+					l_activity_inst_id,
+					l_user_id,
+					vc_user_code,
+					vc_user_name,
+					vc_operate_type,
+					 CASE WHEN vc_comments is null THEN
+                	'同意'
+                	ELSE vc_comments
+           	   		END AS vc_comments,
+					d_start_time,
+					d_end_time,
+					d_create_time,
+					vc_work_item_name,
+					vc_operate_people,
+					l_rollback_flag,
+					vc_rollback_emp,
+					vc_rollback_item_id
+			   from t_ats_approve_info 
+    		   where 1 = 1
+    		  		and l_process_inst_id= #processinstid# 
+    		  		and vc_activity_def_id IN ('ATS_FM_XZQCSH','ATS_FM_XZLR','ATS_FM_JYY1FH','JYY2FH','ATS_FM_XZQCFH','ATS_FM_XZQCFH2') 
+    		  	order by l_approve_id
+    	]]>
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="reportInfoMap">
+    	<result column="L_APPLY_INST_ID" javaType="string" property="lApplyInstId"/>
+    	<result column="EN_REPORT" javaType="string" property="enReport"/>
+    	<result column="EN_OFFER" javaType="string" property="enOffer"/>
+    	<result column="EN_ENSURE_GOLD" javaType="string" property="enEnsureGold"/>
+    	<result column="VC_REPORT_REMARK" javaType="string" property="vcReportRemark"/>
+    </resultMap>
+    <!-- 查询报量历史记录  -->
+    <select id="queryReportInfo" parameterClass="Long" resultMap="reportInfoMap">
+	    select 
+	    	b.L_APPLY_INST_ID,
+			b.EN_REPORT,
+			b.EN_OFFER,
+			b.EN_ENSURE_GOLD,
+			b.VC_REPORT_REMARK 
+		from 
+			t_ats_apply_inst a, t_ats_apply_inst_report b
+		where 
+			a.l_apply_inst_id=b.l_apply_inst_id 
+	    	  and a.l_invest_no = #investNo#
+			 and b.l_valid_status not in '0'
+		order by 
+			a.l_apply_inst_id,b.l_report_id desc
+    </select>
+</sqlMap>

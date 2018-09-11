@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+    <delete id="deleteWFHNotificationinst" parameterClass="java.util.Map">
+		delete from wf_h_notificationinst where notificationid in 
+		(select notificationid from wf_h_notificationinst where (recipient,procinstid) = 
+		(select recipient,procinstid from wf_h_notificationinst where notificationid = $notificationid$ and procinstid>0) and notificationid != $notificationid$)
+	</delete>
+	 <resultMap class="commonj.sdo.DataObject" id="queryNotificationid">
+        <result column="notificationid" javaType="string" property="notificationid"/>
+     </resultMap>
+	 <select id="getNotificationid"  parameterClass="java.util.Map"  resultMap="queryNotificationid">
+      /**
+       *获取代办的待阅任务
+       **/
+		select t.notificationid from WFNOTIFICATIONINST t where t.recipient like '%$userId$%'
+     </select>
+     	<!--查询工作项-->
+	<select id="queryWorkItemByInstId" parameterClass="java.util.HashMap" resultClass="com.eos.workflow.data.WFWorkItem">
+	    select w.activityinstid,w.workitemid,activitydefid,w.processinstid,w.workitemname,w.workitemtype,w.activityinstname,w.processinstname from wfworkitem w where w.processinstid=#processinstid# and w.activitydefid=#actrefid#
+	</select>
+</sqlMap>

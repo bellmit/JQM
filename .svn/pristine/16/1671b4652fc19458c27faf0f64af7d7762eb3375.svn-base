@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="operate_type" javaType="string" property="operateType"/>
+        <result column="user_name" javaType="string" property="userName"/>
+     </resultMap>
+    
+    <select id="queryReqUseName" parameterClass="java.lang.String" resultMap="resultMap">
+         select t1.operate_type, t1.user_name
+         from (select t.operate_type, t.user_name
+         from  t_ats_prc_work_info t
+         where t.operate_type in (3,4)
+         and t.workitem_id = #workitemID#
+         order by sysid desc) t1
+         where rownum = 1
+      </select> 
+       <select id="queryBizProcess" parameterClass="java.lang.String" resultClass="com.cjhxfund.fpm.bpsExpend.task.TAtsBizProcess">
+          select p.bizprocess_name as bizprocessName,p.biz_type as bizType,p.prod_id as prodId,p.prod_name as prodName from pm_biz_process p where p.processinst_id=#processInstId#
+       </select>
+</sqlMap>

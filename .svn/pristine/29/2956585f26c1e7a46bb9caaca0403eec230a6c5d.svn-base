@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+     <resultMap class="commonj.sdo.DataObject" id="prcWorkInfoWorkId">
+        <result column="turn_state" javaType="string" property="turnState"/>
+    </resultMap> 
+    <select id="queryPrcWorkItemId" parameterClass="java.util.Map" resultMap="prcWorkInfoWorkId">
+    	select t.turn_state
+		from T_ATS__PRC_WORK_INFO t 
+		where t.processinst_id=#processInstId#
+		and t.activity_def_id=#activityDefId#
+		and t.operate_type='3'
+		and t.turn_state is not null  
+		group by t.turn_state
+    </select>
+</sqlMap>

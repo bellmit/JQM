@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈迪 -->
+<sqlMap>
+    <!--判断日期是否为交易日(以O32为准) start-->
+    <resultMap class="commonj.sdo.DataObject" id="isTradeDateMap">
+        <result column="ISTRADEDATE" javaType="int" property="isTradeDate"/>
+    </resultMap>
+    <select id="isTradeDate" parameterClass="commonj.sdo.DataObject" resultMap="isTradeDateMap">
+      select 1 isTradeDate from trade.tmarkettradeday t 
+       where t.c_trade_flag='1'
+         and t.vc_tradeday_type= #dateType#
+    	 and t.l_date= #date#
+    </select>
+    <!--判断日期是否为交易日(以O32为准) end-->
+    
+    <!-- 获取当天日期(yyyyMMdd) start -->
+    <select id="getToday" resultClass="long">
+      select to_number(to_char(sysdate,'yyyyMMdd')) as today from dual
+    </select>
+    <!-- 获取当天日期(yyyyMMdd) end -->
+    
+    <!-- 获取O32系统下一交易日期(yyyyMMdd) start -->
+    <select id="getNextTradeDay" resultClass="string">
+      with calendarcalculate as
+		 (select a.*, rank() over(partition by vc_tradeday_type order by l_date) rn
+		    from trade.tmarkettradeday a
+		   where a.vc_tradeday_type = '00'
+		     and a.c_trade_flag = '1')
+		select l_date
+		  from calendarcalculate b
+		 where b.rn =
+		       nvl((select c.rn + (1)
+		             from calendarcalculate c
+		            where c.l_date = to_number(to_char(sysdate, 'yyyyMMdd'))),
+		           (select min(c.rn + (1))
+		              from calendarcalculate c
+		             where c.l_date > to_number(to_char(sysdate, 'yyyyMMdd'))))
+    </select>
+    <!-- 获取下一交易日期(yyyyMMdd) -->
+</sqlMap>

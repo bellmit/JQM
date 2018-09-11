@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WSExchangeSecondMarketServiceService" targetNamespace="http://www.primeton.com/WSExchangeSecondMarketService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nns="http://www.primeton.com/WSExchangeSecondMarketService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WSExchangeSecondMarketService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="exchangeSecondOrderIssued">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="exchangeSecondOrderIssuedResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="exchangeSecondOrderModify">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="exchangeSecondOrderModifyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="exchangeSecondOrderIssued">
+    <wsdl:part name="exchangeSecondOrderIssued" element="nns:exchangeSecondOrderIssued">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="exchangeSecondOrderIssuedResponse">
+    <wsdl:part name="exchangeSecondOrderIssuedResponse" element="nns:exchangeSecondOrderIssuedResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="exchangeSecondOrderModifyResponse">
+    <wsdl:part name="exchangeSecondOrderModifyResponse" element="nns:exchangeSecondOrderModifyResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="exchangeSecondOrderModify">
+    <wsdl:part name="exchangeSecondOrderModify" element="nns:exchangeSecondOrderModify">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WSExchangeSecondMarketService">
+    <wsdl:operation name="exchangeSecondOrderIssued">
+      <wsdl:input name="exchangeSecondOrderIssued" message="nns:exchangeSecondOrderIssued">
+    </wsdl:input>
+      <wsdl:output name="exchangeSecondOrderIssuedResponse" message="nns:exchangeSecondOrderIssuedResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="exchangeSecondOrderModify">
+      <wsdl:input name="exchangeSecondOrderModify" message="nns:exchangeSecondOrderModify">
+    </wsdl:input>
+      <wsdl:output name="exchangeSecondOrderModifyResponse" message="nns:exchangeSecondOrderModifyResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

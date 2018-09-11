@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="queryProductListByUserIdAndRealtype.bizx" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" collapsed="false" nodeType="note" type="note" content="根据用户ID和对应的产品权限查询产品数据；&#xD;&#xA;realType：用户权限类型--自己传进来&#xD;&#xA;&#xD;&#xA;* 1、创金员工、非创金员工公共权限类型：&#xD;&#xA; * 00-组合查询权限；&#xD;&#xA; * &#xD;&#xA; * 2、投顾、委托人等非创金员工权限类型：&#xD;&#xA; * 01-组合与投顾录入权限；&#xD;&#xA; * 07-组合与投顾确认权限；&#xD;&#xA; * A4-需要投顾风控确认；&#xD;&#xA; * A5-组合与投顾风控确认权限；&#xD;&#xA; * A2-需要委托人确认；&#xD;&#xA; * A3-组合与委托人确认权限；&#xD;&#xA; * A1-投顾录入确认可为同一人员；&#xD;&#xA; * &#xD;&#xA; * 3、投资经理、交易员等创金员工权限类型：&#xD;&#xA; * 02-组合与投资经理权限；&#xD;&#xA; * 03-组合与询价结果录入权限；&#xD;&#xA; * 04-组合与交易录单确认权限；&#xD;&#xA; * 05-组合与交易录单复核权限；&#xD;&#xA; * 06-组合与资金手工交收权限；&#xD;&#xA; * 99-交易确认阶段权限；&#xD;&#xA; * 98-后台成交确认阶段权限；" title="童伟&#x9;16-12-30 下午1:24">
+    <location x="39" y="240"/>
+    <size height="376" width="404"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <location x="127" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link6</targetConnections>
+    <location x="567" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns>
+      <process:return id="0" language="com.cjhxfund.commonUtil.model.TProductHandle[]" name="data" type="query" valueType="Java">data</process:return>
+    </process:returns>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="129" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="569" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="获取用户ID" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>invokePojo0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="255" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">m:userObject/attributes/EXTEND_USER_ID</process:from>
+      <process:to type="query">vc_user_id</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="238" y="96"/>
+    <figSize height="17" width="62"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo0" name="查询产品集合" displayName="查询产品集合" collapsed="false" type="invoke" index="2" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link6" name="link6" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo0</sourceNode>
+      <targetNode>end0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link5</targetConnections>
+    <location x="417" y="60"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo0label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.cjhxfund.commonUtil.ProductCombiRightUtil.getProductHandleList</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="relateType" type="query" value="java.lang.String" valueType="Java" pattern="reference">realType</process:inputVariable>
+      <process:inputVariable id="1" name="userId" type="query" value="java.lang.String" valueType="Java" pattern="reference">vc_user_id</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.util.List&lt;com.cjhxfund.commonUtil.model.TProductHandle>" valueType="Java">data</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo0label" name="label" nodeType="label">
+    <location x="392" y="96"/>
+    <figSize height="17" width="73"/>
+    <node>invokePojo0</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="童伟" createTime="2016-12-30 10:15:31" date="2016-12-30Z" description="" name="根据用户id和权限类型查询产品列表" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="当前登录用户Id" historyStateLocation="client" isArray="false" name="vc_user_id" primitiveType="String"/>
+  </process:variables>
+  <process:inputs varArgs="false">
+    <process:input description="权限关系类型" isArray="false" name="realType" primitiveType="String"/>
+  </process:inputs>
+  <process:outputs>
+    <process:output anyType="com.cjhxfund.commonUtil.model.TProductHandle" description="返回值" isArray="true" name="data"/>
+  </process:outputs>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:刘玉龙 -->
+<sqlMap>
+    <!-- 获取指令风控审批收件人（“流程-监察稽核部-合规审批”角色的监察部人员、指令相关“交易确认”权限的交易员） -->
+    <select id="queryApproveRecipients" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String">
+		select replace(wm_concat(oemail), ',', ';') emails
+		  from (select distinct t.oemail
+		          from (select emp.userid, emp.empname, emp.oemail
+		                  from cap_role r, cap_partyauth pauth, org_employee emp
+		                 where r.role_id = pauth.role_id
+		                   and pauth.party_id = emp.empid
+		                   and pauth.party_type = 'emp'
+		                   and r.role_code = 'ATS_IPO_FKJL'
+		                union
+		                select cu.userid, cu.empname, cu.oemail
+		                  from org_employee cu, t_ats_product_handle handle
+		                 where cu.userid = handle.vc_user_id
+		                   and handle.vc_relate_type in ('04')
+		                   <isNotNull property="vcCombiCode">
+				      	 	 and handle.vc_combi_no = #vcCombiCode#
+				  	 	    </isNotNull>) t)
+	</select>
+	<!-- 获取**角色下的人员列表 -->
+    <select id="queryRoleList" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+		select u.operator_id, u.user_id, u.user_name
+		  from cap_user u, cap_role r, cap_partyauth p, org_employee e
+		 where u.operator_id = e.operatorid
+		   and to_char(e.empid) = to_char(p.party_id)
+		   and p.role_id = r.role_id
+		   and r.role_code = #value#
+	</select>
+	
+</sqlMap>

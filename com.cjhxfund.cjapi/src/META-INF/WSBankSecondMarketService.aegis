@@ -1,0 +1,10 @@
+<mapping>
+	<method name="bankSecondOrderIssued">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="bankSecondOrderModify">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+</mapping>

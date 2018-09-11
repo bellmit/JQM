@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="updateInstruct.bizx" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" collapsed="false" nodeType="note" type="note" content="机能：更新指令实体对象&#xD;&#xA;&#xD;&#xA;输入：instructInfo  指令对象&#xD;&#xA;&#xD;&#xA;输出：无" title="侯志勇&#x9;17-2-15 上午10:59">
+    <targetConnections>link3</targetConnections>
+    <location x="123" y="255"/>
+    <size height="138" width="281"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link3" name="link3" displayName="连接线" type="note">
+      <sourceNode>start0</sourceNode>
+      <targetNode>node0</targetNode>
+    </sourceConnections>
+    <location x="60" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link2</targetConnections>
+    <location x="498" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="62" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="500" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="设置指令信息" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>invokePojo0</targetNode>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="208" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">instructInfo/lInstructNo</process:from>
+      <process:to type="query">ipoInstructInfo/lInstructNo</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">instructInfo/enSuggestPrice</process:from>
+      <process:to type="query">ipoInstructInfo/enSuggestPrice</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">instructInfo/enPredictDistributionRate</process:from>
+      <process:to type="query">ipoInstructInfo/enPredictDistributionRate</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">instructInfo/enPurchaseScale</process:from>
+      <process:to type="query">ipoInstructInfo/enPurchaseScale</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">instructInfo/enTotalIssuerRate</process:from>
+      <process:to type="query">ipoInstructInfo/enTotalIssuerRate</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">instructInfo/enTotalPurchaseRate</process:from>
+      <process:to type="query">ipoInstructInfo/enTotalPurchaseRate</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">instructInfo/enTotalPurchaseSize</process:from>
+      <process:to type="query">ipoInstructInfo/enTotalPurchaseSize</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="186" y="96"/>
+    <figSize height="17" width="73"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo0" name="更新指令信息" displayName="更新指令信息" collapsed="false" type="invoke" index="2" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link2" name="link2" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo0</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="356" y="60"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo0label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.updateEntity</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="dataObject" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">ipoInstructInfo</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo0label" name="label" nodeType="label">
+    <location x="331" y="96"/>
+    <figSize height="17" width="73"/>
+    <node>invokePojo0</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="侯志勇" createTime="2017-01-10 18:26:08" date="2017-01-10Z" description="更新指令实体对象" name="更新指令实体对象" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="指令实体对象" historyStateLocation="client" isArray="false" modelType="com.cjhxfund.ats.ipo.ipoDataset.TAtsIpoInstructInfo" name="ipoInstructInfo"/>
+  </process:variables>
+  <process:inputs varArgs="false">
+    <process:input anyType="commonj.sdo.DataObject" description="指令对象" isArray="false" name="instructInfo"/>
+  </process:inputs>
+  <process:outputs/>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

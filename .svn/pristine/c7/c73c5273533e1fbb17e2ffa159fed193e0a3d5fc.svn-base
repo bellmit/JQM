@@ -1,0 +1,141 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/JQMHistory/common/commscripts.jsp" %>	
+<!-- 
+  - Author(s): jiangkanqian
+  - Date: 2018-05-31 09:13:00
+  - Description:
+-->
+<head>
+<title>冲销统计</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/common/css/instruct.css"/> 
+</head>
+<body>
+<div style="margin:0px 2px 0px 2px;width:100%;height:100%;" >
+	<div id="tab" activeIndex="0" onactivechanged="activechangedFun" style="width:100%;height:100%;">
+			   <div class="search-condition">
+				   <div class="list">
+					   <div id="form_today_instruct" class="nui-form" style="padding:2px;" align="center" style="height:10%">
+					   		<!-- 业务标签:1-投顾端、2-交易员端 -->
+		   					<input class="nui-hidden" id="queryType" name="queryType" value="1"/>							
+			                <table id="instruct_follow_condition" border="0" cellpadding="1" cellspacing="1" style="width:100%;table-layout:fixed;">
+				                <tr>
+			                		<td class="form_label" width="60px">
+										产品名称:
+			                        </td>
+			                        <td colspan="1" width="200px">
+			                            <input id="vcProductCode" class="nui-buttonedit" name="vcProductCode" emptyText="全部" showClose="true" oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct" style="width:95%"/>
+			                        </td>
+									<td width="60px" class="form_label">业务类别:</td>
+									<td colspan="1" width="180px">
+										<input class="nui-dictcombobox" id="vcBusinType" name="vcBusinType" multiSelect="true"
+											valueField="dictID" textField="dictName" dictTypeId="interestSwapBusinType" 
+											emptyText="全部" showClose="true" oncloseclick="onCloseClick" style="width:95%"/>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="7" align="left">
+				                		<input class='nui-button' plain='false' text="查询" iconCls="icon-search" onclick="search()"/>
+				                		<input class='nui-button' plain='false' text="重置" iconCls="icon-reset" onclick="reset()"/>
+				                		<a class="nui-menubutton " plain="false" menu="#popupMenu"
+			                               id="searchCond"
+			                               name="searchCond"
+			                               data-options='{formId:"form_today_instruct"}'
+			                               iconCls="icon-add">保存查询条件</a>
+			                            <ul id="popupMenu" class="mini-menu" style="display:none;"></ul>
+				                	</td>
+								</tr>
+							</table>
+						</div>
+				  </div>
+			   </div>
+
+		<%-- 列表操作工具开始... --%>
+		<div class="nui-toolbar" style="border-bottom:0;padding:0px;">
+	    	<table style="width:100%;table-layout:fixed;">
+	            <tr>
+	                <td style="width:75%;">
+	                  <a class='nui-button' plain='false' iconCls="icon-download" id="export_todayInstruct" onclick="exportExcel()">导出</a>
+	            </tr>
+	        </table>
+	    </div>
+		        
+		        <div class="nui-fit" style="width:100%;height:100%;overflow:hidden;">
+		            <div id="treegrid_todays_instruct" class="nui-treegrid" style="width:100%;height:100%;"
+				 		url="com.cjhxfund.ats.instruction.InterestSwap.InterestSwapInstruction.queryInstructInfo.biz.ext" 
+				 		dataField="insructInfos" treeColumn="lInstructNo"
+				 		showPager="true" pageSize="20"
+				 		showTreeIcon="false" showTreeLines="false" multiSelect="true"
+				 		sizeList="[20,50,100,200,500,1000]"
+				 		showReloadButton="false"
+				 		onbeforeload="onBeforeTreeLoad"
+				 		onselectionchanged="selectionchanged"
+				 		pagerButtons="#prompt_todays"
+				 		virtualScroll="true"
+				 		sortField="" sortOrder=""
+				 		enableHotTrack="false"
+				 		idField="lInstructId"
+	             		onselect="onSelect"
+	             		ondeselect="onDeselect"
+	             		onload="onGridLoad"
+				 	>		
+		                    <div property="columns">
+		                        <div type="checkcolumn"></div>
+		                        <div name="action" width="60px" align="center" headerAlign="center" headerallowSort="true" renderer="operate"></div>
+		                        <div field="vcProductName" headerAlign="center" allowSort="true" align="center" width="200px">
+		                            产品名称
+		                        </div>
+		                        <div field="vcCombiName" headerAlign="center" allowSort="true" align="left">
+		                           组合名称
+		                        </div>
+		                        <div field="lTradeDate" headerAlign="center" allowSort="true" align="center">
+		                            业务名称
+		                        </div>
+		                        <div field="vcBusinType" headerAlign="center" allowSort="true" align="left" renderer="vcBusinTypeRender">
+		                            业务类别
+		                        </div>
+		                        <div field="vcBusinName" headerAlign="center" allowSort="true" align="left" renderer="vcBusinNameRender">
+		                            名义本金（万元）
+		                        </div>
+		                        <div field="lNominalCapital" headerAlign="center" allowSort="true" align="center" numberFormat="#,###">
+		                           开仓指令/建议序号
+		                        </div>
+		                        <div field="lLeftDays" headerAlign="center" allowSort="true" align="left">
+		                            累计冲销（万元）
+		                        </div>
+		                     </div>
+		                </div>		                
+		                
+		             </div>
+		        </div>
+	
+		<!-- 导出参数 -->
+	<div>
+		<form id="export_FROM" method="post">
+			<!-- 业务标签:当日指令/建议 -->
+			<input class="nui-hidden" id="exportInstructId" name="paramObject/exportInstructId">
+			<input class="nui-hidden" id="exportIselect" name="paramObject/exportIselect">
+	   		<input class="nui-hidden" id="exportQueryType" name="paramObject/exportQueryType" value="1"/>
+			<input class="nui-hidden" id="exportProductCode" name="paramObject/exportProductCode">
+			<input class="nui-hidden" id="exportBusinType" name="paramObject/exportBusinType">
+			<input class="nui-hidden" id="exportTradeDateMin" name="paramObject/exportTradeDateMin">
+			<input class="nui-hidden" id="exportTradeDateMax" name="paramObject/exportTradeDateMax">
+			<input class="nui-hidden" id="exportReferRate" name="paramObject/exportReferRate">
+			<input class="nui-hidden" id="exportLeftDays" name="paramObject/exportLeftDays">
+			<input class="nui-hidden" id="exportCounterpartyId" name="paramObject/exportCounterpartyId">				
+		</form>	
+	</div>
+	<!-- 导出参数结束 -->
+		            
+	</div>
+
+
+	<script type="text/javascript">
+    	nui.parse();
+    </script>
+</body>
+</html>

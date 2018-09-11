@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:石浩 
+cStockType	  	  c_stock_type        VARCHAR2(2) not null,		证券类别
+cMarketNo	  	  c_market_no         CHAR(1) not null,			交易市场内部编号';
+cAssetClass	  	  c_asset_class       CHAR(1),					资产类别
+vcStocktypeName	  vc_stocktype_name   VARCHAR2(16),			 	证券类别简称
+lAmountPerHand	  l_amount_per_hand   NUMBER(10),				每手股数
+lBuyUnit	  	  l_buy_unit          NUMBER(20,4),				买入最小单位
+lSaleUnit	      l_sale_unit         NUMBER(20,4),				卖出最小单位
+enFaceValues	  en_face_values      NUMBER(14,8),				面值
+vcEntrustRight	  vc_entrust_right    VARCHAR2(512) not null,	委托方向权限
+lBuyMax	          l_buy_max           NUMBER(20,4),				 买入最大数量
+lSaleMax	      l_sale_max          NUMBER(20,4),				卖出最大数量
+cUnitControlType  c_unit_control_type CHAR(1) default '1'		买卖最小单位控制方式
+-->
+<sqlMap>
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsStockType" id="resultMap">
+        <result column="vc_stock_type" javaType="string" property="vcStockType"/>
+        <result column="vc_stocktype_name" javaType="string" property="vcStocktypeName"/>
+       
+    </resultMap>
+
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsStockType" id="stockTypeMap">
+        <result column="c_stock_type" javaType="string" property="cStockType"/>
+        <result column="c_market_no" javaType="string" property="cMarketNo"/>
+        <result column="VC_MARKET_NAME" javaType="string" property="vcMarketName"/>
+        <result column="c_asset_class" javaType="string" property="cAssetClass"/>
+        <result column="c_asset_class_name" javaType="string" property="cAssetClassName"/>
+        <result column="vc_stocktype_name" javaType="string" property="vcStocktypeName"/>
+        <result column="l_amount_per_hand" javaType="string" property="lAmountPerHand"/>
+        <result column="l_buy_unit" javaType="string" property="lBuyUnit"/>
+        <result column="l_sale_unit" javaType="string" property="lSaleUnit"/>
+        <result column="en_face_values" javaType="string" property="enFaceValues"/>
+        <result column="vc_entrust_right" javaType="string" property="vcEntrustRight"/>
+        <result column="l_buy_max" javaType="string" property="lBuyMax"/>
+        <result column="l_sale_max" javaType="string" property="lSaleMax"/>
+        <result column="c_unit_control_type" javaType="string" property="cUnitControlType"/>
+       
+    </resultMap>
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsStockType" id="typeResultMap">
+        <result column="vc_stock_type" javaType="string" property="cStockType"/>
+        <result column="vc_stocktype_name" javaType="string" property="vcStocktypeName"/>
+    </resultMap>
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsStockType" id="O32typeResult">
+        <result column="c_stock_type" javaType="string" property="cStockType"/>
+        <result column="vc_stocktype_name" javaType="string" property="vcStocktypeName"/>
+    </resultMap>
+    
+    <resultMap class="com.eos.foundation.DictEntry" id="O32DetailResult">
+        <result column="dictid" javaType="string" property="Dictid"/>
+        <result column="dictname" javaType="string" property="Dictname"/>
+    </resultMap>
+    
+    
+    <!--查询证券类型-->
+    <select id="getStockType" parameterClass="java.util.HashMap" resultMap="stockTypeMap">
+	    select c_stock_type,
+	    c_market_no,
+	    (select T.VC_MARKET_NAME from T_ATS_MARKET_INFO T where T.C_MARKET_NO = t_ats_stock_type.c_market_no) AS VC_MARKET_NAME,
+	    c_asset_class,
+	    (select T.DICTNAME from EOS_DICT_ENTRY T where T.DICTTYPEID='O32AssetClass' AND T.DICTID=t_ats_stock_type.c_asset_class) AS c_asset_class_name,
+	    vc_stocktype_name,l_amount_per_hand,
+	    l_buy_unit,l_sale_unit,en_face_values,vc_entrust_right,l_buy_max,l_sale_max,c_unit_control_type from t_ats_stock_type 
+	    where 1=1
+	    <isNotNull property="vcStocktypeName">
+		  		AND vc_stocktype_name like '%'||#vcStocktypeName#||'%'
+		  </isNotNull>
+		  <isNotNull property="sortField">
+		  		order by $sortField$ 
+		  </isNotNull>
+		  <isNotNull property="sortOrder">
+		  		 $sortOrder$ 
+		  </isNotNull>
+    </select>
+    
+     <!--查询证券类型-->
+    <select id="getStockTypeName" parameterClass="java.util.HashMap" resultMap="resultMap">
+	    SELECT VC_STOCK_TYPE,VC_STOCKTYPE_NAME,VC_PARENT_STOCK_TYPE,L_LEVEL,L_IS_LEAF
+		FROM t_ats_stock_type_define 
+		WHERE  1=1
+ 		AND VC_STOCK_TYPE = #type#
+    </select>
+    
+      <!--查询证券类型-->
+    <select id="getStockTypes" resultMap="typeResultMap">
+	    SELECT VC_STOCK_TYPE,VC_STOCKTYPE_NAME,VC_PARENT_STOCK_TYPE,L_LEVEL,L_IS_LEAF
+		FROM t_ats_stock_type_define 
+		WHERE  1=1
+		ORDER BY VC_STOCKTYPE_NAME
+    </select>
+    
+    <!--查询O32证券类型-->
+    <select id="getO32StockTypes" parameterClass="java.util.HashMap" resultMap="O32typeResult">
+       select c_stock_type, vc_stocktype_name
+	    from t_ats_stock_type
+	    where 1=1
+	    <isNotNull property="id">
+	   	 and c_market_no = #id#
+	   	</isNotNull>
+	   	group by c_stock_type, vc_stocktype_name
+	  	having count（c_stock_type) > 0
+  	</select>
+  	
+  	<!--查询O32证券类型下拉框-->
+    <select id="getO32StockTypeCombo" resultMap="O32typeResult">
+       select distinct c_stock_type, vc_stocktype_name
+	    from t_ats_stock_type
+	    where 1=1
+  	</select>
+  	
+    <!--查询O32的杂项分类-->
+    <select id="getO32Detail" resultMap="O32DetailResult">
+        select dictid, dictname
+	    from eos_dict_entry
+	   where dicttypeid = 'StockTypeDetail'
+	     and status = '1'
+  	</select>
+  	
+  	    <!--查询映射表的排序号-->
+    <select id="getOrderid" resultClass="Object">
+        select count(l_order_id)+1 as orderid from t_ats_stock_type_map
+  	</select>
+  	
+</sqlMap>

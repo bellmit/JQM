@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:张姚 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="ipoResult">
+        <result column="EMPID" javaType="long" property="empId"/>
+        <result column="EMPNAME" javaType="string" property="empName"/>
+    </resultMap>
+    <select id="queryIPOResearcher" parameterClass="commonj.sdo.DataObject" resultMap="ipoResult">
+     	SELECT E.EMPID,E.EMPNAME FROM ORG_EMPLOYEE E 
+     		WHERE E.EMPID IN (SELECT PARTY_ID FROM CAP_PARTYAUTH C WHERE C.ROLE_ID IN 
+     							(SELECT ROLE_ID FROM CAP_ROLE T WHERE T.ROLE_CODE='ATS_IPO_YJY') AND C.PARTY_TYPE = 'emp') 
+    	<isNotNull property="empId">
+ 			AND E.EMPID = #empId# 
+ 		</isNotNull>
+ 		<isNotNull property="empName">
+ 			AND E.EMPNAME like '%'||#empName#||'%' 
+ 		</isNotNull>
+    </select>
+    
+    <!-- 交易总监参与者查询 -->
+    <select id="queryEmpByRole" parameterClass="commonj.sdo.DataObject" resultMap="ipoResult">
+    	SELECT T.EMPID,T.EMPNAME FROM ORG_EMPLOYEE T WHERE TO_CHAR(T.EMPID) 
+    		IN (SELECT PARTY_ID FROM CAP_PARTYAUTH C,CAP_ROLE R WHERE  
+    			C.ROLE_ID=R.ROLE_ID AND R.ROLE_CODE=#roleCode#)
+    </select>
+</sqlMap>

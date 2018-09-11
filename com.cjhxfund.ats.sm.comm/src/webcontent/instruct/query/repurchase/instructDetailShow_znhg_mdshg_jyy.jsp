@@ -1,0 +1,313 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/common.jsp" %>
+<!-- 
+  - Author(s): 童伟
+  - Date: 2017-06-21 15:58:24
+  - Description:正逆回购--买断式回购指令交易员指令详细页
+-->
+<head>
+<title>指令/建议详情</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="<%=contextPath%>/scripts/com.cjhxfund.js.base/utils/DateUtil.js"></script>
+    <script type="text/javascript" src="<%=contextPath%>/sm/comm/instruct/instructDetail_znhg_comm.js"></script>
+    <style type="text/css">
+    	tr{
+		    display: table-row;
+		    vertical-align: inherit;
+		    border-color: inherit;
+		}
+		.nui-form-table {
+		    border-collapse: collapse;
+		    border: none;
+		    padding-left: 5px;
+		}
+    </style>
+</head>
+<body>
+	<div id="instructDetail_grid">
+        <table id="instruct_detail_from" class="nui-form-table" style="width:100%; heiht:100%">
+            <tr>
+                <td align="right"><span style="color: red">*</span>产品名称：</td>
+                <td >    
+                    <input name="instructInfo.vcProductName" class="nui-textbox" required="true" readonly/>
+                </td>
+                <td align="right"><span style="color: red">*</span>业务类别：</td>
+                <td >    
+                    <input name="instructInfo.vcBizType" class="nui-dictcombobox" valueField="dictID" textField="dictName" dictTypeId="bizTypeRepurchase" required="true" readonly/>
+                </td>
+            </tr>
+            <tr>
+                <td align="right"><span style="color: red">*</span>组合名称：</td>
+                <td >    
+                    <input name="instructInfo.vcCombiName" class="nui-textbox" required="true" readonly/>
+                </td>
+                <td align="right"><span style="color: red">*</span>交易日期：</td>
+                <td >    
+                    <input name="instructInfo.lTradeDate" class="nui-textbox" required="true" readonly/>
+                </td>
+            </tr>
+            <tr>
+                <td align="right"><span style="color: red">*</span>回购天数：</td>
+                <td >    
+                    <input name="instructInfo.lRepoDays" class="nui-textbox" required="true" readonly/>
+                </td>
+                <td align="right">首次结算日期：</td>
+				<td>
+					<input name="instructInfo.lFirstSettleDate" class=	"nui-textbox" required="true" readonly/>
+				</td>
+            </tr>
+            <tr>
+                <td align="right"><span style="color: red">*</span>委托方向：</td>
+                <td >    
+                    <input name="instructInfo.vcEntrustDirection" class="nui-dictcombobox" valueField="dictID" textField="dictName" dictTypeId="entrustDirectionRepurchase" required="true" readonly/>
+                </td>
+                <td align="right">到期结算日期：</td>
+				<td>
+					<input name="instructInfo.lMaturitySettleDate" class="nui-textbox" required="true" readonly/>
+				</td>
+            </tr>
+            <tr>
+                <td align="right"><span style="color: red">*</span>清算速度：</td>
+                <td >    
+                    <input name="instructInfo.vcSettleSpeed" class="nui-dictcombobox" valueField="dictID" textField="dictName" dictTypeId="settleSpeed" required="true" readonly/>
+                </td>
+                <td align="right">占款天数：</td>
+				<td>
+					<input name="instructInfo.lContractPeriods" class="nui-textbox" readonly/>
+				</td>
+            </tr>
+            <tr>
+                <td align="right"><span style="color: red">*</span>首期结算金额（元）：</td>
+                <td >    
+                    <input name="instructInfo.enFullPriceAmount" class="nui-spinner" minValue="0" maxValue="10000000000000000000000" format="n2" required="true" readonly/>
+                </td>
+                <td align="right">到期结算金额（元）：</td>
+				<td>
+					<input name="instructInfo.enSettleAmount" class="nui-spinner" minValue="0" maxValue="10000000000000000000000" format="n2" readonly/>
+				</td>
+            </tr>
+            <tr>
+                <td align="right"><span style="color: red">*</span>交易对手：</td>
+                <td >    
+                    <input name="instructInfo.vcCounterpartyName" class="nui-textbox" required="true" readonly/>
+                </td>
+                <td align="right">对手主体机构：</td>
+				<td>
+					<input name="instructInfo.vcCounterpartyOrgan" class="nui-textbox" readonly/>
+				</td>
+            </tr>
+            <tr>
+                <td align="right"><span style="color: red">*</span>回购利率（%）：</td>
+                <td >    
+                    <input name="instructInfo.enRepoRate" class="nui-textbox" required="true" readonly/>
+                </td>
+                <td align="right">对方交易员：</td>
+				<td>
+					<input name="instructInfo.vcCounterpartyTrader" class="nui-textbox" readonly/>
+				</td>
+            </tr>
+            <tr>
+                <td align="right">回购利息（元）：</td>
+				<td>
+					<input name="instructInfo.enRepoInterest" class="nui-spinner" minValue="0" maxValue="10000000000000000000000" format="n2" readonly/>
+				</td>
+				<td align="right">中途付息：</td>
+				<td>
+					<input name="instructInfo.enMiddleInterest" class="nui-spinner" minValue="0" maxValue="10000000000000000000000" format="n2" readonly/>
+				</td>
+            </tr> 
+            <tr>
+                <td align="right" width="150">备注：</td>
+                <td colspan="3" style="width:493px;">    
+                    <input name="instructInfo.vcRemark" class="nui-textarea" style="width:493px;" required="true" readonly/>
+                </td>
+            </tr>        
+        </table>
+    </div>  
+    
+    <!-- 质押券信息 -->
+    <div title="质押券信息" id="mortgageInfoPanel" class="nui-panel" iconCls="icon-edit" style="width:100%;" 
+   				showCollapseButton="true" collapseOnTitleClick="true">
+		<div id="datagrid_mortgage_info" dataField="mortgageInfos" 
+	        url="com.cjhxfund.ats.sm.comm.InstructionManager.getJqmAndSmMortgageInfo.biz.ext"
+	        class="nui-datagrid" style="width:100%;height:155px;"
+	        allowSortColumn="false"
+		    showPager="false"
+		    enableHotTrack="false">
+			<div property="columns">
+				<div field="vcStockCode" width="120px" headerAlign="center" align="center" >债券代码</div>
+				<div field="vcStockName" width="120px" headerAlign="center" align="center" >债券名称</div>
+				<div field="enFaceAmount" width="100px" headerAlign="center" align="center" numberFormat="n4"><span style="color:red;">*</span>券面金额（万元）</div>
+				<div field="enNetPriceInit" width="100px" headerAlign="center" align="center" numberFormat="n4"><span style="color:red;">*</span>首次净价</div>
+				<div field="enFullPriceInit" width="100px" headerAlign="center" align="center" numberFormat="n4">首次全价</div>
+				<div field="enNetPriceFinal" width="100px" headerAlign="center" align="center" numberFormat="n4" >到期净价</div>
+				<div field="enFullPriceFinal" width="100px" headerAlign="center" align="center" numberFormat="n4" >到期全价</div>
+				<div field="enCbValueNetValue" width="85px" headerAlign="center" align="center" numberFormat="n4">净价（T-1）</div>
+				<div field="enCbValueAllValue" width="85px" headerAlign="center" align="center" numberFormat="n4">全价（T-1）</div>
+                <div field="vcDepository" width="85px" headerAlign="center" align="center" renderer="depository">托管机构</div>
+				<div field="vcBondAppraise" width="85px" headerAlign="center" align="center" renderer="renderBondAppraise">债项评级</div>
+				<div field="vcIssueAppraise" width="85px" headerAlign="center" align="center" renderer="renderIssueAppraise">主体评级</div>
+				<div field="vcBondAppraiseOrgan" width="85px" headerAlign="center" align="center" renderer="renderBondAppraiseOrgan">评级机构</div>
+                <div field="lRatingForecast" width="85px" headerAlign="center" align="center" renderer="lRatingForecastRD">评级展望</div>
+                <div field="vcIssueProperty" headerAlign="center" align="center" width="100px" renderer="atsFmIssueProperty">发行人性质</div>
+			</div>
+		</div>
+    </div>    
+	
+	<div class="nui-toolbar" id="confirmInstructInfo" style="border:0;"> 
+        <table class="nui-form-table" style="padding:0px; width:100%;" borderStyle="border:0;">
+        	<tr>
+        		<td align="center" style="text-align:center;" colspan="3">
+        			<a class="nui-button" plain="false" iconCls="icon-tip" onclick="riskControlTrial()">风控试算</a>
+        			<span style="display:inline-block;width:25px;"></span>
+        			<a class='nui-button' plain='false' iconCls="icon-edit" id="updateEnterCheck" enabled="false" onclick="openSetEnterCheckUser()">指定复核人</a>
+        			<span style="display:inline-block;width:25px;"></span>
+        			<a class='nui-button' plain='false' iconCls="icon-ok" id="confirm" enabled="false" onclick="goConfirm_jyy()">确认</a>
+        			<span style="display:inline-block;width:25px;"></span>
+        			<a class='nui-button' plain='false' iconCls="icon-cancel" onclick="CloseWindow()">关闭</a>
+        		</td>
+        	</tr>
+        </table>
+	</div>
+    <div id="approveResultInfo" style="display:none"> 
+        <table class="nui-form-table" style="padding:0px; width:100%;" borderStyle="border:0;">
+        	<tr>
+        		<td align="center" style="text-align:center;" colspan="3">
+        			<a class='nui-button' plain='false' iconCls="icon-cancel" onclick="CloseWindow()">关闭</a>
+        		</td>
+        	</tr>
+        </table>
+	</div>
+	<script type="text/javascript">
+    	nui.parse();
+    	$("#instructDetail_grid .mini-buttonedit-button").remove();
+    	var instruct_detail_from = new nui.Form("#instructDetail_grid");
+    	var row = "";
+    	var mortgage_info = nui.get("datagrid_mortgage_info");
+    	var ATS_SUCCESS = "<%= com.cjhxfund.commonUtil.Constants.ATS_SUCCESS %>";
+    	var ATS_ORDER_USABLE_AMOUNT_INSUFFICIENT = "<%= com.cjhxfund.commonUtil.Constants.ATS_ORDER_USABLE_AMOUNT_INSUFFICIENT %>";
+    	var instructCheckUser = "";
+    	
+    	function setFormData(data){
+    		//跨页面传递的数据对象，克隆后才可以安全使用
+    		row = nui.clone(data);
+    		if(row.lFirstSettleDate != null){
+				row["lFirstSettleDate"] = nui.formatDate(DateUtil.numStrToDate(row["lFirstSettleDate"].toString()),"yyyy-MM-dd");
+			}
+			if(row.lTradeDate != null){
+				row["lTradeDate"] = nui.formatDate(DateUtil.numStrToDate(row["lTradeDate"].toString()),"yyyy-MM-dd");
+			}
+			if(row.lMaturitySettleDate != null){
+				row["lMaturitySettleDate"] = nui.formatDate(DateUtil.numStrToDate(row["lMaturitySettleDate"].toString()),"yyyy-MM-dd");
+			}
+			instruct_detail_from.setData({instructInfo:row});
+			// 指令id和指令来源
+			var json = {lResultId:row.lResultId, instructResource:row.vcInstructSource};
+			mortgage_info.load(json);
+			
+			// 3-二级债 其他为老机器猫
+	        var validStatus = row.cIsValid;
+	        if(validStatus=="1"){
+				if(row.vcInstructSource=="3"){		
+					if(row.vcProcessStatus ==5 && row.cIsValid==1){
+						if (getProductHandleByDealEnter(row.vcProductCode)) {
+							nui.get("confirm").enable();
+							nui.get("updateEnterCheck").enable();
+						}
+					}
+					if(row.vcProcessStatus ==6 && row.cIsValid==1){
+						if (getProductHandleByDealCheck(row.lResultId)) {
+							nui.get("confirm").enable();
+						}
+					}
+				}else if(row.vcInstructSource=="1" || row.vcInstructSource=="2"){		//机器猫业务按钮显示
+	        		if(getJqmConfrimProductHandle(row)){
+						nui.get("confirm").enable();
+					};
+				}	        	
+			}
+    	}
+    	
+    	// 根据序号查指令信息
+    	function setResultNo(lInstructNo){
+    		// 是否显示确认，退回按钮
+			document.getElementById("approveResultInfo").style.display = "";
+			document.getElementById("confirmInstructInfo").style.display = "none";
+    		var params = {lResultNo:lInstructNo};
+    		var a = nui.loading("正在处理中,请稍等...","提示");
+    		nui.ajax({
+		    	url: "com.cjhxfund.ats.sm.comm.InstructionManager.getInstructInfoByResultNo.biz.ext",
+		      	type: 'POST',
+		      	data: {params:params},
+		      	contentType: 'text/json',
+		      	success: function(text){
+		      		nui.hideMessageBox(a);
+		      		var returnJson = nui.decode(text.instrcutInfos);
+		      		if(returnJson.length>0){
+		      			var row = returnJson[0];
+			    		if(row.lFirstSettleDate != null){
+							row["lFirstSettleDate"] = nui.formatDate(DateUtil.numStrToDate(row["lFirstSettleDate"].toString()),"yyyy-MM-dd");
+						}
+						if(row.lTradeDate != null){
+							row["lTradeDate"] = nui.formatDate(DateUtil.numStrToDate(row["lTradeDate"].toString()),"yyyy-MM-dd");
+						}
+						if(row.lMaturitySettleDate != null){
+							row["lMaturitySettleDate"] = nui.formatDate(DateUtil.numStrToDate(row["lMaturitySettleDate"].toString()),"yyyy-MM-dd");
+						}
+						instruct_detail_from.setData({instructInfo:row});
+						var json = {lResultId:row.lResultId, instructResource:row.vcInstructSource};
+						mortgage_info.load(json);
+						
+						// 3-二级债 其他为老机器猫
+				        var validStatus = row.cIsValid;
+				        if(validStatus=="1"){
+							if(row.vcInstructSource=="3"){		
+								if(row.vcProcessStatus ==5 && row.cIsValid==1){
+									if (getProductHandleByDealEnter(row.vcProductCode)) {
+										nui.get("confirm").enable();
+										nui.get("updateEnterCheck").enable();
+									}
+								}
+								if(row.vcProcessStatus ==6 && row.cIsValid==1){
+									if (getProductHandleByDealCheck(row.lResultId)) {
+										nui.get("confirm").enable();
+									}
+								}
+							}else if(row.vcInstructSource=="1" || row.vcInstructSource=="2"){		//机器猫业务按钮显示
+				        		if(getJqmConfrimProductHandle(row)){
+									nui.get("confirm").enable();
+								};
+							}	        	
+						}
+		      		}
+		      	}
+	 		});
+    	}
+		
+		function openSetEnterCheckUser(){
+			// 加载选择复核人页面
+			nui.open({
+				url : "<%=request.getContextPath()%>/transaction/manage/deal_entering/setEnteringCheckUser.jsp",
+			    title: "选择复核人", 
+			    width: 283, 
+			    height: 331,
+			    onload: function () {
+			        var iframe = this.getIFrameEl();
+			        iframe.contentWindow.SetData(row,"confirm");
+			    },
+			    ondestroy: function (action) {
+					var iframe = this.getIFrameEl();
+		            //获取选中、编辑的结果
+		            var returnJson = iframe.contentWindow.getData();
+		            returnJson = mini.clone(returnJson);    //必须。克隆数据。
+		            instructCheckUser = returnJson;
+        		}
+			});
+		}
+    </script>
+</body>
+</html>

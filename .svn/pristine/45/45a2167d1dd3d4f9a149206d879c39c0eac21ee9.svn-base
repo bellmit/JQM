@@ -1,0 +1,43 @@
+package com.cjhxfund.ats.instruction.Util;
+
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.eos.system.annotation.Bizlet;
+
+@Bizlet("")
+public class StrUtil {
+	
+	/**
+	 * 将字符串拼凑成SQL in 条件的格式
+	 * @param str 需转换的字符串，以英文逗号或分号分隔
+	 * @return
+	 */
+	@Bizlet("")
+	public static Map<String,String> changeToStr(Map<String,String> strMap){
+		for(Map.Entry<String, String> entry : strMap.entrySet()){
+			String key = entry.getKey();
+			String str = entry.getValue();
+			String result = null;
+			if(StringUtils.isBlank(str)){
+				strMap.put(key, result);
+			}
+			else{
+				StringBuffer sb = new StringBuffer();				
+				String[] strArr = str.replaceAll(";", ",").split(",");
+				for(int i=0; i<strArr.length; i++){
+					if(StringUtils.isNotEmpty(strArr[i])){
+						sb.append("'").append(strArr[i]).append("',");
+					}
+				}
+				if(sb.length()>0){
+					result = sb.substring(0, sb.length()-1);
+				}
+				strMap.put(key, result);
+			}
+		}
+		return strMap;		
+	}
+	
+}

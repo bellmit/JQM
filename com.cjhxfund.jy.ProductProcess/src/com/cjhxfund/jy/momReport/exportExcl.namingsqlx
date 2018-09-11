@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:章璐 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    	 <!--查询持仓信息-->
+	 <select id="queryCCXX" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+	  select 
+	   a.information_plan_name              
+      ,a.total_amount                       
+      ,to_char(to_date(a.expiration_date,'yyyymmdd'),'yyyy/mm/dd')  as EXPIRATION_DATE 
+      ,a.no_investment_positions            
+      ,a.balance_code                       
+      ,a.bottom_name                        
+      ,a.credit_rating                      
+      ,a.bond_type                          
+      ,replace(a.asset_to_date,'-','/') as ASSET_TO_DATE      
+      ,a.poairion_quantity                  
+      ,a.rmb_valur                          
+      ,to_char(to_date(a.cc_date,'yyyymmdd'),'yyyy/mm/dd')  as CC_DATE 
+ from dw.a001_position_book a
+inner join dw.v_dim_product b
+  on a.product_no=b.bk_portfolio
+  and b.dk_priority in ('1','3')
+	  where 1=1
+		<isNotNull property="lDate">
+		  		and a.data_date = to_char(TO_DATE(#lDate#,'yyyy-MM-dd HH24:mi:ss'),'yyyymmdd')
+		</isNotNull>
+	    <isNotNull property="vCFundCode">
+		  		and b.bk_product = #vCFundCode# 
+		</isNotNull>
+		 order by a.place asc,a.balance_code asc
+	 </select>
+	 
+	  <!--资管计划底层资产信息-->
+	 <select id="queryZGJHDCZCXX" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		 select 
+	       FXJG_NAME                        
+	      ,DY_BALANCE_CODE                  
+	      ,ISSUE_AMOUNT                     
+	      ,CURRENT_AMOUNT                   
+	      ,NO_INVESTMENT_POSITIONS          
+	      ,BALANCE_NAME                      
+	      ,BALANCE_CODE                      
+	      ,POAIRION_QUANTITY                 
+	      ,RMB_VALUR                        
+	      ,TO_CHAR(TO_DATE(CC_DATE,'YYYYMMDD'),'YYYY/MM/DD') as CC_DATE
+	  from dw.A001_ASSET_POSITION a
+	inner join dw.v_dim_product b
+	  on a.product_no=b.bk_portfolio
+	  and b.dk_priority in ('1','3')
+	  where 1=1
+		<isNotNull property="lDate">
+		  		and a.data_date = to_char(TO_DATE(#lDate#,'yyyy-MM-dd HH24:mi:ss'),'yyyymmdd')
+		</isNotNull>
+	    <isNotNull property="vCFundCode">
+		  		and b.bk_product = #vCFundCode# 
+		</isNotNull>
+		order by a.place asc,a.balance_code asc
+	 </select>
+	 
+	 <!--资管计划底层资产信息-->
+	 <select id="queryTZZCJFZXX" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		select
+		 a.col001   
+		,a.col002   
+		,a.col003   
+		,a.col004   
+		,a.col005   
+		,a.col006   
+		,a.col007   
+		,to_char(to_date(a.col008,'yyyymmdd'),'yyyy/mm/dd')   as col008
+		,to_char(to_date(a.col009,'yyyymmdd'),'yyyy/mm/dd')   as col009
+		,a.col010   
+		,a.col011   
+		,a.col012   
+		,a.col013   
+		,a.col014   
+		,a.col015   
+		,a.col016   
+		,a.col017   
+		,a.col018   
+		,a.col019   
+		,a.col020   
+		,a.col021   
+		,a.col022   
+		,a.col023   
+		,a.col024   
+		,a.col025   
+		,to_char(to_date(a.col026,'yyyymmdd'),'yyyy/mm/dd')  as col026
+		,to_char(to_date(a.col027,'yyyymmdd'),'yyyy/mm/dd')  as col027
+		,a.col028   
+		,a.col029   
+		,a.col030   
+		,a.col031   
+		,a.col032   
+		,a.col033   
+		,a.col034   
+		,a.col035   
+		,a.col036   
+		,a.col037   
+		,a.col038   
+		,a.col039   
+		,a.col040   
+		,a.col041   
+		,a.col042   
+		,a.col043   
+		,a.col044   
+		,a.col045   
+		,a.col046   
+		,a.col047   
+		,a.col048   
+		,a.col049   
+		,a.col050   
+		,a.col051   
+		,a.col052   
+		,a.col053   
+		,a.col054   
+		,a.col055   
+		,a.col056   
+		,a.col057   
+		,a.col058   
+		,a.col059   
+		,a.col060   
+		,a.col061   
+		,a.col062   
+		,a.col063   
+		,a.col064   
+		,a.col065   
+		,a.col066   
+		,a.col067   
+		,a.col068   
+		,a.col069   
+		,a.col070   
+		,a.col071   
+		,a.col072   
+		,a.col073   
+		,a.col074   
+		,a.col075   
+		,a.col076   
+		,a.col077   
+		,a.col078   
+		,a.col079   
+		,a.col080   
+		,a.col081   
+		,a.col082   
+		,a.col083   
+		,a.col084   
+		,a.col085   
+		,a.col086   
+		,a.col087   
+		,a.col088   
+		,a.col089   
+		,a.col090   
+		,a.col091   
+		,a.col092   
+		,a.col093   
+		,a.col094   
+		,a.col095   
+		,a.col096   
+		,a.col097   
+		,a.col098   
+		,a.col099   
+		,a.col100   
+		,a.col101   
+		,a.col102   
+		,a.col103   
+		,a.col104   
+		,a.col105   
+		,a.col106   
+		,a.col107   
+		,a.col108   
+		,a.col109   
+		,a.col110   
+		,a.col111   
+		,a.col112   
+		,a.col113   
+		,a.col114   
+		,a.col115   
+		,a.col116   
+		,a.col117   
+		,a.col118   
+		,a.col119   
+		,a.col120   
+		,a.col121   
+		,a.col122   
+		,a.col123   
+		,a.col124   
+		,a.col125   
+		,a.col126   
+		,a.col127   
+		,a.col128   
+		,a.col129   
+		,a.col130   
+		,a.col131   
+		,a.col132   
+		,a.col133   
+		,a.col134   
+		,a.col135   
+		,a.col136   
+		,a.col137   
+		,a.col138   
+		,a.col139   
+		,a.col140   
+		,a.col141   
+		,a.col142   
+		,a.col143   
+		,a.col144   
+		,a.col145   
+		,a.col146   
+		,a.col147   
+		,a.col148   
+		,a.col149   
+		,a.col150   
+		,a.col151   
+		,a.col152   
+		,a.col153   
+		,a.col154   
+		,a.col155   
+		,a.col156   
+		,a.col157   
+		,a.col158   
+		,a.col159   
+		,a.col160   
+		,a.col161   
+		,a.col162   
+		,a.col163   
+		,a.col164   
+		,a.col165   
+		,a.col166   
+		,a.col167   
+		,a.col168   
+		,a.col169   
+		,a.col170   
+		,a.col171   
+		,a.col172   
+		,a.col173   
+		,a.col174   
+		,a.col175   
+		,a.col176   
+		,a.col177   
+		,a.col178   
+		,a.col179   
+		,a.col180   
+		,a.col181   
+		,a.col182   
+		,a.col183   
+		,a.col184   
+		,a.col185   
+		,a.col186   
+		,a.col187   
+		,a.col188   
+		,a.col189   
+		,a.col190   
+		,a.col191   
+		,a.col192   
+		,a.col193   
+		,a.col194   
+		,a.col195   
+		,a.col196   
+		,a.col197   
+		,a.col198   
+		,a.col199   
+		,a.col200   
+		,a.col201   
+		,a.col202   
+		,a.col203   
+		,a.col204   
+		,a.col205   
+		,a.col206   
+		,a.col207   
+		,a.col208   
+	  from dw.a001_tab_zcysdj a
+	inner join dw.v_dim_product b
+	  on a.product_no=b.bk_portfolio
+	  and b.dk_priority in ('1','3')
+	  where 1=1
+		<isNotNull property="lDate">
+		  		and a.data_date = to_char(TO_DATE(#lDate#,'yyyy-MM-dd HH24:mi:ss'),'yyyymmdd')
+		</isNotNull>
+		
+	    <isNotNull property="vCFundCode">
+		  		and b.bk_product = #vCFundCode# 
+		</isNotNull>	
+		 order by a.place,a.col001
+		 
+	 </select>
+	 
+	   <!--收集信息-->
+	 <select id="querySJXX" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		select 
+		   product_fullname,
+		   jg_name,
+		   zqlb,
+		   vc_zqdm,
+		   vc_kmmc,
+		   b_info_issuer,
+		   bz,
+		   en_cb,
+		   en_sz,
+		   l_sl,
+		   to_char(ncdwjz,'fm99999999999999999990.00000000') ncdwjz,
+		   to_char(jjdwjz,'fm99999999999999999990.00000000') jjdwjz
+		  from dw.A001_PRODUCT_JINNIU 
+		  where 1=1
+		<isNotNull property="lDate">
+		  		and d_ywrq = TO_DATE(#lDate#,'yyyy-MM-dd')
+		</isNotNull>
+	    <isNotNull property="productNo">
+		  		and L_ZTBH = #productNo# 
+		</isNotNull>
+		order by vc_zqdm
+		
+	 </select>
+	 
+	   <!--收集信息查询产品数据集-->
+	 <select id="queryProductData" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		<!--select a.bk_portfolio id,a.product_fullname text
+		from dw.dim_product a where a.bk_portfolio in ('2072','2076','2077','2078','2079','2080') order by a.product_fullname
+		-->
+		select t.vc_product_code id,t.vc_product_name text from t_ats_product_info t
+		where t.vc_product_code in($combProductCodes$)
+	 </select>
+	 
+</sqlMap>

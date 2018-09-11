@@ -1,0 +1,636 @@
+/**
+ * 
+ */
+package com.cjhxfund.jy.ProductProcess;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.cjhxfund.commonUtil.CacheUtil;
+import com.cjhxfund.commonUtil.StrUtil;
+import com.cjhxfund.commonUtil.externalService.HttpClientService;
+import com.eos.foundation.database.DatabaseExt;
+import com.eos.system.annotation.Bizlet;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.primeton.spring.support.DataObjectUtil;
+import commonj.sdo.DataObject;
+
+/**
+ * 现金流信息处理公共类
+ * @author chendi
+ * @date 2017-06-12 10:44:09
+ *
+ */
+@Bizlet("")
+public class CashFlowUtil {
+	
+	/**
+	//调用头寸预测接口url
+	//调用头寸预测接口-获取交易所和银行间业务的明细数据
+	//调用头寸预测接口-获取存款业务的明细数据
+	//调用头寸预测接口-获取债券兑息兑付业务的明细数据
+	//调用头寸预测接口-获取非投资类业务的明细数据
+	//调用头寸预测接口-获取总头寸计算的明细数据(20170704新增加，还未实现)
+	*/
+	public String getUrl(String action){
+		DataObject cacheparam = (DataObject) com.eos.foundation.eoscommon.CacheUtil.getValue("ReloadParamConf1","ATS_CASHFLOW_IP");
+		String CashflowUrl = "";
+		if(cacheparam !=null){
+			String paramValue = cacheparam.getString("paramValue");
+			if(("URL_SERVICE").equals(action)){
+				CashflowUrl = paramValue + "/pos/CashEnable/getCashEnable.action";
+			}else if(("URL_JSY_YHJ").equals(action)){
+				CashflowUrl = paramValue + "/pos/CashEnableDtl/getBizDtlData.action";
+			}else if(("URL_DEPOSIT").equals(action)){
+				CashflowUrl = paramValue + "/pos/CashEnableDtl/getDpstBizDtlData.action";
+			}else if(("URL_BOND_CASH").equals(action)){
+				CashflowUrl = paramValue + "/pos/CashEnableDtl/getBondDxdfBizDtlData.action";
+			}else if(("URL_NON_INVESTMENT").equals(action)){
+				CashflowUrl = paramValue + "/pos/CashEnableDtl/getNonInvestBizDtlData.action";
+			}else if(("URL_DETAIL_COUNT").equals(action)){
+				CashflowUrl = paramValue + "/pos/CashEnableDtl/getCashEnableDtl.action";
+			}
+		}
+		return CashflowUrl;
+	}
+		
+	/**
+	 * 未来一至两周头寸信息查询
+	 * @param paramObject 查询条件对象
+	 * @param page 分页对象
+	 * @param type 1头寸信息查询
+	 * @return
+	 * @author chendi
+	 */
+	@Bizlet("")
+	public List<DataObject> queryPositionForecast(DataObject paramObject, DataObject page,String type){
+		//定义返回值
+		List<DataObject> result = new ArrayList<DataObject>();
+		String json = null;
+		
+		//获取页面传进来的查询条件值
+		String vcFundCodes = paramObject.getString("vCFundCode");//基金代码（查询条件传入）
+		int endDate = Integer.parseInt(paramObject.getString("endDate"));//结束日期（查询条件传入）
+		String currencyNo = paramObject.getString("currencyNo");//币种（查询条件传入,调用接口非必须条件）
+		
+		//currencyNo设置默认值
+		if(currencyNo == null || currencyNo == ""){
+			currencyNo = "CNY";
+		}
+		//根据基金代码列表查询基金编号列表
+		if(vcFundCodes !=null && vcFundCodes !=""){
+			//将字符串转成数组
+			String[] fundCodes = vcFundCodes.split(",");
+			try{
+            	//调用接口查询头寸预测数据
+            	JsonObject object=new JsonObject();
+            	Gson gson = new Gson();
+            	String fundCodeList = gson.toJson(fundCodes);
+            	object.addProperty("endDate", endDate);
+            	object.addProperty("fundCodeList", fundCodeList);
+            	json = object.toString();
+            	String ret = HttpClientService.postByJson(getUrl("URL_SERVICE"), json);
+            	System.out.println(ret);
+            	//Json转换对象
+            	BasePostion basePostion = gson.fromJson(ret, BasePostion.class);
+            	//成功返回数据,则正常处理。否则输出错误信息
+            	if("1".equals(basePostion.getCode())){
+            		//遍历List，加上日期查询条件筛选数据，重新将结果数据组装成新的DataObject数组
+                	List<RealPostion> postionList = basePostion.getData();
+            		System.out.println(postionList.get(0).getFundName());
+            		//将页面需要的元素重新放在新的List<dataObject>中
+            		int lengthPosition = postionList.size();
+            		for(int i=0;i<lengthPosition;i++){
+            			DataObject resultData = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+        				//组装数据
+        				resultData.setString("lDate", postionList.get(i).getSettleDate().toString());//预测日期
+        				resultData.setString("lFundId", postionList.get(i).getFundId().toString());//基金编号
+        				resultData.setString("vcFundCode", postionList.get(i).getFundCode());//基金代码
+        				resultData.setString("vcFundName", postionList.get(i).getFundName());//基金名称
+        				resultData.setString("lAssetId", postionList.get(i).getAssetId().toString());//单元编号
+        				resultData.setString("vcAssetName", postionList.get(i).getAssetName());//资产单元名称
+        				resultData.setString("lSettleDate", postionList.get(i).getSettleDate().toString());//交割日期
+        				resultData.set("beginCash", postionList.get(i).getT0CashEnableBalInvest()==null?0.00:postionList.get(i).getBeginCash());//期初余额
+        				resultData.set("t0CashEnableBalInvest", postionList.get(i).getT0CashEnableBalInvest()==null?0.00:postionList.get(i).getT0CashEnableBalInvest());//T+0投资可用
+        				resultData.set("t1CashEnableBalInvest", postionList.get(i).getT1CashEnableBalInvest()==null?0.00:postionList.get(i).getT1CashEnableBalInvest());//T+1投资可用
+        				resultData.set("t1CashEnableBalTrade", postionList.get(i).getT1CashEnableBalTrade()==null?0.00:postionList.get(i).getT1CashEnableBalTrade());//T+1交易可用
+        				resultData.set("netInflowBal", postionList.get(i).getNetInflowBal());//净流入金额
+        				resultData.set("riskSettleMargin", postionList.get(i).getRiskSettleMargin());//风险备付金
+        				resultData.set("settleReserveBal", postionList.get(i).getSettleReserveBal());//月初备付金调整
+        				/**最大可融资金额**/
+        				resultData.setString("M_COL", StrUtil.addThousandth("0", StrUtil.df1));//交易所--隐藏
+        				resultData.setString("N_COL", StrUtil.addThousandth("0", StrUtil.df1));//中债登--隐藏
+        				resultData.setString("O_COL", StrUtil.addThousandth("0", StrUtil.df1));//上清所--隐藏
+        				resultData.setString("P_COL", StrUtil.addThousandth("0", StrUtil.df1));//合计--隐藏
+        				/**银行间业务**/
+        				resultData.set("bondBuyBalCibm", postionList.get(i).getBondBuyBalCibm());//债券买入金额
+        				resultData.set("bondSaleBalCibm", postionList.get(i).getBondSaleBalCibm());//债券卖出金额
+        				resultData.set("rzhgBalCibm", postionList.get(i).getRzhgBalCibm());//正回购首期
+        				resultData.set("rzhgExpireBalCibm", postionList.get(i).getRzhgExpireBalCibm());//正回购到期
+        				resultData.set("rqhgBalCibm", postionList.get(i).getRqhgBalCibm());//逆回购首期
+        				resultData.set("rqhgExpireBalCibm", postionList.get(i).getRqhgExpireBalCibm());//逆回购到期
+        				resultData.set("netStlBalCibm", postionList.get(i).getNetStlBalCibm());//净交收金额
+        				resultData.set("netStlBalCibmZzd", postionList.get(i).getNetStlBalCibmZzd());//银行间中债登净交收金额
+        				resultData.set("netStlBalCibmSqs", postionList.get(i).getNetStlBalCibmSqs());//银行间上清所净交收金额
+        				/**沪深交易所业务**/
+        				resultData.set("stockBuyBal", postionList.get(i).getStockBuyBal());//股票/基金买入
+        				resultData.set("stockSaleBal", postionList.get(i).getStockSaleBal());//股票/基金卖出
+        				resultData.set("bondBuyBalGuar", postionList.get(i).getBondBuyBalGuar());//债券买入(担保)
+        				resultData.set("bondSaleBalGuar", postionList.get(i).getBondSaleBalGuar());//债券卖出(担保)
+        				resultData.set("bondBuyBalNonGuar", postionList.get(i).getBondBuyBalNonGuar());//债券买入(非担保)
+        				resultData.set("bondSaleBalNonGuar", postionList.get(i).getBondSaleBalNonGuar());//债券卖出(非担保)
+        				resultData.set("rzhgBal", postionList.get(i).getRzhgBal());//质押式融资回购首期金额
+        				resultData.set("rzhgExpireBal", postionList.get(i).getRzhgExpireBal());//质押式融资回购到期金额
+        				resultData.set("rqhgBal", postionList.get(i).getRqhgBal());//质押式融券回购首期金额
+        				resultData.set("rqhgExpireBal", postionList.get(i).getRqhgExpireBal());//质押式融券回购到期金额
+        				resultData.set("rzhgPactBal", postionList.get(i).getRzhgBalPact()==null?0.00:postionList.get(i).getRzhgBalPact());//协议式融资回购首期金额
+        				resultData.set("rzhgExpireBalPact", postionList.get(i).getRzhgExpireBalPact());//协议式融资回购到期金额
+        				resultData.set("rqhgBalPact", postionList.get(i).getRqhgBalPact());//协议式融券回购首期金额
+        				resultData.set("rqhgExpireBalPact", postionList.get(i).getRqhgExpireBalPact());//协议式融券回购到期金额
+        				resultData.set("netStlBal", postionList.get(i).getNetStlBal());//净交收金额
+        				resultData.set("netStlGuarBal", postionList.get(i).getNetStlGuarBal());//交易所担保净交收金额
+        				resultData.set("netStlNonGuarBal", postionList.get(i).getNetStlNonGuarBal());//交易所非担保净交收金额
+        				/**存款业务**/
+        				resultData.set("depositBal", postionList.get(i).getDepositBal());//存款存入金额
+        				resultData.set("depositExpireBal", postionList.get(i).getDepositExpireBal());//存款到期金额
+        				/**场外基金**/
+        				resultData.set("applyFundBal", postionList.get(i).getApplyFundBal());//场外开基申购金额
+        				resultData.set("redeemFundBal", postionList.get(i).getRedeemFundBal());//场外开基赎回金额
+        				/**港股业务业务**/
+        				resultData.set("stockBuyBalHgt", postionList.get(i).getStockBuyBalHgt()==null?0.00:postionList.get(i).getStockBuyBalHgt());//沪港通股票买入金额
+        				resultData.set("stockSaleBalHgt", postionList.get(i).getStockSaleBalHgt()==null?0.00:postionList.get(i).getStockSaleBalHgt());//沪港通股票卖出金额
+        				resultData.set("riskBalHgt", postionList.get(i).getRiskBalHgt()==null?0.00:postionList.get(i).getRiskBalHgt());//沪港通风控资金
+        				resultData.set("stockBuyBalSgt", postionList.get(i).getStockBuyBalSgt()==null?0.00:postionList.get(i).getStockBuyBalSgt());//深港通证券买入金额
+        				resultData.set("stockSaleBalSgt", postionList.get(i).getStockSaleBalSgt()==null?0.00:postionList.get(i).getStockSaleBalSgt());//深港通证券卖出金额
+        				resultData.set("riskBalSgt", postionList.get(i).getRiskBalSgt()==null?0.00:postionList.get(i).getRiskBalSgt());//深港通风控资金
+        				/**TA业务**/
+        				resultData.set("applyTaBal", postionList.get(i).getApplyTaBal()==null?0.00:postionList.get(i).getApplyTaBal());//TA申购
+        				resultData.set("redeemTaBal", postionList.get(i).getRedeemTaBal()==null?0.00:postionList.get(i).getRedeemTaBal());//TA赎回
+        				resultData.set("dividendTaBal", postionList.get(i).getDividendTaBal()==null?0.00:postionList.get(i).getDividendTaBal());//TA分红
+        				/**分销业务**/
+        				resultData.set("distributeBuyBal", postionList.get(i).getDistributeBuyBal());//债券一级缴款(分销买入金额)
+        				/**付息兑付业务**/
+        				resultData.set("bondDxDfBalCsi", postionList.get(i).getBondDxDfBalCsi());//交易所债券兑息兑付金额
+        				resultData.set("bondDxDfBalCibm", postionList.get(i).getBondDxDfBalCibm());//银行间债券兑息兑付金额
+        				resultData.set("bondDxDfBal", postionList.get(i).getBondDxDfBal());//债券兑息兑付金额
+        				/**追加/提取业务**/
+        				resultData.set("appendBal", postionList.get(i).getAppendBal());//委托人追加金额
+        				resultData.set("extractBal", postionList.get(i).getExtractBal());//委托人提取金额
+        				resultData.set("appendExtractBal", postionList.get(i).getAppendExtractBal());//委托人追加提取金额
+        				/**期货保证金**/
+        				resultData.set("futuresMarginBal", postionList.get(i).getFuturesMarginBal());//期货保证金调整金额
+        				/**其他业务**/
+        				resultData.set("otherBal", postionList.get(i).getOtherBal()==null?0.00:postionList.get(i).getOtherBal());//其他业务
+        				resultData.set("vatBal", postionList.get(i).getVatBal()==null?0.00:postionList.get(i).getVatBal());//增值税
+        				/**手工业务查询逻辑待实现**/
+        				resultData.set("manualAdjustBal", postionList.get(i).getManualAdjustBal()==null?0.00:postionList.get(i).getManualAdjustBal());//手工调整金额
+        				result.add(resultData);
+            		}
+            		
+            	}else{
+            		System.out.println("打印日志信息如下：---"+basePostion.getMsg()+"---");
+            	}
+			}catch(Throwable e){
+				e.printStackTrace();
+			}
+		}else{
+			result = null;
+		}
+		return result;
+	}
+	
+	/**
+	 * 头寸明细信息查询
+	 * @param paramObject 查询条件对象
+	 * @param page 分页对象
+	 * @return
+	 * @author chendi
+	 */
+	@Bizlet("")
+	public List<DataObject> queryCashflowDetail(DataObject paramObject, DataObject page){
+		//定义返回值
+		List<DataObject> result = new ArrayList<DataObject>();
+		String json = null;
+		String ret = null;
+		//存款类型：F存款存入 i存款到期
+		String dpstType = "";
+		//非投资类业务类型-委托人追加资金40103;委托人提取资金40104;委托人追加及提取401034
+		int businType = 0;
+		//头寸明细类型：0-期初现金,1-T+0投资头寸,2-T+1交易头寸
+		String cashEnableType = null;
+		//获取页面传进来的查询条件值
+		String lAssetId = paramObject.getString("lAssetId");//基金代码（查询条件传入）
+		String stockCode = paramObject.getString("stockCode");
+		int settleDate = Integer.parseInt(paramObject.getString("lSettleDate"));//交收日期（查询条件传入）
+		/**
+		 * 调用接口类型
+		 * 1:交易所和银行间业务的明细接口2:存款业务明细接口3：债券兑息兑付业务的明细接口4：非投资类业务的明细接口5:总头寸计算的明细接口
+		 */
+		String type = paramObject.getString("type");
+		/**
+		 * 列名
+		 */
+		String colType = paramObject.getString("colType");
+		//判断资产单元编号是否为空
+		if(lAssetId !=null && lAssetId !=""){
+			CashDictInfo cashDict = new CashDictInfo();
+			try{
+            	//创建jsonObject对象
+            	JsonObject object=new JsonObject();
+            	Gson gson = new Gson();
+            	//资产单元编号
+            	object.addProperty("assetId", lAssetId);
+            	//交收日期
+            	object.addProperty("settleDate", settleDate);
+            	
+            	if("1".equals(type)){
+            		//银行间、交易所、场外、一级分销
+            		//委托方向字典提取
+        			object.addProperty("entrustDirection", cashDict.getEntrustDirectionDict(colType));
+        			//交易市场字典提取
+        			object.addProperty("marketType", cashDict.getMarketDict(colType));
+                	// 交易所业务担保交收标志:0全部 1担保交收 2-非担保交收
+                	if("bondBuyBalGuar".equals(colType)||"bondSaleBalGuar".equals(colType)){
+                		object.addProperty("guarFlag", "1");
+                	}
+                	if("bondBuyBalNonGuar".equals(colType)||"bondSaleBalNonGuar".equals(colType)){
+                		object.addProperty("guarFlag", "2");
+                	}
+                	json = object.toString();
+            		ret = HttpClientService.postByJson(getUrl("URL_JSY_YHJ"), json);
+            	}else if("2".equals(type)){
+            		//存款业务
+            		dpstType = paramObject.getString("dpstType");
+            		object.addProperty("dpstType", dpstType);
+            		json = object.toString();
+            		ret = HttpClientService.postByJson(getUrl("URL_DEPOSIT"), json);
+            	}else if("3".equals(type)){
+            		//付息兑付业务
+            		String marketType = paramObject.getString("marketType");
+        			object.addProperty("marketType", marketType);
+        			json = object.toString();
+            		ret = HttpClientService.postByJson(getUrl("URL_BOND_CASH"), json);
+            	}else if("4".equals(type)){
+            		//非投资类业务类型设置
+            		businType = paramObject.getString("businType")==null?businType:Integer.parseInt(paramObject.getString("businType"));
+            		object.addProperty("businType", businType);
+            		json = object.toString();
+            		ret = HttpClientService.postByJson(getUrl("URL_NON_INVESTMENT"), json);
+            	}else if("5".equals(type)){
+            		//期初余额、T+0头寸、T+1头寸
+            		cashEnableType = paramObject.getString("cashEnableType");
+            		object.addProperty("cashEnableType", cashEnableType);
+            		json = object.toString();
+            		ret = HttpClientService.postByJson(getUrl("URL_DETAIL_COUNT"), json);
+            	}
+            	System.out.println("入参："+json);
+            	System.out.println("返回值："+ret);
+            	if("1".equals(type)||"4".equals(type)){
+            		BaseDtlData beanData = gson.fromJson(ret, BaseDtlData.class);
+                	//成功返回数据,则正常处理。否则输出错误信息
+                	if("1".equals(beanData.getCode())){
+                		//获取列表大小
+                		int dtlLength = beanData.getData().size();
+                		//组装新的list(先拆分原来的list,将页面需要的元素重新放在新的List<dataObject>中)
+                		for(int i=0;i<dtlLength;i++){
+                			DataObject resultData = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+                			if(stockCode==null||stockCode==""){
+                				//组装数据
+                				resultData.setString("fundId", beanData.getData().get(i).getFundId().toString());//基金序号
+                				resultData.setString("fundCode", beanData.getData().get(i).getFundCode());//基金代码
+                				resultData.setString("fundName", beanData.getData().get(i).getFundName());//基金名称
+                				resultData.setString("assetId", beanData.getData().get(i).getAssetId().toString());//单元序号
+                				resultData.setString("assetName", beanData.getData().get(i).getAssetName());//单元名称
+                				resultData.setString("tradeDate", beanData.getData().get(i).getTradeDate()==null?"-":beanData.getData().get(i).getTradeDate().toString());//交易日期
+                				resultData.setString("settleDate", beanData.getData().get(i).getSettleDate()==null?"-":beanData.getData().get(i).getSettleDate().toString());//交割日期
+                				resultData.setString("marketNo", beanData.getData().get(i).getMarketNo()==null?"-":getMarketName(beanData.getData().get(i).getMarketNo()));//交易市场
+                				resultData.setString("businClass", beanData.getData().get(i).getBusinClass()==null?"-":getDictInfo(40396,beanData.getData().get(i).getBusinClass()).getString("vcItemName"));//交易平台
+                				resultData.setString("businType", beanData.getData().get(i).getBusinType()==null?"-":beanData.getData().get(i).getBusinType().toString());//业务类型
+                				resultData.setString("businTypeName", beanData.getData().get(i).getBusinTypeName()==null?"-":beanData.getData().get(i).getBusinTypeName().toString());//业务类型名称
+                				resultData.setString("stockCode", beanData.getData().get(i).getStockCode()==null?"-":beanData.getData().get(i).getStockCode());//证券代码
+                				resultData.setString("stockName", beanData.getData().get(i).getStockName()==null?"-":beanData.getData().get(i).getStockName());//证券名称
+                				resultData.setString("stockType", beanData.getData().get(i).getStockType()==null?"-":beanData.getData().get(i).getStockType());//证券类别
+                				resultData.setString("entrustDirection", beanData.getData().get(i).getEntrustDirection()==null?"-":getEntrustDirectionName(beanData.getData().get(i).getEntrustDirection(),beanData.getData().get(i).getMarketNo()));//委托方向
+                				resultData.set("occurBal", beanData.getData().get(i).getOccurBal()==null?0.00:beanData.getData().get(i).getOccurBal());//发生金额
+                				resultData.setString("dataSource", getDataSource(beanData.getData().get(i).getDataSource().toString()));//数据来源:0-交易端,1-指令端
+                				if("1".equals(type)){
+                					resultData.setString("trusteeShip", getTrusteeShip(beanData.getData().get(i).getTrusteeShip().toString()));//债券托管机构
+                					resultData.setString("tradeRivalId", beanData.getData().get(i).getTradeRivalId());//交易对手托管序号
+                					resultData.setString("tradeRivalName", beanData.getData().get(i).getTradeRivalName());//交易对手名称
+                				}
+                				
+                				result.add(resultData);
+                			}else if(stockCode.equals(beanData.getData().get(i).getStockCode())){
+                				//组装数据
+                				resultData.setString("fundId", beanData.getData().get(i).getFundId().toString());//基金序号
+                				resultData.setString("fundCode", beanData.getData().get(i).getFundCode());//基金代码
+                				resultData.setString("fundName", beanData.getData().get(i).getFundName());//基金名称
+                				resultData.setString("assetId", beanData.getData().get(i).getAssetId().toString());//单元序号
+                				resultData.setString("assetName", beanData.getData().get(i).getAssetName());//单元名称
+                				resultData.setString("tradeDate", beanData.getData().get(i).getTradeDate()==null?"-":beanData.getData().get(i).getTradeDate().toString());//交易日期
+                				resultData.setString("settleDate", beanData.getData().get(i).getSettleDate()==null?"-":beanData.getData().get(i).getSettleDate().toString());//交割日期
+                				resultData.setString("marketNo", beanData.getData().get(i).getMarketNo()==null?"-":getMarketName(beanData.getData().get(i).getMarketNo()));//交易市场
+                				resultData.setString("businClass", beanData.getData().get(i).getBusinClass()==null?"-":getDictInfo(40396,beanData.getData().get(i).getBusinClass()).getString("vcItemName"));//交易平台
+                				resultData.setString("businType", beanData.getData().get(i).getBusinType()==null?"-":beanData.getData().get(i).getBusinType().toString());//业务类型
+                				resultData.setString("businTypeName", beanData.getData().get(i).getBusinTypeName()==null?"-":beanData.getData().get(i).getBusinTypeName().toString());//业务类型名称
+                				resultData.setString("stockCode", beanData.getData().get(i).getStockCode()==null?"-":beanData.getData().get(i).getStockCode());//证券代码
+                				resultData.setString("stockName", beanData.getData().get(i).getStockName()==null?"-":beanData.getData().get(i).getStockName());//证券名称
+                				resultData.setString("stockType", beanData.getData().get(i).getStockType()==null?"-":beanData.getData().get(i).getStockType());//证券类别
+                				resultData.setString("entrustDirection", beanData.getData().get(i).getEntrustDirection()==null?"-":getEntrustDirectionName(beanData.getData().get(i).getEntrustDirection(),beanData.getData().get(i).getMarketNo()));//委托方向
+                				resultData.set("occurBal", beanData.getData().get(i).getOccurBal()==null?0.00:beanData.getData().get(i).getOccurBal());//发生金额
+                				resultData.setString("dataSource", getDataSource(beanData.getData().get(i).getDataSource().toString()));//数据来源:0-交易端,1-指令端
+                				if("1".equals(type)){
+	                				resultData.setString("trusteeShip", getTrusteeShip(beanData.getData().get(i).getTrusteeShip().toString()));//债券托管机构
+	                				resultData.setString("tradeRivalId", beanData.getData().get(i).getTradeRivalId());//交易对手托管序号
+	                				resultData.setString("tradeRivalName", beanData.getData().get(i).getTradeRivalName());//交易对手名称
+                				}
+                				result.add(resultData);
+                			}
+            			}
+                	}else{
+                		System.out.println("错误信息如下：---"+beanData.getMsg()+"---");
+                	}
+            	}else if("2".equals(type)){//存款业务
+            		BaseDpstData beanData = gson.fromJson(ret, BaseDpstData.class);
+            		//成功返回数据,则正常处理。否则输出错误信息
+                	if("1".equals(beanData.getCode())){
+                		//获取列表大小
+                		int dtlLength = beanData.getData().size();
+                		//组装新的list(先拆分原来的list,将页面需要的元素重新放在新的List<dataObject>中)
+                		for(int i=0;i<dtlLength;i++){
+                				DataObject resultData = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+                				//组装数据
+                				resultData.setString("fundId", beanData.getData().get(i).getFundId().toString());//基金序号
+                				resultData.setString("fundCode", beanData.getData().get(i).getFundCode().toString());//基金代码
+                				resultData.setString("fundName", beanData.getData().get(i).getFundName().toString());//基金名称
+                				resultData.setString("assetId", beanData.getData().get(i).getAssetId().toString());//单元序号
+                				resultData.setString("assetName", beanData.getData().get(i).getAssetName().toString());//单元名称
+                				resultData.setString("beginDate", beanData.getData().get(i).getBeginDate().toString());//起息日期
+                				resultData.setString("endDate", beanData.getData().get(i).getEndDate().toString());//到息日期
+                				resultData.set("dpstBalance", beanData.getData().get(i).getDpstBalance());//存款金额
+                				resultData.setString("dpstRatio", beanData.getData().get(i).getDpstRatio().toString());//存款利率
+                				resultData.set("dpstStlBal", beanData.getData().get(i).getDpstStlBal());//存款到期交割金额(元)
+                				resultData.setString("businType", beanData.getData().get(i).getBusinType()==null?"-":beanData.getData().get(i).getBusinType().toString());//业务类型
+                				resultData.setString("businTypeName", beanData.getData().get(i).getBusinTypeName()==null?"-":beanData.getData().get(i).getBusinTypeName().toString());//业务类型名称
+                				resultData.setString("dataSource", getDataSource(beanData.getData().get(i).getDataSource().toString()));//数据来源:0-交易端,1-指令端
+                				
+                				result.add(resultData);
+            			}
+                	}else{
+                		System.out.println("打印日志信息如下：---"+beanData.getMsg()+"---");
+                	}
+            	}else if("3".equals(type)){//付息兑付业务
+            		BaseDtlData beanData = gson.fromJson(ret, BaseDtlData.class);
+            		//成功返回数据,则正常处理。否则输出错误信息
+                	if("1".equals(beanData.getCode())){
+                		//获取列表大小
+                		int dtlLength = beanData.getData().size();
+                		//组装新的list(先拆分原来的list,将页面需要的元素重新放在新的List<dataObject>中)
+                		for(int i=0;i<dtlLength;i++){
+                			DataObject resultData = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+                			if(stockCode==null||stockCode==""){
+                				//组装数据
+                				resultData.setString("fundId", beanData.getData().get(i).getFundId().toString());//基金序号
+                				resultData.setString("fundCode", beanData.getData().get(i).getFundCode().toString());//基金代码
+                				resultData.setString("fundName", beanData.getData().get(i).getFundName().toString());//基金名称
+                				resultData.setString("assetId", beanData.getData().get(i).getAssetId().toString());//单元序号
+                				resultData.setString("assetName", beanData.getData().get(i).getAssetName().toString());//单元名称
+                				resultData.setString("tradeDate", beanData.getData().get(i).getTradeDate().toString());//交易日期
+                				resultData.setString("settleDate", beanData.getData().get(i).getSettleDate().toString());//交割日期
+                				resultData.set("marketNo", getMarketName(beanData.getData().get(i).getMarketNo()));//交易市场
+                				resultData.setString("businClass", getDictInfo(40396,beanData.getData().get(i).getBusinClass()).getString("vcItemName"));//交易平台
+                				resultData.setString("businType", beanData.getData().get(i).getBusinType()==null?"-":beanData.getData().get(i).getBusinType().toString());//业务类型
+                				resultData.setString("businTypeName", beanData.getData().get(i).getBusinTypeName()==null?"-":beanData.getData().get(i).getBusinTypeName().toString());//业务类型名称
+                				resultData.set("stockCode", beanData.getData().get(i).getStockCode());//证券代码
+                				resultData.set("stockName", beanData.getData().get(i).getStockName());//证券名称
+                				resultData.set("occurBal", beanData.getData().get(i).getOccurBal());//发生金额
+                				resultData.setString("dataSource", getDataSource(beanData.getData().get(i).getDataSource().toString()));//数据来源:0-交易端,1-指令端
+                				result.add(resultData);
+                			}else if(stockCode.equals(beanData.getData().get(i).getStockCode())){
+                				//组装数据
+                				resultData.setString("fundId", beanData.getData().get(i).getFundId().toString());//基金序号
+                				resultData.setString("fundCode", beanData.getData().get(i).getFundCode().toString());//基金代码
+                				resultData.setString("fundName", beanData.getData().get(i).getFundName().toString());//基金名称
+                				resultData.setString("assetId", beanData.getData().get(i).getAssetId().toString());//单元序号
+                				resultData.setString("assetName", beanData.getData().get(i).getAssetName().toString());//单元名称
+                				resultData.setString("tradeDate", beanData.getData().get(i).getTradeDate().toString());//交易日期
+                				resultData.setString("settleDate", beanData.getData().get(i).getSettleDate().toString());//交割日期
+                				resultData.set("marketNo", getMarketName(beanData.getData().get(i).getMarketNo()));//交易市场
+                				resultData.setString("businClass", getDictInfo(40396,beanData.getData().get(i).getBusinClass()).getString("vcItemName"));//交易平台
+                				resultData.setString("businType", beanData.getData().get(i).getBusinType()==null?"-":beanData.getData().get(i).getBusinType().toString());//业务类型
+                				resultData.setString("businTypeName", beanData.getData().get(i).getBusinTypeName()==null?"-":beanData.getData().get(i).getBusinTypeName().toString());//业务类型名称
+                				resultData.set("stockCode", beanData.getData().get(i).getStockCode());//证券代码
+                				resultData.set("stockName", beanData.getData().get(i).getStockName());//证券名称
+                				resultData.set("occurBal", beanData.getData().get(i).getOccurBal());//发生金额
+                				resultData.setString("dataSource", getDataSource(beanData.getData().get(i).getDataSource().toString()));//数据来源:0-交易端,1-指令端
+                				result.add(resultData);
+                			}
+                		}
+                	}else{
+                		System.out.println("打印日志信息如下：---"+beanData.getMsg()+"---");
+                	}
+            	}else if("5".equals(type)){//计算总明细
+            		BaseEnableData beanData = gson.fromJson(ret, BaseEnableData.class);
+            		//成功返回数据,则正常处理。否则输出错误信息
+                	if("1".equals(beanData.getCode())){
+                		//获取列表大小
+                		int dtlLength = beanData.getData().size();
+                		//组装新的list(先拆分原来的list,将页面需要的元素重新放在新的List<dataObject>中)
+                		for(int i=0;i<dtlLength;i++){
+                			DataObject resultData = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+                			if(stockCode==null||stockCode==""){
+                				//组装数据
+                				resultData.setString("fundId", beanData.getData().get(i).getFundId().toString());//基金序号
+                				resultData.setString("fundCode", beanData.getData().get(i).getFundCode().toString());//基金代码
+                				resultData.setString("fundName", beanData.getData().get(i).getFundName().toString());//基金名称
+                				resultData.setString("assetId", beanData.getData().get(i).getAssetId().toString());//单元序号
+                				resultData.setString("assetName", beanData.getData().get(i).getAssetName().toString());//单元名称
+                				resultData.setString("marketNo", "!".equals(beanData.getData().get(i).getMarketNo())?"-":getMarketName(beanData.getData().get(i).getMarketNo()));//交易市场
+                				resultData.setString("entrustDirection","!".equals(beanData.getData().get(i).getEntrustDirection())?"-":getEntrustDirectionName(beanData.getData().get(i).getEntrustDirection(),beanData.getData().get(i).getMarketNo()));//委托方向
+                				resultData.setString("stockCode", "!".equals(beanData.getData().get(i).getStockCode())?"-":beanData.getData().get(i).getStockCode());//证券代码
+                				resultData.setString("stockName", "!".equals(beanData.getData().get(i).getStockName())?"-":beanData.getData().get(i).getStockName());//证券名称
+                				resultData.set("guarFlag", beanData.getData().get(i).getGuarFlag());//担保交收标志
+                				resultData.set("settleDate", beanData.getData().get(i).getSettleDate());//交割日期
+                				resultData.set("settleBalance", beanData.getData().get(i).getSettleBalance());//交割金额
+                				resultData.setString("businType", beanData.getData().get(i).getBusinType()==null?"-":beanData.getData().get(i).getBusinType().toString());//业务类型
+                				resultData.setString("businTypeName", beanData.getData().get(i).getBusinTypeName()==null?"-":beanData.getData().get(i).getBusinTypeName().toString());//业务类型名称
+                				resultData.setString("dataSource", getDataSource(beanData.getData().get(i).getDataSource().toString()));//数据来源:0-交易端,1-指令端
+            					resultData.setString("trusteeShip", getTrusteeShip(beanData.getData().get(i).getTrusteeShip().toString()));//债券托管机构
+                				
+                				result.add(resultData);
+                			}else if(stockCode.equals(beanData.getData().get(i).getStockCode())){
+                				//组装数据
+                				resultData.setString("fundId", beanData.getData().get(i).getFundId().toString());//基金序号
+                				resultData.setString("fundCode", beanData.getData().get(i).getFundCode().toString());//基金代码
+                				resultData.setString("fundName", beanData.getData().get(i).getFundName().toString());//基金名称
+                				resultData.setString("assetId", beanData.getData().get(i).getAssetId().toString());//单元序号
+                				resultData.setString("assetName", beanData.getData().get(i).getAssetName().toString());//单元名称
+                				resultData.setString("marketNo", "!".equals(beanData.getData().get(i).getMarketNo())?"-":getMarketName(beanData.getData().get(i).getMarketNo()));//交易市场
+                				resultData.setString("entrustDirection","!".equals(beanData.getData().get(i).getEntrustDirection())?"-":getEntrustDirectionName(beanData.getData().get(i).getEntrustDirection(),beanData.getData().get(i).getMarketNo()));//委托方向
+                				resultData.setString("stockCode", "!".equals(beanData.getData().get(i).getStockCode())?"-":beanData.getData().get(i).getStockCode());//证券代码
+                				resultData.setString("stockName", "!".equals(beanData.getData().get(i).getStockName())?"-":beanData.getData().get(i).getStockName());//证券名称
+                				resultData.set("guarFlag", beanData.getData().get(i).getGuarFlag());//担保交收标志
+                				resultData.set("settleDate", beanData.getData().get(i).getSettleDate());//交割日期
+                				resultData.set("settleBalance", beanData.getData().get(i).getSettleBalance());//交割金额
+                				resultData.setString("businType", beanData.getData().get(i).getBusinType()==null?"-":beanData.getData().get(i).getBusinType().toString());//业务类型
+                				resultData.setString("businTypeName", beanData.getData().get(i).getBusinTypeName()==null?"-":beanData.getData().get(i).getBusinTypeName().toString());//业务类型名称
+                				resultData.setString("dataSource", getDataSource(beanData.getData().get(i).getDataSource().toString()));//数据来源:0-交易端,1-指令端
+            					resultData.setString("trusteeShip", getTrusteeShip(beanData.getData().get(i).getTrusteeShip().toString()));//债券托管机构
+                				
+                				result.add(resultData);
+                			}
+            			}
+                	}else{
+                		System.out.println("打印日志信息如下：---"+beanData.getMsg()+"---");
+                	}
+            	}
+			}catch(Throwable e){
+				e.printStackTrace();
+			}
+		}else{
+			result = null;
+		}
+		return result;
+	}
+	/**
+	 * 获取业务字典项
+	 * @param lDictionaryNo 字典类别
+	 * @param cLemmaItem 词条键值
+	 * @return {"dictInfo":[{lDictionaryNo 字典类别 ,cLemmaItem 词条键值 ,vcItemName 中文说明}]}
+	 */
+	public DataObject getDictInfo(int lDictionaryNo,String cLemmaItem){
+		//返回O32字典信息
+		DataObject dictInfo = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+		//辅助dataObject
+		DataObject o32Dict = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+		//存储查询条件
+		DataObject db = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+		db.set("lDictionaryNo", lDictionaryNo);
+		db.set("cLemmaItem", cLemmaItem);
+		//获取O32字典信息
+		Object[] object = DatabaseExt.queryByNamedSql(CacheUtil.getO32CacheDataSourceName(),
+				"com.cjhxfund.jy.ProductProcess.cashFlowInfo.queryO32DictInfo",db);
+		o32Dict = (DataObject)object[0];
+		if(o32Dict!=null){
+			dictInfo.setInt("lDictionaryNo", o32Dict.getInt("L_DICTIONARY_NO"));
+			dictInfo.setString("cLemmaItem", o32Dict.getString("C_LEMMA_ITEM"));
+			dictInfo.setString("vcItemName", o32Dict.getString("VC_ITEM_NAME"));
+		}else{
+			dictInfo = null;
+		}
+		return dictInfo;
+	}
+	
+	/**
+	 * 获取交易市场名称
+	 * @param marketNo
+	 * @return
+	 */
+	public String getMarketName(String marketNo){
+		String marketName = null;
+		//根据交易市场编号返回O32交易市场名称
+		Object[] rtnData = DatabaseExt.queryByNamedSql(CacheUtil.getO32CacheDataSourceName(),
+				"com.cjhxfund.jy.ProductProcess.cashFlowInfo.queryMarketInfo",marketNo);
+		if(rtnData[0]!=null){
+			marketName = (String)rtnData[0];
+		}
+		return marketName;
+	}
+	/**
+	 * 获取O32委托方向名称
+	 * @param marketNo
+	 * @return
+	 */
+	public String getEntrustDirectionName(String cEntrustDirection,String cMarketNo){
+		String entrustDirectionName = null;
+		DataObject data = DataObjectUtil.createDataObject("commonj.sdo.DataObject");
+		data.setString("cEntrustDirection", cEntrustDirection);
+		data.setString("cMarketNo", cMarketNo);
+		//根据交易市场编号返回O32交易市场名称
+		Object[] rtnData = DatabaseExt.queryByNamedSql(CacheUtil.getO32CacheDataSourceName(),
+				"com.cjhxfund.jy.ProductProcess.cashFlowInfo.queryEntrustDirectionName",data);
+		if(rtnData[0]!=null){
+			entrustDirectionName = (String)rtnData[0];
+		}
+		if("融资回购".equals(entrustDirectionName)){
+			entrustDirectionName = "正回购";
+		}else if("融资购回".equals(entrustDirectionName)){
+			entrustDirectionName = "正回购到期";
+		}else if("融券回购".equals(entrustDirectionName)){
+			entrustDirectionName = "逆回购";
+		}else if("融券购回".equals(entrustDirectionName)){
+			entrustDirectionName = "逆回购到期";
+		}
+		
+		return entrustDirectionName;
+	}
+	/**
+	 * 交易来源字典翻译
+	 * @param data
+	 * @return
+	 */
+	public String getDataSource(String data){
+		String dataSource = null;
+		if("0".equals(data)){
+			dataSource = "指令已成交";
+		}else if("1".equals(data)){
+			dataSource = "指令未成交";
+		}
+		return dataSource;
+	}
+	/**
+	 * 交易来源字典翻译
+	 * @param data
+	 * @return
+	 */
+	public String getTrusteeShip(String data){
+		String trusteeShip = null;
+		if("0".equals(data)){
+			trusteeShip = "中证登";
+		}else if("1".equals(data)){
+			trusteeShip = "中债登";
+		}else if("2".equals(data)){
+			trusteeShip = "上清所";
+		}
+		return trusteeShip;
+	}
+	/**
+	 * 获取追加提取字典
+	 * @param data
+	 * @return
+	 */
+	public String getBusinType(String data){
+		String businType = null;
+		if("0".equals(data)){
+			businType = "-";
+		}else if("40103".equals(data)){
+			businType = "资金投入";
+		}else if("40104".equals(data)){
+			businType = "资金支取";
+		}else if("401034".equals(data)){
+			businType = "委托人追加及提取";
+		}else if("72558".equals(data)){
+			businType = "期货保证金增加";
+		}else if("72559".equals(data)){
+			businType = "期货保证金减少";
+		}else if("725589".equals(data)){
+			businType = "期货保证金调增及调减 ";
+		}
+		return businType;
+	}
+	/**
+	 * 获取存款业务类型字典
+	 * @param data
+	 * @return
+	 */
+	public String getBusinFlag(String data){
+		String businFlag = null;
+		if("40227".equals(data)){
+			businFlag = "存款存入";
+		}else if("40223".equals(data)){
+			businFlag = "到期兑付";
+		}
+		return businFlag;
+	}
+}

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:杨敏 -->
+<sqlMap>
+    <!--通过子流程processInstID查询主流程ActivityInstId-->
+     <resultMap class="commonj.sdo.DataObject" id="mapResultMap">
+
+        <result column="workitemid" javaType="Long" property="workItemID"/>
+        <result column="workitemname" javaType="String" property="workItemName"/>
+        <result column="activityinstid" javaType="String" property="activityInstID"/>
+        <result column="activitydefid" javaType="String" property="activityDefID"/>
+        <result column="processinstid" javaType="Long" property="processInstID"/>
+        <result column="l_main_biz_id" javaType="Long" property="lMainBizId"/>
+        <result column="vc_is_risk_control" javaType="String" property="vcIsRiskControl"/>
+        
+    </resultMap>
+     <!-- 查询上一环节是否为征求意见 -->
+    <select id="queryReqUseName" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+     select t1.operate_type, t1.user_name
+         from (select t.operate_type, t.user_name from cf_jy_prc_aprv_info t
+         where t.work_item_id = #workitemID#
+         order by sysid desc) t1
+         where rownum = 1
+      </select> 
+      <!-- 获取第一个工作项编号  -->
+    <select id="workitemid" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select * from wfworkitem where currentstate in (4,10) and processinstid=#processInstID# and activitydefid=#activityDefid#
+   </select>
+   <!-- 查询当前流程实例  待办工作项信息 -->
+   <select id="queyrProcessWorkitem" parameterClass="java.util.HashMap"  resultClass="com.eos.workflow.data.WFWorkItem">
+      select * from WFWORKITEM t where t.processinstid=#processInstID# and t.currentstate in (4,10)
+   </select>
+   <!---O32 取基金净资产-->
+   <select id="queyrVfundasset" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select a.en_fund_value as enFundValue from trade.vfundasset a where a.l_fund_id=#vcProductId#
+   </select>
+   <!---O32 取已投资该发行主体债券存量-->
+   <select id="queyrFsumamount" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select sum(b.l_current_amount / 100) fsumamount
+		  from trade.tunitstock b, trade.tstockinfo c, trade.tissuer d
+		 where b.vc_inter_code = c.vc_inter_code
+		   and c.l_company_id = d.l_issuer_id
+		   and b.l_fund_id = #vcProductId#
+		   and d.vc_issuer_code = #vcIssuerCode#     
+   </select>
+    <!---ats未成功发送O32的指令数量-->
+   <select id="queyrApplyCount" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+    	select sum(a.en_invest_balance)  as en_sum_amount
+	      from t_ats_apply_inst a, t_ats_stock_issue_info b        
+	     where a.l_stock_invest_no=b.l_stock_invest_no and b.c_status='2' and b.l_valid_status=0              
+	       and a.l_fix_valid_status != '3'
+	       and a.l_valid_status = '0'
+		   and a.vc_product_code = #vcProductCode#
+		   and b.l_issuer_id = #lIssuerId#
+   </select>
+    <!-- 查询当前流程实例  是否要投顾复核，委托人复核，风控审核 -->
+   <select id="queyrByProcessInstId" parameterClass="java.util.HashMap"  resultClass="com.eos.workflow.data.WFWorkItem">
+      select * from WFWORKITEM t where t.activitydefid in ($activitydefid$) and t.processinstid=#processInstID#
+   </select>
+   <!-- 通过子流程processInstID查询主流程挂起节点ActivityInstId -->
+   <select id="queyrActInstIdByProInstId" parameterClass="java.util.HashMap" resultMap="mapResultMap">
+      select wf.workitemid,wf.workitemname,wf.activityinstid,wf.activitydefid,wf.processinstid,m.vc_is_risk_control,m.l_main_biz_id from wfworkitem wf,t_ats_sub_process m where wf.currentstate=8 and wf.processinstid = m.l_main_process_inst_id 
+		and m.l_sub_process_inst_id=#processInstID#
+   </select>
+   <!-- 获取最新的回退节点节点ActivityInstId -->
+   <select id="queryBackNode" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+     
+      select app.vc_activity_def_id as vcActivityDefId from t_ats_approve_info app 
+       where app.d_create_time =(select max(d_create_time) from t_ats_approve_info 
+       where l_process_inst_id=#processInstID# and l_rollback_flag=1)
+          
+   </select>
+   
+   <!-- 获取最新的回退节点节点ActivityInstId -->
+   <select id="queryApproveInfo" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+      select app.vc_user_code as userCode from t_ats_approve_info app 
+      where app.l_process_inst_id=#processInstID# and app.vc_activity_def_id=#vcActivityDefID# 
+      		and app.vc_operate_type =1 order by app.l_approve_id desc
+   </select>
+   
+    <!-- 获取投资经理是否同意过 -->
+   <select id="queryApproveInfoTZJLFH" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+      select app.vc_user_code as userCode from t_ats_approve_info app 
+      where app.l_process_inst_id=#processInstID# and app.vc_activity_def_id=#vcActivityDefIDTLJL# 
+      		and app.vc_operate_type =1 and rownum=1
+   </select>
+   
+    <!-- 获取工作项的参与者姓名和ID  -->
+    <select id="workitemparticipant" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select connstr(distinct t.participantname) participantname,connstr(distinct t.participantid) participantid from V_CURRENTWORKITEM t where 
+       t.processinstid = #processInstID#  and t.workitemid = #workItemID#
+       
+   </select>
+   
+   <!-- 获取工作项ID  -->
+    <select id="queryWorkitemId" parameterClass="java.lang.String"  resultClass="java.lang.String">
+      select wf.workitemid from wfworkitem wf where wf.activitydefid='ATS_FM_TGLR' and wf.processinstid=#processInstId#
+   </select>
+    
+   
+</sqlMap>

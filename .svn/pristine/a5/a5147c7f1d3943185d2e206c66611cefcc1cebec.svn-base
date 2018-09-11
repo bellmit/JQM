@@ -1,0 +1,28 @@
+//发起风控审批流程按钮可用控制
+function riskProcessBtnControl(row){
+	if(row.cIsValid=='1' || row.cIsValid=='5'){	//交易状态为有效或者修改审核中
+		if(row.vcBizType=='1' || row.vcBizType=='5' || row.vcBizType=='6'){
+			nui.ajax({
+				url : "com.cjhxfund.ats.riskMgr.comm.getRiskInfo.biz.ext",
+				type : 'POST',
+				data : {lResultId:row.lResultId},
+				cache : false,
+				async: true,
+				contentType : 'text/json',
+				success : function(text) {
+					var returnJson = nui.decode(text);
+					if(returnJson.exception == null){
+						if(returnJson.riskInfo == null || (returnJson.riskInfo.cStatus!=1 && returnJson.riskInfo.cStatus!=2)){
+							nui.get("riskProcess").enable();
+						}
+					}
+				}
+			 });
+		}
+	}
+}
+
+//发起风控审批流程
+function startRiskProcess(){
+	
+}

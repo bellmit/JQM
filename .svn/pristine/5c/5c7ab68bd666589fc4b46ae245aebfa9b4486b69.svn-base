@@ -1,0 +1,1600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:DataSetDiagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://www.primeton.com/datamodel" name="riskInfo" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" displayName="风控信息" author="caikaifa">
+  <nodes xsi:type="model:PEntityNode" id="node0" name="TAtsRiskmgrDetail" nodeType="table" displayName="TAtsRiskmgrDetail" author="caikaifa" table="T_ATS_RISKMGR_DETAIL" genStrategy="assigned">
+    <location x="345" y="60"/>
+    <size height="228" width="150"/>
+    <figSize height="20" width="150"/>
+    <comment>风控指令信息</comment>
+    <columnProperty id="property11" name="lRiskmgrDetailId" displayName="主键" columnName="L_RISKMGR_DETAIL_ID" nullAble="false" PK="true" columnType="NUMBER" eosDataType="Long" length="22" dasType="long" overWriteDefaultColumnType="false" showType="Long" update="true" insert="true">
+      <comment>主键</comment>
+      <viewField dict="false" displayName="主键" id="lRiskmgrDetailId" label="主键" name="lRiskmgrDetailId" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property0" name="lRiskmgrId" displayName="风控信息ID" columnName="L_RISKMGR_ID" nullAble="true" columnType="NUMBER" eosDataType="Long" length="22" dasType="long" overWriteDefaultColumnType="false" showType="Long" update="true" insert="true">
+      <comment>风控信息ID</comment>
+      <viewField dict="false" displayName="风控信息ID" id="lRiskmgrId" label="风控信息ID" name="lRiskmgrId" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property1" name="vcIsTransaction" displayName="是否关联/异常交易" columnName="VC_IS_TRANSACTION" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>是否关联/异常交易</comment>
+      <viewField dict="false" displayName="是否关联/异常交易" id="vcIsTransaction" label="是否关联/异常交易" name="vcIsTransaction" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property2" name="vcRiskType" displayName="风控类型" columnName="VC_RISK_TYPE" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>风控类型</comment>
+      <viewField dict="false" displayName="风控类型" id="vcRiskType" label="风控类型" name="vcRiskType" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property3" name="vcRiskNo" displayName="风控编号" columnName="VC_RISK_NO" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>风控编号</comment>
+      <viewField dict="false" displayName="风控编号" id="vcRiskNo" label="风控编号" name="vcRiskNo" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property4" name="vcSetValue" displayName="设置值" columnName="VC_SET_VALUE" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>设置值</comment>
+      <viewField dict="false" displayName="设置值" id="vcSetValue" label="设置值" name="vcSetValue" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property5" name="vcTrueValue" displayName="真实值" columnName="VC_TRUE_VALUE" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>真实值</comment>
+      <viewField dict="false" displayName="真实值" id="vcTrueValue" label="真实值" name="vcTrueValue" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property6" name="vcDenomValue" displayName="分母值" columnName="VC_DENOM_VALUE" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>分母值</comment>
+      <viewField dict="false" displayName="分母值" id="vcDenomValue" label="分母值" name="vcDenomValue" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property7" name="vcMolecularValue" displayName="分子值" columnName="VC_MOLECULAR_VALUE" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>分子值</comment>
+      <viewField dict="false" displayName="分子值" id="vcMolecularValue" label="分子值" name="vcMolecularValue" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property8" name="vcRiskDescribe" displayName="风控描述" columnName="VC_RISK_DESCRIBE" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="512" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>风控描述</comment>
+      <viewField dict="false" displayName="风控描述" id="vcRiskDescribe" label="风控描述" name="vcRiskDescribe" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property9" name="vcIncontrolRiskDesc" displayName="不能控制的风控说明" columnName="VC_INCONTROL_RISK_DESC" nullAble="true" columnType="VARCHAR2" eosDataType="String" length="2048" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>不能控制的风控说明</comment>
+      <viewField dict="false" displayName="不能控制的风控说明" id="vcIncontrolRiskDesc" label="不能控制的风控说明" name="vcIncontrolRiskDesc" userDefined="true">
+        <fieldView>
+          <type name="write"/>
+          <attr name="formatPattern"/>
+          <attr name="srcFormatPattern"/>
+          <attr name="maxLength"/>
+          <attr attrValue="" defaultValue="" name="filter"/>
+          <attr attrValue="" defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+        </fieldView>
+        <fieldEdit>
+          <type name="text"/>
+          <attr attrValue="" defaultValue="" name="value"/>
+          <attr attrValue="" defaultValue="" name="extAttr"/>
+          <attr attrValue="" defaultValue="" name="tabindex"/>
+          <attr attrValue="" defaultValue="" name="readonly"/>
+          <attr attrValue="" defaultValue="" name="disabled"/>
+          <attr attrValue="" defaultValue="" name="size"/>
+          <attr attrValue="" defaultValue="" name="maxlength"/>
+          <attr attrValue="" defaultValue="" name="title"/>
+          <attr attrValue="" defaultValue="" name="style"/>
+          <attr attrValue="" defaultValue="" name="styleClass"/>
+          <attr attrValue="" defaultValue="" name="validateAttr"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+  </nodes>
+  <nodes xsi:type="model:SPEntityNode" id="Entity0" name="QueryRiskInfo" nodeType="table" displayName="Entity" author="caikaifa" open="true" entType="SPEntity" allUseViewModel="true" instanceClass="" table="">
+    <location x="75" y="345"/>
+    <size height="318" width="150"/>
+    <figSize height="20" width="150"/>
+    <columnProperty id="property17" name="lRiskmgrId" displayName="lRiskmgrId" columnName="L_RISKMGR_ID" nullAble="false" PK="false" columnType="NUMBER" eosDataType="Decimal" precision="-127" dasType="big_decimal" showType="Decimal">
+      <viewField dict="false" dictTypeId="" displayName="lRiskmgrId" entityField="lRiskmgrId" id="lRiskmgrId" label="lRiskmgrId" name="lRiskmgrId" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property18" name="lResultId" displayName="lResultId" columnName="L_RESULT_ID" nullAble="true" PK="false" columnType="NUMBER" eosDataType="Decimal" precision="-127" dasType="big_decimal" showType="Decimal">
+      <viewField dict="false" dictTypeId="" displayName="lResultId" entityField="lResultId" id="lResultId" label="lResultId" name="lResultId" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property19" name="lProcessinstId" displayName="lProcessinstId" columnName="L_PROCESSINST_ID" nullAble="true" PK="false" columnType="NUMBER" eosDataType="Decimal" precision="-127" dasType="big_decimal" showType="Decimal">
+      <viewField dict="false" dictTypeId="" displayName="lProcessinstId" entityField="lProcessinstId" id="lProcessinstId" label="lProcessinstId" name="lProcessinstId" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property20" name="lRiskNo" displayName="lRiskNo" columnName="L_RISK_NO" nullAble="true" PK="false" columnType="NUMBER" eosDataType="Decimal" precision="-127" dasType="big_decimal" showType="Decimal">
+      <viewField dict="false" dictTypeId="" displayName="lRiskNo" entityField="lRiskNo" id="lRiskNo" label="lRiskNo" name="lRiskNo" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property21" name="cRiskType" displayName="cRiskType" columnName="C_RISK_TYPE" nullAble="true" PK="false" columnType="CHAR" eosDataType="String" length="1" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="cRiskType" entityField="cRiskType" id="cRiskType" label="cRiskType" name="cRiskType" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property22" name="cStatus" displayName="cStatus" columnName="C_STATUS" nullAble="true" PK="false" columnType="CHAR" eosDataType="String" length="1" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="cStatus" entityField="cStatus" id="cStatus" label="cStatus" name="cStatus" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property23" name="vcProductCode" displayName="vcProductCode" columnName="VC_PRODUCT_CODE" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcProductCode" entityField="vcProductCode" id="vcProductCode" label="vcProductCode" name="vcProductCode" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property24" name="vcProductName" displayName="vcProductName" columnName="VC_PRODUCT_NAME" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="128" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcProductName" entityField="vcProductName" id="vcProductName" label="vcProductName" name="vcProductName" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property25" name="cIsValid" displayName="cIsValid" columnName="C_IS_VALID" nullAble="true" PK="false" columnType="CHAR" eosDataType="String" length="1" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="cIsValid" entityField="cIsValid" id="cIsValid" label="cIsValid" name="cIsValid" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property26" name="vcBizType" displayName="vcBizType" columnName="VC_BIZ_TYPE" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcBizType" entityField="vcBizType" id="vcBizType" label="vcBizType" name="vcBizType" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property27" name="vcDepository" displayName="vcDepository" columnName="VC_DEPOSITORY" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcDepository" entityField="vcDepository" id="vcDepository" label="vcDepository" name="vcDepository" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property28" name="vcStockInnerCode" displayName="vcStockInnerCode" columnName="VC_STOCK_INNER_CODE" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcStockInnerCode" entityField="vcStockInnerCode" id="vcStockInnerCode" label="vcStockInnerCode" name="vcStockInnerCode" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property29" name="vcStockCode" displayName="vcStockCode" columnName="VC_STOCK_CODE" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="32" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcStockCode" entityField="vcStockCode" id="vcStockCode" label="vcStockCode" name="vcStockCode" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property30" name="vcStockName" displayName="vcStockName" columnName="VC_STOCK_NAME" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="64" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcStockName" entityField="vcStockName" id="vcStockName" label="vcStockName" name="vcStockName" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property31" name="vcCounterpartyName" displayName="vcCounterpartyName" columnName="VC_COUNTERPARTY_NAME" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="128" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcCounterpartyName" entityField="vcCounterpartyName" id="vcCounterpartyName" label="vcCounterpartyName" name="vcCounterpartyName" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property32" name="vcProcessType" displayName="vcProcessType" columnName="VC_PROCESS_TYPE" nullAble="true" PK="false" columnType="VARCHAR2" eosDataType="String" length="20" dasType="string" showType="String">
+      <viewField dict="false" dictTypeId="" displayName="vcProcessType" entityField="vcProcessType" id="vcProcessType" label="vcProcessType" name="vcProcessType" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <spEntitySqlView product="default" view="" useSql="true" schema="" needSave="true">
+      <sql>select risk.l_riskmgr_id,&#xD;
+       risk.l_result_id,&#xD;
+       risk.l_processinst_id,&#xD;
+       risk.l_risk_no,&#xD;
+       risk.c_risk_type,&#xD;
+       risk.c_status,&#xD;
+       instruct.vc_product_code, --产品代码&#xD;
+       instruct.vc_product_name, --产品名称&#xD;
+       instruct.c_is_valid, --指令状态&#xD;
+       instruct.VC_BIZ_TYPE, --业务类别&#xD;
+       instruct.VC_DEPOSITORY, --托管机构&#xD;
+       instruct.VC_STOCK_INNER_CODE, --证券内码&#xD;
+       instruct.VC_STOCK_CODE, --证券代码&#xD;
+       instruct.VC_STOCK_NAME, --证券名称&#xD;
+       instruct.VC_COUNTERPARTY_NAME, --交易对手名称&#xD;
+       process.VC_PROCESS_TYPE --流程类型&#xD;
+  from t_ats_riskmgr_info risk&#xD;
+  left join t_ats_inquiry_result_instruct instruct&#xD;
+    on risk.l_result_id = instruct.l_result_id&#xD;
+  left join t_ats_biz_process process&#xD;
+    on risk.l_processinst_id = process.l_process_inst_id&#xD;
+</sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="DB2 UDB" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="DM DBMS" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="GBase" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="Informix" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="KingbaseES" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="MySql" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="Oracle" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="OSCAR" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="SQL Server" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+    <spEntitySqlView product="Sybase_ASE" view="" useSql="true" schema="">
+      <sql></sql>
+    </spEntitySqlView>
+  </nodes>
+  <nodes xsi:type="model:PEntityNode" id="node1" name="TAtsRiskmgrInfo" nodeType="table" displayName="TAtsRiskmgrInfo" author="caikaifa" allUseViewModel="true" instanceClass="" table="T_ATS_RISKMGR_INFO" genStrategy="assigned">
+    <location x="75" y="60"/>
+    <size height="151" width="150"/>
+    <figSize height="20" width="150"/>
+    <comment>风控引擎信息表</comment>
+    <columnProperty id="property10" name="lRiskmgrId" displayName="风控管理ID" columnName="L_RISKMGR_ID" nullAble="false" PK="true" columnType="NUMBER" eosDataType="Long" length="22" dasType="long" overWriteDefaultColumnType="false" showType="Long" update="true" insert="true">
+      <comment>风控管理ID</comment>
+      <viewField dict="false" dictTypeId="" displayName="风控管理ID" entityField="lRiskmgrId" id="lRiskmgrId" label="风控管理ID" name="lRiskmgrId" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property12" name="lProcessinstId" displayName="风控流程ID" columnName="L_PROCESSINST_ID" nullAble="true" PK="false" columnType="NUMBER" eosDataType="Long" length="22" dasType="long" overWriteDefaultColumnType="false" showType="Long" update="true" insert="true">
+      <comment>风控流程ID</comment>
+      <viewField dict="false" dictTypeId="" displayName="风控流程ID" entityField="lProcessinstId" id="lProcessinstId" label="风控流程ID" name="lProcessinstId" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property13" name="lResultId" displayName="询价结果指令编号(主键ID)" columnName="L_RESULT_ID" nullAble="true" PK="false" columnType="NUMBER" eosDataType="Long" length="22" dasType="long" overWriteDefaultColumnType="false" showType="Long" update="true" insert="true">
+      <comment>询价结果指令编号(主键ID)</comment>
+      <viewField dict="false" dictTypeId="" displayName="询价结果指令编号(主键ID)" entityField="lResultId" id="lResultId" label="询价结果指令编号(主键ID)" name="lResultId" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property14" name="cStatus" displayName="状态" columnName="C_STATUS" nullAble="true" PK="false" columnType="CHAR" eosDataType="String" length="1" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>状态</comment>
+      <viewField dict="false" dictTypeId="" displayName="状态" entityField="cStatus" id="cStatus" label="状态" name="cStatus" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property15" name="cRiskType" displayName="风控类型（异常、关联、异常且关联）" columnName="C_RISK_TYPE" nullAble="true" PK="false" columnType="CHAR" eosDataType="String" length="1" dasType="string" overWriteDefaultColumnType="false" showType="String" update="true" insert="true">
+      <comment>风控类型（异常、关联、异常且关联）</comment>
+      <viewField dict="false" dictTypeId="" displayName="风控类型（异常、关联、异常且关联）" entityField="cRiskType" id="cRiskType" label="风控类型（异常、关联、异常且关联）" name="cRiskType" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+    <columnProperty id="property16" name="lRiskNo" displayName="风控序号和对应的风控条款" columnName="L_RISK_NO" nullAble="true" PK="false" columnType="NUMBER" eosDataType="Long" length="22" dasType="long" overWriteDefaultColumnType="false" showType="Long" update="true" insert="true">
+      <comment>风控序号和对应的风控条款</comment>
+      <viewField dict="false" dictTypeId="" displayName="风控序号和对应的风控条款" entityField="lRiskNo" id="lRiskNo" label="风控序号和对应的风控条款" name="lRiskNo" userDefined="true">
+        <fieldView showAllAttr="false">
+          <type name="write"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="propertyType"/>
+          <attr name="maxLength"/>
+          <attr name="formatPattern"/>
+          <attr defaultValue="" name="maxLengthString"/>
+          <attr name="value"/>
+          <attr name="srcFormatPattern"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="filter"/>
+          <attr name="ignore"/>
+        </fieldView>
+        <fieldEdit showAllAttr="false">
+          <type name="text"/>
+          <attr defaultValue="" name="scope"/>
+          <attr defaultValue="" name="indexed"/>
+          <attr defaultValue="" name="validateAttr"/>
+          <attr name="accesskey"/>
+          <attr defaultValue="" name="id"/>
+          <attr defaultValue="" name="iterateId"/>
+          <attr defaultValue="" name="title"/>
+          <attr defaultValue="" name="maxlength"/>
+          <attr defaultValue="" name="style"/>
+          <attr defaultValue="" name="onmouseup"/>
+          <attr defaultValue="" name="name"/>
+          <attr defaultValue="" name="onblur"/>
+          <attr defaultValue="" name="value"/>
+          <attr defaultValue="" name="onmousemove"/>
+          <attr defaultValue="" name="extAttr"/>
+          <attr defaultValue="" name="ondblclick"/>
+          <attr defaultValue="" name="onmouseout"/>
+          <attr defaultValue="" name="styleClass"/>
+          <attr defaultValue="" name="tabindex"/>
+          <attr defaultValue="" name="onkeyup"/>
+          <attr defaultValue="" name="onkeypress"/>
+          <attr defaultValue="" name="onkeydown"/>
+          <attr defaultValue="" name="property"/>
+          <attr defaultValue="" name="onfocus"/>
+          <attr defaultValue="" name="onchange"/>
+          <attr defaultValue="" name="onmouseover"/>
+          <attr defaultValue="" name="size"/>
+          <attr defaultValue="" name="onselect"/>
+          <attr defaultValue="" name="onclick"/>
+          <attr defaultValue="" name="onmousedown"/>
+          <attr defaultValue="" name="readonly"/>
+          <attr defaultValue="" name="modelField"/>
+          <attr defaultValue="" name="disabled"/>
+        </fieldEdit>
+      </viewField>
+    </columnProperty>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+</model:DataSetDiagram>

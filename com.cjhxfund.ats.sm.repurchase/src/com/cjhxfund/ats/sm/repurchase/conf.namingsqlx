@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:王沐寰 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="PARAM_CONF_ID" javaType="int" property="paramConfId"/>
+        <result column="PARAM_TYPE" javaType="String" property="paramType"/>
+        <result column="PARAM_STATUS" javaType="String" property="paramStatus"/>
+        <result column="PARAM_KEY" javaType="String" property="paramKey"/>
+        <result column="PARAM_NAME" javaType="String" property="paramName"/>
+         <result column="PARAM_VALUE" javaType="String" property="paramValue"/>
+    </resultMap>
+    <select id="select_conf"  resultMap="resultMap">
+    select PARAM_CONF_ID,PARAM_TYPE,PARAM_STATUS,
+    	PARAM_KEY,PARAM_NAME，PARAM_VALUE 
+    	from ZHFWPT_PARAM_CONF where id =#id# and gender =#gender#
+    </select>
+</sqlMap>

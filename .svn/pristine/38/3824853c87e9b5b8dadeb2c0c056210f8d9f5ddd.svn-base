@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:谭凯 -->
+<!-- 一级市场指令 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultMapForPrimaryMarket">
+        <result column="L_PRIMARY_MARKE_ID" javaType="string" property="lPrimaryMarketId"/>
+        <result column="VC_CLORD_ID" javaType="string" property="vcClordId"/>
+        <result column="VC_SENDER_SUB_ID" javaType="string" property="vcSenderSubId"/>
+        <result column="VC_SENDER_SUB_NAME" javaType="string" property="vcSenderSubName"/>
+        <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/>
+        <result column="VC_COMBI_NO" javaType="string" property="vcCombiNo"/>
+        <result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/>
+        <result column="VC_BOND_NAME" javaType="string" property="vcBondName"/>
+        <result column="VC_BOND_CODE" javaType="string" property="vcBondCode"/>
+        <result column="VC_BUSIN_CLASS" javaType="string" property="vcBusinClass"/>
+        <result column="VC_BUSIN_TYPE" javaType="string" property="vcBusinType"/>
+        <result column="VC_TRADE_RIVAL" javaType="string" property="vcTradeRival"/>
+        <result column="EN_PRICE1" javaType="double" property="enPrice1"/>
+        <result column="EN_PRICE2" javaType="double" property="enPrice2"/>
+        <result column="EN_PRICE3" javaType="double" property="enPrice3"/>
+        <result column="EN_PRICE4" javaType="double" property="enPrice4"/>
+        <result column="EN_PRICE5" javaType="double" property="enPrice5"/>
+        <result column="EN_ORDER_BALANCE1" javaType="double" property="enOrderBalance1"/>
+        <result column="EN_ORDER_BALANCE2" javaType="double" property="enOrderBalance2"/>
+        <result column="EN_ORDER_BALANCE3" javaType="double" property="enOrderBalance3"/>
+        <result column="EN_ORDER_BALANCE4" javaType="double" property="enOrderBalance4"/>
+        <result column="EN_ORDER_BALANCE5" javaType="double" property="enOrderBalance5"/>
+        <result column="VC_EX_DESTINATION" javaType="string" property="vcExDestination"/>
+        <result column="VC_PAYMENTPLACE" javaType="string" property="vcPaymentPalce"/>
+        <result column="VC_ORDER_TYPE" javaType="string" property="vcOrderType"/>
+        <result column="VC_ORDER_STATUS" javaType="string" property="vcOrderStatus"/>
+        <result column="L_CREATE_DATE" javaType="double" property="lCreateDate"/>
+        <result column="L_CREATE_TIME" javaType="double" property="lCreateTime"/>
+        <result column="L_UPDATE_DATE" javaType="double" property="lUpdateDate"/>
+        <result column="L_UPDATE_TIME" javaType="double" property="lUpdateTime"/>
+        <result column="VC_REMARK" javaType="string" property="vcRemark"/>
+        <result column="VC_CURRENCY" javaType="string" property="vcCurrency"/>
+        <result column="VC_INSTRUCTION_ID" javaType="string" property="vcInstructionId"/>
+        <result column="VC_INVEST_NO" javaType="string" property="vcInvestNo"/>
+        <result column="EN_PROCESS_ID" javaType="double" property="enProcessId"/>
+        <result column="VC_ORDER_PROCESS" javaType="string" property="vcOrderProcess"/>
+        <result column="VC_FIRST_CLORD_ID" javaType="string" property="vcFirstClordId"/>
+    </resultMap>
+    
+    <!--一级市场成交反馈-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapForOutConfirm">
+        <result column="EN_PRICE" javaType="double" property="enPrice"/>
+        <result column="EN_BALANCE" javaType="double" property="enBalance"/>
+        <result column="L_DEAL_DATE" javaType="double" property="lDealDate"/>
+        <result column="VC_INTER_CODE" javaType="string" property="nvInterCode"/>
+        <result column="L_RIVAL_ID" javaType="string" property="lRivalId"/>
+        <result column="EN_AMOUNT" javaType="string" property="enAmount"/>
+        <result column="C_DEAL_STATUS" javaType="string" property="cDealStatus"/>
+    </resultMap>
+    
+    <!--通过投资编号investNo查询指令信息-->
+    <select id="queryPrimaryMarketByInvestNo"  parameterClass="java.util.Map" resultMap="resultMapForPrimaryMarket">
+   		select
+   			*
+   		from
+   		   T_ATS_CJAPI_P_MARKET t
+   		  where 1=1 
+   		 <isNotNull property="vcInvestNo">
+   		    and t.VC_INVEST_NO = #vcInvestNo# 
+   		 </isNotNull>
+   		 <isNotNull property="vcOrderStatus">
+   			and t.VC_ORDER_STATUS = #vcOrderStatus#
+   		 </isNotNull>
+    </select>
+    
+    <!--通过原指令id获取整条信息-->
+    <select id="queryPrimaryMarketByInstrunctionId"  parameterClass="java.util.Map" resultMap="resultMapForPrimaryMarket">
+   		SELECT 
+   		 	*
+		FROM 
+			T_ATS_CJAPI_P_MARKET A
+		WHERE 1=1 AND  A.VC_CLORD_ID =#vcClordId#
+    </select>
+    
+    <update id="updatePrimaryMarketStatus" parameterClass="commonj.sdo.DataObject">
+    	UPDATE T_ATS_CJAPI_P_MARKET A
+    		SET 
+   				<isNotNull property="lUpdateTime">
+   				   A.L_UPDATE_TIME = #lUpdateTime#
+   				</isNotNull>
+   				<isNotNull property="lUpdateDate">
+   				  ,A.L_UPDATE_DATE = #lUpdateDate#
+   				</isNotNull>
+    			<isNotNull property="vcOrderProcess">
+    			  ,A.VC_ORDER_PROCESS = #vcOrderProcess#
+    			</isNotNull>
+    			<isNotNull property="vcOrderStatus">
+    			  ,A.VC_ORDER_STATUS = #vcOrderStatus#
+    			</isNotNull>
+   			WHERE A.L_PRIMARY_MARKE_ID = #lPrimaryMarketId#
+    </update>
+    
+      <update id="updatePrimaryMarketStatusByClordId" parameterClass="commonj.sdo.DataObject">
+    	UPDATE T_ATS_CJAPI_P_MARKET A
+    		SET 
+   				<isNotNull property="lUpdateDate">
+   				   A.L_UPDATE_DATE = #lUpdateDate#
+   				</isNotNull>
+   				<isNotNull property="lUpdateTime">
+   				   ,A.L_UPDATE_TIME = #lUpdateTime#
+   				</isNotNull>
+   				<isNotNull property="vcFirstClordId">
+   				   ,A.VC_FIRST_CLORD_ID = #vcFirstClordId#
+   				</isNotNull>
+   				<isNotNull property="vcOrderStatus">
+    			   ,A.VC_ORDER_STATUS = #vcOrderStatus#
+   				</isNotNull>
+   			WHERE A.VC_CLORD_ID = #vcClordId#
+    </update>
+    
+    <!--插入中标确认信息-->
+    <insert id="insertBindConfirmInfo" parameterClass="commonj.sdo.DataObject">
+    	insert into 
+    		T_ATS_CJAPI_BID_CONFIRM_INFO 
+    	(
+    		L_BID_CONFIRM_ID, VC_CLORD_ID, VC_INVEST_NO,
+    		L_BALLOT_NUMBER, EN_BALLOT_PRICE, L_PAYMENT_DATE,
+    		EN_COUPON_RATE,VC_FREQUENCE,VC_MODE_REPAYMENT,
+    		L_BEGINCAL_DATE,L_BID_LIMIT_TIME,VC_STOCK_NAME, 
+    		VC_STOCK_CODE, L_FIRST_PAY_DATE,VC_INTEREST_TYPE,
+    		VC_BID_STATUS, L_CREATE_DATE, L_CREATE_TIME,L_UPDATE_DATE, L_UPDATE_TIME,
+    		VC_DEAL_RESULT
+    	) 
+    	values
+    	(
+    		#lBidConfirmId#, #vcClordId#, #vcInvestNo#,
+    		#lBallotNumber#, #enBallotPrice#, #lPaymentDate#,
+    		#enCouponRate#,#vcFrequence#,#vcModeRepayment#,
+    		#lBegincalDate#,#lBidLimitTime#,#vcStockName#, 
+    		#vcStockCode#, #lFirstPayDate#,#vcInterestType#,
+    		#vcBidStatus#, #lCreateDate#,#lCreateTime#,#lCreateDate#,#lCreateTime#,
+    		#vcDealResult#
+    	)
+    </insert>
+    
+     <!--更新中标确认信息-->
+     <update id="updateBidConfirmInfoByClordId" parameterClass="commonj.sdo.DataObject">
+    	UPDATE T_ATS_CJAPI_BID_CONFIRM_INFO A
+    		SET 
+    			 A.VC_CLORD_ID = #vcClordId#
+   				<isNotNull property="lUpdateDate">
+   				   ,A.L_UPDATE_DATE = #lUpdateDate#
+   				</isNotNull>
+   				<isNotNull property="lUpdateTime">
+   				   ,A.L_UPDATE_TIME = #lUpdateTime#
+   				</isNotNull>
+   				<isNotNull property="vcDealResult">
+    			   ,A.VC_DEAL_RESULT = #vcDealResult#
+   				</isNotNull>
+   				<isNotNull property="vcDealMessage">
+    			   ,A.VC_DEAL_MESSAGE = #vcDealMessage#
+   				</isNotNull>
+   				<isNotNull property="vcBidStatus">
+    			   ,A.VC_BID_STATUS = #vcBidStatus#
+   				</isNotNull>
+   				<isNotNull property="vcInvestNo">
+    			   ,A.VC_INVEST_NO = #vcInvestNo#
+   				</isNotNull>
+   				<isNotNull property="lBallotNumber">
+    			   ,A.L_BALLOT_NUMBER = #lBallotNumber#
+   				</isNotNull>
+   				<isNotNull property="enBallotPrice">
+    			   ,A.EN_BALLOT_PRICE = #enBallotPrice#
+   				</isNotNull>
+   				<isNotNull property="lPaymentDate">
+    			   ,A.L_PAYMENT_DATE = #lPaymentDate#
+   				</isNotNull>
+   				<isNotNull property="enCouponRate">
+    			   ,A.EN_COUPON_RATE = #enCouponRate#
+   				</isNotNull>
+   				<isNotNull property="vcFrequence">
+    			   ,A.VC_FREQUENCE = #vcFrequence#
+   				</isNotNull>
+   				<isNotNull property="vcModeRepayment">
+    			   ,A.VC_MODE_REPAYMENT = #vcModeRepayment#
+   				</isNotNull>
+   				<isNotNull property="lBegincalDate">
+    			   ,A.L_BEGINCAL_DATE = #lBegincalDate#
+   				</isNotNull>
+   				<isNotNull property="lBidLimitTime">
+    			   ,A.L_BID_LIMIT_TIME = #lBidLimitTime#
+   				</isNotNull>
+   				<isNotNull property="vcStockCode">
+    			   ,A.VC_STOCK_CODE = #vcStockCode#
+   				</isNotNull>
+   				<isNotNull property="vcStockName">
+    			   ,A.VC_STOCK_NAME = #vcStockName#
+   				</isNotNull>
+   				<isNotNull property="lFirstPayDate">
+    			   ,A.L_FIRST_PAY_DATE = #lFirstPayDate#
+   				</isNotNull>
+   				<isNotNull property="vcInterestType">
+    			   ,A.VC_INTEREST_TYPE = #vcInterestType#
+   				</isNotNull>
+   			WHERE A.VC_CLORD_ID = #vcClordId#
+    </update>
+     
+    
+</sqlMap>

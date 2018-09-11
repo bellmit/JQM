@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:chendi -->
+<sqlMap> 
+    <resultMap class="commonj.sdo.DataObject" id="bondBetweenBankMap">
+        <result column="vc_stock_code" javaType="string" property="stockCode"/>
+        <result column="vc_stock_name" javaType="string" property="stockName"/>
+        <result column="vc_market_no" javaType="string" property="vcMarketNo"/>
+        <result column="vc_inter_code" javaType="string" property="vcStockInnerCode"/>
+    </resultMap>
+    <!--模糊查询证券代码信息-->
+    <select id="queryBondCodeSql" parameterClass="string" resultMap="bondBetweenBankMap">
+        select vc_stock_code,
+        	   vc_stock_name,
+               vc_market_no,
+               vc_inter_code 
+          from vw_bondinfo_wind 
+         where vc_stock_code like #stockCode#||'%' 
+           and rownum &lt;= 50
+    </select>
+    <resultMap class="commonj.sdo.DataObject" id="roles">
+    	<result column="role_code" javaType="String" property="roleCode"/>
+    </resultMap>
+    <!-- 查询系统参数状态 -->
+    <select id="queryRoleByUser" parameterClass="commonj.sdo.DataObject" resultMap="roles">
+    	select distinct t.role_code
+		  from cap_role t, cap_partyauth ap, org_employee emp
+		 where t.role_id = ap.role_id
+		   and ap.party_type = 'emp'
+		   and ap.party_id = to_char(emp.empid)
+		   and emp.operatorid = #userId#
+		   and t.role_code = #roleCode#
+    </select>
+</sqlMap>

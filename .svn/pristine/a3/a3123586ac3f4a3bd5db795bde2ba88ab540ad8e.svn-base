@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="submitTask.bizx" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node1" name="注释1" displayName="注释" nodeType="note" type="note" content="流程流程信息中勾选的抄送方式" title="wjh&#x9;18-1-22 上午10:54">
+    <targetConnections>link10</targetConnections>
+    <location x="1067" y="189"/>
+    <size height="100" width="156"/>
+  </nodes>
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="发送流程操作下一处理人的邮件" title="Hui&#x9;16-7-8 上午10:04">
+    <location x="701" y="242"/>
+    <size height="74" width="125"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>transactionbegin0</targetNode>
+    </sourceConnections>
+    <location x="-94" y="353"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link13</targetConnections>
+    <location x="1316" y="354"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="-92" y="389"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="1318" y="390"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tSwitch" id="switch0" name="空操作" displayName="空操作" type="switch">
+    <sourceConnections xsi:type="process:tLink" description="" id="link5" name="2-回退" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess8</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">bpsParam/operateType</process:leftOperand>
+          <process:rightOperand type="literal">2</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link6" name="5-否决" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess3</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">bpsParam/operateType</process:leftOperand>
+          <process:rightOperand type="literal">5</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link7" name="3-转办" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess9</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">bpsParam/operateType</process:leftOperand>
+          <process:rightOperand type="literal">3</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link8" name="4-征求意见" displayName="连接线" isDefault="false" type="transition">
+      <bendPoint heightToEnd="0" heightToStart="206" widthToEnd="-151" widthToStart="0"/>
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess10</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">bpsParam/operateType</process:leftOperand>
+          <process:rightOperand type="literal">4</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link4" name="1-同意" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess0</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="6-不同意" id="link24" name="6-不同意" displayName="连接线" type="transition">
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess12</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">bpsParam/operateType</process:leftOperand>
+          <process:rightOperand type="literal">6</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link26" name="8-挂起" displayName="连接线" type="transition">
+      <bendPoint heightToEnd="0" heightToStart="-309" widthToEnd="-152" widthToStart="0"/>
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess6</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">bpsParam/operateType</process:leftOperand>
+          <process:rightOperand type="literal">8</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link22</targetConnections>
+    <location x="208" y="353"/>
+    <size height="28" width="28"/>
+    <nodeLabel>switch0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="switch0label" name="label" nodeType="label">
+    <location x="204" y="389"/>
+    <figSize height="17" width="37"/>
+    <node>switch0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess3" name="否决" displayName="terminateProcessInstance" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link14" name="link14" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess3</sourceNode>
+      <targetNode>switch1</targetNode>
+    </sourceConnections>
+    <targetConnections>link6</targetConnections>
+    <location x="360" y="195"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess3label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.process.terminateProcessInstance</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject" pattern="reference">pmprcaprvinfo</process:inputVariable>
+        <process:inputVariable id="2" name="userObject" type="query" value="com.eos.data.datacontext.UserObject" valueType="Java" pattern="reference">m:userObject</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess3label" name="label" nodeType="label">
+    <location x="361" y="230"/>
+    <figSize height="17" width="25"/>
+    <node>subprocess3</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess8" name="回退" displayName="rollbackActivityInst" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link15" name="link15" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess8</sourceNode>
+      <targetNode>switch1</targetNode>
+    </sourceConnections>
+    <targetConnections>link5</targetConnections>
+    <location x="360" y="280"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess8label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.rollback.rollbackActivityInst</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="destActDefID" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/backActivity</process:inputVariable>
+        <process:inputVariable id="2" name="rollBackStrategy" type="literal" value="String" valueType="Primitive" pattern="reference">path</process:inputVariable>
+        <process:inputVariable id="3" name="isReAudit" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/isReAudit</process:inputVariable>
+        <process:inputVariable id="4" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject" pattern="reference">pmprcaprvinfo</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject">pmprcaprvinfo</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess8label" name="label" nodeType="label">
+    <location x="361" y="315"/>
+    <figSize height="17" width="25"/>
+    <node>subprocess8</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess9" name="转换参与者" displayName="transParticipant4SDO" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess9</sourceNode>
+      <targetNode>subprocess4</targetNode>
+    </sourceConnections>
+    <targetConnections>link7</targetConnections>
+    <location x="359" y="450"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess9label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.participant.transParticipant4SDO</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="participantStr" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/handlerActor</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="participantArr" type="query" value="com.eos.workflow.data.WFParticipant[]" valueType="DataObject">participantArr</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess9label" name="label" nodeType="label">
+    <location x="342" y="485"/>
+    <figSize height="17" width="61"/>
+    <node>subprocess9</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess10" name="转换参与者" displayName="transParticipant4SDO" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link2" name="link2" displayName="link23" isDefault="true" type="transition">
+      <sourceNode>subprocess10</sourceNode>
+      <targetNode>subprocess14</targetNode>
+    </sourceConnections>
+    <targetConnections>link8</targetConnections>
+    <location x="360" y="560"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess10label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.participant.transParticipant4SDO</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="participantStr" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/helpActor</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="participantArr" type="query" value="com.eos.workflow.data.WFParticipant[]" valueType="DataObject">participantArr</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess10label" name="label" nodeType="label">
+    <location x="343" y="595"/>
+    <figSize height="17" width="61"/>
+    <node>subprocess10</node>
+  </nodes>
+  <nodes xsi:type="process:tTransactionBegin" id="transactionbegin0" name="事务开始" displayName="事务开始" type="transactionbegin">
+    <sourceConnections xsi:type="process:tLink" id="link27" name="link27" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>transactionbegin0</sourceNode>
+      <targetNode>subprocess11</targetNode>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="-15" y="353"/>
+    <size height="28" width="28"/>
+    <nodeLabel>transactionbegin0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="transactionbegin0label" name="label" nodeType="label">
+    <location x="-25" y="389"/>
+    <figSize height="17" width="49"/>
+    <node>transactionbegin0</node>
+  </nodes>
+  <nodes xsi:type="process:tTransactionCommit" id="transactioncommit0" name="事务提交" displayName="事务提交" type="transactioncommit">
+    <sourceConnections xsi:type="process:tLink" id="link13" name="link13" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>transactioncommit0</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link21</targetConnections>
+    <targetConnections>link20</targetConnections>
+    <location x="1222" y="353"/>
+    <size height="28" width="28"/>
+    <nodeLabel>transactioncommit0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="transactioncommit0label" name="label" nodeType="label">
+    <location x="1212" y="389"/>
+    <figSize height="17" width="49"/>
+    <node>transactioncommit0</node>
+  </nodes>
+  <nodes xsi:type="process:tSwitch" id="switch1" name="空操作1" displayName="空操作" type="switch">
+    <sourceConnections xsi:type="process:tLink" id="link23" name="link23" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>switch1</sourceNode>
+      <targetNode>subprocess2</targetNode>
+    </sourceConnections>
+    <targetConnections>link14</targetConnections>
+    <targetConnections>link15</targetConnections>
+    <targetConnections>link17</targetConnections>
+    <targetConnections>link9</targetConnections>
+    <targetConnections>link25</targetConnections>
+    <targetConnections>link16</targetConnections>
+    <targetConnections>link29</targetConnections>
+    <location x="650" y="354"/>
+    <size height="28" width="28"/>
+    <nodeLabel>switch1label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="switch1label" name="label" nodeType="label">
+    <location x="642" y="390"/>
+    <figSize height="17" width="44"/>
+    <node>switch1</node>
+  </nodes>
+  <nodes xsi:type="process:tSwitch" id="switch2" name="空操作2" displayName="空操作" type="switch">
+    <sourceConnections xsi:type="process:tLink" id="link21" name="link21" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>switch2</sourceNode>
+      <targetNode>transactioncommit0</targetNode>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link18" name="link18" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>switch2</sourceNode>
+      <targetNode>subprocess5</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="NOTNULLANDEMPTY">
+          <process:leftOperand type="query">fileIds</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link12</targetConnections>
+    <targetConnections>link31</targetConnections>
+    <location x="1080" y="354"/>
+    <size height="28" width="28"/>
+    <nodeLabel>switch2label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="switch2label" name="label" nodeType="label">
+    <location x="1072" y="390"/>
+    <figSize height="17" width="44"/>
+    <node>switch2</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess7" name="添加审批意见" displayName="addProdWorkitemExce" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" description="" id="link12" name="link12" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess7</sourceNode>
+      <targetNode>switch2</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link30" name="link30" displayName="连接线" type="transition">
+      <sourceNode>subprocess7</sourceNode>
+      <targetNode>subprocess1</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">bpsParam/operateType</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link11</targetConnections>
+    <location x="919" y="354"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess7label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.aprvInfo.addProdWorkitemExce</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitemID" type="query" value="String" valueType="Primitive" pattern="reference">workitem/workItemID</process:inputVariable>
+        <process:inputVariable id="1" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject" pattern="reference">pmprcaprvinfo</process:inputVariable>
+        <process:inputVariable id="2" name="operateType" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/operateType</process:inputVariable>
+        <process:inputVariable id="3" name="sendUser" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/sendUser</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="pmprcId" type="query" value="Long" valueType="Primitive">pmprcId</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess7label" name="label" nodeType="label">
+    <location x="896" y="389"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess7</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess0" name="同意" displayName="workItemExce" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link9" name="link9" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>switch1</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link4</targetConnections>
+    <location x="356" y="354"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess0label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.workitem.workItemExce</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="bpsParam" type="query" value="java.util.HashMap" valueType="Java" pattern="reference">bpsParam</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess0label" name="label" nodeType="label">
+    <location x="357" y="389"/>
+    <figSize height="17" width="25"/>
+    <node>subprocess0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess5" name="更新附件表审批意见ID" displayName="updateAttachment4Process" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link20" name="link20" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess5</sourceNode>
+      <targetNode>transactioncommit0</targetNode>
+    </sourceConnections>
+    <targetConnections>link18</targetConnections>
+    <location x="1155" y="450"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess5label</nodeLabel>
+    <process:flow index="2" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.file.updateAttachment4Process</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="aprvInfoId" type="query" value="String" valueType="Primitive" pattern="reference">pmprcId</process:inputVariable>
+        <process:inputVariable id="1" name="fileIds" type="query" value="String" valueType="Primitive" pattern="reference">fileIds</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess5label" name="label" nodeType="label">
+    <location x="1107" y="485"/>
+    <figSize height="17" width="122"/>
+    <node>subprocess5</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess11" name="保存到WorkInfo" displayName="addPmPrcWorkInfo" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link22" name="link22" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess11</sourceNode>
+      <targetNode>switch0</targetNode>
+    </sourceConnections>
+    <targetConnections>link27</targetConnections>
+    <location x="105" y="353"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess11label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.workinfo.addPmPrcWorkInfo</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workItem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="bpsParam" type="query" value="java.util.HashMap" valueType="Java" pattern="reference">bpsParam</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="pmPrcWorkInfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsPrcWorkInfo" valueType="DataObject">pmPrcWorkInfo</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess11label" name="label" nodeType="label">
+    <location x="72" y="388"/>
+    <figSize height="17" width="92"/>
+    <node>subprocess11</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess12" name="不同意" displayName="disAgreeWorkItemExce" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link25" name="link25" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess12</sourceNode>
+      <targetNode>switch1</targetNode>
+    </sourceConnections>
+    <targetConnections>link24</targetConnections>
+    <location x="360" y="120"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess12label</nodeLabel>
+    <process:flow index="1" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.workitem.disAgreeWorkItemExce</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess12label" name="label" nodeType="label">
+    <location x="355" y="155"/>
+    <figSize height="17" width="37"/>
+    <node>subprocess12</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess13" name="修改工作项名" displayName="editTaskName" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link11" name="link11" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess13</sourceNode>
+      <targetNode>subprocess7</targetNode>
+    </sourceConnections>
+    <targetConnections>link3</targetConnections>
+    <location x="840" y="354"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess13label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.workitem.editTaskName</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workItem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="operateType" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/operateType</process:inputVariable>
+        <process:inputVariable id="2" name="nextActDefID" type="query" value="String" valueType="Primitive" pattern="reference">bpsParam/backActivity</process:inputVariable>
+        <process:inputVariable id="3" name="helpProcessInstID" type="query" value="String" valueType="Primitive" pattern="reference">helpProcessInstID</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess13label" name="label" nodeType="label">
+    <location x="817" y="389"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess13</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess14" name="征求意见" displayName="startHelpProcess" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link17" name="link17" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess14</sourceNode>
+      <targetNode>switch1</targetNode>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="492" y="560"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess14label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.help.startHelpProcess</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="participantArr" type="query" value="com.eos.workflow.data.WFParticipant[]" valueType="DataObject" pattern="reference">participantArr</process:inputVariable>
+        <process:inputVariable id="2" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject" pattern="reference">pmprcaprvinfo</process:inputVariable>
+        <process:inputVariable id="3" name="pmPrcWorkInfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsPrcWorkInfo" valueType="DataObject" pattern="reference">pmPrcWorkInfo</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject">pmprcaprvinfo</process:outputVariable>
+        <process:outputVariable id="1" name="helpProcessInstID" type="query" value="String" valueType="Primitive">helpProcessInstID</process:outputVariable>
+        <process:outputVariable id="2" name="retcode" type="query" value="String" valueType="Primitive">retcode</process:outputVariable>
+        <process:outputVariable id="3" name="retmemo" type="query" value="String" valueType="Primitive">retmemo</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess14label" name="label" nodeType="label">
+    <location x="481" y="595"/>
+    <figSize height="17" width="49"/>
+    <node>subprocess14</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess4" name="转办" displayName="reassignWorkItemEx" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link16" name="link16" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess4</sourceNode>
+      <targetNode>switch1</targetNode>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="466" y="450"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess4label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.reassign.reassignWorkItemEx</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="participantArr" type="query" value="commonj.sdo.DataObject[]" valueType="Java" pattern="reference">participantArr</process:inputVariable>
+        <process:inputVariable id="2" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject" pattern="reference">pmprcaprvinfo</process:inputVariable>
+        <process:inputVariable id="3" name="pmPrcWorkInfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsPrcWorkInfo" valueType="DataObject" pattern="reference">pmPrcWorkInfo</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="pmprcaprvinfo" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" valueType="DataObject">pmprcaprvinfo</process:outputVariable>
+        <process:outputVariable id="1" name="retcode" type="query" value="String" valueType="Primitive">retcode</process:outputVariable>
+        <process:outputVariable id="2" name="retmemo" type="query" value="String" valueType="Primitive">retmemo</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess4label" name="label" nodeType="label">
+    <location x="467" y="485"/>
+    <figSize height="17" width="25"/>
+    <node>subprocess4</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess6" name="挂起" displayName="setProcessInstSuspend" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link29" name="link29" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess6</sourceNode>
+      <targetNode>switch1</targetNode>
+    </sourceConnections>
+    <targetConnections>link26</targetConnections>
+    <location x="361" y="45"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess6label</nodeLabel>
+    <process:flow index="1" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.process.setProcessInstSuspend</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processInstID" type="query" value="String" valueType="Primitive" pattern="reference">workitem/processInstID</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess6label" name="label" nodeType="label">
+    <location x="362" y="80"/>
+    <figSize height="17" width="25"/>
+    <node>subprocess6</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess1" name="抄送通知" displayName="sendUserNotification" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link31" name="link31" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess1</sourceNode>
+      <targetNode>switch2</targetNode>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link10" name="link10" displayName="连接线" type="note">
+      <sourceNode>subprocess1</sourceNode>
+      <targetNode>node1</targetNode>
+    </sourceConnections>
+    <targetConnections>link30</targetConnections>
+    <location x="990" y="289"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess1label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.taskNotification.sendUserNotification</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+        <process:inputVariable id="1" name="bpsParam" type="query" value="java.util.HashMap" valueType="Java" pattern="reference">bpsParam</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess1label" name="label" nodeType="label">
+    <location x="979" y="324"/>
+    <figSize height="17" width="49"/>
+    <node>subprocess1</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess2" name="流程环节结束后的调用" displayName="bpsEndInvoke" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link3" name="link3" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess2</sourceNode>
+      <targetNode>subprocess13</targetNode>
+    </sourceConnections>
+    <targetConnections>link23</targetConnections>
+    <location x="732" y="354"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess2label</nodeLabel>
+    <process:flow index="2" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.bpsEndInvoke</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="bpsParam" type="query" value="java.util.HashMap" valueType="Java" pattern="reference">bpsParam</process:inputVariable>
+        <process:inputVariable id="1" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="Java" pattern="reference">workitem</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="results" type="query" value="java.util.HashMap" valueType="Java">result</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess2label" name="label" nodeType="label">
+    <location x="685" y="389"/>
+    <figSize height="17" width="121"/>
+    <node>subprocess2</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="zengjing" createTime="2015-12-16 15:39:33" date="2015-12-16Z" description="流程提交统一入口" name="流程提交统一入口" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="" historyStateLocation="client" isArray="false" modelType="com.cjhxfund.fpm.bpsExpend.task.TAtsPrcWorkInfo" name="pmPrcWorkInfo"/>
+    <process:variable description="征求意见流程ID" historyStateLocation="client" isArray="false" name="helpProcessInstID" primitiveType="String"/>
+  </process:variables>
+  <process:inputs varArgs="false">
+    <process:input anyType="com.eos.workflow.data.WFWorkItem" description="工作项信息" isArray="false" name="workitem"/>
+    <process:input description="审批意见" isArray="false" modelType="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" name="pmprcaprvinfo"/>
+    <process:input anyType="java.util.HashMap" description="流程相关参数" isArray="false" name="bpsParam"/>
+    <process:input description="附件id字符串" isArray="false" name="fileIds" primitiveType="String"/>
+  </process:inputs>
+  <process:outputs/>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

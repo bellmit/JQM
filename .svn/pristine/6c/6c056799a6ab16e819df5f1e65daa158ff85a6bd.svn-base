@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:何祎 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="suggestionList">
+    	<result column="l_suggestion_id" javaType="Long" property="lSuggestionId"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_suggestion_titil" javaType="string" property="vcSuggestionTitil"/>
+        <result column="vc_suggestion_type" javaType="string" property="vcSuggestionType"/>
+        <result column="vc_suggestion_content" javaType="string" property="vcSuggestionContent"/>
+        <result column="vc_user_mail" javaType="string" property="vcUserMail"/>
+        <result column="vc_suggestion_status" javaType="string" property="vcSuggestionStatus"/>
+        <result column="vc_suggestion_userid" javaType="string" property="vcSuggestionUserid"/>
+        <result column="vc_suggestion_username" javaType="string" property="vcSuggestionUsername"/>
+        <result column="vc_user_tel" javaType="string" property="vcUserTel"/>
+        <result column="l_user_phone" javaType="Long" property="lUserPhone"/>
+        <result column="t_suggestion_date" javaType="string" property="tSuggestionDate"/>
+        <result column="t_suggestion_time" javaType="Date" property="tSuggestionTime"/>
+        <result column="l_attach_id" javaType="string" property="lAttachId"/>
+    </resultMap>
+    <select id="querySuggestionList" parameterClass="commonj.sdo.DataObject" resultMap="suggestionList">
+	    select t.l_suggestion_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.vc_suggestion_titil,
+	       t.vc_suggestion_type,
+	       t.vc_suggestion_content,
+	       t.vc_user_mail,
+	       t.vc_suggestion_status,
+	       t.vc_suggestion_userid,
+	       t.vc_suggestion_username,
+	       t.vc_user_tel,
+	       t.l_user_phone,
+	       to_char(t.t_suggestion_date,'yyyy-MM-dd HH24:mi:ss') t_suggestion_date,
+	       t.t_suggestion_time,
+	       t.l_attach_id
+	  from t_ats_suggestion_info t
+	  where 1 = 1
+	    <isNotNull property="vcSuggestionTitil"> 
+    	  	and t.vc_suggestion_titil like '%'||#vcSuggestionTitil#||'%' 
+    	</isNotNull>
+    	<isNotNull property="vcSuggestionType"> 
+    	  	and t.vc_suggestion_type = '$vcSuggestionType$'
+    	</isNotNull> 
+	   	<isNotNull property="tSuggestionDateB">
+	  	    AND  to_char(t.t_suggestion_date,'yyyy-MM-dd HH:mm:ss') <![CDATA[ >= ]]> '$tSuggestionDateB$'
+	  	</isNotNull>
+	   	<isNotNull property="tSuggestionDateE">
+	  		AND to_char(t.t_suggestion_date,'yyyy-MM-dd HH:mm:ss') <![CDATA[ <= ]]> '$tSuggestionDateE$'
+	  	</isNotNull>
+    	order by t_suggestion_date asc
+    </select>
+    
+        <select id="querySuggestionById" parameterClass="java.lang.String" resultMap="suggestionList">
+	    select t.l_suggestion_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.vc_suggestion_titil,
+	       t.vc_suggestion_type,
+	       t.vc_suggestion_content,
+	       t.vc_user_mail,
+	       t.vc_suggestion_status,
+	       t.vc_suggestion_userid,
+	       t.vc_suggestion_username,
+	       t.vc_user_tel,
+	       t.l_user_phone,
+	       to_char(t.t_suggestion_date,'yyyyMMdd HH:mm:ss') t_suggestion_date,
+	       t.t_suggestion_time,
+	       t.l_attach_id
+	  from t_ats_suggestion_info t
+	  where l_suggestion_id = #lSuggestionId#
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="communicationList">
+        <result column="vc_communication_content" javaType="string" property="vcCommunicationContent"/>
+        <result column="vc_communication_userid" javaType="string" property="vcCommunicationUserid"/>
+        <result column="vc_communication_username" javaType="string" property="vcCommunicationUsername"/>
+        <result column="t_communication_date" javaType="string" property="tCommunicationDate"/>
+    </resultMap>
+    <select id="queryCommunicationList" parameterClass="java.lang.String" resultMap="communicationList">
+	select t.vc_communication_content,
+	       t.vc_communication_userid,
+	       t.vc_communication_username,
+	       to_char(to_date(to_char(t.t_communication_date,'yyyyMMdd HH24:mi:ss'),'yyyyMMdd HH24:mi:ss'),'yyyyMMdd HH24:mi:ss') t_communication_date
+	  from t_ats_communication_log t
+	  where t.l_suggestion_id = #lSuggestionId#
+	  order by t_communication_date asc
+    </select>
+    
+     <resultMap id="fileResult" class="java.util.HashMap">
+		  <result property="sysid" column="L_ATTACH_ID"/>
+		  <result property="name" column="VC_ATTACH_NAME"/>
+		  <result property="attachSize" column="VC_ATTACH_SIZE"/>
+		  <result property="vcAttachType" column="VC_ATTACH_TYPE"/>
+		  <result property="vcAttachAdd" column="VC_ATTACH_ADD"/>
+	</resultMap>
+    <!-- 附件查询 add by shihao-->
+    <select id="getAttachInfos"  parameterClass="java.util.Map" resultMap="fileResult">
+    	select L_ATTACH_ID,VC_ATTACH_NAME,VC_ATTACH_SIZE,VC_ATTACH_ADD,VC_ATTACH_TYPE
+    	from T_ATS_ATTACH_INFO 
+        where 1 = 1
+        and L_ATTACH_ID in ($lAttachId$)
+    </select>
+    
+    
+</sqlMap>

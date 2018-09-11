@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:杨敏 -->
+<sqlMap>
+   <!--定义返回值类型-->
+   <resultMap class="commonj.sdo.DataObject" id="fileResultMap">
+        <result column="L_ATTACH_ID" javaType="int" property="lAttachId"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="VC_WHETHER_INDIA" javaType="string" property="vcWhetherIndia"/>
+        <result column="VC_ANNEX_SEAL" javaType="string" property="vcAnnexSeal"/>
+        <result column="WORKITEMNAME" javaType="string" property="workitemname"/>
+        
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+     </resultMap>
+     
+     <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="L_ATTACH_ID" javaType="string" property="lAttachId"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="VC_WHETHER_INDIA" javaType="string" property="vcWhetherIndia"/>
+        <result column="VC_ANNEX_SEAL" javaType="string" property="vcAnnexSeal"/>
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+     </resultMap>
+     
+     
+     <resultMap id="fileResult" class="java.util.HashMap">
+		  <result property="sysid" column="L_ATTACH_ID"/>
+		  <result property="name" column="VC_ATTACH_NAME"/>
+		  <result property="attachSize" column="VC_ATTACH_SIZE"/>
+	</resultMap>
+     
+     
+   <!-- 查询附件列表 -->
+    <select id="queryAttachmentList"  parameterClass="java.util.Map" resultMap="fileResultMap">
+    	select info.*,wf.workitemname from T_ATS_ATTACH_INFO info,wfworkitem wf
+        where info.l_work_item_id = wf.workitemid and info.l_biz_id=#bizId# 
+        and info.vc_version_no = '1'
+        <isNotNull property="processinstid"> 
+       	  and info.l_process_inst_id = '$processinstid$'
+        </isNotNull> 
+      	<isNotNull property="workItemID">
+        	and info.l_work_item_id = #workItemID# 
+      	</isNotNull>
+      	<isNotNull property="annexseal">
+        	and info.vc_annex_seal != #annexseal# 
+      	</isNotNull>
+      	<isNotNull property="attachBusType">
+        	and info.vc_attach_biz_type = #attachBusType#      
+      	</isNotNull>
+      	
+      	<isNotNull property="activitydefid">
+      	   union all
+           select info.*,wf.workitemname from T_ATS_ATTACH_INFO info,wfworkitem wf
+      	   where info.l_work_item_id = wf.workitemid and wf.activitydefid=#activitydefid# and info.l_process_inst_id=#processinstid#
+      	</isNotNull>
+
+    </select>
+    
+    <!-- 附件查询 add by shihao-->
+    <select id="getAttachInfos"  parameterClass="java.util.Map" resultMap="fileResult">
+    	select L_ATTACH_ID,VC_ATTACH_NAME,VC_ATTACH_SIZE
+    	from T_ATS_ATTACH_INFO 
+        where 1 = 1
+        <isNotNull property="bizId"> 
+       	   and l_biz_id=#bizId# 
+        </isNotNull>
+         <isNotNull property="attachBusType"> 
+       	   and VC_ATTACH_BIZ_TYPE=#attachBusType# 
+        </isNotNull> 
+         <isNotNull property="attachType"> 
+       	   and VC_ATTACH_TYPE=#attachType# 
+        </isNotNull> 
+    </select>
+    
+     <!-- 附件查询 add by shihao-->
+    <select id="getAttachInfos1"  parameterClass="java.util.Map" resultMap="resultMap">
+    	select *
+    	from T_ATS_ATTACH_INFO 
+        where 1 = 1
+        <isNotNull property="bizId"> 
+       	   and l_biz_id=#bizId# 
+        </isNotNull>
+        <isNotNull property="processinstid"> 
+       	   and L_PROCESS_INST_ID=#processinstid# 
+        </isNotNull>
+         <isNotNull property="attachBusType"> 
+       	   and VC_ATTACH_BIZ_TYPE=#attachBusType# 
+        </isNotNull> 
+         <isNotNull property="attachType"> 
+       	   and VC_ATTACH_TYPE=#attachType# 
+        </isNotNull> 
+    </select>
+    
+   <!-- 删除附件信息 -->
+    <delete id="deleteAttachment" parameterClass="java.util.Map">
+		delete from T_ATS_ATTACH_INFO info where info.L_ATTACH_ID in ($lAttachId$)
+	</delete>
+	 <!-- 附件查询 add by shihao-->
+    <select id="getAttachInfosByIds"  parameterClass="java.util.Map" resultMap="resultMap">
+    	select *
+    	from T_ATS_ATTACH_INFO 
+        where l_attach_id in ($lAttachId$)
+    </select>
+	<!-- 查询最新的审批意见-->
+    <select id="queryApproveInfo"  parameterClass="java.util.Map" resultClass="com.cjhxfund.commonUtil.dataBase.TAtsApproveInfo">
+    	select * from (select * from t_ats_approve_info aa where aa.l_process_inst_id=#processInstId#  order by aa.d_create_time desc) where   rownum = 1
+    </select>
+    
+    
+    
+
+</sqlMap>

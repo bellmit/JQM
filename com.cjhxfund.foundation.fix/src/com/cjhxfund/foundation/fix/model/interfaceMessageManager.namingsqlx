@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:刘玉龙 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="rcRiskMap">
+        <result column="vc_clord_id" javaType="string" property="vcClordId"/>
+        <result column="vc_symbol" javaType="string" property="vcSymbol"/>
+        <result column="vc_market_code" javaType="string" property="vcMarketCode"/>
+        <result column="vc_ex_destination" javaType="string" property="vcExDestination"/>
+        <result column="vc_rule_id" javaType="string" property="vcRuleId"/>
+        <result column="c_risk_operation" javaType="string" property="cRiskOperation"/>
+        <result column="vc_risk_type" javaType="string" property="vcRiskType"/>
+        <result column="vc_threshhold" javaType="string" property="vcThreshhold"/>
+        <result column="vc_fund_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_combi_no" javaType="string" property="vcCombiNo"/>
+        <result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+        <result column="vc_setting_value" javaType="string" property="vcSettingValue"/>
+        <result column="vc_real_value" javaType="string" property="vcRealValue"/>
+        <result column="vc_risk_summary" javaType="string" property="vcRiskSummary"/>
+        <result column="c_risk_source" javaType="string" property="cRiskSource"/>
+        <result column="vc_remark" javaType="string" property="vcRemark"/>
+        <result column="vc_ins_approve_flow" javaType="string" property="vcInsApproveFlow"/>
+    </resultMap>
+    
+    <!-- 查询风控接口反馈的风控信息 -->
+    <select id="queryRCRiskInfo" parameterClass="commonj.sdo.DataObject" resultMap="rcRiskMap">
+    	select ts.*, tc.vc_combi_name
+          from (select tb.vc_clord_id,
+                       td.vc_symbol,
+                       '' vc_market_code,
+                       td.vc_ex_destination,
+                       td.vc_rule_id,
+                       td.c_risk_operation,
+                       td.vc_risk_type,
+                       td.vc_threshhold,
+                       td.vc_fund_code,
+                       tp.vc_product_name,
+                       td.vc_combi_no,
+                       td.vc_setting_value,
+                       td.vc_real_value,
+                       td.vc_risk_summary,
+                       td.c_risk_source,
+                       td.vc_remark,
+                       td.vc_ins_approve_flow
+                  from t_ats_risk_check_result_return tb,
+                       t_ats_risk_check_result_dto    td,
+                       t_ats_product_info             tp
+                 where tb.l_check_return_id = td.l_check_return_id
+                   and td.vc_fund_code(+) = tp.vc_product_code
+                   and tb.vc_clord_id=#vcClordId#) ts
+          left join t_ats_combi_info tc
+            on ts.vc_combi_no = tc.vc_combi_no
+    </select>
+    <resultMap class="commonj.sdo.DataObject" id="ucRiskMap">
+        <result column="vc_clord_id" javaType="string" property="vcClordId"/>
+        <result column="vc_uncontrol_risk_nos" javaType="string" property="vcUncontrolRiskNos"/><!-- 风控编号 -->
+        <result column="vc_uncontrol_fund_code" javaType="string" property="vcUncontrolFundCode"/><!-- 基金代码 -->
+        <result column="vc_product_name" javaType="string" property="vcProductName"/><!-- 基金名称 -->
+        <result column="vc_uncontrol_risk_summary" javaType="string" property="vcUncontrolRiskSummary"/><!-- 不可控风控说明 -->
+        <result column="vc_uncontrol_remark" javaType="string" property="vcUncontrolRemark"/><!-- 备注 -->
+    </resultMap>
+    <!-- 查询风控接口反馈的不可控风控信息 -->
+    <select id="queryUCRiskInfo" parameterClass="string" resultMap="ucRiskMap">
+    	select tb.vc_clord_id,
+		       tc.vc_uncontrol_risk_nos,
+		       tc.vc_uncontrol_fund_code,
+		       tp.vc_product_name,
+		       tc.vc_uncontrol_risk_summary,
+		       tc.vc_uncontrol_remark
+		  from t_ats_risk_check_result_return tb,
+		       t_ats_risk_uncontrol_result    tc,
+		       t_ats_product_info             tp
+		 where tc.l_check_return_id = tb.l_check_return_id
+		   and tc.vc_uncontrol_fund_code(+) = tp.vc_product_code
+		   and tb.vc_clord_id = #vcClordId#
+    </select>
+    
+    
+    <resultMap class="commonj.sdo.DataObject" id="riskInfoMap">
+    	<result column="l_risk_warn_log_id" javaType="string" property="lRiskWarnLogId"/><!-- 主键ID -->
+    	<result column="l_date" javaType="string" property="lDate"/>
+    	<result column="l_time" javaType="string" property="lTime"/>
+        <result column="vc_clordid" javaType="string" property="vcClordId"/>
+        <result column="l_risk_serial_no" javaType="string" property="vcRuleId"/>
+        <result column="c_warn_operation" javaType="string" property="cRiskOperation"/>
+        <result column="c_risk_type" javaType="string" property="vcRiskType"/>
+        <result column="c_warn_level" javaType="string" property="vcThreshhold"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_combi_no" javaType="string" property="vcCombiNo"/>
+        <result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+        <result column="vc_stock_code" javaType="string" property="vcSymbol"/>
+        <result column="vc_market_code" javaType="string" property="vcMarketCode"/>
+        <result column="c_market_no" javaType="string" property="vcExDestination"/>
+        <result column="en_setvalue" javaType="double" property="vcSettingValue"/>
+        <result column="en_value" javaType="double" property="vcRealValue"/>
+        <result column="vc_summary" javaType="string" property="vcRiskSummary"/>
+        <result column="c_risk_source" javaType="string" property="cRiskSource"/>
+        <result column="vc_trigger_remark" javaType="string" property="vcRemark"/>
+        <result column="c_log_source" javaType="string" property="cLogSource"/>
+        <result column="rn" javaType="string" property="rn"/>
+    </resultMap>
+    <!-- 查询FIX风控反馈的风控信息 -->
+    <select id="queryRiskInfo" parameterClass="commonj.sdo.DataObject" resultMap="riskInfoMap">
+    	select f.*
+      from (select distinct t.l_risk_warn_log_id,
+                            to_char(t.l_date) l_date,
+                            to_char(lpad(t.l_time, 6, '0')) l_time,
+                            t.vc_clordid,
+                            t.l_risk_serial_no,
+                            t.c_warn_operation,
+                            t.c_risk_type,
+                            t.c_warn_level,
+                            p.vc_product_code,
+                            p.vc_product_name,
+                            t.vc_combi_no,
+                            c.vc_combi_name,
+                            t.vc_stock_code,
+                            t.vc_market_code,
+                            '' c_market_no,
+                            t.en_value,
+                            t.en_setvalue,
+                            t.vc_summary,
+                            t.vc_trigger_remark,
+                            '1' c_risk_source,
+                            t.c_log_source,
+                            row_number() over(partition by t.l_risk_serial_no order by t.l_date, t.l_time asc) rn
+              from t_ats_risk_warn_log   t,
+                   t_ats_fix_receive_msg fs,
+                   t_ats_product_info    p,
+                   t_ats_combi_info      c
+             where t.l_msg_id = fs.l_msg_id
+               and t.vc_combi_no(+) = c.vc_combi_no
+               and c.l_product_id(+) = p.l_product_id
+               and t.vc_clordid =#vcClordid#) f
+     where f.rn = 1
+	 union    
+	 select g.*   
+	    from (select risk.l_riskmgr_id l_risk_warn_log_id,
+	            to_char(r.d_insert_date,'yyyymmdd') l_date,
+	            to_char(r.d_insert_date,'hh24miss') l_time,
+	            iri.vc_clord_id,
+	            to_number(risk.vc_risk_no) l_risk_serial_no,
+	            to_char(risk.vc_risk_type) c_warn_operation,
+	            '' c_risk_type,
+	            to_char(risk.vc_threshhold) c_warn_level,
+	            iri.vc_product_code,
+	            iri.vc_product_name,
+	            iri.vc_combi_code vc_combi_no,
+	            iri.vc_combi_name,
+	            iri.vc_stock_code,
+	            '' vc_market_code,
+	            '' c_market_no,
+	            to_number(risk.vc_true_value) en_value,
+	            to_number(risk.vc_set_value) en_setvalue,
+	            risk.vc_risk_describe vc_summary,
+	            risk.vc_remarks vc_trigger_remark,
+	            case when risk.c_data_source='3' then '2'
+	              else '3' end c_risk_source,
+	            '' c_log_source,
+	            row_number() over(partition by risk.vc_risk_no order by r.d_insert_date asc) rn
+	      from t_ats_riskmgr_detail risk
+	      left join t_ats_riskmgr_info r on risk.l_riskmgr_id=r.l_riskmgr_id
+	      left join t_ats_inquiry_result_instruct iri on r.l_result_id=iri.l_result_id
+	      where iri.vc_clord_id=#vcClordid#) g
+	  where g.rn=1
+    </select>
+    
+    <select id="getO32StockName" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+    	select t.vc_report_code, t.vc_stock_name, t.c_market_no, m.vc_market_char
+		  from trade.tstockinfo t, trade.tmarketinfo m
+		 where t.c_market_no = m.c_market_no
+		 	and t.vc_report_code = #vcSymbol#
+		 <isNotNull property="vcMarketCode">
+		 	and m.vc_market_char = #vcMarketCode#
+		 </isNotNull>
+		 <isNotNull property="vcExDestination">
+		 	and m.c_market_no = #vcExDestination#
+		 </isNotNull>
+    </select>
+    
+    <select id="getProductInfoByCombiNo" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+    	select tsc.l_combi_id,
+		       tsc.vc_combi_no,
+		       tsc.vc_combi_name,
+		       tsa.l_asset_id,
+		       tsa.vc_asset_name,
+		       tsa.vc_asset_name,
+		       tsp.l_product_id,
+		       tsp.vc_product_code,
+		       tsp.vc_product_name
+		  from t_ats_combi_info tsc, t_ats_asset_info tsa, t_ats_product_info tsp
+		 where tsc.l_asset_id = tsa.l_asset_id
+		   and tsa.l_product_id = tsp.l_product_id
+		   and tsc.vc_combi_no = #vcCombiNo#
+    </select>
+    
+    <select id="getO32InvestManagerOperatorId" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+    	select distinct (a.l_operator_no)
+		  from trade.topfundright  a,
+		       trade.toperator     b,
+		       trade.toprolerights c,
+		       trade.tfundinfo     d
+		 where a.l_fund_id = d.l_fund_id
+		   and a.l_operator_no = b.l_operator_no
+		   and a.l_operator_no = c.l_operator_no
+		   and instr(a.vc_rights, '2') > 0
+		   and b.c_operator_status = '1'
+		   and c.l_role_id in ('2','3')<!-- 2-投资经理;3-投资助理 -->
+		 <isNotNull property="vcOperatorName">
+		 	and b.vc_operator_name = #vcOperatorName#
+		 </isNotNull>
+		 <isNotNull property="vcFundCode">
+		 	and d.vc_fund_code = #vcFundCode#
+		 </isNotNull>
+    </select>
+    
+    <!-- 获取债券收益率类型  -->
+    <select id="getBondYideldType" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String">
+    	select nvl((select t.c_yield_ratio_type
+		             from trade.tbondproperty t
+		            where 1 = 1
+		              and (t.l_investor_operation_date >= #lFirstSettleDate# or
+		                  t.l_publisher_operation_date >= #lFirstSettleDate#)
+		              and t.c_yield_ratio_type = '2'
+		              and t.vc_inter_code = ts.vc_inter_code
+		              and rownum = 1),
+		           1) c_yield_ratio_type
+		  from trade.tstockinfo ts
+		 where ts.c_market_no = #cMarketNo#
+		   and ts.vc_report_code = #vcStockCode#
+    </select>
+</sqlMap>

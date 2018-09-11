@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:wjh -->
+<sqlMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="lRiskmgrId" javaType="string" property="lRiskmgrId"/>
+        <result column="lProcessinstId" javaType="string" property="lProcessinstId"/>
+        <result column="lRiskNo" javaType="string" property="lRiskNo"/>
+        <result column="vcRiskType" javaType="string" property="vcRiskType"/>
+        <result column="cStatus" javaType="string" property="cStatus"/>
+        <result column="vcApproveType" javaType="string" property="vcApproveType"/>
+        <result column="vcForbidType" javaType="string" property="vcForbidType"/>
+        <result column="vcForbidRemark" javaType="string" property="vcForbidRemark"/>
+        <result column="dInsertDate" javaType="Date" property="dInsertDate"/>
+        <result column="dUpdateDate" javaType="Date" property="dUpdateDate"/>
+        <result column="lMistakeProcessId" javaType="string" property="lMistakeProcessId"/>
+        <result column="cMistakeStatus" javaType="string" property="cMistakeStatus"/>
+        <result column="cBizType" javaType="string" property="cBizType"/>
+        <result column="cMistake" javaType="string" property="cMistake"/>
+        <result column="lBizId" javaType="string" property="lBizId"/>
+        <result column="lResultId" javaType="string" property="lResultId"/>
+        <result column="vcClordId" javaType="string" property="vcClordId"/>
+        <result column="lresultInputerId" javaType="string" property="lresultInputerId"/>
+        <result column="vcProductCode" javaType="string" property="vcProductCode"/>
+        <result column="vcProductName" javaType="string" property="vcProductName"/>
+        <result column="vcCombiCode" javaType="string" property="vcCombiCode"/>
+        <result column="vcCombiName" javaType="string" property="vcCombiName"/>
+        <result column="cIsValid" javaType="string" property="cIsValid"/>
+        <result column="enTransactionPrice" javaType="string" property="enTransactionPrice"/>
+        <result column="vcBizType" javaType="string" property="vcBizType"/>
+        <result column="lAvailId" javaType="string" property="lAvailId"/>
+        <result column="vcDepository" javaType="string" property="vcDepository"/>
+        <result column="vcStockInnerCode" javaType="string" property="vcStockInnerCode"/>
+        <result column="vcStockCode" javaType="string" property="vcStockCode"/>
+        <result column="vcStockName" javaType="string" property="vcStockName"/>
+        <result column="vcCounterpartyName" javaType="string" property="vcCounterpartyName"/>
+        <result column="vcInstructSource" javaType="string" property="vcInstructSource"/>
+        <result column="lResultNo" javaType="string" property="lResultNo"/>
+        <result column="vcEntrustDirection" javaType="string" property="vcEntrustDirection"/>
+        <result column="enFaceAmount" javaType="string" property="enFaceAmount"/>
+        <result column="enFullPriceAmount" javaType="string" property="enFullPriceAmount"/>
+        <result column="lTradeDate" javaType="string" property="lTradeDate"/>
+        <result column="vcProcessType" javaType="string" property="vcProcessType"/>
+        <result column="activityInstName" javaType="string" property="activityInstName"/>
+        <result column="creator" javaType="string" property="creator"/>
+        <result column="c_manage_type" javaType="string" property="cManageType"/>
+    </resultMap>
+    <select id="qRiskInfo" parameterClass="java.util.HashMap" resultMap="resultMap">
+    select * from (   
+       select risk.l_riskmgr_id lRiskmgrId,
+           risk.l_processinst_id lProcessinstId,
+             process.vc_Process_Type,
+           risk.l_risk_no lRiskNo,
+           risk.vc_risk_type vcRiskType,
+           risk.c_status cStatus,
+           risk.vc_approve_type vcApproveType,
+           risk.vc_forbid_type vcForbidType,
+           risk.vc_forbid_remark vcForbidRemark,
+           risk.D_INSERT_DATE dInsertDate,
+           risk.d_update_date dUpdateDate,
+           risk.l_mistake_process_id lMistakeProcessId,
+           risk.c_mistake_status cMistakeStatus,
+           risk.c_biz_type cBizType,
+           nvl(risk.c_mistake, '0') cMistake,
+           (select to_char(wm_concat(vp.participantname))
+              from V_PERSONWORKITEM vp
+             where vp.l_process_inst_id = risk.l_processinst_id) nextActor,
+           process.l_biz_id lBizId,
+           instruct.l_result_id lResultId,
+           instruct.vc_clord_id vcClordId,
+           instruct.l_result_inputer_id lresultInputerId,
+           instruct.vc_product_code vcProductCode,
+           instruct.vc_product_name vcProductName,
+           (select p.c_manage_type
+              from t_ats_product_info p
+             where p.vc_product_code = instruct.vc_product_code) c_manage_type,
+           instruct.vc_combi_code vcCombiCode,
+           instruct.vc_combi_name vcCombiName,
+           instruct.c_is_valid cIsValid,
+           instruct.VC_BIZ_TYPE vcBizType,
+           case
+             when instruct.VC_BIZ_TYPE in (1, 2, 3, 4) then
+              to_char(instruct.en_net_price) || '/' ||
+              to_char(instruct.en_full_price)
+             when instruct.VC_BIZ_TYPE in (5, 6, 7) and  instruct.en_repo_rate is not null then
+               to_char(instruct.en_repo_rate) || '%'
+             when instruct.VC_BIZ_TYPE in (5, 6, 7) and  instruct.en_repo_rate is null then
+               to_char(instruct.en_weighting_value)
+           end enTransactionPrice,
+           instruct.VC_DEPOSITORY vcDepository,
+           instruct.VC_STOCK_INNER_CODE vcStockInnerCode,
+           instruct.VC_STOCK_CODE vcStockCode,
+           instruct.VC_STOCK_NAME vcStockName,
+           instruct.VC_COUNTERPARTY_NAME vcCounterpartyName,
+           instruct.vc_instruct_source vcInstructSource,
+           instruct.l_result_no lResultNo,
+           instruct.vc_entrust_direction vcEntrustDirection,
+           instruct.en_face_amount enFaceAmount,
+           instruct.en_full_price_amount enFullPriceAmount,
+           instruct.l_trade_date lTradeDate,
+           (select avail.l_avail_id from T_ATS_RISKMGR_AVAIL avail where avail.l_result_id = risk.l_result_id and risk.c_biz_type='2' and avail.vc_avail_remark='false') lAvailId,
+           process.VC_PROCESS_TYPE vcProcessType,
+           (case
+             when t1.currentstate = 7 then
+              '已完成'
+             when t1.currentstate = 8 then
+              '已终止'
+             when risk.c_status = '5' then
+              '--'
+             when t1.currentstate is null then
+              '未发起'
+             else
+              (select to_char(wm_concat(t3.activityinstname))
+                 from wfactivityinst t3
+                where t3.processinstid = t1.processinstid
+                  and t3.currentstate = 2)
+           end) activityInstName,
+           t1.creator
+      from t_ats_riskmgr_info risk
+     inner join t_ats_inquiry_result_instruct instruct
+        on risk.l_result_id = instruct.l_result_id
+        and risk.c_biz_type = '2'
+      left join t_ats_biz_process process
+        on risk.l_processinst_id = process.l_process_inst_id
+      left join wfprocessinst t1
+        on t1.processinstid = risk.l_processinst_id
+    union all
+    select risk.l_riskmgr_id,
+           risk.l_processinst_id,
+             process.vc_Process_Type,
+           risk.l_risk_no,
+           risk.vc_risk_type,
+           risk.c_status,
+           risk.vc_approve_type,
+           risk.vc_forbid_type,
+           risk.vc_forbid_remark,
+           risk.D_INSERT_DATE,
+           risk.d_update_date,
+           risk.l_mistake_process_id,
+           risk.c_mistake_status,
+           risk.c_biz_type,
+           nvl(risk.c_mistake, '0') c_mistake,
+           (select to_char(wm_concat(vp.participantname))
+              from V_PERSONWORKITEM vp
+             where vp.l_process_inst_id = risk.l_processinst_id) next_Actor,
+           process.l_biz_id,
+           app.l_apply_inst_id,
+           app.vc_clord_id,
+           null, 
+           app.vc_product_code, 
+           app.vc_product_name, 
+           (select p.c_manage_type
+              from t_ats_product_info p
+             where p.vc_product_code = app.vc_product_code) c_manage_type,
+           null, 
+           app.vc_combi_name, 
+           to_char(app.l_valid_status), 
+           app.c_apply_inst_type, 
+           app.vc_payment_place, 
+           null,
+           null, 
+           app.VC_STOCK_CODE, 
+           app.VC_STOCK_NAME, 
+           app.vc_business_object, 
+           null, 
+           app.l_invest_no, 
+           null, 
+           null, 
+           null, 
+           to_number(to_char(app.d_application_time, 'yyyyMMdd')), 
+           null,
+           process.VC_PROCESS_TYPE, 
+           (case
+             when t1.currentstate = 7 then
+              '已完成'
+             when t1.currentstate = 8 then
+              '已终止'
+             when t1.currentstate is null then
+              '未发起'
+             else
+              (select to_char(wm_concat(t3.activityinstname))
+                 from wfactivityinst t3
+                where t3.processinstid = t1.processinstid
+                  and t3.currentstate = 2)
+           end) activity_inst_name,
+           t1.creator
+      from t_ats_riskmgr_info risk
+     inner join t_ats_apply_inst app
+        on risk.l_result_id = app.l_apply_inst_id
+       and risk.c_biz_type = '1'
+      left join t_ats_biz_process process
+        on risk.l_processinst_id = process.l_process_inst_id
+      left join wfprocessinst t1
+        on t1.processinstid = risk.l_processinst_id
+  
+  ) A where 1=1
+  
+  <isNotNull property="lTradeDateMin">
+  and A.ltradedate &gt;= #lTradeDateMin#</isNotNull>
+  <isNotNull property="lTradeDateMax">
+  and A.ltradedate &lt;= #lTradeDateMax#</isNotNull>
+  <isNotNull property="vcProdCodes">
+  and A.vcproductcode in ($vcProdCodes$)</isNotNull>
+  <isNotNull property="vcProductName">
+  and A.vcproductname like '%'||#vcProductName#||'%'</isNotNull>
+  <isNotNull property="vcBizType"> 
+  and A.VCBIZTYPE in ($vcBizType$)</isNotNull>
+  <isNotNull property="lResultNo">
+  and A.lresultid like '%$lResultNo$%'</isNotNull>
+  <isNotNull property="vcApproveType">
+  and A.vcapprovetype in ($vcApproveType$)</isNotNull>
+  <isNotNull property="cStatus">
+  and A.cstatus in ($cStatus$)</isNotNull>
+  <isNotNull property="activityInstName">
+  
+  and A.activityInstName like '%'||#activityInstName#||'%'</isNotNull>
+  order by case when A.cstatus = '0' then 1
+  			when instr(nextActor,#currentUserName#)> 0 then 2
+           else 3 end 
+  <isNotNull property="sortField">, $sortField$ $sortOrder$</isNotNull>
+  
+    </select>
+</sqlMap>

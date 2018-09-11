@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:chenpeng -->
+<sqlMap>
+   
+    <select id="queryFaxList" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+       select t.*, t.rowid from CF_JY_EAST_FAX t where 1=1  and t.fax_account='$userId$'
+        <isNotNull property="sendTime"> 
+    	  and to_char(t.send_time,'yyyy-MM-dd') ='$sendTime$'
+    	</isNotNull>
+    	<isNotNull property="faxTheme"> 
+    	  and t.fax_theme like '%$faxTheme$%'
+    	</isNotNull>
+    	<isNotNull property="recvName"> 
+    	  and t.recv_name like '%$recvName$%'
+    	</isNotNull> 
+         
+    </select>
+</sqlMap>

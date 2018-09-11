@@ -1,0 +1,9 @@
+<mapping>
+	<method name="orderCancel">
+		<parameter index="0" name="ZROrder" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="orderState">
+		<parameter index="-1" name="jsonStr" />
+	</method>
+</mapping>

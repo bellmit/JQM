@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="JY_ZNHG_CMB_delete" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node1" name="注释1" displayName="注释" collapsed="false" nodeType="note" type="note" content="调用CJAPI逻辑流&#xD;&#xA;    opType  操作类型（1-废弃 2-确认）&#xD;&#xA;    processId 机器猫流程主键Id&#xD;&#xA;    tableName 机器猫表名(ZHFWPT_JY_ZQMM或ZHFWPT_JY_ZNHG)&#xD;&#xA;    temp 更新的变量&#xD;&#xA;&#xD;&#xA;    abandonedReasons 添加废弃原因" title="liangjilong&#x9;17-2-7 下午3:38">
+    <targetConnections>link19</targetConnections>
+    <targetConnections>link22</targetConnections>
+    <location x="465" y="480"/>
+    <size height="166" width="451"/>
+  </nodes>
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="废弃指令单：将交易状态更改为2-无效-废弃，并记录废弃原因&#xD;&#xA;&#xD;&#xA;交易状态：&#xD;&#xA;0-有效；1-无效-修改；2-无效-废弃；&#xD;&#xA;3-有效-退回；4-无效-退回；" title="huangmizhi&#x9;15-10-20 上午10:59">
+    <targetConnections>link21</targetConnections>
+    <location x="-6" y="345"/>
+    <size height="152" width="231"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>subprocess2</targetNode>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link21" name="link21" displayName="连接线" lineType="inheritance" type="note">
+      <sourceNode>start0</sourceNode>
+      <targetNode>node0</targetNode>
+    </sourceConnections>
+    <location x="90" y="132"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link1</targetConnections>
+    <location x="1050" y="128"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns>
+      <process:return id="0" language="String" name="invalidStr" type="query" valueType="Primitive">invalidStr</process:return>
+      <process:return id="1" language="Int" name="invalidCount" type="query" valueType="Primitive">invalidCount</process:return>
+      <process:return id="2" language="String" name="invalidFixStr" type="query" valueType="Primitive">invalidFixStr</process:return>
+      <process:return id="3" language="String" name="validFixFailReason" type="query" valueType="Primitive">validFixFailReason</process:return>
+    </process:returns>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="92" y="168"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="1052" y="164"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tLoopStart" description="" id="loopstart0" name="循环" displayName="循环" grouped="true" type="loopstart" matchedName="loopend0" loopType="iterate">
+    <sourceConnections xsi:type="process:tLink" id="link2" name="link2" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>loopstart0</sourceNode>
+      <targetNode>assign2</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link15</targetConnections>
+    <location x="390" y="134"/>
+    <size height="24" width="24"/>
+    <nodeLabel>loopstart0label</nodeLabel>
+    <process:condition/>
+    <process:iterate iterable="zhfwptjyznhgs" iterableElement="temp"/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="loopstart0label" name="label" nodeType="label">
+    <location x="390" y="166"/>
+    <figSize height="17" width="25"/>
+    <node>loopstart0</node>
+  </nodes>
+  <nodes xsi:type="process:tLoopEnd" id="loopend0" name="循环结束" displayName="循环结束" grouped="true" type="loopend" matchedName="loopstart0">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>loopend0</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link13</targetConnections>
+    <targetConnections>link6</targetConnections>
+    <location x="966" y="134"/>
+    <size height="24" width="24"/>
+    <nodeLabel>loopend0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="loopend0label" name="label" nodeType="label">
+    <location x="954" y="166"/>
+    <figSize height="17" width="49"/>
+    <node>loopend0</node>
+  </nodes>
+  <nodes xsi:type="model:GroupNode" id="group0" name="group" grouped="true" gstart="loopstart0" gend="loopend0">
+    <location x="390" y="45"/>
+    <size height="219" width="601"/>
+    <chidren>loopend0</chidren>
+    <chidren>loopstart0</chidren>
+    <chidren>invokePojo1</chidren>
+    <chidren>assign0</chidren>
+    <chidren>subprocess0</chidren>
+    <chidren>assign8</chidren>
+    <chidren>switch0</chidren>
+    <chidren>invokePojo2</chidren>
+    <chidren>subprocess3</chidren>
+    <chidren>assign2</chidren>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo1" name="updateEntity" displayName="updateEntity" collapsed="false" grouped="true" type="invoke" index="2" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link7" name="link7" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo1</sourceNode>
+      <targetNode>subprocess3</targetNode>
+    </sourceConnections>
+    <targetConnections>link4</targetConnections>
+    <targetConnections>link17</targetConnections>
+    <targetConnections>link14</targetConnections>
+    <location x="801" y="211"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo1label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.updateEntity</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="dataObject" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">temp</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo1label" name="label" nodeType="label">
+    <location x="776" y="247"/>
+    <figSize height="17" width="73"/>
+    <node>invokePojo1</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="赋值" displayName="赋值" grouped="true" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link4" name="link4" displayName="连接线" isDefault="true" type="transition">
+      <bendPoint heightToEnd="0" heightToStart="83" widthToEnd="-206" widthToStart="39"/>
+      <sourceNode>assign0</sourceNode>
+      <targetNode>invokePojo1</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="是否启用Fix对接O32：0-启用；1-不启用；&#xD;&#xA;业务类别_质押式回购：03-质押式正回购；04-质押式逆回购；&#xD;&#xA;&quot;0&quot;.equals(enableFix)&amp;&amp;(&quot;03&quot;.equals(processType)||&quot;04&quot;.equals(processType))" id="link12" name="启用Fix" displayName="连接线" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>switch0</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;0&quot;.equals(enableFix)&amp;&amp;(&quot;03&quot;.equals(processType)||&quot;04&quot;.equals(processType))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link22" name="link22" displayName="连接线" lineType="inheritance" type="note">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>node1</targetNode>
+    </sourceConnections>
+    <targetConnections>link18</targetConnections>
+    <location x="587" y="128"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">2</process:from>
+      <process:to type="query">temp/validStatus</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">new Date()</process:from>
+      <process:to type="query">temp/investAdviserMd</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">temp/processStatus</process:from>
+      <process:to type="query">processStatus</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">temp/processType</process:from>
+      <process:to type="query">processType</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">abandonedReasons</process:from>
+      <process:to type="query">temp/abandonedReasons</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="589" y="164"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess0" name="JY_ZNHG_fixToO32" displayName="JY_ZNHG_fixToO32" collapsed="false" grouped="true" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" description="" id="link9" name="下单失败" displayName="下单失败" isDefault="false" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>assign8</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">isSuccess</process:leftOperand>
+          <process:rightOperand type="literal">false</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link11" name="link11" displayName="link32" lineType="note" isDefault="false" type="exception">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>assign8</targetNode>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link14" name="link14" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>invokePojo1</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link16</targetConnections>
+    <location x="705" y="60"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess0label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.JY_ZNHG_fixToO32</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="zhfwptjyznhg" type="query" value="com.cjhxfund.jy.ProductProcess.singleDataset.ZhfwptJyZnhg" valueType="DataObject" pattern="reference">temp</process:inputVariable>
+        <process:inputVariable id="1" name="type" type="literal" value="String" valueType="Primitive" pattern="reference">del</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="requestMsgType" type="query" value="String" valueType="Primitive">requestMsgType</process:outputVariable>
+        <process:outputVariable id="1" name="isSuccess" type="query" value="Boolean" valueType="Primitive">isSuccess</process:outputVariable>
+        <process:outputVariable id="2" name="returnText" type="query" value="String" valueType="Primitive">returnText</process:outputVariable>
+        <process:outputVariable id="3" name="returnFailReason" type="query" value="String" valueType="Primitive">returnFailReason</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess0label" name="label" nodeType="label">
+    <location x="663" y="95"/>
+    <figSize height="17" width="110"/>
+    <node>subprocess0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign8" name="赋值" displayName="赋值" collapsed="false" grouped="true" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link13" name="link13" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign8</sourceNode>
+      <targetNode>loopend0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link9</targetConnections>
+    <targetConnections>link11</targetConnections>
+    <location x="840" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign8label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">temp/combProductName</process:from>
+      <process:to type="query">tempStr</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">(tempStr!=null&amp;&amp;!&quot;&quot;.equals(tempStr.trim()))?((invalidStr==null||&quot;&quot;.equals(invalidStr.trim()))?tempStr:(invalidStr+&quot;,&quot;+tempStr)):invalidStr</process:from>
+      <process:to type="query">invalidStr</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">invalidCount+1</process:from>
+      <process:to type="query">invalidCount</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">(returnText!=null&amp;&amp;!&quot;&quot;.equals(returnText.trim()))?((invalidFixStr==null||&quot;&quot;.equals(invalidFixStr.trim()))?returnText:(invalidFixStr+&quot;★&quot;+returnText)):invalidFixStr</process:from>
+      <process:to type="query">invalidFixStr</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">(returnFailReason!=null&amp;&amp;!&quot;&quot;.equals(returnFailReason.trim()))?((validFixFailReason==null||&quot;&quot;.equals(validFixFailReason.trim()))?returnFailReason:(validFixFailReason+&quot;★&quot;+returnFailReason)):validFixFailReason</process:from>
+      <process:to type="query">validFixFailReason</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">&quot;&quot;.trim()</process:from>
+      <process:to type="query">returnFailReason</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign8label" name="label" nodeType="label">
+    <location x="842" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>assign8</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign1" name="赋值" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link15" name="link15" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign1</sourceNode>
+      <targetNode>loopstart0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link5</targetConnections>
+    <location x="300" y="132"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign1label</nodeLabel>
+    <process:copy>
+      <process:from type="expression" pattern="reference">&quot;&quot;.trim()</process:from>
+      <process:to type="query">invalidStr</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">&quot;&quot;.trim()</process:from>
+      <process:to type="query">invalidFixStr</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">&quot;&quot;.trim()</process:from>
+      <process:to type="query">validFixFailReason</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign1label" name="label" nodeType="label">
+    <location x="302" y="168"/>
+    <figSize height="17" width="25"/>
+    <node>assign1</node>
+  </nodes>
+  <nodes xsi:type="process:tSwitch" id="switch0" name="空操作" displayName="空操作" grouped="true" type="switch">
+    <sourceConnections xsi:type="process:tLink" description="processStatus>=2 说明投资经理已经往O32系统下单" id="link16" name="link16" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>switch0</sourceNode>
+      <targetNode>subprocess0</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="GE">
+          <process:leftOperand type="query">processStatus</process:leftOperand>
+          <process:rightOperand type="literal">2</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link17" name="link17" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>switch0</sourceNode>
+      <targetNode>invokePojo1</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link12</targetConnections>
+    <location x="704" y="128"/>
+    <size height="28" width="28"/>
+    <nodeLabel>switch0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="switch0label" name="label" nodeType="label">
+    <location x="700" y="164"/>
+    <figSize height="17" width="37"/>
+    <node>switch0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo2" name="expandEntity" displayName="expandEntity" collapsed="false" grouped="true" type="invoke" index="2" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link18" name="link18" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo2</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <targetConnections>link8</targetConnections>
+    <location x="525" y="128"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo2label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.expandEntity</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="dataObject" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">temp</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="int" valueType="Java"/>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo2label" name="label" nodeType="label">
+    <location x="499" y="164"/>
+    <figSize height="17" width="75"/>
+    <node>invokePojo2</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess3" name="债券备份" displayName="updateValidStatusBondsByProcessIdAndStatus" collapsed="false" grouped="true" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link6" name="link6" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess3</sourceNode>
+      <targetNode>loopend0</targetNode>
+    </sourceConnections>
+    <targetConnections>link7</targetConnections>
+    <location x="895" y="136"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess3label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.jy.ProductProcess.JY_ZNHG_Bond.updateValidStatusBondsByProcessIdAndStatus</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processId" type="query" value="String" valueType="Primitive" pattern="reference">temp/processId</process:inputVariable>
+        <process:inputVariable id="1" name="validStatus" type="literal" value="String" valueType="Primitive" pattern="reference">2</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess3label" name="label" nodeType="label">
+    <location x="884" y="171"/>
+    <figSize height="17" width="49"/>
+    <node>subprocess3</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess2" name="是否启用Fix对接O32" displayName="getParamValue" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess2</sourceNode>
+      <targetNode>assign1</targetNode>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="210" y="136"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess2label</nodeLabel>
+    <process:flow index="1" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.commonUtil.zhfwptparamconfbiz.getParamValue</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="paramKey" type="literal" value="String" valueType="Primitive" pattern="reference">ZHFWPT_ENABLE_FIX</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="paramValue" type="query" value="String" valueType="Primitive">enableFix</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess2label" name="label" nodeType="label">
+    <location x="167" y="171"/>
+    <figSize height="17" width="112"/>
+    <node>subprocess2</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign2" name="废弃原因" displayName="赋值" grouped="true" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link8" name="link8" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign2</sourceNode>
+      <targetNode>invokePojo2</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link19" name="link19" displayName="连接线" lineType="inheritance" type="note">
+      <sourceNode>assign2</sourceNode>
+      <targetNode>node1</targetNode>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="450" y="128"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign2label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">temp/abandonedReasons</process:from>
+      <process:to type="query">abandonedReasons</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign2label" name="label" nodeType="label">
+    <location x="440" y="164"/>
+    <figSize height="17" width="49"/>
+    <node>assign2</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="huangmizhi" createTime="2016-06-28 21:42:39" date="2015-10-09Z" description="正逆回购业务-废弃" name="JY_ZNHG_delete" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="" historyStateLocation="client" isArray="false" modelType="com.cjhxfund.jy.ProductProcess.singleDataset.ZhfwptJyZnhg" name="temp"/>
+    <process:variable description="流程处理状态：-2-投顾询价录入完成；-1-交易员补齐指令完成；0-投资顾问录入完成；1-投顾录入确认完成；2-投资经理确认完成；3-交易员确认完成；4-复核人（交易发送）确认完成；5-送单确认完成；6-后台成交确认完成；" historyStateLocation="client" isArray="false" name="processStatus" primitiveType="String"/>
+    <process:variable description="临时字符串" historyStateLocation="client" isArray="false" name="tempStr" primitiveType="String"/>
+    <process:variable description="是否启用Fix对接O32：0-启用；1-不启用；" historyStateLocation="client" isArray="false" name="enableFix" primitiveType="String"/>
+    <process:variable description="业务类别_质押式回购：03-质押式正回购；04-质押式逆回购；" historyStateLocation="client" isArray="false" name="processType" primitiveType="String"/>
+    <process:variable description="是否执行成功" historyStateLocation="client" isArray="false" name="isSuccess" primitiveType="Boolean"/>
+    <process:variable description="执行反馈结果，若失败，则是失败原因" historyStateLocation="client" isArray="false" name="returnText" primitiveType="String"/>
+    <process:variable description="反馈报文失败原因[警告信息等]" historyStateLocation="client" isArray="false" name="returnFailReason" primitiveType="String"/>
+    <process:variable description="指令请求消息类型：D-指令下达；F-指令撤销；G-指令修改；H-指令查询；" historyStateLocation="client" isArray="false" name="requestMsgType" primitiveType="String"/>
+  </process:variables>
+  <process:serviceVariables/>
+  <process:inputs varArgs="false">
+    <process:input description="" isArray="true" modelType="com.cjhxfund.jy.ProductProcess.singleDataset.ZhfwptJyZnhg" name="zhfwptjyznhgs"/>
+  </process:inputs>
+  <process:outputs>
+    <process:output description="无效指令单字符串" isArray="false" name="invalidStr" primitiveType="String"/>
+    <process:output description="无效指令单记录数" isArray="false" name="invalidCount" primitiveType="Int"/>
+    <process:output description="无效指令单字符串（Fix错误信息）" isArray="false" name="invalidFixStr" primitiveType="String"/>
+    <process:output description="有效指令单字符串（反馈报文失败原因[警告信息等]）" isArray="false" name="validFixFailReason" primitiveType="String"/>
+  </process:outputs>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

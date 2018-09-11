@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈迪 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="VC_PRODUCT_ID" javaType="string" property="vcProductId"/>
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/>
+        <result column="VC_CONF_CODE" javaType="string" property="vcConfCode"/>
+        <result column="VC_CONF_VALUE" javaType="string" property="vcConfValue"/>
+        <result column="VC_CONF_DESC" javaType="string" property="vcConfDesc"/>
+    </resultMap>
+    <!-- 查询产品参数列表start -->
+    <select id="queryProductConfs" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+    	SELECT A.VC_PRODUCT_ID,
+	       B.VC_PRODUCT_NAME,
+	       A.VC_CONF_CODE,
+	       A.VC_CONF_VALUE,
+	       A.VC_CONF_DESC
+  	  FROM T_ATS_PRODUCT_CONF A, T_ATS_PRODUCT_INFO B
+ 	 WHERE A.VC_PRODUCT_ID = B.VC_PRODUCT_CODE
+ 	   <isNotNull property="vcProductId"><!-- 产品名称对应的代码，如：合信丰收1号 -->
+			and a.vc_Product_Id = #vcProductId#
+   	   </isNotNull>
+   	   <isNotNull property="vcConfCode"><!-- 产品参数项对应的代码，如：交易录单人 -->
+			and a.vc_Conf_Code = #vcConfCode#
+   	   </isNotNull>
+   	   <isNotNull property="vcConfValue"><!-- 产品参数值，如：sysadmin -->
+ 	   		AND A.VC_CONF_VALUE like '%'||#vcConfValue#||'%'
+ 	   </isNotNull>
+   	   <isNotNull property="vcConfDesc"><!-- 产品参数描述，如：交易录单人 -->
+ 	   		AND A.VC_CONF_DESC like '%'||#vcConfDesc#||'%'
+ 	   </isNotNull> 	   
+  		ORDER BY A.VC_PRODUCT_ID ASC
+    </select>
+    <!-- 查询产品参数列表end -->
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultInfo">
+        <result column="c_overdraft" javaType="string" property="cOverdraft"/><!-- 是否允许透支 -->
+    </resultMap>
+    <!-- 查询该组合是否允许透支 start -->
+    <select id="getWhetherAllowOverdraft" parameterClass="commonj.sdo.DataObject" resultMap="resultInfo">
+    <![CDATA[
+    	select case
+         when a.c_overdraft = 1 and instr(a.vc_invest_overdraft, #businClass#) > 0 then
+          '1'
+         else
+          '2'
+       end c_overdraft
+  from trade.TASSET a
+ where a.l_asset_id =
+       (select c.l_asset_id from trade.TCOMBI c where c.vc_combi_no = #vcCombiCode#)
+  ]]>
+    </select>
+    <!-- 查询该组合是否允许透支 end -->
+    
+    
+    <!-- 查询该组合是否允许透支 start -->
+    <select id="whetherAllowOverdraft" parameterClass="commonj.sdo.DataObject" resultClass="String">
+	    <![CDATA[
+	    	select case
+			         when a.c_overdraft = 1 and instr(a.vc_invest_overdraft, #businClass#) > 0 then
+			          '1'
+			         else
+			          '2'
+			       end c_overdraft
+			  from trade.TASSET a
+			 where a.l_asset_id = (select c.l_asset_id
+			                         from trade.TCOMBI c
+			                        where c.vc_combi_no = #vcCombiCode#)
+	  	]]>
+    </select>
+    <!-- 查询该组合是否允许透支 end -->
+</sqlMap>

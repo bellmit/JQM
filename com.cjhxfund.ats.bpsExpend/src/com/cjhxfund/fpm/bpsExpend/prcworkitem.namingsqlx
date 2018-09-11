@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:wjh -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="tAtsPrcWorkInfo">
+        <result column="sysid" javaType="string" property="sysid"/>
+        <result column="workitem_id" javaType="string" property="workitemId"/>
+        <result column="workitem_name" javaType="string" property="workitemName"/>
+        <result column="activityinst_id" javaType="string" property="activityinstId"/>
+        <result column="processinst_id" javaType="string" property="processinstId"/>
+        <result column="is_agree" javaType="string" property="isAgree"/>
+        <result column="rollback_flag" javaType="string" property="rollbackFlag"/>
+        <result column="operate_type" javaType="string" property="operateType"/>
+        <result column="activity_def_id" javaType="string" property="activityDefId"/>
+        <result column="rollback_activity_def_id" javaType="string" property="rollbackActivityDefId"/>
+        <result column="user_id" javaType="string" property="userId"/>
+        <result column="user_code" javaType="string" property="userCode"/>
+        <result column="user_name" javaType="string" property="userName"/>
+        <result column="create_time" javaType="date" property="createTime"/>
+        <result column="handle_actor" javaType="string" property="handleActor"/>
+        <result column="is_help" javaType="string" property="isHelp"/>
+        <result column="help_processinst_id" javaType="string" property="helpProcessinstId"/>
+        <result column="turn_state" javaType="string" property="turnState"/>
+    </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="prcWorkInfoWorkId">
+        <result column="turn_state" javaType="string" property="turnState"/>
+    </resultMap>
+    
+    <select id="queryPrcWorkInfo" parameterClass="java.util.Map" resultMap="tAtsPrcWorkInfo">
+    	select t.sysid,t.workitem_id,t.workitem_name,t.activityinst_id,
+    	t.processinst_id,t.is_agree,t.rollback_flag,t.operate_type,
+    	t.activity_def_id,t.rollback_activity_def_id,t.user_id,t.user_code,
+    	t.user_name,t.create_time,t.handle_actor,t.is_help,t.help_processinst_id
+		from T_ATS_PRC_WORK_INFO t 
+		where t.processinst_id=#processInstId#
+		and t.activity_def_id=#activityDefId#
+		and t.operate_type='3' 
+		order by t.sysid asc
+    </select>
+    
+    <select id="queryPrcWorkItemId" parameterClass="java.util.Map" resultMap="prcWorkInfoWorkId">
+    	select t.turn_state
+		from T_ATS_PRC_WORK_INFO t 
+		where t.processinst_id=#processInstId#
+		and t.activity_def_id=#activityDefId#
+		and t.operate_type='3'
+		and t.turn_state is not null  
+		group by t.turn_state
+    </select>
+    
+    <select id="queryPrcWorkByTurnState" parameterClass="java.util.Map" resultMap="tAtsPrcWorkInfo">
+    	select t.* 
+		from T_ATS_PRC_WORK_INFO t 
+		where t.processinst_id=#processInstId#
+		and t.activity_def_id =#activityDefId#
+		and t.turn_state =#turnState#
+		order by t.sysid
+    </select>
+    
+    <update id="updatePrcWorkTurnState" parameterClass="java.lang.Object">
+    	 update T_ATS_PRC_WORK_INFO t  
+    	 set t.turn_state = null
+    	 where t.processinst_id = #processInstId#
+    </update>
+    
+</sqlMap>

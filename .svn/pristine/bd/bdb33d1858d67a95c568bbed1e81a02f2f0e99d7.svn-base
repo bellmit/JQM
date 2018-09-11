@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WSPrimaryMarketServiceService" targetNamespace="http://www.primeton.com/WSPrimaryMarketService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="commonj.sdo" xmlns:nns="http://www.primeton.com/WSPrimaryMarketService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WSPrimaryMarketService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import namespace="commonj.sdo"/>
+      <xsd:element name="bidConfirm">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="bidConfirmResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryCallBack">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="investNo" type="xsd:long"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="orderProcess" type="xsd:int"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="orderStatus" type="xsd:int"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="infoDataObj" nillable="true" type="ns0:DataObject"/>
+            <xsd:element maxOccurs="1" minOccurs="0" name="vcInvestCode" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryCallBackResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" type="xsd:int"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryOrderFeedback">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryOrderFeedbackResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryOrderIssued">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryOrderIssuedResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryOrderModify">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="primaryOrderModifyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="primaryOrderFeedback">
+    <wsdl:part name="primaryOrderFeedback" element="nns:primaryOrderFeedback">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="primaryOrderFeedbackResponse">
+    <wsdl:part name="primaryOrderFeedbackResponse" element="nns:primaryOrderFeedbackResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="primaryOrderIssuedResponse">
+    <wsdl:part name="primaryOrderIssuedResponse" element="nns:primaryOrderIssuedResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="primaryOrderIssued">
+    <wsdl:part name="primaryOrderIssued" element="nns:primaryOrderIssued">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="primaryCallBackResponse">
+    <wsdl:part name="primaryCallBackResponse" element="nns:primaryCallBackResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="primaryCallBack">
+    <wsdl:part name="primaryCallBack" element="nns:primaryCallBack">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="primaryOrderModifyResponse">
+    <wsdl:part name="primaryOrderModifyResponse" element="nns:primaryOrderModifyResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bidConfirm">
+    <wsdl:part name="bidConfirm" element="nns:bidConfirm">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bidConfirmResponse">
+    <wsdl:part name="bidConfirmResponse" element="nns:bidConfirmResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="primaryOrderModify">
+    <wsdl:part name="primaryOrderModify" element="nns:primaryOrderModify">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WSPrimaryMarketService">
+    <wsdl:operation name="bidConfirm">
+      <wsdl:input name="bidConfirm" message="nns:bidConfirm">
+    </wsdl:input>
+      <wsdl:output name="bidConfirmResponse" message="nns:bidConfirmResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="primaryCallBack">
+      <wsdl:input name="primaryCallBack" message="nns:primaryCallBack">
+    </wsdl:input>
+      <wsdl:output name="primaryCallBackResponse" message="nns:primaryCallBackResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="primaryOrderFeedback">
+      <wsdl:input name="primaryOrderFeedback" message="nns:primaryOrderFeedback">
+    </wsdl:input>
+      <wsdl:output name="primaryOrderFeedbackResponse" message="nns:primaryOrderFeedbackResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="primaryOrderIssued">
+      <wsdl:input name="primaryOrderIssued" message="nns:primaryOrderIssued">
+    </wsdl:input>
+      <wsdl:output name="primaryOrderIssuedResponse" message="nns:primaryOrderIssuedResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="primaryOrderModify">
+      <wsdl:input name="primaryOrderModify" message="nns:primaryOrderModify">
+    </wsdl:input>
+      <wsdl:output name="primaryOrderModifyResponse" message="nns:primaryOrderModifyResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

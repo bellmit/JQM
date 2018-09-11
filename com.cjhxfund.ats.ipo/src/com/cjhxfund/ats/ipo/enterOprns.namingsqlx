@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:谭凯 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="enterInfo">
+		<result column="L_INQUIRY_RESULT_ID" javaType="long"	property="lInquiryResultId"/>	<!--主键-->
+		<result column="L_INSTRUCT_NO" javaType="long"	property="lInstructNo"/>	<!--指令单编号-->
+		<result column="L_INVEST_NO" javaType="long"	property="lInvestNo"/>	<!--投资编号-->
+		<result column="VC_EXCHANGE_NO" javaType="string"	property="vcExchangeNo"/>	<!--所属交易所编号-->
+		<result column="VC_PRODUCT_NO" javaType="string"	property="vcProductNo"/>	<!--产品代码-->
+		<result column="VC_COMBI_NO" javaType="string"	property="vcCombiNo"/>	<!--组合编码-->
+		<result column="L_PRODUCT_ID" javaType="long"	property="lProductId"/>	<!--产品id-->
+		<result column="EN_ENTER_PRICE" javaType="double"	property="enEnterPrice"/>	<!--入围价格-->
+		<result column="EN_ENTER_AMOUNT" javaType="double"	property="enEnterAmount"/>	<!--入围数量-->
+		<result column="EN_ENTER_MONEY" javaType="double"	property="enEnterMoney"/>	<!--入围申购金额-->
+		<result column="EN_PURCHASE_PRICE" javaType="double"	property="enPurchasePrice"/>	<!--询价申报价格-->
+		<result column="EN_PURCHASE_NUMBER" javaType="double"	property="enPurchaseNumber"/>	<!--询价申购数量(万股)-->
+		<result column="EN_PURCHASE_MONEY" javaType="double"	property="enPurchaseMoney"/>	<!--询价申购金额-->
+		<result column="VC_PURCHASE_CODE" javaType="string"	property="vcPurchaseCode"/>	<!--股票代码-->
+		<result column="L_OFFLINE_PURCHASE_DATE" javaType="long"	property="lOfflinePurchaseDate"/>	<!--网下申购日-->
+		<result column="C_ORDER_STATUS" javaType="string"	property="cOrderStatus"/>	<!--指令状态0-正常1-剔除-->
+		<result column="L_CREATE_DATE" javaType="long"	property="lCreateDate"/>	<!--创建日期-->
+		<result column="L_CREATE_TIME" javaType="long"	property="lCreateTime"/>	<!--创建时间-->
+		<result column="L_LAST_UPDATE_DATE" javaType="long"	property="lLastUpdateDate"/>	<!--最后更新日期-->
+		<result column="L_LAST_UPDATE_TIME" javaType="long"	property="lLastUpdateTime"/>	<!--最后更新时间-->
+		<result column="VC_CREATOR" javaType="string"	property="vcCreator"/>	<!--创建者-->
+		<result column="VC_LAST_UPDTOR" javaType="string"	property="vcLastUpdtor"/>	<!--最后更新着-->
+		<result column="VC_REMARK" javaType="string"	property="vcRemark"/>	<!--备注-->
+		<result column="VC_PRODUCT_NO" javaType="string"	property="vcProductNo"/>	<!--产品代码-->
+		<result column="VC_PRODUCT_NAME" javaType="string"	property="vcProductName"/>	<!--c产品名称-->
+		<result column="VC_COMBI_NO" javaType="string"	property="vcCombiNo"/>	<!--组合代码-->
+		<result column="VC_COMBI_NAME" javaType="string"	property="vcCombiName"/>	<!--组合名称-->
+		<result column="VC_RATION_PRODUCT_TYPE" javaType="string"	property="vcRationProductType"/>	<!--配售对象投资类型-->
+	</resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="inquiryResultInfo">
+		<result column="L_INQUIRY_RESULT_ID" javaType="long"	property="lInquiryResultId"/>	<!--主键-->
+		<result column="L_INSTRUCT_NO" javaType="long"	property="lInstructNo"/>	<!--指令单编号-->
+		<result column="L_INVEST_NO" javaType="long"	property="lInvestNo"/>	<!--投资编号-->
+		<result column="VC_EXCHANGE_NO" javaType="string"	property="vcExchangeNo"/>	<!--所属交易所编号-->
+		<result column="VC_PRODUCT_NO" javaType="string"	property="vcProductNo"/>	<!--产品代码-->
+		<result column="L_PRODUCT_ID" javaType="long"	property="lProductId"/>	<!--产品id-->
+		<result column="EN_ENTER_PRICE" javaType="double"	property="enEnterPrice"/>	<!--入围价格-->
+		<result column="EN_ENTER_AMOUNT" javaType="double"	property="enEnterAmount"/>	<!--入围数量-->
+		<result column="EN_ENTER_MONEY" javaType="double"	property="enEnterMoney"/>	<!--入围申购金额-->
+		<result column="EN_PURCHASE_PRICE" javaType="double"	property="enPurchasePrice"/>	<!--询价申报价格-->
+		<result column="EN_PURCHASE_NUMBER" javaType="double"	property="enPurchaseNumber"/>	<!--询价申购数量(万股)-->
+		<result column="EN_PURCHASE_MONEY" javaType="double"	property="enPurchaseMoney"/>	<!--询价申购金额-->
+		<result column="VC_PURCHASE_CODE" javaType="string"	property="vcPurchaseCode"/>	<!--股票代码-->
+		<result column="L_OFFLINE_PURCHASE_DATE" javaType="long"	property="lOfflinePurchaseDate"/>	<!--网下申购日-->
+		<result column="C_ORDER_STATUS" javaType="string"	property="cOrderStatus"/>	<!--指令状态0-正常1-剔除-->
+		<result column="L_CREATE_DATE" javaType="long"	property="lCreateDate"/>	<!--创建日期-->
+		<result column="L_CREATE_TIME" javaType="long"	property="lCreateTime"/>	<!--创建时间-->
+		<result column="L_LAST_UPDATE_DATE" javaType="long"	property="lLastUpdateDate"/>	<!--最后更新日期-->
+		<result column="L_LAST_UPDATE_TIME" javaType="long"	property="lLastUpdateTime"/>	<!--最后更新时间-->
+		<result column="VC_CREATOR" javaType="string"	property="vcCreator"/>	<!--创建者-->
+		<result column="VC_LAST_UPDTOR" javaType="string"	property="vcLastUpdtor"/>	<!--最后更新着-->
+		<result column="VC_REMARK" javaType="string"	property="vcRemark"/>	<!--备注-->
+		<result column="VC_PRODUCT_NAME" javaType="string"	property="vcProductName"/>	<!--c产品名称-->
+		<result column="VC_COMBI_NO" javaType="string"	property="vcCombiNo"/>	<!--组合代码-->
+		<result column="VC_COMBI_NAME" javaType="string"	property="vcCombiName"/>	<!--组合名称-->
+		<result column="VC_COMPANY_NAME" javaType="string"	property="vcCompanyName"/>	<!--公司名称-->
+	</resultMap>
+    <!-- 查询入围申购指令 -->
+	<select id="queryEnterInfoList" parameterClass="commonj.sdo.DataObject" resultMap="enterInfo">
+		SELECT P.VC_PRODUCT_NO,
+		       P.VC_PRODUCT_NAME,
+		       P.VC_COMBI_NO,
+		       P.VC_COMBI_NAME,
+		       P.VC_RATION_PRODUCT_TYPE,
+		       O.L_INQUIRY_RESULT_ID,
+		       O.L_INSTRUCT_NO,
+		       O.L_INVEST_NO,
+		       O.VC_EXCHANGE_NO,
+		       O.VC_PRODUCT_NO,
+		       O.L_PRODUCT_ID,
+		       O.EN_ENTER_PRICE,
+		       O.EN_ENTER_AMOUNT,
+		       O.EN_ENTER_MONEY,
+		       O.EN_PURCHASE_PRICE,
+		       O.EN_PURCHASE_NUMBER,
+		       O.EN_PURCHASE_MONEY,
+		       O.VC_PURCHASE_CODE,
+		       O.L_OFFLINE_PURCHASE_DATE ,
+		       O.C_ORDER_STATUS,
+		       O.L_CREATE_DATE,
+		       O.L_CREATE_TIME,
+		       O.L_LAST_UPDATE_DATE,
+		       O.L_LAST_UPDATE_TIME,
+		       O.VC_CREATOR,
+		       O.VC_LAST_UPDTOR,
+		       O.VC_REMARK,
+		       '' VC_PRODUCT_NAME
+		  FROM T_ATS_IPO_PRODUCT_INFO P, T_ATS_IPO_INQUIRY_RESULT O
+		 WHERE O.L_PRODUCT_ID = P.L_PRODUCT_ID
+		 	AND O.L_INSTRUCT_NO = #lInstructNo#
+		 	ORDER BY P.VC_PRODUCT_NO , P.VC_COMBI_NO
+	</select>
+	
+    <!-- 查询询价结果指令信息 -->
+	<select id="queryInquiryResultList" parameterClass="java.util.Map" resultMap="inquiryResultInfo">
+		SELECT T.L_INQUIRY_RESULT_ID,
+		       T.L_INSTRUCT_NO,
+		       T.L_INVEST_NO,
+		       T.VC_EXCHANGE_NO,
+		       T.VC_PRODUCT_NO,
+		       PI.VC_PRODUCT_NAME,
+		       T.VC_COMBI_NO,
+		       CI.VC_COMBI_NAME,
+		       T.L_PRODUCT_ID,
+		       T.EN_ENTER_PRICE,
+		       T.EN_ENTER_AMOUNT,
+		       T.EN_ENTER_MONEY,
+		       T.EN_PURCHASE_PRICE,
+		       T.EN_PURCHASE_NUMBER,
+		       T.EN_PURCHASE_MONEY,
+		       T.VC_PURCHASE_CODE,
+		       T.VC_COMPANY_NAME,
+		       T.L_OFFLINE_PURCHASE_DATE,
+		       T.C_ORDER_STATUS,
+		       T.L_CREATE_DATE,
+		       T.L_CREATE_TIME,
+		       T.L_LAST_UPDATE_DATE,
+		       T.L_LAST_UPDATE_TIME,
+		       T.VC_CREATOR,
+		       T.VC_LAST_UPDTOR,
+		       T.VC_REMARK
+		  FROM T_ATS_IPO_INQUIRY_RESULT T,
+		       T_ATS_IPO_INSTRUCT_INFO  I,
+		       T_ATS_PRODUCT_INFO       PI,
+		       T_ATS_COMBI_INFO         CI
+		 WHERE T.L_INSTRUCT_NO = I.L_INSTRUCT_NO
+		   AND T.C_ORDER_STATUS = '0'
+		   AND T.VC_COMBI_NO = CI.VC_COMBI_NO
+		   AND T.VC_PRODUCT_NO = PI.VC_PRODUCT_CODE
+		   AND I.L_PROCESS_INST_ID = #processInstId#
+	</select>
+	
+    <!-- 查询询价结果指令信息 -->
+	<select id="queryInquiryResultByPage" parameterClass="java.util.Map" resultMap="inquiryResultInfo">
+		SELECT T.L_INQUIRY_RESULT_ID,
+		       T.L_INSTRUCT_NO,
+		       T.L_INVEST_NO,
+		       T.VC_EXCHANGE_NO,
+		       T.VC_PRODUCT_NO,
+		       PI.VC_PRODUCT_NAME,
+		       T.VC_COMBI_NO,
+		       CI.VC_COMBI_NAME,
+		       T.L_PRODUCT_ID,
+		       T.EN_ENTER_PRICE,
+		       T.EN_ENTER_AMOUNT,
+		       T.EN_ENTER_MONEY,
+		       T.EN_PURCHASE_PRICE,
+		       T.EN_PURCHASE_NUMBER,
+		       T.EN_PURCHASE_MONEY,
+		       T.VC_PURCHASE_CODE,
+		       T.VC_COMPANY_NAME,
+		       T.L_OFFLINE_PURCHASE_DATE,
+		       T.C_ORDER_STATUS,
+		       T.L_CREATE_DATE,
+		       T.L_CREATE_TIME,
+		       T.L_LAST_UPDATE_DATE,
+		       T.L_LAST_UPDATE_TIME,
+		       T.VC_CREATOR,
+		       T.VC_LAST_UPDTOR,
+		       T.VC_REMARK
+		  FROM T_ATS_IPO_INQUIRY_RESULT T,
+		       T_ATS_IPO_INSTRUCT_INFO  I,
+		       T_ATS_PRODUCT_INFO       PI,
+		       T_ATS_COMBI_INFO         CI
+		 WHERE T.L_INSTRUCT_NO = I.L_INSTRUCT_NO
+		   AND T.C_ORDER_STATUS = '2'
+		   AND T.VC_COMBI_NO = CI.VC_COMBI_NO
+		   AND T.VC_PRODUCT_NO = PI.VC_PRODUCT_CODE
+		   <isNotNull property="vcProductCode"><!-- 产品代码，如：001662 -->
+				AND T.VC_PRODUCT_NO IN ($vcProductCode$)
+		   </isNotNull>
+	</select>
+	
+	<!-- 删除附件信息 -->
+    <delete id="deleteInquiryResult" parameterClass="java.util.Map">
+		DELETE T_ATS_IPO_INQUIRY_RESULT T WHERE T.L_INSTRUCT_NO = #lInstructNo#
+	</delete>
+</sqlMap>

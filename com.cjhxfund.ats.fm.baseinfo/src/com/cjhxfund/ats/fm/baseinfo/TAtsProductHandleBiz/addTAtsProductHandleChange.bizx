@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="addTAtsProductHandleChange.bizx" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node1" name="注释1" displayName="注释" nodeType="note" type="note" content="1、创金员工、非创金员工公共权限类型：&#xD;&#xA;00-组合查询权限；&#xD;&#xA;&#xD;&#xA;2、投顾、委托人等非创金员工权限类型：&#xD;&#xA;01-组合与投资录入权限；&#xD;&#xA;07-组合与投资确认权限；&#xD;&#xA;A4-需要投顾风控确认；&#xD;&#xA;A5-组合与投顾风控确认权限；&#xD;&#xA;A2-需要委托人确认；&#xD;&#xA;A3-组合与委托人确认权限；&#xD;&#xA;A1-投资录入确认可为同一人员；&#xD;&#xA;&#xD;&#xA;3、投资经理、交易员等创金员工权限类型：&#xD;&#xA;02-组合与投资/基金经理权限；&#xD;&#xA;03-组合与询价结果录入权限；&#xD;&#xA;04-组合与交易录单确认权限；&#xD;&#xA;05-组合与交易录单复核权限；&#xD;&#xA;06-组合与资金手工交收权限；&#xD;&#xA;08-组合与资金交收设置权限；&#xD;&#xA;09-组合与中标确认交易员审批权限；&#xD;&#xA;99-交易确认阶段权限；&#xD;&#xA;98-后台成交确认阶段权限；" title="huangmizhi&#x9;17-11-24 下午9:13">
+    <location x="45" y="285"/>
+    <size height="406" width="301"/>
+  </nodes>
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="新增产品权限时根据不同的权限类型做特殊处理：&#xD;&#xA;&#xD;&#xA;1、当类型为“A1”或“A2”或“A4”时，设置如下：&#xD;&#xA;vcUserId=All Users；&#xD;&#xA;vcUserName=全部用户；&#xD;&#xA;&#xD;&#xA;2、当类型为“98”或“99”时，设置如下：&#xD;&#xA;lProductId=-1；&#xD;&#xA;vcProductCode=All Products；&#xD;&#xA;vcProductName=全部产品；&#xD;&#xA;lCombiId=-1；&#xD;&#xA;vcCombiNo=All Combis；&#xD;&#xA;vcCombiName=全部组合；&#xD;&#xA;lAssetId=-1；&#xD;&#xA;vcAssetNo=All Assets；&#xD;&#xA;vcAssetName=全部资产单元；" title="huangmizhi&#x9;17-11-24 下午9:05">
+    <location x="391" y="285"/>
+    <size height="301" width="316"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <location x="100" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link3</targetConnections>
+    <targetConnections>link4</targetConnections>
+    <targetConnections>link5</targetConnections>
+    <location x="570" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="102" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="572" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="赋值" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" description="产品权限类型：&#xD;&#xA;A1-投资录入确认可为同一人员&#xD;&#xA;A2-需要委托人确认&#xD;&#xA;A4-需要投顾风控确认" id="link1" name="A1||A2||A4" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>assign1</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;A1&quot;.equals(vcRelateType)||&quot;A2&quot;.equals(vcRelateType)||&quot;A4&quot;.equals(vcRelateType)</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="产品权限类型：&#xD;&#xA;99-交易确认阶段权限&#xD;&#xA;98-后台成交确认阶段权限" id="link2" name="98||99" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>assign2</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;98&quot;.equals(vcRelateType)||&quot;99&quot;.equals(vcRelateType)</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link3" name="link3" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>end0</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"></process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="210" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">bean/vcRelateType</process:from>
+      <process:to type="query">vcRelateType</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="212" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign1" name="设置为全部用户" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link4" name="link4" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign1</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="390" y="90"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign1label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">All Users</process:from>
+      <process:to type="query">bean/vcUserId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">全部用户</process:from>
+      <process:to type="query">bean/vcUserName</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign1label" name="label" nodeType="label">
+    <location x="362" y="126"/>
+    <figSize height="17" width="85"/>
+    <node>assign1</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign2" name="赋值2" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign2</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="391" y="202"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign2label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">-1</process:from>
+      <process:to type="query">bean/lProductId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">All Products</process:from>
+      <process:to type="query">bean/vcProductCode</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">全部产品</process:from>
+      <process:to type="query">bean/vcProductName</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">-1</process:from>
+      <process:to type="query">bean/lCombiId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">All Combis</process:from>
+      <process:to type="query">bean/vcCombiNo</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">全部组合</process:from>
+      <process:to type="query">bean/vcCombiName</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">-1</process:from>
+      <process:to type="query">bean/lAssetId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">All Assets</process:from>
+      <process:to type="query">bean/vcAssetNo</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">全部资产单元</process:from>
+      <process:to type="query">bean/vcAssetName</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign2label" name="label" nodeType="label">
+    <location x="389" y="238"/>
+    <figSize height="17" width="32"/>
+    <node>assign2</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="huangmizhi" createTime="2017-11-24 20:42:17" date="2017-11-24Z" description="产品权限配置特殊处理&#xD;&#xA;&#xD;&#xA;00-组合查询权限&#xD;&#xA;01-组合与投资录入权限&#xD;&#xA;07-组合与投资确认权限&#xD;&#xA;A4-需要投顾风控确认&#xD;&#xA;A5-组合与投顾风控确认权限&#xD;&#xA;A2-需要委托人确认&#xD;&#xA;A3-组合与委托人确认权限&#xD;&#xA;A1-投资录入确认可为同一人员&#xD;&#xA;02-组合与投资/基金经理权限&#xD;&#xA;03-组合与询价结果录入权限&#xD;&#xA;04-组合与交易录单确认权限&#xD;&#xA;05-组合与交易录单复核权限&#xD;&#xA;06-组合与资金手工交收权限&#xD;&#xA;08-组合与资金交收设置权限&#xD;&#xA;09-组合与中标确认交易员审批权限&#xD;&#xA;99-交易确认阶段权限&#xD;&#xA;98-后台成交确认阶段权限" name="产品权限配置特殊处理" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="权限类型" historyStateLocation="client" isArray="false" name="vcRelateType" primitiveType="String"/>
+  </process:variables>
+  <process:inputs varArgs="false">
+    <process:input description="" isArray="false" modelType="com.cjhxfund.ats.fm.baseinfo.basicInfo.TAtsProductHandle" name="bean"/>
+  </process:inputs>
+  <process:outputs/>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

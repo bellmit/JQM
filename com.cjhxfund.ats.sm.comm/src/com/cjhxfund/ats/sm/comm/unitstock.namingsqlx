@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:周靖 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+    	<result column="L_FUND_ID" javaType="int" property="lFundId"/>
+    	<result column="VC_FUND_CODE" javaType="string" property="vcFundCode"/>
+    	<result column="VC_FUND_NAME" javaType="string" property="vcFundName"/>
+    	<result column="L_ASSET_ID" javaType="int" property="lAssetId"/>
+    	<result column="L_BASECOMBI_ID" javaType="int" property="lBasecombiId"/>
+    	<result column="VC_COMBI_NO" javaType="string" property="vcCombiNo"/>
+    	<result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/>
+   	 	<result column="VC_INTER_CODE" javaType="string" property="vcInterCode"/>
+        <result column="VC_REPORT_CODE" javaType="string" property="vcReportCode"/>
+        <result column="C_MARKET_NO" javaType="string" property="cMarketNo"/>
+        <result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+        <result column="C_STOCK_TYPE" javaType="string" property="cStockType"/>
+        <result column="VC_MIXED_TYPE" javaType="string" property="vcMixedType"/><!-- 杂项分类 -->
+        <result column="VC_BIND_SEAT" javaType="string" property="vcBindSeat"/><!-- 托管席位 -->
+        <result column="C_INVEST_TYPE" javaType="string" property="cInvestType"/><!-- 投资类型 -->
+        <result column="C_POSITION_FLAG" javaType="string" property="cPositionFlag"/><!-- 持仓多空标志 -->
+        <result column="L_CURRENT_AMOUNT" javaType="int" property="lCurrentAmount"/><!-- 当前数量 -->
+        <result column="L_FROZEN_AMOUNT" javaType="int" property="lFrozenAmount"/><!-- 冻结数量 -->
+        <result column="L_UNFROZEN_AMOUNT" javaType="int" property="lUnfrozenAmount"/><!-- 解冻数量 -->
+        <result column="EN_COST_PRICE" javaType="double" property="enCostPrice"/><!-- 成本价 -->
+        
+        <result column="IS_SELL_OPERATE" javaType="string" property="isSellOperate"/><!-- 是否有卖出与追加买入权限：1-有，0-无 -->
+    </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="BondInfoByStockCodeAndMarketNo">
+		<result column="l_date" javaType="int" property="lDate"/><!--日期-->
+		<result column="vc_market_no" javaType="string" property="vcMarketNo"/><!--交易市场代码-->
+		<result column="vc_inter_code" javaType="string" property="vcInterCode"/><!--债券内码-->
+		<result column="vc_stock_code" javaType="string" property="vcStockCode"/><!--债券代码-->
+		<result column="vc_stock_name" javaType="string" property="vcStockName"/><!--债券简称-->
+		<result column="vc_stock_name_full" javaType="string" property="vcStockNameFull"/><!--债券全称-->
+		<result column="vc_stock_type" javaType="string" property="vcStockType"/><!--债券类型-->
+		<result column="vc_stocktype_name" javaType="string" property="vcStocktypeName"/><!--债券类型名称-->
+		<result column="en_exist_limite" javaType="double" property="enExistLimite"/><!--发行期限(年)-->
+		<result column="en_issue_balance" javaType="double" property="enIssueBalance"/><!--发行额度(亿)-->
+		<result column="vc_bond_appraise" javaType="string" property="vcBondAppraise"/><!--债券评级-->
+		<result column="vc_bond_appraise_organ" javaType="string" property="vcBondAppraiseOrgan"/><!--债券评级机构-->
+		<result column="l_issuer_id" javaType="string" property="lIssuerId"/><!--发行人序号-->
+		<result column="vc_issuer_name_full" javaType="string" property="vcIssuerNameFull"/><!--发行人名称-->
+		<result column="vc_issue_property" javaType="string" property="vcIssueProperty"/><!--企业性质-->
+		<result column="vc_issue_appraise" javaType="string" property="vcIssueAppraise"/><!--主体评级-->
+		<result column="vc_issue_appraise_organ" javaType="string" property="vcIssueAppraiseOrgan"/><!--主体评级机构-->
+		<result column="vc_industry" javaType="string" property="vcIndustry"/><!--所属行业-->
+		<result column="vc_industry_1" javaType="string" property="vcIndustry1"/><!--Wind一级行业分类-->
+		<result column="vc_industry_2" javaType="string" property="vcIndustry2"/><!--Wind二级行业分类-->
+		<result column="vc_industry_3" javaType="string" property="vcIndustry3"/><!--Wind三级行业分类-->
+		<result column="vc_industry_4" javaType="string" property="vcIndustry4"/><!--Wind四级行业分类-->
+		<result column="vc_province" javaType="string" property="vcProvince"/><!--所属省份-->
+		<result column="l_guarantor_id" javaType="string" property="lGuarantorId"/><!--担保人序号-->
+		<result column="vc_guarantor_name_full" javaType="string" property="vcGuarantorNameFull"/><!--担保人名称-->
+		<result column="vc_guarantor_summary" javaType="string" property="vcGuarantorSummary"/><!--担保人简介-->
+		<result column="l_delisting_date" javaType="string" property="lDelistingDate"/><!--摘牌日-->
+		<result column="l_issue_post_date" javaType="int" property="lIssuePostDate"/><!--公告日期-->
+		<result column="l_issue_begin_date" javaType="int" property="lIssueBeginDate"/><!--发行日期-->
+		<result column="l_issue_end_date" javaType="int" property="lIssueEndDate"/><!--发行终止日期-->
+		<result column="l_pay_date" javaType="int" property="lPayDate"/><!--缴款日期-->
+		<result column="l_publish_date" javaType="int" property="lPublishDate"/><!--上市日期-->
+		<result column="l_begincal_date" javaType="string" property="lBegincalDate"/><!--起息日期-->
+		<result column="l_endincal_date" javaType="string" property="lEndincalDate"/><!--到期日期-->
+		<result column="c_interest_type" javaType="string" property="cInterestType"/><!--利率类型-->
+		<result column="c_pay_interest_type" javaType="string" property="cPayInterestType"/><!--息票品种-->
+		<result column="en_pay_inteval" javaType="double" property="enPayInteval"/><!--付息频率-->
+		<result column="en_face_rate" javaType="float" property="enFaceRate"/><!--票面利率-->
+		<result column="c_bid_type" javaType="string" property="cBidType"/><!--招标方式-->
+		<result column="c_pay_type" javaType="string" property="cPayType"/><!--缴款方式-->
+		<result column="vc_special_text" javaType="string" property="vcSpecialText"/><!--特殊条款-->
+		<result column="vc_main_underwriter_id" javaType="string" property="vcMainUnderwriterId"/><!--主承销商ID-->
+		<result column="vc_main_underwriter" javaType="string" property="vcMainUnderwriter"/><!--主承销商-->
+		<result column="vc_deputy_underwriter_id" javaType="string" property="vcDeputyUnderwriterId"/><!--副主承销商ID-->
+		<result column="vc_deputy_underwriter" javaType="string" property="vcDeputyUnderwriter"/><!--副主承销商-->
+		<result column="c_underwrite_type" javaType="string" property="cUnderwriteType"/><!--承销方式-->
+		<result column="vc_group_underwriter" javaType="string" property="vcGroupUnderwriter"/><!--承销团-->
+		<result column="l_next_exercise_date" javaType="string" property="lNextExerciseDate"/><!--下一行权日-->
+		<result column="c_is_small_raised" javaType="String" property="cIsSmallRaised"/><!--是否小公募-->
+		<result column="c_is_have_saleback" javaType="String" property="cIsHaveSaleback"/><!--是否具有回售权-->
+		<result column="vc_limit_left" javaType="String" property="lLimiteLeft"/><!--剩余期限-->
+		<result column="vc_assure_type" javaType="string" property="vcAssureType"/><!--担保方式-->
+		<result column="en_parvalue" javaType="int" property="enParvalue"/><!--面值-->
+		<result column="vc_bchmk_rate" javaType="string" property="vcBchmkRate"/><!--基准利率-->
+		<result column="l_next_payint_date" javaType="string" property="lNextPayintDate"/><!--下一付息日-->
+		<result column="l_next_payint_days" javaType="int" property="lNextPayintDays"/><!--距下一付息日天数-->
+		<result column="en_cb_value_convexity" javaType="double" property="enCbValueConvexity"/><!--中债估值凸性-->
+		<result column="l_endincal_days" javaType="int" property="lEndincalDays"/><!--距到期日天数-->
+		<result column="en_cb_value_mduration" javaType="double" property="enCbValueMduration"/><!--中债估价修正久期（推荐）-->
+		<result column="en_cb_value_incm_rate" javaType="double" property="enCbValueIncmRate"/><!--中债估价收益率（%推荐）-->
+		<result column="en_cb_value_net_value" javaType="double" property="enCbValueNetValue"/><!--中债估价净价（推荐元）-->
+		<result column="en_cb_value_all_value" javaType="double" property="enCbValueAllValue"/><!--中债估价全价（推荐元）-->
+		<result column="l_rating_forecast" javaType="string" property="lRatingForecast"/><!--评级展望-->
+		<result column="vc_interest_rate_desc" javaType="string" property="vcInterestRateDesc"/><!--利率说明-->
+		<result column="l_is_step_market" javaType="int" property="lIsStepMarket"/><!--是否跨市场-->
+		<result column="vc_step_market_inter_code" javaType="string" property="vcStepMarketInterCode"/><!--跨市场债券内码-->
+		<result column="en_exchange_conver_ratio" javaType="double" property="enExchangeConverRatio"/><!--交易所折算比例-->
+		<result column="vc_exchange_pledge_code" javaType="string" property="vcExchangePledgeCode"/><!--交易所质押代码-->
+		<result column="vc_payment_place" javaType="string" property="vcPaymentPlace"/><!--登记托管机构-->
+		<result column="vc_latest_max_investor" javaType="string" property="vcLatestMaxInvestor"/><!--最新最大投资者-->
+		<result column="vc_new_cop_bond_type" javaType="string" property="vcNewCopBondType"/><!--新公司债类型-->
+		
+		<result column="en_cz_value_net_value" javaType="double" property="enCzValueNetValue"/><!--中证净价-->
+		<result column="en_cz_value_all_value" javaType="double" property="enCzValueAllValue"/><!--中证全价-->
+		<result column="en_cz_value_convexity" javaType="double" property="enCzValueConvexity"/><!--中证估值凸性-->
+		<result column="en_cz_value_mduration" javaType="double" property="enCzValueMduration"/><!--中证估价修正久期-->
+		<result column="en_cz_value_incm_rate" javaType="double" property="enCzValueIncmRate"/><!--中证估价收益率(%推荐)-->
+	</resultMap>
+	<!--条件查询用户有权账户中债券持仓信息列表（分页）   查询方式：db_like  查询表（ats_vunitstock）    数据源：default   传入参数：根据传入的参数匹配查询条件        返回参数：所有字段-->
+    <select id="conditionInquiryUserEntitleInfo" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+		  select t.vc_report_code,
+		         t.c_market_no,
+		         t.vc_inter_code,
+		         t.c_stock_type,
+		         t.vc_mixed_type,
+		         t.l_fund_id,
+		         t.l_asset_id,
+		         t.l_basecombi_id,
+		         t.vc_stockholder_id,
+		         t.vc_bind_seat,
+		         t.c_invest_type,
+		         t.c_position_flag,
+		         t.l_current_amount,
+		         t.l_frozen_amount
+		    from o32_cj.ats_vunitstock@$dblinkDataRource$ t
+		   where 1 = 1
+		   <isNotNull property="reportCode"><!---->	
+				and t.vc_report_code = #reportCode#
+			</isNotNull>         
+			<isNotNull property="marketNo"><!---->	
+				and t.c_market_no = #marketNo#
+			</isNotNull>         
+			<isNotNull property="interCode"><!---->	
+				and t.vc_inter_code = #interCode#
+			</isNotNull>         
+			<isNotNull property="stockType"><!---->	
+				and t.c_stock_type = #stockType#
+			</isNotNull>         
+			<isNotNull property="mixedType"><!---->	
+				and t.vc_mixed_type = #mixedType#
+			</isNotNull>         
+			<isNotNull property="fundId"><!---->	
+				and t.vc_report_code = #fundId#
+			</isNotNull>         
+			<isNotNull property="assetId"><!---->	
+				and t.l_asset_id = #assetId#
+			</isNotNull>         
+			<isNotNull property="basecombiId"><!---->	
+				and t.l_basecombi_id = #basecombiId# 
+			</isNotNull>         
+			<isNotNull property="stockholderId"><!---->	
+				and t.vc_stockholder_id = #stockholderId#
+			</isNotNull>         
+			<isNotNull property="bindSeat"><!---->	
+				and t.vc_bind_seat = #bindSeat#
+			</isNotNull>         	
+			<isNotNull property="investType"><!---->	
+				and t.c_invest_type = #investType#
+			</isNotNull>         
+			<isNotNull property="positionFlag"><!---->	
+				and t.c_position_flag = #positionFlag#
+			</isNotNull>        
+			<isNotNull property="currentAmount"><!---->	
+				and t.l_current_amount= #currentAmount#
+			</isNotNull>         
+			<isNotNull property="frozenAmount"><!---->	
+				and t.l_frozen_amount = #frozenAmount#
+			</isNotNull> 
+    </select>
+    <!--查询指定债券对应的债券基本信息数据   查询表（vw_bondinfo_wind）  传入参数：根据传入的参数匹配查询条件        返回参数：所有字段-->
+    <select id="getBondBasicInfo" parameterClass="commonj.sdo.DataObject" resultMap="BondInfoByStockCodeAndMarketNo">
+		select  b.l_date,
+					 b.vc_market_no,
+			         b.vc_inter_code,
+			         b.vc_stock_code, 
+			         b.vc_stock_name,
+			         b.vc_stock_name_full,
+			         b.vc_stock_type,
+			         std.vc_stocktype_name,
+			         b.en_exist_limite,
+			         b.en_issue_balance,
+			         b.vc_bond_appraise,
+			         b.vc_bond_appraise_organ,
+			         b.l_issuer_id,
+			         b.vc_issuer_name_full,
+			         b.vc_issue_property,
+			         b.vc_issue_appraise,
+			         b.vc_issue_appraise_organ,
+			         b.vc_industry,
+			         b.vc_industry_1,
+			         b.vc_industry_2,
+			         b.vc_industry_3,
+			         b.vc_industry_4,
+			         b.vc_province,
+			         b.l_guarantor_id,
+			         b.vc_guarantor_name_full,
+			         to_char(to_date(b.l_delisting_date,'yyyymmdd'),'yyyy-mm-dd') as l_delisting_date,
+			         b.vc_guarantor_summary,
+			         b.l_issue_post_date,
+			         b.l_issue_begin_date,
+			         b.l_issue_end_date,
+			         b.l_pay_date,
+			         b.l_publish_date,
+			         to_char(to_date(b.l_begincal_date,'yyyymmdd'),'yyyy-mm-dd') as l_begincal_date,
+			         to_char(to_date(b.l_endincal_date,'yyyymmdd'),'yyyy-mm-dd') as l_endincal_date,
+			         to_char(to_date(b.l_next_payint_date,'yyyymmdd'),'yyyy-mm-dd') as l_next_payint_date,
+			         to_char(to_date(b.l_next_exercise_date,'yyyymmdd'),'yyyy-mm-dd') as l_next_exercise_date,
+			         b.c_interest_type,
+			         b.c_pay_interest_type,
+			         b.en_pay_inteval,
+			         b.en_face_rate,
+			         b.c_bid_type,
+			         b.c_pay_type,
+			         b.vc_special_text,
+			         b.vc_main_underwriter_id,
+			         b.vc_main_underwriter,
+			         b.vc_deputy_underwriter_id,
+			         b.vc_deputy_underwriter,
+			         b.c_underwrite_type,
+			         b.vc_group_underwriter,
+			         b.c_is_small_raised,
+			         b.c_is_have_saleback,
+			         b.vc_limit_left,
+			         b.vc_assure_type,
+			         b.en_parvalue,
+			         b.vc_bchmk_rate,
+			         b.l_next_payint_days,
+			         b.en_cb_value_convexity,
+			         b.l_endincal_days,
+			         b.en_cb_value_mduration,
+			         b.en_cb_value_incm_rate,
+			         b.en_cb_value_net_value,
+			         b.en_cb_value_all_value,
+			         b.l_rating_forecast,
+			         b.vc_interest_rate_desc,
+			         b.l_is_step_market,
+			         b.vc_step_market_inter_code,
+			         b.en_exchange_conver_ratio,
+			         b.vc_exchange_pledge_code,
+			         b.vc_payment_place,
+			         b.vc_latest_max_investor,
+			         b.vc_new_cop_bond_type,
+			         b.en_cz_value_net_value,
+			         b.en_cz_value_all_value,
+			         b.en_cz_value_convexity,
+			         b.en_cz_value_mduration,
+			         b.en_cz_value_incm_rate
+	      from  vw_bondinfo_wind   b left join t_ats_stock_type_define std on b.vc_stock_type = std.vc_stock_type
+		where b.vc_market_no=#vcMarketNo#
+			and b.vc_stock_code=#vcStockCode#
+    </select>
+    <!--获取指定债券用户有权账户中该债券持仓信息列表（报价）  数据源：O32-->
+    <select id="getBondUserPosition" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+		    select a.l_fund_id,
+		       a.vc_fund_code,
+		       a.vc_fund_name,
+		       a.l_asset_id,
+		       a.l_basecombi_id,
+		       a.vc_combi_name,
+		       b.vc_combi_no,
+		       a.vc_inter_code,
+		       a.vc_report_code,
+		       a.c_market_no,
+		       a.vc_stock_name,
+		       a.c_stock_type,
+		       a.vc_mixed_type,
+		       a.vc_bind_seat,
+		       a.c_invest_type,
+		       a.c_position_flag,
+		       a.l_current_amount,
+		       a.l_frozen_amount,
+		       a.l_unfrozen_amount,
+		       a.en_cost_price,
+		       case when b.vc_combi_no in ($operateCombiNos$) then '1' else '0' end is_sell_operate
+		  from o32_cj.ats_vunitstock a, trade.tcombi b
+		 where a.l_basecombi_id = b.l_combi_id
+		   and b.vc_combi_no in ($vcCombiNos$)
+		<isNotNull property="reportCode"><!--新公司债类型-->
+			and a.vc_report_code = #reportCode#
+		</isNotNull>	   
+    </select>
+    
+</sqlMap>

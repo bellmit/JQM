@@ -1,0 +1,197 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- 
+  - Author(s): jiangkanqian
+  - Date: 2018-06-11 21:23:45
+  - Description:
+-->
+<head>
+<title>冲销平仓流程基础页面</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="<%= request.getContextPath() %>/common/nui/nui.js" type="text/javascript"></script>
+</head>
+<body>
+	<div title="基本信息" id="instructInfoPanel" class="nui-panel" iconCls="icon-edit" style="width:100%;" showCollapseButton="true" collapseOnTitleClick="true">
+		 <div style="padding-top:5px;" id="chargeBasicForm" class="nui-form">
+		 	<table class="chargeTable" border="0" style="width: 100%;">
+		<tr>
+			<td align="right" width="60px">
+				产品名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductName" class="nui-textbox" name="newCharge.vcProductName"
+				readonly="readonly"   
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				组合名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcCombiName" class="nui-textbox" name="newCharge.vcCombiName" 
+				readonly="readonly"  
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				业务方向:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcBusinType" class="nui-dictcombobox" name="newCharge.vcBusinType"
+				 valueField="dictID" textField="dictName" dictTypeId="interestSwapBusinType"
+				 readonly="readonly"  
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				业务名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcBusinName" class="nui-dictcombobox" name="newCharge.vcBusinName"
+				valueField="dictID" textField="dictName" dictTypeId="interestSwapBusinName" 
+				readonly="readonly"  
+				style="width: 80%;"/>
+			</td>			
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				名义本金(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lNominalCapital" class="nui-textbox" name="newCharge.lNominalCapital" 
+				readonly="readonly"  
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				开仓指令编号:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lInstructNo" class="nui-textbox" name="newCharge.lInstructNo" 
+				readonly="readonly"  
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				累计冲销金额(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lSpendCapital" class="nui-textbox" name="newCharge.lSpendCapital" 
+				readonly="readonly"  
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				可冲销金额(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lLeftCapital" class="nui-textbox" name="newCharge.lLeftCapital" 
+				readonly="readonly"  
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				对手方:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcCounterpartyName" class="nui-textbox" name="newCharge.vcCounterpartyName" 
+				readonly="readonly"  
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销类型:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcChargeType"  class="nui-combobox" 
+                        data = "[{id: 0, text: '双边冲销'}, {id: 1, text: '多边冲销'}]"
+                        readonly="readonly"  
+                        name="newCharge.vcChargeType" required="true" style="width: 80%;"/>
+			</td>						
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销日期:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lTradeDate"  class="nui-datepicker" style="width: 80%;"
+				readonly="readonly"  
+                        name="newCharge.lTradeDate" required="true" 
+ 						 format="yyyyMMdd"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销金额(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lChargeCapital" class="nui-textbox" name="newCharge.lChargeCapital" 
+				readonly="readonly"  
+				required="true" style="width: 80%;"/>
+			</td>
+		</tr>
+	</table>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>附件:</strong></div>
+	<div colspan="3" class="td">
+		<iframe id="prodIfm1" name="prodIfm1" width="98%"  height="120px" frameborder="no" border="0" marginwidth="0" marginheight="0" scolling="no"></iframe>
+	</div>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>备注:</strong></div>
+	<div colspan="5">
+        <input class="nui-textarea"  name="newCharge.vcRemark" id="vcRemark" width="100%" height="90px" readonly="readonly"  />
+    </div>
+		 </div>
+	</div>
+
+	<script type="text/javascript">
+    	nui.parse();
+    	
+    	var basicInfo;
+    	
+    	function setInstructInfo(processInstID){
+    		nui.ajax({
+				url : "com.cjhxfund.ats.instruction.InterestSwap.InterestSwapInstruction.queryProcessCharge.biz.ext",
+				type : 'POST',
+				data : {lProcessinstId:processInstID},
+				cache : false,
+				async: false,
+				contentType : 'text/json',
+				success : function(text) {
+					var returnJson = nui.decode(text);
+					var chargeInfo = returnJson.chargeInfo;
+					if(chargeInfo != null){
+						basicInfo = chargeInfo;		
+                    	nui.get("vcProductName").setValue(chargeInfo.openProductName);
+                    	nui.get("vcCombiName").setValue(chargeInfo.openCombiName);
+                    	nui.get("vcBusinType").setValue(chargeInfo.openBusinType);
+                    	nui.get("vcBusinName").setValue(chargeInfo.openBusinName);
+                    	nui.get("lNominalCapital").setValue(chargeInfo.openNominalCapital);
+                    	nui.get("lInstructNo").setValue(chargeInfo.openInstructNo);
+                    	nui.get("lSpendCapital").setValue(chargeInfo.lSpendCapital);
+                    	nui.get("lLeftCapital").setValue(chargeInfo.lLeftCapital);
+                    	nui.get("vcCounterpartyName").setValue(chargeInfo.openvcCounterPartyName);
+                    	nui.get("vcChargeType").setValue(chargeInfo.vcChargeType);
+                    	nui.get("lTradeDate").setValue(chargeInfo.lTradeDate.toString());
+                    	nui.get("lChargeCapital").setValue(chargeInfo.lChargeCapital);
+                    	nui.get("vcRemark").setValue(chargeInfo.vcRemark);
+                    	
+                    	var lAttachId = chargeInfo.lAttachId;
+                    	$("#prodIfm1").attr("src","<%= request.getContextPath() %>/fm/baseinfo/fileuploadComm/any_upload.jsp?attachType=77&attachBusType=1&bizId="+lAttachId+"&isEdit=n");
+                    	
+					}
+					
+				}
+			});
+    	}
+    	
+    </script>
+</body>
+</html>

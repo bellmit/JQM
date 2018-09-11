@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.cjapi,com.cjhxfund.commonUtil,com.cjhxfun
+ d.jy.ProductProcess,com.primeton.eos.richweb,com.eos.foundation,com.e
+ os.workflow,org.gocom.components.coframe.auth,org.gocom.components.co
+ frame.rights,org.gocom.components.coframe.org,org.gocom.components.co
+ frame.tools,org.gocom.components.coframe.framework
+Bundle-Vendor: chenpeng
+eos-webCtxPath: process
+Bundle-Version: 1.0.0
+Bundle-Name: com.cjhxfund.jy.process
+Bundle-Description: 流程
+Bundle-SymbolicName: com.cjhxfund.jy.process
+

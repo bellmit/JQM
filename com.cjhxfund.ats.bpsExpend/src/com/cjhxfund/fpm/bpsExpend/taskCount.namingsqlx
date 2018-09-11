@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:chenxing -->
+<sqlMap>
+   <select id="queryTaskListCount" parameterClass="java.util.HashMap"  resultClass="java.lang.Integer">
+     	/**
+       *2017-12-06 统计代理任务数量 chenxing
+       **/
+    select t.workitemid
+    from (
+     select t1.workitemid from wfworkitem t1,wfwiparticipant t2,pm_biz_process t5
+    where t1.currentstate in (4,10)/*待处理的工作项状态*/
+    and t1.workitemid = t2.workitemid
+    and t1.processinstid = t5.processinst_id
+    and ((t1.bizstate in (0,3,4) and t2.partiintype in('GET','EXE')) or (t1.bizstate = 2 and t2.partiintype = 'EXE'))/*流程协办和转办的特殊业务状态收集*/
+    and not exists (select 1 from pm_prc_work_info t4 where t4.workitem_id = t1.workitemid and t4.is_help = 1)/*过滤征求意见*/
+    and t2.participant = t1.participant
+    and exists (select 1 from Wfprocessinst t3 where t3.processinstid = t1.processinstid and t3.currentstate = 2 /*运行中流程状态*/
+                                                 and t3.Processinstname != 'com.cjhxfund.fpm.design.supply.spclInfoSupply')/*处理子流程*/
+    <isNotNull property="processType">
+	   and t5.biz_type = #processType#
+	</isNotNull>   
+	<isNotNull property="prodName">
+	   and t5.prod_name like '%'||#prodName#||'%' 
+	</isNotNull>   
+                                       
+    and t2.participanttype = 'emp'
+    and exists (select 1 from org_employee e where to_char(e.empid) = to_char(t2.participantid) and to_char(e.empid) = to_char(#personID#))
+    union
+    
+    select t1.workitemid from wfworkitem t1,wfwiparticipant t2,pm_biz_process t5
+    where t1.currentstate in (4,10)
+    and t1.workitemid = t2.workitemid
+    and t1.processinstid = t5.processinst_id
+    and ((t1.bizstate in (0,3,4) and t2.partiintype in('GET','EXE')) or (t1.bizstate = 2 and t2.partiintype = 'EXE'))
+    and not exists (select 1 from pm_prc_work_info t4 where t4.workitem_id = t1.workitemid and t4.is_help = 1)
+    and t2.participant = t1.participant
+    and exists (select 1 from Wfprocessinst t3 where t3.processinstid = t1.processinstid
+                                                 and t3.Processinstname != 'com.cjhxfund.fpm.design.supply.spclInfoSupply') 
+	 <isNotNull property="processType">
+	   and t5.biz_type = #processType#
+	</isNotNull>   
+	<isNotNull property="prodName">
+	   and t5.prod_name like '%'||#prodName#||'%' 
+	</isNotNull>                                                 
+    and t2.participanttype = 'role'
+    and exists (select 1 from v_roleemp r where to_char(r.role_id) = to_char(t2.participantid) and to_char(r.empid) = to_char(#personID#))
+	) t 
+     </select>
+      <select id="queryRunningTaskListCount" parameterClass="java.util.HashMap"  resultClass="java.lang.Integer">
+       /**
+       *2017-12-06 统计流转中任务 chenxing
+       **/
+      select processinst_id from (
+      select t.processinst_id from pm_biz_process t ,org_employee e,(select max(a.end_time) endtime ,process_inst_id from pm_prc_aprv_info a group by a.process_inst_id) t1,wfprocessinst t2
+      where t.process_creator = e.empid 
+      and t.processinst_id=t2.processinstid
+      and t2.currentstate = 2
+      and t.processinst_id = t1.process_inst_id
+      and t.process_def_name != 'com.cjhx.fpm.task.help'
+      and t.process_def_name != 'com.cjhxfund.fpm.design.supply.spclInfoSupply'
+      and exists (select 1 from v_wfparticipant t1 where t1.processinstid = t.processinst_id and to_char(t1.empid) = #personID#)
+      and not exists (select 1 from v_wfparticipant t1 where t1.processinstid = t.processinst_id and t1.iscurrent = 1 and to_char(t1.empid) = #personID#)
+	  <isNotNull property="processType">
+	    and t.biz_type = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.prod_name like '%'||#prodName#||'%' 
+	 </isNotNull>   
+      union
+    
+     select t.processinst_id from pm_biz_process t ,org_employee e,(select max(a.end_time) endtime ,process_inst_id from pm_prc_aprv_info a group by a.process_inst_id) t1,wfprocessinst t2
+      where t.process_creator = e.empid
+      and t.processinst_id=t2.processinstid
+      and t2.currentstate = 2
+      and t.processinst_id = t1.process_inst_id
+      and t.process_def_name != 'com.cjhx.fpm.task.help'
+      and t.process_def_name != 'com.cjhxfund.fpm.design.supply.spclInfoSupply'
+      and exists (select 1 from pm_prc_work_info p where p.processinst_id =t.processinst_id  and p.is_help = 1 and to_char(p.user_id) = #personID#)
+	  <isNotNull property="processType">
+	    and t.biz_type = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.prod_name like '%'||#prodName#||'%' 
+	 </isNotNull>
+	 )  
+     </select> 
+     <select id="queryFinishTaskListCount"  parameterClass="java.util.Map" resultClass="java.lang.Integer">
+      /**
+       *2017-12-06 统计已完成数量
+       *查询已完成的流程
+       */
+      select t.processinst_id from pm_biz_process t,org_employee e ,wfprocessinst t2 where t.process_creator = e.empid
+      and t.processinst_id=t2.processinstid and t2.currentstate = 7 and t.process_def_name not like '%com.cjhx.fpm.task.help%'
+      and t.process_def_name != 'com.cjhxfund.fpm.design.supply.spclInfoSupply'
+      <isNotNull property="processType">
+	    and t.biz_type = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.prod_name like '%'||#prodName#||'%' 
+	 </isNotNull>  
+      and exists (select 1 from v_wfparticipant t1 where t1.processinstid = t.processinst_id  and to_char(t1.empid) = #personID#)
+     </select>
+      <select id="getUnviewedNoticeCount"  parameterClass="java.util.Map"  resultClass="java.lang.Integer">
+      /**
+       * 统计待阅数量
+       */
+       select t.processType,t.productName from (select t.processType,
+       (case when instr(t.productName,'（原') &gt; 0
+        then
+           substr(t.productName,0,(instr(t.productName,'（原')-1))
+        when instr(t.productName,'（曾用名') &gt; 0
+        then
+             substr(t.productName,0,(instr(t.productName,'（曾用名')-1))
+        else
+           t.productName
+        end) productName 
+        from (
+       	select 
+        (case when instr(substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1),'】') &lt;= 0
+        then
+           substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1)
+        else
+           substr(substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1),0,instr(substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1),'】')-1)
+        end) processType,
+         (case when instr(substr(t.title,(instr(t.title,'-')+1)),'--') &lt;= 0
+         then 
+            substr(t.title,(instr(t.title,'-')+1))
+         else
+            substr(t.title,(instr(t.title,'-')+1),instr(substr(t.title,(instr(t.title,'-')+1)),'--')-1)
+         end ) productName from wfnotificationinst t  where 
+         t.recipient like '%{'||#personID#||'}%'
+        and state = 'UNVIEWED'  
+        ) t ) t where 1=1
+      <isNotNull property="processType">
+	    and t.processType = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.productName like '%'||#prodName#||'%' 
+	 </isNotNull> 
+     </select>
+      <select id="getViewedNoticeCount"  parameterClass="java.util.Map" resultClass="java.lang.Integer">
+      /**
+       * 统计已阅数量
+       */
+     	select t.processType,t.productName from (select t.processType,
+          (case when instr(t.productName,'（原') &gt; 0
+        then
+           substr(t.productName,0,(instr(t.productName,'（原')-1))
+        when instr(t.productName,'（曾用名') &gt; 0
+        then
+             substr(t.productName,0,(instr(t.productName,'（曾用名')-1))
+        else
+           t.productName
+        end) productName
+        from (
+     	select (case when instr(substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1),'】') &lt;= 0
+        then
+           substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1)
+        else
+           substr(substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1),0,instr(substr(t.title,instr(t.title,'【')+1,instr(t.title,'】')+1),'】')-1)
+        end) processType,
+         (case when instr(substr(t.title,(instr(t.title,'-')+1)),'--') &lt;= 0
+         then 
+            substr(t.title,(instr(t.title,'-')+1))
+         else
+            substr(t.title,(instr(t.title,'-')+1),instr(substr(t.title,(instr(t.title,'-')+1)),'--')-1)
+         end ) productName from wf_h_notificationinst t where
+         t.recipient like '%{'||#personID#||'}%'
+        and state = 'VIEWED' 
+        ) t ) t where 1=1 
+      <isNotNull property="processType">
+	    and t.processType = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.productName like '%'||#prodName#||'%' 
+	 </isNotNull>  
+     </select>
+</sqlMap>

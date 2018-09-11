@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.sm.comm,com.cjhxfund.commonUtil,com.c
+ jhxfund.foundation.fix,com.primeton.eos.richweb,com.eos.foundation,co
+ m.eos.workflow,org.gocom.components.coframe.auth,org.gocom.components
+ .coframe.rights,org.gocom.components.coframe.org,org.gocom.components
+ .coframe.tools,org.gocom.components.coframe.framework
+eos-webCtxPath: ipo
+Bundle-Vendor: 谭凯
+Bundle-Version: 1.0.0
+Bundle-Name: 固收-网下新股申购
+Bundle-Description: 固收-网下新股申购
+Bundle-SymbolicName: com.cjhxfund.ats.ipo
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:周靖 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+		<result column="vc_report_code" javaType="string" property="vcReportCode"/>
+		<result column="c_market_no" javaType="string" property="cMarketNo"/>
+		<result column="vc_inter_code" javaType="string" property="vcInterCode"/>
+		<result column="c_stock_type" javaType="string" property="cStockType"/>
+		<result column="vc_mixed_type" javaType="string" property="vcMixedType"/>
+		<result column="l_fund_id" javaType="string" property="lFundId"/>
+		<result column="l_asset_id" javaType="string" property="lAssetId"/>
+		<result column="l_basecombi_id" javaType="string" property="lBasecombiId"/>
+		<result column="vc_stockholder_id" javaType="string" property="vcStockholderId"/>
+		<result column="vc_bind_seat" javaType="string" property="vcBindSeat"/>
+		<result column="c_invest_type" javaType="string" property="cInvestType"/>
+		<result column="c_position_flag" javaType="string" property="cPositionFlag"/>
+		<result column="l_current_amount" javaType="string" property="lCurrentAmount"/>
+		<result column="l_frozen_amount" javaType="string" property="lFrozenAmount"/>
+		<result column="l_unfrozen_amount" javaType="string" property="lUnfrozenAmount"/>
+    </resultMap>
+    <select id="inquiryAppointBondInfo" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+    	select t.vc_report_code,
+		   t.c_market_no,
+		   t.vc_inter_code,
+		   t.c_stock_type,
+		   t.vc_mixed_type,
+		   t.l_fund_id,
+		   t.l_asset_id,
+		   t.l_basecombi_id,
+		   t.vc_stockholder_id,
+		   t.vc_bind_seat,
+		   t.c_invest_type,
+		   t.c_position_flag,
+		   t.l_current_amount,
+		   t.l_frozen_amount,
+		   t.l_unfrozen_amount
+		  from o32_cj.ats_vunitstock t
+		  where 1 = 1
+ 	  	<isNotNull property="vcReportCode"><!---->	
+			and t.vc_report_code = #vcReportCode#
+		</isNotNull>      
+    </select>
+</sqlMap>

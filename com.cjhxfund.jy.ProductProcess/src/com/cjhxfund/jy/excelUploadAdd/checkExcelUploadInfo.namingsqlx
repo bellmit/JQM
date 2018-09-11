@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:黄燕 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <resultMap class="com.eos.foundation.DictEntry" id="detailResult">
+        <result column="dictid" javaType="string" property="Dictid"/>
+        <result column="dictname" javaType="string" property="Dictname"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="getvcCombiNo">
+        <result column="vc_combi_no" javaType="string" property="vcCombiNo"/>
+        <result column="vc_fund_name" javaType="string" property="combProductName"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="getInvestProductCode">
+        <result column="vc_stock_code" javaType="string" property="investProductCode"/>
+        <result column="vc_stock_name" javaType="string" property="investProductName"/>
+        <result column="vc_inter_code" javaType="string" property="vcInterCode"/>
+    </resultMap>
+    <!--根据名称查询数据字典-->
+    <select id="checkExcelUploadInfo" parameterClass="java.util.HashMap" resultMap="detailResult">
+        select dictid, dictname
+	    from eos_dict_entry
+	   where 1=1
+	   <isNotNull property="dicttypeid">
+		  		and dicttypeid = #dicttypeid# 
+		  </isNotNull>
+	   <isNotNull property="dictname">
+		  		and dictname = #dictname# 
+		  </isNotNull>
+  	</select>
+  	
+  	<!--根据产品编号，组合名称查询产品名称，组合编号-->
+    <select id="getvcCombiNo" parameterClass="java.util.HashMap" resultMap="getvcCombiNo">
+		select t.vc_combi_no,tt.vc_fund_name
+		  from TCOMBI t, tfundinfo tt
+		 where t.l_fund_id = tt.l_fund_id
+	   <isNotNull property="vcCombiName">
+		  		and t.vc_combi_name = #vcCombiName# 
+		  </isNotNull>
+	   <isNotNull property="combProductCode">
+		  		and tt.vc_fund_code = #combProductCode# 
+		  </isNotNull>
+  	</select>
+  	
+  	<!--根据债券代码进行校验-->
+    <select id="getInvestProductCode" parameterClass="java.util.HashMap" resultMap="getInvestProductCode">
+		select t.vc_stock_code, t.vc_stock_name,t.vc_inter_code
+  			from vw_bondinfo_wind t
+  			where 1=1
+	   <isNotNull property="investProductCode">
+		  		and t.vc_stock_code = #investProductCode# 
+		  </isNotNull>
+  	</select>
+  	
+</sqlMap>

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.fm.baseinfo,com.cjhxfund.commonUtil,c
+ om.primeton.eos.richweb,com.eos.foundation,com.eos.workflow,org.gocom
+ .components.coframe.auth,org.gocom.components.coframe.rights,org.goco
+ m.components.coframe.org,org.gocom.components.coframe.tools,org.gocom
+ .components.coframe.framework
+Bundle-Vendor: 谭凯
+eos-webCtxPath: report
+Bundle-Version: 1.0.0
+Bundle-Name: mom报表管理
+Bundle-Description: mom报表管理
+Bundle-SymbolicName: com.cjhxfund.ats.mom.report
+

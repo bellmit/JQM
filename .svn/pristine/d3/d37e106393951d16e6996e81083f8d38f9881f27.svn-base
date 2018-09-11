@@ -1,0 +1,166 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+<%@include file="/JQMHistory/common/commscripts.jsp" %>	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- 
+  - Author(s): jiangkanqian
+  - Date: 2018-05-16 14:00:29
+  - Description:
+-->
+<head>
+<title>投资管理出入金</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/common/css/instruct.css"/>
+	 
+</head>
+<body style="width:100%;height:100%;">
+<div style="margin:0px 2px 0px 2px;width:100%;height:100%;" >
+   <div class="search-condition">
+   <div class="list">
+   <div id="discGoldSearchForm" class="nui-form" style="height:10%" align="center"> 
+   <table id="instruct_follow_condition" border="0" cellpadding="1" cellspacing="1" 
+   style="width:100%;table-layout:fixed;"> 
+     <tr> 
+      <td class="form_label" width="60px">产品名称:</td> 
+      <td colspan="1" width="200px"> 
+      	<input id="vcProductCode" 
+      	class="nui-buttonedit" name="vcProductCode" emptytext="全部" showclose="true" 
+      	oncloseclick="onCloseClick" onbuttonclick="ButtonClickGetFundName_todayInstruct"/>
+      </td> 
+      <td width="60px" class="form_label">委托方向:</td> 
+      <td colspan="1" width="180px"> 
+      	<input class="nui-dictcombobox" id="vcBusinType" name="vcBusinType" 
+      	multiselect="true" valuefield="dictID" textfield="dictName" 
+      	dicttypeid="interestSwapBusinType" emptytext="全部" showclose="true" 
+      	oncloseclick="onCloseClick" style="width:95%" /> 
+      </td> 
+      <td class="form_label" width="60px">交易日期:</td> 
+      <td colspan="1" width="290px"> 
+      	<input class="nui-datepicker" name="lTradeDateMin" style="width:120px" id="lTradeDateMin" 
+      	showclose="true" oncloseclick="onCloseClick" /> 
+      	<span style="width:50px;" align="left">-</span> 
+      	<input class="nui-datepicker" name="lTradeDateMax" style="width:120px" id="lTradeDateMax" 
+      	showclose="true" oncloseclick="onCloseClick" /> 
+      </td> 
+      <td width="60px" class="form_label">代理行:</td> 
+      <td colspan="1" width="200px"> 
+      	<input class="nui-dictcombobox" id="vcReferRate" name="vcReferRate"/> 
+      </td> 
+     </tr> 
+     <tr>       
+      <td colspan="7" align="left"> 
+      <input class="nui-button" plain="false" text="查询" iconcls="icon-search" onclick="search()" /> 
+      <input class="nui-button" plain="false" text="重置" iconcls="icon-reset" onclick="reset()" /> 
+      <a class="nui-menubutton " plain="false" menu="#popupMenu" id="searchCond" name="searchCond" 
+      data-options="{formId:&quot;form_today_instruct&quot;}" iconcls="icon-add">保存查询条件</a> 
+       <ul id="popupMenu" class="mini-menu" style="display:none;"></ul> 
+       </td> 
+     </tr> 
+   </table> 
+  </div>
+  </div>
+  </div>
+
+  <div class="nui-toolbar" style="border-bottom:0;padding:0px;">
+	    	<table style="width:100%;table-layout:fixed;">
+	            <tr>
+	                <td style="width:75%;">
+	                	<a id="addInstruct" class='nui-button' plain='false' iconCls="icon-add" onclick="addInterestSwap()">增加</a>
+	                	<a id="copyInstruct" enabled="false" class='nui-button' plain='false' iconCls="icon-add" onclick="copyInstruct()">复制增加</a>&nbsp;
+	                    <a id="edit" enabled="false" class='nui-button' plain='false' iconCls="icon-edit" onclick="edit()">修改</a>&nbsp;
+	                    <a id="remove" enabled="false" class='nui-button' plain='false' iconCls="icon-remove" onclick="onCancle()">撤销</a>&nbsp;
+	                	<a id="batchConfirm" enabled="false" class='nui-button' plain='false' iconCls="icon-ok" onclick="batchConfirmTasks()">确认</a>&nbsp;
+	                  	<a class='nui-button' plain='false' iconCls="icon-download" id="export_todayInstruct" onclick="exportExcel()">导出</a>&nbsp;
+	                <td align="right">
+	                    <a class='nui-button' plain='false' iconCls="icon-reload" onclick="autoRefreshFun()">刷新</a>
+	                    <input id="autoRefresh" class="nui-combobox" style="width:90px;" 
+		                    value="180" showNullItem="false" allowInput="false"
+		                    data="[
+						    { id: 0, text: '不自动刷新' },
+						    { id: 15, text: '每15秒刷新' },
+						    { id: 30, text: '每30秒刷新' },
+							{ id: 60, text: '每1分刷新' },
+							{ id: 120, text: '每2分刷新' },
+							{ id: 180, text: '每3分刷新' },
+							{ id: 300, text: '每5分刷新' },
+							{ id: 600, text: '每10分刷新' },
+							{ id: 1200, text: '每20分刷新' },
+							{ id: 1800, text: '每30分刷新' }]"/>&nbsp;&nbsp;
+	            	</td>
+	            </tr>
+	        </table>
+	</div>
+	
+  <div class="nui-fit" style="width:100%;height:100%;overflow:hidden;">
+  	<div id="treegrid_todays_instruct" class="nui-treegrid" style="width:100%;height:100%;" 
+  	url="com.cjhxfund.ats.instruction.InterestSwap.InterestSwapInstruction.queryInstructInfo.biz.ext" 
+  	dataField="insructInfos" 
+  	treeColumn="lInstructNo" 
+  	showPager="true" 
+  	pageSize="20" 
+  	frozenStartColumn="0" 
+  	frozenEndColumn="6" 
+  	showTreeIcon="false" 
+  	showTreeLines="false" 
+  	multiSelect="true" 
+  	sizeList="[20,50,100,200,500,1000]" 
+  	showReloadButton="false" 
+  	
+  	onselectionchanged="selectionchanged" 
+  	pagerButtons="#prompt_todays" 
+  	virtualScroll="true" 
+  	sortField="" 
+  	sortOrder="" 
+  	enableHotTrack="false" 
+  	idField="lInstructId" 
+  	onselect="onSelect" 
+  	ondeselect="onDeselect" 
+  	onload="onGridLoad">
+    <div property="columns">
+      <div type="checkcolumn"></div>
+      <div name="action" width="60px" align="center" headerAlign="center" headerallowSort="true" renderer="operate">操作</div>
+      <div field="vcProductName" headerAlign="center" allowSort="true" align="center" width="200px">产品名称</div>
+      <div field="vcCombiName" headerAlign="center" allowSort="true" align="left">组合名称</div>
+      <div field="lTradeDate" headerAlign="center" allowSort="true" align="center">委托方向</div>
+      <div field="vcBusinType" headerAlign="center" allowSort="true" align="left" renderer="vcBusinTypeRender">代理行</div>
+      <div field="vcBusinName" headerAlign="center" allowSort="true" align="left" renderer="vcBusinNameRender">交易日期</div>
+      <div field="lNominalCapital" headerAlign="center" allowSort="true" align="center" numberFormat="#,###">金额（万元）</div>
+      <div field="lLeftDays" headerAlign="center" allowSort="true" align="left">代理行账号</div>
+      <div field="lFixedRate" headerAlign="center" allowSort="true" align="left" numberFormat="n4">代理行账户名称</div>
+      <div field="lValueDate" headerAlign="center" allowSort="true" align="right">交易状态</div>
+      <div field="lDueDate" headerAlign="center" allowSort="true" align="center">录入时间</div>
+      <div field="lFirstvalueDate" headerAlign="center" allowSort="true" align="center">复核时间</div>
+      <div field="vcInterdayAdj" headerAlign="center" allowSort="true" align="center">流程状态</div>
+      <div field="lInstructNo" headerAlign="center" allowSort="true" align="center">指令/建议序号</div>
+      <div field="vcInstructSource" headerAlign="center" allowSort="true" align="center" renderer="InstructResource">指令/建议来源</div>
+      <div field="vcRemark" headerAlign="center" allowSort="true" align="center" width="250px">备注</div></div>
+  </div>
+  <div id="prompt_todays">
+    <span class="separator"></span>
+    <div class="investdata"></div>
+    <div style="display:inline-block; margin-right: 8px;">投顾已录入</div>
+    <div class="transactionConfirmData"></div>
+    <div style="display:inline-block; margin-right: 8px;">投顾已复核</div>
+    <div class="tradedate"></div>
+    <div style="display:inline-block; margin-right: 8px;">前台已成交</div>
+    <div class="closedata"></div>
+    <div style="display:inline-block;">后台已成交</div>
+    <div class="invaliddata"></div>
+    <div style="display: inline-block; margin-right: 8px;">无效</div>
+    <div class="backdata"></div>
+    <div style="display:inline-block; margin-right: 8px;">已修改</div>
+    <!-- <div class="forbiddata"></div>
+    <div style= "display:inline-block; margin-right: 8px;">交易禁止</div> -->
+  </div>
+</div>
+</div>
+  
+	<script type="text/javascript">
+    	nui.parse();
+    	
+    	
+    	
+    </script>
+</body>
+</html>

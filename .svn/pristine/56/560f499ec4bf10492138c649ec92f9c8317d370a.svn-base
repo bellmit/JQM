@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Require-Bundle: org.gocom.components.coframe.auth,com.eos.workflow,com
+ .primeton.eos.richweb,com.eos.foundation
+Bundle-Vendor: wjh
+eos-webCtxPath: bpsExpend
+Bundle-Version: 1.0.0
+Bundle-Name: com.cjhxfund.fpm.bpsExpend
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.bpsExpend
+

@@ -1,0 +1,456 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8" session="false" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/common.jsp" %>
+<!-- 
+  - Author(s): 罗倔怀
+  - Date: 2017-07-03 15:16:15
+  - Description:
+-->
+<head>
+    <title>回购指令/建议下达</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    
+    <style type="text/css">
+
+        .mini-buttonedit-border {
+            padding-right: 1px;
+        }
+
+        .inputContainer {
+            width: 890px;
+            height: auto;
+            background-color: #FEFEFE;
+            box-shadow: 0px 0px 2px #6C7A87;
+            margin-bottom: 10px;
+        }
+
+        .inputContainer ul {
+            padding: 0px 10px 0px 10px;
+            display: block;
+            padding-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .inputContainer li[liType=input] {
+            list-style: none;
+            width: 273px;
+            line-height: 21px;
+            display: block;
+            border-radius: 3px;
+            margin-top: 10px;
+            margin-right: 5px;
+            padding-left: 10px;
+            float: left;
+            height: auto;
+        }
+
+        .inputContainer > ul > li[liType=input] > label {
+            width: 110px;
+            margin-right:3px;
+            text-align: right;
+            float: left;
+            display: block;
+        }
+        .inputContainer > ul > li[liType=input] > label > span{
+            color: red;
+        }
+
+        .inputContainer > ul > li[liType=input] > div {
+            width: 160px;
+            text-align: left;
+            float: left;
+            height: auto;
+        }
+        
+        .infoContainer {
+            width: 890px;
+            height: auto;
+            background-color: #FEFEFE;
+            box-shadow: 0px 0px 2px #6C7A87;
+        }
+        
+        .infoContainer ul {
+            padding: 0px 10px 0px 10px;
+            display: block;
+            padding-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .infoContainer li {
+            list-style: none;
+            width: 270px;
+            height: 21px;
+            display: block;
+            margin-top: 10px;
+            margin-right: 5px;
+            padding-left:10px;
+            float: left;
+            background: #0F88EB;
+            box-shadow: 0px 0px 2px #6C7A87;
+            border-radius: 2px;
+            color: white;
+        }
+        .infoContainer > ul > li > label {
+            width: 110px;
+            display: block;
+            text-align: right;
+            float: left;
+        }
+        .infoContainer > ul > li > div {
+            width: 125px;
+            height: auto;
+            float:left;
+            padding-left:5px;
+            
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/common/css/GridDetailBlock.css"/>
+</head>
+<body style="overflow:hidden;padding: 10px 10px 10px 10px;">
+<div style="margin-bottom: 5px;">
+        <div class="inputContainer" id="fullDirection">
+            <ul>
+                <li liType='input'><label><span>*</span>产品名称:</label>
+                    <div>
+                        <div name="vcProductCode" class="mini-autocomplete" pinyinField="ID" id="vcProductCode"
+                             textField="TEXT" valueField="ID"
+                             searchField="productCode"
+                             url="com.cjhxfund.commonUtil.applyInstUtil.QueryTAtsProductInfoMatchSort.biz.ext?queryType='01','02'"
+                             showNullItem="false"
+                             allowInput="true"
+                             emptyText="请输入产品代码或产品名称..."
+                             nullItemText="请输入产品代码或产品名称..."
+                             valueFromSelect="true"
+                             showClose="true"
+                             onvaluechanged="selectFund"
+                             oncloseclick="onCloseClick"
+                             popupWidth="300"
+                             style="width: 100%;"
+                             required="true">
+                            <div property="columns">
+                                <div header="产品代码" field="ID" width="40px"></div>
+                                <div header="产品名称" field="TEXT"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li liType='input'><label><span>*</span>交易日期:</label>
+                    <div>
+                        <input id="lTradeDate" allowInput="false" name="lTradeDate" required="true"
+                               data-options='{dateType:"01"}'
+                               onvaluechanged="calFirstMaturityRe()" class="nui-datepicker"
+                               onvalidation="lTradeDateValid"
+                               style="width: 100%;"/>
+                    </div>
+                </li>
+                <li liType='input'><label>首次结算日期:</label>
+                    <div>
+                        <input id="lFirstSettleDate" allowInput="false" name="lFirstSettleDate"
+                               onblur="calByFirstMa()"  class="nui-datepicker" required="true"
+                               data-options='{dateType:"01"}' enabled="false"
+                               style="width: 100%;"/>
+                    </div>
+                </li>
+                <li liType='input'><label><span>*</span>组合名称:</label>
+                    <div>
+                        <input name="vcCombiCode" class="nui-combobox" id="vcCombiCode"
+                               textField="TEXT" valueField="ID"
+                               dataField="data"
+                               url="com.cjhxfund.commonUtil.applyInstUtil.queryCombiInfo.biz.ext"
+                               showNullItem="false"
+                               emptyText="请选择..."
+                               nullItemText="请选择..."
+                               showClose="true"
+                               oncloseclick="onCloseClick"
+                               onvaluechanged="selectCombi2"
+                               required="true"
+                               style="width:100%;"
+                        />
+
+                    </div>
+                </li>
+                <li liType='input'><label><span>*</span>回购天数:</label>
+                    <div>
+                        <input class="nui-spinner" id="lRepoDays" required="true" name="lRepoDays" 
+                               onblur="caclSymbol(true,'5','1')" maxValue="365" onvalidation="positiveNum"
+                               style="width: 100%;"/>
+                    </div>
+                </li>
+                <li liType='input'><label>占款天数:</label>
+                    <div><input class="nui-textbox" id="lContractPeriods" name="lContractPeriods"
+                                showClose="true" vtype="int" oncloseclick="onCloseClick" enabled="false"
+                                style="width: 100%;"/></div>
+                </li>
+                
+                <li liType='input'><label id="vcEntrustDirectionLab" style="color:red;"><span>*</span>委托方向:</label>
+                    <div>
+                        <input class="nui-radiobuttonlist" name="vcEntrustDirection" id="vcEntrustDirection"
+                               data="[{id: '5', text:'正回购'}, {id: '6', text: '逆回购'}]" required="true"
+                               onvaluechanged="changeRed(this.value)" value="5"
+                               style="width: 100%;"/></div>
+                </li>
+                 <li liType='input'><label>到期结算日期:</label>
+                    <div>
+                        <input class="nui-datepicker" id="lMaturitySettleDate" allowInput=
+                                "false" name="lMaturitySettleDate" required="true"
+                               onvalidation="setlMaturitySettleDate" data-options='{dateType:"01"}'
+                               style="width: 100%;"/></div>
+                </li>
+                <li liType='input'><label>到期结算金额(元):</label>
+                    <div>
+                        <input class="nui-spinner" id="enSettleAmount" vtype="float" name="enSettleAmount"
+                         minValue="0" maxValue="999999999999"
+                               enabled="false" format="n2"
+                               style="width: 100%;"/></div>
+                </li>
+                <li liType='input'><label><span>*</span>清算速度: </label>
+                    <div><input class="nui-radiobuttonlist" name="vcSettleSpeed" id="vcSettleSpeed"
+                                data="[{id: '0', text:'T+0'}, {id: '1', text: 'T+1'}]" required="true"
+                                value="0" onvaluechanged="calFirstMaturityRe()"
+                                style="width: 100%;"/></div>
+                </li>
+                
+                <li liType='input'><label><span>*</span>回购金额(万元):</label>
+                    <div><input class="nui-spinner" minValue="0" maxValue="999999999999" format="n4"
+                                id="enFaceAmount"
+                                name="enFaceAmount"
+                                required="true"
+                                vtype="float"
+                                onblur="calEmFaceAmount()"
+                                onvalidation="enFaceAmountValid"
+                                style="width: 100%;"
+                    /></div>
+                </li>
+                <li liType='input'><label>回购利息(元):</label>
+                    <div>
+                        <input class="nui-spinner" enabled="false" id="enRepoInterest" name="enRepoInterest"
+                         format="n2" vtype="float" minValue="0" maxValue="999999999999"
+                         style="width: 100%;"/></div>
+                </li>
+                <li liType='input'><label><span>*</span>交易对手: </label>
+                    <div>
+                        <div name="vcCounterpartyId" class="mini-autocomplete" id="vcCounterpartyId"
+                             required="true"
+                             textField="vcName"
+                             valueField="vcRivalCode"
+                             searchField="vcPinyin"
+                             url="com.cjhxfund.ats.sm.comm.TraderivalManager.QueryTraderByPinyin.biz.ext"
+                             popupEmptyText="全部"
+                             nullItemText="全部"
+                             loadingText="加载中"
+                             valueFromSelect="false"
+                             dataField="traders"
+                             multiSelect="false"
+                             showClose="true"
+                             oncloseclick="onCloseClick"
+                             style="width: 100%;"
+                             popupWidth="300"
+                             onvalidation="vcCounterpartyCheck"
+                             onvaluechanged="setIssueOrgan">
+                            <div property="columns">
+                                <div header="对手代码" field="vcRivalCode" width="20"></div>
+                                <div header="对手名称" field="vcName"></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li liType='input'><label><span>*</span>报价方式:</label>
+                    <div>
+                        <input class="nui-dictcombobox" valueField="dictID" textField="dictName"
+                               onvaluechanged="changeMode"
+                               dictTypeId="quoteMode" name="vcQuoteMode" id="vcQuoteMode" showClose="true"
+                               value="1"
+                               oncloseclick="onCloseClick"
+                               required="true"
+                               style="width: 100%;"/>
+                    </div>
+                </li>
+                <li liType='input'><label>T+0可用金额(元):</label>
+                    <div>
+                        <input class="nui-textbox" enabled="false" id="vcAvailableamountT0" name="vcAvailableamountT0"
+                               style="width: 100%;"/></div>
+                </li>
+                <li liType='input'><label>对手主体机构:</label>
+                    <div><input class="nui-textbox" showClose="true" id="vcCounterpartyOrgan"
+                                name="vcCounterpartyOrgan"  onvalidation="organVali" style="width: 100%;"/></div>
+                </li>
+                <li liType='input'>
+                	 <label id="enRepoRateLabel"> <span>*</span>回购利率(%):</label>
+                     <label id="enWeightingValueLabel" style="display:none;"> <span>*</span>加点(bp)</label>
+                    <div>
+                    <input name="enRepoRate" id="enRepoRate" class="nui-textbox" showClose="true"
+                                   oncloseclick="onCloseClick" onvalidation="positiveFlo" required="true"
+                                   onblur="calEmFaceAmount()" style="width: 100%;"/>
+                                   
+                    <input name="enWeightingValue" style="display:none;" id="enWeightingValue"
+                                class="nui-textbox" showClose="true"  required="true"
+                                oncloseclick="onCloseClick" onvalidation="weightValueVali" 
+                                style="width: 50px;"/></div>
+                </li>
+                <li liType='input'><label>T+1可用金额(元):</label>
+                    <div>
+                        <input class="nui-textbox" enabled="false" id="vcAvailableamountT1" name="vcAvailableamountT1"
+                               style="width: 100%;"/></div>
+                </li>
+                <li liType='input'><label>对方交易员:</label>
+                    <div>
+                       <input class="nui-textbox" id="vcCounterpartyTrader" onblur="ChangeTraderName(this)" name="vcCounterpartyTrader" style="width: 100%;"/>
+                    </div>
+                </li>
+                
+                <li liType='input'><label>备注:</label>
+                    <div><input class="nui-textbox" showClose="true" id="vcRemark" onvalidation="remarkVali" name="vcRemark" style="width: 100%;"/></div>
+                </li>
+                
+                <li liType='input'><label>基金净资产(元):</label>
+                    <div>
+                        <input class="nui-spinner" enabled="false" id="enFundValue" name="enFundValue"
+                               format="n2"  minValue="0" maxValue="999999999999"
+                               style="width: 100%;"/>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    <div style="height:auto;width:100%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:80%;" align="left">
+                        <span style="float:left;padding-left: 2px;">添加债券代码：</span>
+                        <div name="vcStockCode" class="mini-autocomplete" id="vcStockCode"
+                             textField="stockCode" valueField="vcCombiNo"
+                             searchField="stockCode"
+                             url=""
+                             showNullItem="false"
+                             allowInput="true"
+                             emptyText="空"
+                             nullItemText="空"
+                             valueFromSelect="true"
+                             dataField="bondList"
+                             multiSelect="false" 
+                             showClose="true"
+                             style="width:40%;float:left;margin-right: 10px;"
+                             oncloseclick="onCloseClick"
+                             onvaluechanged = "addBond"
+                             popupWidth="370">
+                            <div property="columns">
+                                <div header="债券代码" field="stockCode" width="60px"></div>
+                                <div header="债券名称" field="stockName"></div>
+                                <div header="所在组合" field="vcCombiName"></div>
+                                <div header="托管机构" field="vcPaymentPlace"></div>
+                            </div>
+                        </div>
+                        <a class='nui-button' plain='true' onclick="addBond()" iconCls="icon-add" >添加</a>
+                        <a class="nui-button" id="showHoldingButton"   onclick="showHolding()" plain="true" iconCls="icon-search">从持仓选择</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="bondsGrid" class="nui-datagrid" style="width:100%;height:170px;"
+             datafield="mortgageInfos"
+             url="com.cjhxfund.ats.sm.comm.InstructionManager.getMortgageInfos.biz.ext"
+             showPager="false"
+             allowCellSelect="true"
+             allowCellEdit="true"
+             onDrawSummaryCell="onDrawSummaryCell"
+             showSummaryRow="false">
+            <div property="columns">
+                <div name="action" headerAlign="center" align="center" renderer="onActionRenderer">操作</div>
+                <div field="vcReportCode" align="left" headerAlign="center"> 债券代码</div>
+                <div field="vcStockName" headerAlign="center" align="left" width="100" >债券名称</div>
+                
+                <div field="enFaceAmount" width="100" numberFormat="n2" renderer="onGenderRenderer" align="right"
+                     headerAlign="center">
+                    <span style="color:red;">*</span> 券面金额（万元）
+                    <input property="editor" onblur="updateFaceAmout(e)" onenter="updateFaceAmout(e)" class="mini-textbox" style="width:100%;"/>
+                </div>
+                <div field="enMortagageRatio" align="left" width="100" headerAlign="center"><span style="color:red;">*</span>质押比例（%）
+                    <input property="editor" floatErrorText="true" onblur="updateMortagage(e)" onenter="updateMortagage(e)" class="mini-textbox"
+                           style="width:100%;"/>
+                </div>
+                <div field="canRepurchaseAmount" headerAlign="center"  align="right" numberFormat="n4" width="100">
+                    可做回购金额(万元)
+                </div>
+                <div field="enCbValueNetValue"  align="right" headerAlign="center" width="100" allowSort="false" format="n4">
+                    净价（T-1）
+                </div>
+                <div field="enCbValueAllValue"  align="right" headerAlign="center" width="100" format="n4">全价(T-1)</div>
+                <div field="vcDepository"  align="left" headerAlign="center" width="100" renderer="depository">托管机构</div>
+                <div field="vcAvailablequantityT0" align="left" width="100"  decimalPlaces="0" numberFormat="n0" headerAlign="center">
+            T+0可质押数量
+        </div>
+                <div field="vcBondAppraise" align="left" width="120" headerAlign="center" renderer="vcBondAppraiseRD">债项评级</div>
+                <div field="vcIssueAppraise" align="left" headerAlign="center" width="100" renderer="vcIssueAppraiseRD">主体评级</div>
+                <div field="vcBondAppraiseOrgan" align="left" headerAlign="center" width="100" renderer="vcBondAppraiseOrganRD">评级机构</div>
+                <div field="lRatingForecast" align="left" headerAlign="center" width="100" renderer="lRatingForecastRD">评级展望</div>
+                <div field="vcIssueProperty" align="left" allowSort="true" width="120" headerAlign="center" renderer="atsFmIssueProperty">发行人性质</div>
+            </div>
+        </div>
+
+    </div>
+    <div style="text-align: center;padding-top: 10px;">
+        <span style="display: block;width:auto;float:left;color:#FF404B;" id="MaxRepurchAmount">可做回购金额:</span>
+		<div style="text-align: center;float:left;width:95%;position: fixed;padding-right: 20px;">
+    		<a class="nui-button" plain="true" iconCls="icon-tip" onclick="riskControlTrial()">风控试算</a>
+    		<a class="nui-button" iconCls="icon-ok" plain="true" onclick="sendDirective(1)">提交</a>
+    		<a class="nui-button" iconCls="icon-goto" plain="true" onclick="sendDirective()">提交继续</a>
+            <a class="nui-button" iconCls="icon-cancel" plain="true" onclick="resetDire()">重置</a>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+    nui.parse();
+    var ATS_SUCCESS = "<%= com.cjhxfund.commonUtil.Constants.ATS_SUCCESS %>";
+    var ATS_ERROR = "<%= com.cjhxfund.commonUtil.Constants.ATS_ERROR %>";
+    var ATS_ORDER_OVER_DEAL_TIME = "<%= com.cjhxfund.commonUtil.Constants.ATS_ORDER_OVER_DEAL_TIME %>";
+    var ATS_ORDER_USABLE_AMOUNT_INSUFFICIENT = "<%= com.cjhxfund.commonUtil.Constants.ATS_ORDER_USABLE_AMOUNT_INSUFFICIENT %>";
+    var ATS_ORDER_NO_RCV_FR_O32 = "<%= com.cjhxfund.commonUtil.Constants.ATS_ORDER_NO_RCV_FR_O32 %>";
+    var ATS_RISK_VIOLATE_FORBID_CTRL = "<%= com.cjhxfund.commonUtil.Constants.ATS_RISK_VIOLATE_FORBID_CTRL %>";
+    var doCloseParam = null;
+	var riskFlagParam = null;
+	var lResultIdParam = null;
+	var lRiskmgrIdParam = null;
+    (function(){
+        nui.context = '<%=request.getContextPath()%>';
+    })();
+    function showHolding() {
+        nui.open({
+            url: "<%=request.getContextPath() %>/repurchase/investNew/holding/collateraliseHolding.jsp",
+            title: "银行间债券持仓",
+            width: 850,
+            height: 520,
+            allowResize: true,
+            onload: function () {
+            	var iframe = this.getIFrameEl();
+				var vcProductCode = nui.get('vcProductCode');
+				var vcCombiCode = nui.get('vcCombiCode');
+				var bondData = bondsGrid.data;
+				var vcEntrustDirection = nui.get("vcEntrustDirection");
+				var searchField = {
+					'vcProductCode':vcProductCode.getValue(),	
+					'vcProductCodeText':vcProductCode.getText(),
+					'vcCombiCode':vcCombiCode.getValue(),
+					'vcCombiCodeText':vcCombiCode.getText(),
+					'bondData':bondData,
+					'entrustDire':vcEntrustDirection.getValue()
+				};
+				iframe.contentWindow.SetSearchField(searchField);
+            },
+            ondestroy: function (action) {
+                if (action == "ok") {
+                }
+            }
+        });
+    }
+</script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/JQMHistory/common/common.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/scripts/com.cjhxfund.js.base/utils/DateUtil.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/repurchase/investNew/js/repurchaseComm.js"></script>
+<script type="text/javascript" src="<%= request.getContextPath() %>/riskMgr/js/riskMgrComm.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/repurchase/investNew/js/collateraliseRepo.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/common/js/GridDetailBlock.js"></script>
+</body>
+</html>

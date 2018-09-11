@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:金文轩 -->
+<sqlMap>
+	<update id="updateOrderStatus" parameterClass="commonj.sdo.DataObject">
+    	update $tableName$ set VC_ORDER_STATUS = #vcOrderStatus# 
+    	where VC_CLORD_ID =#vcOrigordId#
+    </update>
+    <!-- 根据第三方指令编号获取反馈信息（返回给招行） -->
+	<resultMap class="java.util.HashMap" id="resultMap">
+		<result column="vcClordId" javaType="string" property="vcClordId"/>
+		<result column="vcOrigOrdId" javaType="string" property="vcOrigOrdId"/>
+		<result column="vcIsBidCfg" javaType="string" property="vcIsBidCfg"/>
+		<result column="vcOperatorState" javaType="string" property="vcOperatorState"/>
+	</resultMap>
+	<select id="searchFeedbackInfoByClordId" parameterClass="java.lang.String"
+		resultMap="resultMap">
+		select 
+			t3.VC_CLORD_ID as vcClordId,
+			t3.VC_INSTRUCTION_ID as vcOrigOrdId,
+			'' as vcIsBidCfg,
+			'success' as vcOperatorState
+		from ZHFWPT_JY_ZQMM t1,T_ATS_CJAPI_E_S_MARKET t3
+		where t1.CLORDID = #clordid#  and 
+		t1.PROCESS_ID = t3.EN_PROCESS_ID
+		UNION
+		select 			
+			t4.VC_CLORD_ID as vcClordId,
+			t4.VC_INSTRUCTION_ID as vcOrigOrdId,
+			'' as vcIsBidCfg,
+			'success' as vcOperatorState
+		from ZHFWPT_JY_ZNHG t2,T_ATS_CJAPI_E_P_REPO t4 
+		where t2.CLORDID = #clordid#  and 
+		t2.PROCESS_ID = t4.EN_PROCESS_ID
+		UNION
+		select 
+			t5.VC_CLORD_ID as vcClordId,
+			t5.VC_INSTRUCTION_ID as vcOrigOrdId,
+			'' as vcIsBidCfg,
+			'success' as vcOperatorState
+		from ZHFWPT_JY_ZQMM t1,T_ATS_CJAPI_B_S_MARKET t5
+		where T1.CLORDID = #clordid#  and 
+		t1.PROCESS_ID = t5.EN_PROCESS_ID
+		UNION
+		select 			
+			t6.VC_CLORD_ID as vcClordId,
+			t6.VC_INSTRUCTION_ID as vcOrigOrdId,
+			'' as vcIsBidCfg,
+			'success' as vcOperatorState
+		from ZHFWPT_JY_ZNHG t2,T_ATS_CJAPI_B_P_REPO t6 
+		where t2.CLORDID = #clordid#  and 
+		t2.PROCESS_ID = t6.EN_PROCESS_ID
+	</select>
+    
+    <!--
+                更新操作执行订单流程状态
+        @Author:梁继龙
+        @Date:2016-12-22
+    -->
+    <update id="updateOrderProcessStatus" parameterClass="commonj.sdo.DataObject">
+    	update $tableName$ set VC_PROCESS_STATUS = #processStatus# 
+    	where  EN_PROCESS_ID = #processId#
+    </update>
+    
+</sqlMap>

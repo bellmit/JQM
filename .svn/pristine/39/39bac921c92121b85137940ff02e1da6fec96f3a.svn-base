@@ -1,0 +1,207 @@
+select to_char(a.l_date) l_date, --日期
+     c.l_fund_id, --基金序号
+     b.vc_fund_code, --基金代码
+     b.vc_fund_name, --基金名称
+     c.vc_combi_no, --组合代码
+     c.vc_combi_name, --组合名称
+     a.vc_inter_code, --证券内码
+     d.vc_report_code, --证券代码
+     d.vc_stock_name, --证券名称
+     a.l_current_amount + a.l_unfrozen_amount - a.l_frozen_amount l_usable_amount, --可用数量
+     a.l_current_amount l_current_amount, --持仓
+     d.c_Market_No, --交易市场代码 1上交所 2深交所 3上期所 4郑商所 5银行间 6场外 7中金所 9大商所 j股转市场 n港股通(沪) o港股通(深)
+     --rp.l_Settle_Date,
+     --rp.l_Mortagage_Amount,
+     e.vc_inter_code_wind2
+     
+  from trade.Tunitstock a,
+     trade.TFUNDINFO b,
+     trade.TCOMBI c,
+     trade.tstockmarketinfo d,
+     t_ats_all_stock_info e
+     --回购质押券--
+     /*
+     (
+        Select l_Hg_Date, --质押（回购）日期
+       l_Serial_No, --回购流水号
+       l_fund_id, --基金编号
+       vc_fund_name, --基金名称
+       vc_combi_name, --组合名称
+       c_entrust_direction, --委托方向
+       vc_entrustdir_name, --委托方向名称
+       vc_report_code, --证券代码
+       vc_stock_name, --证券名称
+       En_Ratio, --质押比例
+       l_Mortagage_Amount, --质押数量
+       vc_combi_no, --组合代码
+       l_Settle_Date, --购回交割日期（质押结束日期）
+       c_stock_type,
+       en_first_settle_balance,
+       en_interest_rate
+  from (Select l_Hg_Date,
+               l_Serial_No,
+               l_fund_id,
+               vc_fund_name,
+               vc_combi_name,
+               c_entrust_direction,
+               vc_entrustdir_name,
+               vc_report_code,
+               vc_stock_name,
+               En_Ratio,
+               l_Mortagage_Amount,
+               vc_combi_no,
+               l_Settle_Date,
+               c_stock_type,
+               en_net_zj,
+               en_interest_rate,
+               en_deal_balance,
+               en_deal_balance_total,
+               decode(en_deal_balance_total,
+                      0,
+                      0,
+                      en_deal_balance * EN_NET_ZJ / en_deal_balance_total) en_first_settle_balance
+          from (select 
+                 a.l_Hg_Date,
+                 a.l_Serial_No,
+                 a.l_fund_id,
+                 f.vc_fund_name,
+                 e.vc_combi_no,
+                 e.vc_combi_name,
+                 a.c_entrust_direction,
+                 g.vc_entrustdir_name,
+                 c.vc_inter_code vc_report_code,
+                 c.vc_inter_code vc_stock_name,
+                 nvl(c.En_Ratio, 0) En_Ratio,
+                 nvl(c.l_Mortagage_Amount, 0) l_Mortagage_Amount,
+                 a.l_Settle_Date, --购回交割日期
+                 c.vc_inter_code c_stock_type, --通过内码取数据字典
+                 decode(a.l_deal_amount,
+                        0,
+                        0,
+                        a.en_deal_price * a.l_deal_amount / a.l_deal_amount) en_interest_rate,
+                 
+                 decode(g.c_fund_direction, '1', 1, -1) * a.en_deal_balance -
+                 a.en_fee en_net_zj,                 
+                 nvl(c.l_Mortagage_Amount, 0) * nvl(bp.EN_FACE_PRICE, 0) en_deal_balance,
+                 sum(nvl(c.l_Mortagage_Amount, 0) * nvl(bp.EN_FACE_PRICE, 0)) over(partition by a.l_Hg_Date, a.l_Serial_No) en_deal_balance_total,
+                 nvl(ti.c_outer_appraise, bp.c_outer_appraise) c_outer_appraise
+                  from thgregister a,
+                       thgmortagage c,
+                       tstockinfo d,
+                       tcombi e,
+                       tfundinfo f,
+                       tentrustdirection g,
+                       (select distinct tg.l_fund_id
+                          from taccountgroup tm, tgroupfundcombi tg
+                         where tm.l_group_id = tg.l_group_id
+                        
+                         group by tg.l_fund_id) tm,
+                       tbondproperty bp,
+                       tstockinfo tsi,
+                       tissuer ti
+                 where a.l_Serial_No = c.l_serial_no(+)
+                   and a.l_hg_date = c.l_date(+)
+                   and a.vc_inter_code = d.vc_inter_code
+                   and a.l_basecombi_id = e.l_combi_id
+                   and a.l_fund_id = f.l_fund_id
+                   and a.c_entrust_direction = g.c_entrust_direction
+                   and a.c_market_no = g.c_market_no
+                   and a.c_market_no = '5'
+                   and e.c_combi_status not in ('2', '3')
+                   and d.c_stock_type not in ('x', 'A', 'z')
+                   and d.c_asset_class <> '6'
+                   and c.c_bail_type in ('1', '2')
+                   and c.vc_inter_code = bp.vc_inter_code(+)
+                   and c.vc_inter_code = tsi.vc_inter_code(+)
+                   and tsi.l_company_id = ti.l_issuer_id(+)
+                   and a.l_fund_id = tm.l_fund_id(+)
+                   and a.l_Settle_Date > 20180803
+                   and a.c_entrust_direction in ('5', '6')
+                   and (select count(*)
+                          from TOPFUNDRIGHT
+                         where TOPFUNDRIGHT.l_fund_id = a.l_fund_id
+                           and TOPFUNDRIGHT.c_layer = '1'
+                           and TOPFUNDRIGHT.l_operator_no = 1000
+                           and instr(TOPFUNDRIGHT.vc_rights, '1') > 0) > 0
+                union all
+                select 
+                 a.l_Hg_Date,
+                 a.l_Serial_No,
+                 a.l_fund_id,
+                 f.vc_fund_name,
+                 e.vc_combi_no,
+                 e.vc_combi_name,
+                 a.c_entrust_direction,
+                 g.vc_entrustdir_name,
+                 c.vc_inter_code vc_report_code,
+                 c.vc_inter_code vc_stock_name,
+                 nvl(c.En_Ratio, 0) En_Ratio,
+                 nvl(c.l_Mortagage_Amount, 0) l_Mortagage_Amount,
+                 a.l_Settle_Date, --购回交割日期
+                 c.vc_inter_code c_stock_type, --通过内码取数据字典
+                 decode(a.l_deal_amount,
+                        0,
+                        0,
+                        a.en_deal_price * a.l_deal_amount / a.l_deal_amount) en_interest_rate,
+                 decode(g.c_fund_direction, '1', 1, -1) * a.en_deal_balance -
+                 a.en_fee en_net_zj,
+                 nvl(c.l_Mortagage_Amount, 0) * nvl(bp.EN_FACE_PRICE, 0) deal_balance,
+                 sum(nvl(c.l_Mortagage_Amount, 0) * nvl(bp.EN_FACE_PRICE, 0)) over(partition by a.l_Hg_Date, a.l_Serial_No) deal_balance_total,
+                 nvl(ti.c_outer_appraise, bp.c_outer_appraise) c_outer_appraise
+                  from thishgregister a,
+                       thgmortagage c,
+                       thisstockinfo d,
+                       tcombi e,
+                       tfundinfo f,
+                       tentrustdirection g,
+                       (select distinct tg.l_fund_id
+                          from taccountgroup tm, tgroupfundcombi tg
+                         where tm.l_group_id = tg.l_group_id
+                        
+                         group by tg.l_fund_id) tm,
+                       thisbondproperty bp,
+                       tstockinfo tsi,
+                       tissuer ti
+                 where a.l_Serial_No = c.l_serial_no(+)
+                   and a.l_hg_date = c.l_date(+)
+                   and a.vc_inter_code = d.vc_inter_code
+                   and a.l_date = d.l_date
+                   and a.l_basecombi_id = e.l_combi_id
+                   and a.l_fund_id = f.l_fund_id
+                   and a.c_entrust_direction = g.c_entrust_direction
+                   and a.c_market_no = g.c_market_no
+                   and a.c_market_no = '5'
+                   and e.c_combi_status not in ('2', '3')
+                   and d.c_stock_type not in ('x', 'A', 'z')
+                   and d.c_asset_class <> '6'
+                   and c.c_bail_type in ('1', '2')
+                   and c.l_date = bp.l_date(+)
+                   and c.vc_inter_code = bp.vc_inter_code(+)
+                   and c.vc_inter_code = tsi.vc_inter_code(+)
+                   and tsi.l_company_id = ti.l_issuer_id(+)
+                   and a.l_fund_id = tm.l_fund_id(+)
+                   and a.l_Settle_Date > 20180803
+                   and a.c_entrust_direction in ('5', '6')
+                   and (select count(*)
+                          from TOPFUNDRIGHT
+                         where TOPFUNDRIGHT.l_fund_id = a.l_fund_id
+                           and TOPFUNDRIGHT.c_layer = '1'
+                           and TOPFUNDRIGHT.l_operator_no = 1000
+                           and instr(TOPFUNDRIGHT.vc_rights, '1') > 0) > 0))                    
+     )rp
+     */
+     --回购质押券--
+  where a.l_basecombi_id = c.l_combi_id
+          and a.l_fund_id = b.l_fund_id
+      and a.vc_inter_code = d.vc_inter_code
+      and a.l_date = d.l_date
+      and c.c_combi_status not in ('2', '3') --1正常 2过期 3冻结
+      and ((a.l_buy_amount + a.l_sale_amount) <> 0 or
+               a.l_current_amount <> 0)
+      and d.c_asset_class in
+               ('1', '2', '3', '4', '5', '7', '8', '9', 'a') --1现金资产 2股票资产 3债券资产 4基金资产 5回购资产 6非资产 7权证资产 8其他资产 9期货盈亏 a期权资产
+      and a.C_POSITION_FLAG not in ('7', 'c', 'd') --1多仓 2空仓 3债券远期买入 4债券远期卖出 5买断式回购远期买入 6买断式回购远期卖出 7证券借入 b备兑空仓 c协议回购买入 d协议回购卖出 e债券借贷待返售债券 f债券借贷待购回债券
+      and a.vc_inter_code = e.vc_inter_code_o32
+      and a.l_date = 20180619
+      --and a.l_date = to_char(sysdate,'yyyyMMdd')
+  

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.fm.comm,com.cjhxfund.ats.fm.fix,com.c
+ jhxfund.ats.fm.instr,com.cjhxfund.commonUtil,com.cjhxfund.foundation.
+ fix,com.primeton.eos.richweb,com.eos.foundation,com.eos.workflow,org.
+ gocom.components.coframe.tools,org.gocom.components.coframe.org,org.g
+ ocom.components.coframe.auth,org.gocom.components.coframe.framework,o
+ rg.gocom.components.coframe.rights
+Bundle-Vendor: huangmizhi
+eos-webCtxPath: task
+Bundle-Version: 1.0.0
+Bundle-Name: 创金合信流程代办已办等公共资源构件包
+Bundle-Description: 创金合信流程代办已办等公共资源构�
+ �包
+Bundle-SymbolicName: com.cjhxfund.foundation.task
+

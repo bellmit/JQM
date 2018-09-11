@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:杨敏 -->
+<sqlMap>
+    <!--通过子流程processInstID查询主流程ActivityInstId-->
+     <resultMap class="commonj.sdo.DataObject" id="mapResultMap">
+
+        <result column="workitemid" javaType="Long" property="workItemID"/>
+        <result column="workitemname" javaType="String" property="workItemName"/>
+        <result column="activityinstid" javaType="String" property="activityInstID"/>
+        <result column="activitydefid" javaType="String" property="activityDefID"/>
+        <result column="processinstid" javaType="Long" property="processInstID"/>
+        <result column="l_main_biz_id" javaType="Long" property="lMainBizId"/>
+        <result column="vc_is_risk_control" javaType="String" property="vcIsRiskControl"/>
+        
+    </resultMap>
+    
+    <!--一级债列表返回值-->
+    <resultMap id="queryPageStockIssueInfoResult" class="commonj.sdo.DataObject">
+    	<result column="l_stock_issue_id" javaType="String" property="lStockIssueId"/>
+		<result column="l_biz_id" javaType="String" property="lBizId"/>
+		<result column="l_stock_invest_no" javaType="String" property="lStockInvestNo"/>
+		<result column="c_status" javaType="String" property="cStatus"/>
+		<result column="l_valid_status" javaType="String" property="lValidStatus"/>
+		<result column="l_date" javaType="String" property="lDate"/>
+		<result column="c_market_no" javaType="String" property="cMarketNo"/>
+		<result column="vc_inter_code" javaType="String" property="vcInterCode"/>
+		<result column="vc_stock_code" javaType="String" property="vcStockCode"/>
+		<result column="vc_stock_name" javaType="String" property="vcStockName"/>
+		<result column="vc_stock_name_full" javaType="String" property="vcStockNameFull"/>
+		<result column="vc_stock_type" javaType="String" property="vcStockType"/>
+		<result column="en_exist_limite" javaType="String" property="enExistLimite"/>
+		<result column="en_issue_balance" javaType="String" property="enIssueBalance"/>
+		<result column="c_bond_appraise" javaType="String" property="cBondAppraise"/>
+		<result column="vc_bond_appraise_organ" javaType="String" property="vcBondAppraiseOrgan"/>
+		<result column="l_issuer_id" javaType="String" property="lIssuerId"/>
+		<result column="vc_issuer_name" javaType="String" property="vcIssuerName"/>
+		<result column="vc_issue_property" javaType="String" property="vcIssueProperty"/>
+		<result column="c_issue_appraise" javaType="String" property="cIssueAppraise"/>
+		<result column="vc_issue_appraise_organ" javaType="String" property="vcIssueAppraiseOrgan"/>
+		<result column="vc_industry" javaType="String" property="vcIndustry"/>
+		<result column="vc_province" javaType="String" property="vcProvince"/>
+		<result column="l_guarantor_id" javaType="String" property="lGuarantorId"/>
+		<result column="vc_guarantor_name" javaType="String" property="vcGuarantorName"/>
+		<result column="vc_guarantor_summary" javaType="String" property="vcGuarantorSummary"/>
+		<result column="l_issue_post_date" javaType="String" property="lIssuePostDate"/>
+		<result column="l_issue_begin_date" javaType="String" property="lIssueBeginDate"/>
+		<result column="l_pay_date" javaType="String" property="lPayDate"/>
+		<result column="l_publish_date" javaType="String" property="lPublishDate"/>
+		<result column="l_begincal_date" javaType="String" property="lBegincalDate"/>
+		<result column="l_endincal_date" javaType="String" property="lEndincalDate"/>
+		<result column="c_interest_type" javaType="String" property="cInterestType"/>
+		<result column="c_pay_interest_type" javaType="String" property="cPayInterestType"/>
+		<result column="en_pay_inteval" javaType="String" property="enPayInteval"/>
+		<result column="en_face_rate" javaType="String" property="enFaceRate"/>
+		<result column="c_bid_type" javaType="String" property="cBidType"/>
+		<result column="c_pay_type" javaType="String" property="cPayType"/>
+		<result column="vc_special_text" javaType="String" property="vcSpecialText"/>
+		<result column="vc_main_underwriter" javaType="String" property="vcMainUnderwriter"/>
+		<result column="vc_deputy_underwriter" javaType="String" property="vcDeputyUnderwriter"/>
+		<result column="c_underwrite_type" javaType="String" property="cUnderwriteType"/>
+		<result column="vc_group_underwriter" javaType="String" property="vcGroupUnderwriter"/>
+		<result column="l_next_exercise_date" javaType="String" property="lNextExerciseDate"/>
+		<result column="c_is_small_raised" javaType="String" property="cIsSmallRaised"/>
+		<result column="c_is_have_saleback" javaType="String" property="cIsHaveSaleback"/>
+		<result column="l_bond_issue_file" javaType="String" property="lBondIssueFile"/>
+		<result column="l_raise_inst_file" javaType="String" property="lRaiseInstFile"/>
+		<result column="l_rate_report_file" javaType="String" property="lRateReportFile"/>
+		<result column="c_source" javaType="String" property="cSource"/>
+		<result column="l_operator_no" javaType="String" property="lOperatorNo"/>
+		<result column="l_credit_analyze_no" javaType="String" property="lCreditAnalyzeNo"/>
+		<result column="vc_credit_analyze" javaType="String" property="vcCreditAnalyze"/>
+		<result column="l_attch_count" javaType="String" property="lAttchCount"/>
+		<result column="vc_user_id" javaType="String" property="vcUserId"/>
+		<result column="d_bid_limit_time" javaType="Date" property="dBidLimitTime"/>
+		<result column="c_is_have_buyback" javaType="String" property="cIsHaveBuyback"/>
+		<result column="en_category_money" javaType="String" property="enCategoryMoney"/>
+		<result column="en_resale_year" javaType="String" property="enResaleYear"/>
+		<result column="en_redemption_year" javaType="String" property="enRedemptionYear"/>
+		<result column="vc_payment_place" javaType="String" property="vcPaymentPlace"/>
+		<result column="l_process_inst_id" javaType="String" property="lProcessInstId"/>
+		<result column="vc_stock_code_wind" javaType="String" property="vcStockCodeWind"/>
+		<result column="vc_issuer_name_full" javaType="String" property="vcIssuerNameFull"/>
+		<result column="vc_inter_code_wind" javaType="String" property="vcInterCodeWind"/>
+		<result column="c_assure_type" javaType="String" property="cAssureType"/>
+		<result column="vc_special_text_desc" javaType="String" property="vcSpecialTextDesc"/>
+		<result column="vc_issue_type" javaType="String" property="vcIssueType"/>
+		<result column="vc_special_limite" javaType="String" property="vcSpecialLimite"/>
+		<result column="vc_exist_limite_desc" javaType="String" property="vcExistLimiteDesc"/>
+		<result column="vc_issue_begin_date_desc" javaType="String" property="vcIssueBeginDateDesc"/>
+		<result column="vc_tender_interval" javaType="String" property="vcTenderInterval"/>
+		<result column="vc_underwriter_info" javaType="String" property="vcUnderwriterInfo"/>
+		<result column="vc_issue_appraise_csrc" javaType="String" property="vcIssueAppraiseCsrc"/>
+		<result column="vc_mort_stock_name" javaType="String" property="vcMortStockName"/>
+		<result column="vc_mort_stock_amount" javaType="String" property="vcMortStockAmount"/>
+		<result column="vc_mort_stock_code" javaType="String" property="vcMortStockCode"/>
+		<result column="en_issuer_net_value" javaType="String" property="enIssuerNetValue"/>
+		<result column="vc_city_level" javaType="String" property="vcCityLevel"/>
+		<result column="l_n_interest_rate_jump_points" javaType="String" property="lNInterestRateJumpPoints"/>
+		<result column="vc_main_underwriter_id" javaType="String" property="vcMainUnderwriterId"/>
+		<result column="vc_deputy_underwriter_id" javaType="String" property="vcDeputyUnderwriterId"/>
+		<result column="vc_group_underwriter_id" javaType="String" property="vcGroupUnderwriterId"/>
+		<result column="l_issuer_id_wind" javaType="String" property="lIssuerIdWind"/>
+		<result column="vc_stocktype_name" javaType="String" property="vcStocktypeName"/>
+		<result column="vc_issue_appraise_csrc_name" javaType="String" property="vcIssueAppraiseCsrcName"/>
+		<result column="c_is_intention" javaType="String" property="cIsIntention"/>
+		
+    </resultMap>
+    
+     <!-- 查询上一环节是否为征求意见 -->
+    <select id="queryReqUseName" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+     select t1.operate_type, t1.user_name
+         from (select t.operate_type, t.user_name from cf_jy_prc_aprv_info t
+         where t.work_item_id = #workitemID#
+         order by sysid desc) t1
+         where rownum = 1
+      </select> 
+      <!-- 获取第一个工作项编号  -->
+    <select id="workitemid" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select * from wfworkitem where currentstate in (4,10) and processinstid=#processInstID# and activitydefid=#activityDefid#
+   </select>
+   <!-- 查询当前流程实例  待办工作项信息 -->
+   <select id="queyrProcessWorkitem" parameterClass="java.util.HashMap"  resultClass="com.eos.workflow.data.WFWorkItem">
+      select * from WFWORKITEM t where t.processinstid=#processInstID# and t.currentstate in (4,10)
+   </select>
+   <!---O32 取基金净资产-->
+   <select id="queyrVfundasset" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select a.en_fund_value as enFundValue from trade.vfundasset a where a.l_fund_id=#vcProductId#
+   </select>
+   <!---O32 取已投资该发行主体债券存量-->
+   <select id="queyrFsumamount" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select sum(b.l_current_amount / 100) fsumamount
+		  from trade.tunitstock b, trade.tstockinfo c, trade.tissuer d
+		 where b.vc_inter_code = c.vc_inter_code
+		   and c.l_company_id = d.l_issuer_id
+		   and b.l_fund_id = #vcProductId#
+		   and d.vc_issuer_code = #vcIssuerCode#     
+   </select>
+    <!---ats未成功发送O32的指令数量-->
+   <select id="queyrApplyCount" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+    	select sum(a.en_invest_balance)  as en_sum_amount
+	      from t_ats_apply_inst a, t_ats_stock_issue_info b        
+	     where a.l_stock_invest_no=b.l_stock_invest_no and b.c_status='2' and b.l_valid_status=0              
+	       and a.l_fix_valid_status != '3'
+	       and a.l_valid_status = '0'
+		   and a.vc_product_code = #vcProductCode#
+		   and b.l_issuer_id = #lIssuerId#
+   </select>
+    <!-- 查询当前流程实例  是否要投顾复核，委托人复核，风控审核 -->
+   <select id="queyrByProcessInstId" parameterClass="java.util.HashMap"  resultClass="com.eos.workflow.data.WFWorkItem">
+      select * from WFWORKITEM t where t.activitydefid in ($activitydefid$) and t.processinstid=#processInstID#
+   </select>
+   <!-- 通过子流程processInstID查询主流程挂起节点ActivityInstId -->
+   <select id="queyrActInstIdByProInstId" parameterClass="java.util.HashMap" resultMap="mapResultMap">
+      select wf.workitemid,wf.workitemname,wf.activityinstid,wf.activitydefid,wf.processinstid,m.vc_is_risk_control,m.l_main_biz_id from wfworkitem wf,t_ats_sub_process m where wf.currentstate=8 and wf.processinstid = m.l_main_process_inst_id 
+		and m.l_sub_process_inst_id=#processInstID#
+   </select>
+   <!-- 获取最新的回退节点节点ActivityInstId -->
+   <select id="queryBackNode" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+     
+      select app.vc_activity_def_id as vcActivityDefId from t_ats_approve_info app 
+       where app.d_create_time =(select max(d_create_time) from t_ats_approve_info 
+       where l_process_inst_id=#processInstID# and l_rollback_flag=1)
+          
+   </select>
+   
+   <!-- 获取最新的回退节点节点ActivityInstId -->
+   <select id="queryApproveInfo" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+      select app.vc_user_code as userCode from t_ats_approve_info app 
+      where app.l_process_inst_id=#processInstID# and app.vc_activity_def_id=#vcActivityDefID# 
+      		and app.vc_operate_type =1 order by app.l_approve_id desc
+   </select>
+   
+    <!-- 获取投资经理是否同意过 -->
+   <select id="queryApproveInfoTZJLFH" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+      select app.vc_user_code as userCode from t_ats_approve_info app 
+      where app.l_process_inst_id=#processInstID# and app.vc_activity_def_id=#vcActivityDefIDTLJL# 
+      		and app.vc_operate_type =1 and rownum=1
+   </select>
+   
+    <!-- 获取工作项的参与者姓名和ID  -->
+    <select id="workitemparticipant" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select connstr(distinct t.participantname) participantname,connstr(distinct t.participantid) participantid from V_CURRENTWORKITEM t where 
+       t.processinstid = #processInstID#  and t.workitemid = #workItemID#
+       
+   </select>
+   
+   <!-- 获取工作项ID  -->
+    <select id="queryWorkitemId" parameterClass="java.lang.String"  resultClass="java.lang.String">
+      select wf.workitemid from wfworkitem wf where wf.activitydefid='ATS_FM_TGLR' and wf.processinstid=#processInstId#
+   </select>
+   
+   <!-- 查询该流程的产品是否在产品权限列表中 -->
+    <select id="queryIsInProducts" parameterClass="java.lang.Long" resultClass="java.lang.Integer">
+     select b.l_process_inst_id from t_ats_apply_inst a ,t_ats_biz_process b, t_ats_product_handle c
+		where a.l_biz_id = b.l_biz_id 
+		and a.vc_product_code = c.vc_product_code
+		and c.vc_relate_type = 'A7'
+		and b.l_process_inst_id = #value#
+      </select> 
+    
+    
+    <!--查询一级债列表-->
+    <select id="queryPageStockIssueInfo" parameterClass="java.util.HashMap" resultMap="queryPageStockIssueInfoResult">
+    	select t1.*,
+		       t2.vc_stocktype_name,
+		       t3.vc_issue_appraise_csrc_name,
+		       (select wm_concat(t.vc_user_name)
+		          from t_ats_stock_intention t
+		         where t.c_is_intention = 1
+		           and t.l_stock_issue_id = t1.l_stock_issue_id
+		           <isNotNull property="userId">
+		           and t.vc_user_id = '$userId$'
+		           </isNotNull>
+		       ) c_is_intention
+		  from T_ATS_STOCK_ISSUE_INFO t1
+		  left join t_ats_stock_type_define t2
+		    on t1.vc_stock_type = t2.vc_stock_type
+		  left join t_ats_issue_appraise_csrc t3
+		    on t3.vc_issue_appraise_csrc = t1.vc_issue_appraise_csrc
+		 where 
+		 <isNull property="cSource">
+		 	t1.c_status = '2'
+		 </isNull>
+		 <isNotNull property="cSource">
+		 	(t1.c_status = '0' and t1.c_Source = '$cSource$' or t1.c_status = '2')
+		 </isNotNull>
+		 
+		 <isNotNull property="lValidStatus">
+		 	and t1.l_Valid_Status = '$lValidStatus$'
+		 </isNotNull>
+		 <isNotNull property="lIssueBeginDate">
+		 	<![CDATA[ and t1.l_Issue_Begin_Date >= '$lIssueBeginDate$' ]]>
+		 </isNotNull>
+		 <isNotNull property="lIssueBeginDate2">
+		 	<![CDATA[ and t1.l_Issue_Begin_Date <= '$lIssueBeginDate2$' ]]>
+		 </isNotNull>
+		 <isNotNull property="enExistLimite">
+		 	and t1.en_Exist_Limite = '$enExistLimite$'
+		 </isNotNull>
+		 <isNotNull property="vcPaymentPlace">
+		 	and t1.vc_Payment_Place = '$vcPaymentPlace$'
+		 </isNotNull>
+		 <isNotNull property="vcStockType">
+		 <isNotEqual property="vcStockType" compareValue="">
+		 	and t1.vc_Stock_Type in ($vcStockType$)
+		 </isNotEqual>
+		 </isNotNull>
+		 <isNotNull property="vcStockName">
+		 	and (t1.vc_Stock_Name like '%$vcStockName$%' or t1.vc_Stock_Name_Full like '%$vcStockName$%')
+		 </isNotNull>
+		 <isNotNull property="vcStockCode">
+		 	and t1.vc_Stock_Code like '%$vcStockCode$%'
+		 </isNotNull>
+		 <isNotNull property="vcIssuerName">
+		 	and t1.vc_Issuer_Name like '%$vcIssuerName$%'
+		 </isNotNull>
+		 <isNotNull property="cIssueAppraise">
+		 <isNotEqual property="cIssueAppraise" compareValue="">
+		 	and t1.c_Issue_Appraise in ($cIssueAppraise$)
+		 </isNotEqual>
+		 </isNotNull>
+		 <isNotNull property="vcIssueProperty">
+		 <isNotEqual property="vcIssueProperty" compareValue="">
+		 	and t1.vc_Issue_Property in ($vcIssueProperty$)
+		 </isNotEqual>
+		 </isNotNull>
+		 
+		 <isNotNull property="sortField">
+			order by $sortField$ $sortOrder$ 
+			<isNotNull property="sortField2">
+				, $sortField2$ $sortOrder2$ 
+			</isNotNull>
+		</isNotNull>
+		  
+    </select>
+   
+</sqlMap>

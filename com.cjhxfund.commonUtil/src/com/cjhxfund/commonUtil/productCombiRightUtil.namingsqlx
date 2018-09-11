@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:huangmizhi -->
+<!--
+	机器猫系统产品、组合权限公共功能类
+	一级债、二级债，包括以后开基、存款等业务，产品、组合等权限的出口都只能本公用类里面的某个方法。
+	若以下抽象的方法还不能满足自己开发功能的权限需求，请提出，评估合理后再继续在本公共类里面添加。
+-->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <select id="select_id" parameterMap="parameterMap" resultMap="resultMap"><![CDATA[sql statement]]></select>
+    
+    <!-- 10、【公共调用方法】获取产品组合与处理人员权限关系列表 映射结果 begin... -->
+    <resultMap class="com.cjhxfund.commonUtil.model.TProductHandle" id="getRightListCommonMap">
+		<result column="vc_relate_type" javaType="string" property="vcRelateType"/><!-- 权限关系类型 -->
+        <result column="vc_user_id" javaType="string" property="vcUserId"/><!-- 用户账号ID，如：huangmizhi -->
+        <result column="vc_user_name" javaType="string" property="vcUserName"/><!-- 用户名称，如：黄秘志 -->
+        <result column="l_product_id" javaType="string" property="lProductId"/><!-- 产品序号，如：1001 -->
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/><!-- 产品代码，如：001199 -->
+        <result column="vc_product_name" javaType="string" property="vcProductName"/><!-- 产品名称，如：创金合信聚利债券（工行） -->
+        <result column="l_asset_id" javaType="string" property="lAssetId"/><!-- 资产单元序号，如：31 -->
+        <result column="vc_asset_no" javaType="string" property="vcAssetNo"/><!-- 资产单元编号(代码)，如：00119900 -->
+        <result column="vc_asset_name" javaType="string" property="vcAssetName"/><!-- 资产单元名称，如：聚利债券 -->
+        <result column="l_combi_id" javaType="string" property="lCombiId"/><!-- 组合序号，如：29 -->
+        <result column="vc_combi_no" javaType="string" property="vcCombiNo"/><!-- 组合编号(代码)，如：1001_000 -->
+        <result column="vc_combi_name" javaType="string" property="vcCombiName"/><!-- 组合名称，如：缺省组合 -->
+	</resultMap>
+    <!-- 10、【公共调用方法】获取产品组合与处理人员权限关系列表 映射结果 end!!! -->
+    
+    <!-- 11、【公共调用方法】获取产品信息列表 映射结果 begin... -->
+    <resultMap class="com.cjhxfund.commonUtil.model.TProduct" id="getProductListCommonMap">
+		<result column="l_product_id" javaType="string" property="lProductId"/><!-- 产品ID，如：1001 -->
+		<result column="vc_product_code" javaType="string" property="vcProductCode"/><!-- 产品代码，如：001199 -->
+		<result column="vc_product_name" javaType="string" property="vcProductName"/><!-- 产品名称，如：创金合信聚利债券（工行） -->
+		<result column="vc_product_caption" javaType="string" property="vcProductCaption"/><!-- 基金全称，如：创金合信聚利债券型证券投资基金 -->
+		<result column="l_default_asset" javaType="string" property="lDefaultAsset"/><!-- 缺省资产单元 -->
+		<result column="l_default_combi" javaType="string" property="lDefaultCombi"/><!-- 缺省组合单元 -->
+		<result column="l_open_date" javaType="string" property="lOpenDate"/><!-- 成立日期 -->
+		<result column="l_end_date" javaType="string" property="lEndDate"/><!-- 结束日期 -->
+		<result column="c_product_type" javaType="string" property="cProductType"/><!-- 基金类型 -->
+		<result column="c_product_status" javaType="string" property="cProductStatus"/><!-- 基金状态 -->
+		<result column="vc_remarks" javaType="string" property="vcRemarks"/><!-- 备注 -->
+		<result column="en_product_share" javaType="string" property="enProductShare"/><!-- 基金总份额 -->
+		<result column="vc_currency_no" javaType="string" property="vcCurrencyNo"/><!-- 本币币种 -->
+		<result column="vc_permit_market" javaType="string" property="vcPermitMarket"/><!-- 允许投资的市场 -->
+		<result column="c_multi_currency" javaType="string" property="cMultiCurrency"/><!-- 多币种标志 -->
+		<result column="c_cash_addup" javaType="string" property="cCashAddup"/><!-- 资金合用标志 -->
+		<result column="l_business_date" javaType="string" property="lBusinessDate"/><!-- 业务日期 -->
+		<result column="vc_cash_control_point" javaType="string" property="vcCashControlPoint"/><!-- 头寸控制点 -->
+		<result column="vc_stock_control_point" javaType="string" property="vcStockControlPoint"/><!-- 证券控制点 -->
+		<result column="c_invest_type" javaType="string" property="cInvestType"/><!-- 投资类型 -->
+		<result column="c_invest_advise_check" javaType="string" property="cInvestAdviseCheck"/><!-- 是否投顾复核:0-无需复核;1-需要复核; -->
+		<result column="c_invest_client_check" javaType="string" property="cInvestClientCheck"/><!-- 是否委托人复核:0-无需复核;1-需要复核; -->
+	</resultMap>
+    <!-- 11、【公共调用方法】获取产品信息列表 映射结果 end!!! -->
+    
+    <!-- 12、【公共调用方法】获取组合信息列表 映射结果 begin... -->
+    <resultMap class="com.cjhxfund.commonUtil.model.TCombi" id="getCombiListCommonMap">
+		<result column="l_product_id" javaType="string" property="lProductId"/><!-- 产品ID，如：1001 -->
+		<result column="vc_product_code" javaType="string" property="vcProductCode"/><!-- 产品代码，如：001199 -->
+		<result column="vc_product_name" javaType="string" property="vcProductName"/><!-- 产品名称，如：创金合信聚利债券（工行） -->
+		<result column="l_combi_id" javaType="string" property="lCombiId"/><!-- 投资组合序号 -->
+		<result column="vc_combi_no" javaType="string" property="vcCombiNo"/><!-- 投资组合编号(代码) -->
+		<result column="vc_combi_name" javaType="string" property="vcCombiName"/><!-- 投资组合名称 -->
+		<result column="c_combi_class" javaType="string" property="cCombiClass"/><!-- 组合类型 -->
+		<result column="l_asset_id" javaType="string" property="lAssetId"/><!-- 资产单元序号 -->
+		<result column="l_setup_date" javaType="string" property="lSetupDate"/><!-- 创建日期 -->
+		<result column="l_end_date" javaType="string" property="lEndDate"/><!-- 结束日期 -->
+		<result column="c_combi_status" javaType="string" property="cCombiStatus"/><!-- 组合状态 -->
+		<result column="vc_remark" javaType="string" property="vcRemark"/><!-- 备注 -->
+		<result column="c_invest_type" javaType="string" property="cInvestType"/><!-- 投资类型 -->
+		<result column="vc_stocktype_right" javaType="string" property="vcStocktypeRight"/><!-- 证券类别权限 -->
+		<result column="vc_entrdire_right" javaType="string" property="vcEntrdireRight"/><!-- 委托方向权限 -->
+		<result column="vc_permit_market" javaType="string" property="vcPermitMarket"/><!-- 允许投资的交易市场 -->
+		<result column="vc_permit_busin_class" javaType="string" property="vcPermitBusinClass"/><!-- 允许投资的业务分类 -->
+		<result column="vc_timestamp" javaType="string" property="vcTimestamp"/><!-- 时间戳 -->
+	</resultMap>
+    <!-- 12、【公共调用方法】获取组合信息列表 映射结果 end!!! -->
+    
+    <!-- 13、【公共调用方法】获取产品组合与处理人员权限关系列表 映射结果 begin(去除重复记录后结果)... -->
+    <resultMap class="com.cjhxfund.commonUtil.model.TProductHandle" id="getProducrHandleListCommonMap">
+        <result column="l_product_id" javaType="string" property="lProductId"/><!-- 产品序号，如：1001 -->
+		<result column="vc_relate_type" javaType="string" property="vcRelateType"/><!-- 权限关系类型 -->
+        <result column="vc_user_id" javaType="string" property="vcUserId"/><!-- 用户账号ID，如：huangmizhi -->
+        <result column="vc_user_name" javaType="string" property="vcUserName"/><!-- 用户名称，如：黄秘志 -->
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/><!-- 产品代码，如：001199 -->
+        <result column="vc_product_name" javaType="string" property="vcProductName"/><!-- 产品名称，如：创金合信聚利债券（工行） -->
+        <result column="vc_asset_no" javaType="string" property="vcAssetNo"/><!-- 资产单元编号(代码)，如：00119900 -->
+        <result column="vc_asset_name" javaType="string" property="vcAssetName"/><!-- 资产单元名称，如：聚利债券 -->
+	</resultMap>
+    <!-- 13、【公共调用方法】获取产品组合与处理人员权限关系列表 映射结果 end!!! -->
+    
+    
+    <!-- 1、【公共调用方法】获取用户产品权限ID串 begin... -->
+    <select id="getProductRightIDCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(l_product_id)
+		  from (select distinct a.l_product_id
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 1、【公共调用方法】获取用户产品权限ID串 end!!! -->
+	
+	<!-- 2、【公共调用方法】获取用户产品权限Code串 begin... -->
+    <select id="getProductRightCodeCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_product_code)
+		  from (select distinct a.vc_product_code
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 2、【公共调用方法】获取用户产品权限Code串 end!!! -->
+	
+	<!-- 3、【公共调用方法】获取用户产品权限name串 begin... -->
+    <select id="getProductRightNameCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_product_name)
+		  from (select distinct a.vc_product_name
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 3、【公共调用方法】获取用户产品权限name串 end!!! -->
+	
+	<!-- 4、【公共调用方法】获取用户组合权限ID串 begin... -->
+    <select id="getCombiRightIDCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(l_combi_id)
+		  from (select distinct a.l_combi_id
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 4、【公共调用方法】获取用户组合权限ID串 end!!! -->
+	
+	<!-- 5、【公共调用方法】获取用户组合权限Code串 begin... -->
+    <select id="getCombiRightCodeCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_combi_no)
+		  from (select distinct a.vc_combi_no
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 5、【公共调用方法】获取用户组合权限Code串 end!!! -->
+	
+	<!-- 6、【公共调用方法】获取用户组合权限name串 begin... -->
+    <select id="getCombiRightNameCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_combi_name)
+		  from (select distinct a.vc_combi_name
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 6、【公共调用方法】获取用户组合权限name串 end!!! -->
+	
+	<!-- 7、【公共调用方法】根据权限关系类型、产品、资产单元、组合获取userId串 begin... -->
+    <select id="getUserIdCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_user_id)
+		  from (select distinct a.vc_user_id
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型  -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 7、【公共调用方法】根据权限关系类型、产品、资产单元、组合获取userId串 end!!! -->
+	
+	<!-- 8、【公共调用方法】根据权限关系类型、产品、资产单元、组合获取name串 begin... -->
+    <select id="getUserNameCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_user_name)
+		  from (select distinct a.vc_user_name
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 8、【公共调用方法】根据权限关系类型、产品、资产单元、组合获取name串 end!!! -->
+	
+	<!-- 9、【公共调用方法】获取权限关系类型字符串 begin... -->
+    <select id="getRelateTypeCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_relate_type)
+		  from (select distinct a.vc_relate_type
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+						and a.vc_user_id = #vcUserId#
+		           </isNotNull>
+		           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+						and a.vc_user_name like '%' || #vcUserName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+						and a.l_product_id = #lProductId#
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+						and a.vc_product_code = #vcProductCode#
+		           </isNotNull>
+		           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+						and a.vc_product_name like '%' || #vcProductName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+						and a.l_asset_id = #lAssetId#
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+						and a.vc_asset_no = #vcAssetNo#
+		           </isNotNull>
+		           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+						and a.vc_asset_name like '%' || #vcAssetName# || '%'
+		           </isNotNull>
+		           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+						and a.l_combi_id = #lCombiId#
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+						and a.vc_combi_no = #vcCombiNo#
+		           </isNotNull>
+		           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+						and a.vc_combi_name like '%' || #vcCombiName# || '%'
+		           </isNotNull>
+				)
+	</select>
+	<!-- 9、【公共调用方法】获取权限关系类型字符串 end!!! -->
+	
+	<!-- 10、【公共调用方法】获取产品组合与处理人员权限关系列表 begin... -->
+    <select id="getRightListCommonSQL" parameterClass="java.util.Map" resultMap="getRightListCommonMap">
+    	select a.vc_relate_type, <!--权限关系类型 -->
+		       a.vc_user_id, <!--用户账号id -->
+		       a.vc_user_name, <!--用户名称 -->
+		       a.l_product_id, <!--产品序号 -->
+		       a.vc_product_code, <!--产品代码 -->
+		       a.vc_product_name, <!--产品名称 -->
+		       a.l_asset_id, <!--资产单元序号 -->
+		       a.vc_asset_no, <!--资产单元编号 -->
+		       a.vc_asset_name, <!--资产单元名称 -->
+		       a.l_combi_id, <!--组合序号 -->
+		       a.vc_combi_no, <!--组合编号 -->
+		       a.vc_combi_name <!--组合名称 -->
+		  from t_ats_product_handle a
+		 where 1 = 1
+		   <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+				and a.vc_relate_type in ($vcRelateType$)
+           </isNotNull>
+           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+				and a.vc_user_id = #vcUserId#
+           </isNotNull>
+           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+				and a.vc_user_name like '%' || #vcUserName# || '%'
+           </isNotNull>
+           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+				and a.l_product_id = #lProductId#
+           </isNotNull>
+           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+				and a.vc_product_code = #vcProductCode#
+           </isNotNull>
+           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+				and a.vc_product_name like '%' || #vcProductName# || '%'
+           </isNotNull>
+           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+				and a.l_asset_id = #lAssetId#
+           </isNotNull>
+           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+				and a.vc_asset_no = #vcAssetNo#
+           </isNotNull>
+           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+				and a.vc_asset_name like '%' || #vcAssetName# || '%'
+           </isNotNull>
+           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+				and a.l_combi_id = #lCombiId#
+           </isNotNull>
+           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+				and a.vc_combi_no = #vcCombiNo#
+           </isNotNull>
+           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+				and a.vc_combi_name like '%' || #vcCombiName# || '%'
+           </isNotNull>
+	</select>
+	<!-- 10、【公共调用方法】获取产品组合与处理人员权限关系列表 end!!! -->
+	
+	<!-- 11、【公共调用方法】获取产品信息列表 begin... -->
+    <select id="getProductListCommonSQL" parameterClass="java.util.Map" resultMap="getProductListCommonMap">
+    	select distinct b.l_product_id, <!--基金序号 -->
+				        b.vc_product_code, <!--基金代码 -->
+				        b.vc_product_name, <!--基金简称 -->
+				        b.vc_product_caption, <!--基金全称 -->
+				        b.l_default_asset, <!--缺省资产单元 -->
+				        b.l_default_combi, <!--缺省组合单元 -->
+				        b.l_open_date, <!--成立日期 -->
+				        b.l_end_date, <!--结束日期 -->
+				        b.c_product_type, <!--基金类型 -->
+				        b.c_product_status, <!--基金状态 -->
+				        b.vc_remarks, <!--备注 -->
+				        b.en_product_share, <!--基金总份额 -->
+				        b.vc_currency_no, <!--本币币种 -->
+				        b.vc_permit_market, <!--允许投资的市场 -->
+				        b.c_multi_currency, <!--多币种标志 -->
+				        b.c_cash_addup, <!--资金合用标志 -->
+				        b.l_business_date, <!--业务日期 -->
+				        b.vc_cash_control_point, <!--头寸控制点 -->
+				        b.vc_stock_control_point, <!--证券控制点 -->
+				        b.c_invest_type, <!--投资类型 -->
+				        b.c_invest_advise_check, <!--是否投顾复核:0-无需复核;1-需要复核; -->
+				        b.c_invest_client_check <!--是否委托人复核:0-无需复核;1-需要复核; -->
+		  from t_ats_product_handle a, t_ats_product_info b
+		 where a.l_product_id = b.l_product_id
+		   <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+				and a.vc_relate_type in ($vcRelateType$)
+           </isNotNull>
+           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+				and a.vc_user_id = #vcUserId#
+           </isNotNull>
+           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+				and a.vc_user_name like '%' || #vcUserName# || '%'
+           </isNotNull>
+           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+				and a.l_product_id = #lProductId#
+           </isNotNull>
+           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+				and a.vc_product_code = #vcProductCode#
+           </isNotNull>
+           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+				and a.vc_product_name like '%' || #vcProductName# || '%'
+           </isNotNull>
+           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+				and a.l_asset_id = #lAssetId#
+           </isNotNull>
+           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+				and a.vc_asset_no = #vcAssetNo#
+           </isNotNull>
+           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+				and a.vc_asset_name like '%' || #vcAssetName# || '%'
+           </isNotNull>
+           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+				and a.l_combi_id = #lCombiId#
+           </isNotNull>
+           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+				and a.vc_combi_no = #vcCombiNo#
+           </isNotNull>
+           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+				and a.vc_combi_name like '%' || #vcCombiName# || '%'
+           </isNotNull>
+	</select>
+	<!-- 11、【公共调用方法】获取产品信息列表 end!!! -->
+	
+	<!-- 12、【公共调用方法】获取组合信息列表 begin... -->
+    <select id="getCombiListCommonSQL" parameterClass="java.util.Map" resultMap="getCombiListCommonMap">
+    	select distinct a.l_product_id, <!--基金序号 -->
+		                a.vc_product_code, <!--基金代码 -->
+		                a.vc_product_name, <!--基金简称 -->
+		                b.l_combi_id, <!--投资组合序号 -->
+		                b.vc_combi_no, <!--投资组合编号 -->
+		                b.vc_combi_name, <!--投资组合名称 -->
+		                b.c_combi_class, <!--组合类型 -->
+		                b.l_asset_id, <!--资产单元序号 -->
+		                b.l_setup_date, <!--创建日期 -->
+		                b.l_end_date, <!--结束日期 -->
+		                b.c_combi_status, <!--组合状态 -->
+		                b.vc_remark, <!--备注 -->
+		                b.c_invest_type, <!--投资类型 -->
+		                b.vc_stocktype_right, <!--证券类别权限 -->
+		                b.vc_entrdire_right, <!--委托方向权限 -->
+		                b.vc_permit_market, <!--允许投资的交易市场 -->
+		                b.vc_permit_busin_class, <!--允许投资的业务分类 -->
+		                b.vc_timestamp <!--时间戳 -->
+		  from t_ats_product_handle a, t_ats_combi_info b
+		 where a.l_combi_id = b.l_combi_id
+		   <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+				and a.vc_relate_type in ($vcRelateType$)
+           </isNotNull>
+           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+				and a.vc_user_id = #vcUserId#
+           </isNotNull>
+           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+				and a.vc_user_name like '%' || #vcUserName# || '%'
+           </isNotNull>
+           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+				and a.l_product_id = #lProductId#
+           </isNotNull>
+           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+				and a.vc_product_code = #vcProductCode#
+           </isNotNull>
+           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+				and a.vc_product_name like '%' || #vcProductName# || '%'
+           </isNotNull>
+           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+				and a.l_asset_id = #lAssetId#
+           </isNotNull>
+           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+				and a.vc_asset_no = #vcAssetNo#
+           </isNotNull>
+           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+				and a.vc_asset_name like '%' || #vcAssetName# || '%'
+           </isNotNull>
+           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+				and a.l_combi_id = #lCombiId#
+           </isNotNull>
+           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+				and a.vc_combi_no = #vcCombiNo#
+           </isNotNull>
+           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+				and a.vc_combi_name like '%' || #vcCombiName# || '%'
+           </isNotNull>
+	</select>
+	<!-- 12、【公共调用方法】获取组合信息列表 end!!! -->
+    
+    <!-- 13、【公共调用方法】获取产品组合与处理人员权限关系列表 begin(去重后结果)... -->
+    <select id="getProducrHandleListCommonSQL" parameterClass="java.util.Map" resultMap="getProducrHandleListCommonMap">
+    	select 
+    		distinct a.l_product_id, <!--产品序号 -->
+    		   a.vc_relate_type, <!--权限关系类型 -->
+		       a.vc_user_id, <!--用户账号id -->
+		       a.vc_user_name, <!--用户名称 -->
+		       a.vc_product_code, <!--产品代码 -->
+		       a.vc_product_name, <!--产品名称 -->
+		       a.vc_asset_no, <!--资产单元编号 -->
+		       a.vc_asset_name <!--资产单元名称 -->
+		  from t_ats_product_handle a
+		 where 1 = 1
+		   <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+				and a.vc_relate_type = #vcRelateType#
+           </isNotNull>
+           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+				and a.vc_user_id = #vcUserId#
+           </isNotNull>
+           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+				and a.vc_user_name like '%' || #vcUserName# || '%'
+           </isNotNull>
+           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+				and a.l_product_id = #lProductId#
+           </isNotNull>
+           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+				and a.vc_product_code = #vcProductCode#
+           </isNotNull>
+           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+				and a.vc_product_name like '%' || #vcProductName# || '%'
+           </isNotNull>
+           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+				and a.l_asset_id = #lAssetId#
+           </isNotNull>
+           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+				and a.vc_asset_no = #vcAssetNo#
+           </isNotNull>
+           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+				and a.vc_asset_name like '%' || #vcAssetName# || '%'
+           </isNotNull>
+           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+				and a.l_combi_id = #lCombiId#
+           </isNotNull>
+           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+				and a.vc_combi_no = #vcCombiNo#
+           </isNotNull>
+           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+				and a.vc_combi_name like '%' || #vcCombiName# || '%'
+           </isNotNull>
+	</select>
+	<!-- 13、【公共调用方法】获取产品组合与处理人员权限关系列表 end!!!(去重后结果) -->
+	
+	<!-- 7、【公共调用方法】根据权限关系类型、产品、资产单元、组合获取userId串 begin... -->
+    <select id="getUserIdInCommonSQL" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select wm_concat(vc_user_id)
+		  from (select distinct a.vc_user_id
+		          from t_ats_product_handle a
+		         where 1 = 1
+		           <isNotNull property="vcRelateType"><!-- 权限关系类型  -->
+						and a.vc_relate_type in ($vcRelateType$)
+		           </isNotNull>
+		           <isNotNull property="vcUserId"><!-- 用户ID，如：'huangmizhi' -->
+						and a.vc_user_id in ($vcUserId$)
+		           </isNotNull>
+		           <isNotNull property="vcProductCode"><!-- 产品代码，如：'001199' -->
+						and a.vc_product_code in ($vcProductCode$)
+		           </isNotNull>
+		           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：'20010001' -->
+						and a.vc_asset_no in ($vcAssetNo$)
+		           </isNotNull>
+		           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：'2001_000' -->
+						and a.vc_combi_no in ($vcCombiNo$)
+		           </isNotNull>
+				)
+	</select>
+	<!-- 7、【公共调用方法】根据权限关系类型、产品、资产单元、组合获取userId串 end!!! -->
+</sqlMap>

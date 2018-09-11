@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:武正新 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    
+    <resultMap class="com.cjhxfund.ats.qrtz.qrtz.JobVo" id="resultMap">
+        <result column="JOB_NAME" javaType="string" property="jobName"/>
+        <result column="JOB_DATA" property="jobData"/>
+        <result column="IS_STATEFUL" javaType="string"  property="isStateFul"/>
+        <result column="TRIGGER_STATE" javaType="string" property="triggerState"/>
+        <result column="PREV_FIRE_TIME" javaType="string" property="prevFireTime"/>
+        <result column="TRIGGER_TYPE" javaType="string" property="triggerType"/>
+        <result column="REPEAT_COUNT" javaType="string" property="repeatCount"/>
+        <result column="TIMES_TRIGGERED" javaType="string" property="timesTriggered"/>
+    </resultMap>
+    
+    <!--定时器监控，查询定时任务列表-->
+    <select id="selectJob" parameterClass="java.util.Map" resultMap="resultMap">
+        select j.JOB_NAME,ts.JOB_DATA,j.IS_STATEFUL,ts.TRIGGER_STATE,ti.PREV_FIRE_TIME,
+               ts.TRIGGER_TYPE,s.REPEAT_COUNT,s.TIMES_TRIGGERED
+        from  EOS_QRTZ_JOB_DETAILS j
+        left join EOS_QRTZ_TRIGGERS ts on ts.JOB_NAME=j.JOB_NAME and ts.JOB_GROUP=j.JOB_GROUP
+        left join EOS_QRTZ_TRIGGER_INFO ti on ti.JOB_NAME=j.JOB_NAME and ti.JOB_GROUP=j.JOB_GROUP
+        left join EOS_QRTZ_SIMPLE_TRIGGERS s on ts.TRIGGER_NAME=s.TRIGGER_NAME and ts.TRIGGER_GROUP=s.TRIGGER_GROUP
+        where j.JOB_GROUP='eos:group:ats'
+        <isNotNull property='jobName'>
+            and j.JOB_NAME LIKE '%'||#jobName#||'%'
+        </isNotNull>
+        order by j.JOB_NAME
+     </select>
+     
+     <resultMap class="commonj.sdo.DataObject" id="triggerMap">
+        <result column="TRIGGER_NAME" javaType="string" property="triggerName"/>
+        <result column="TRIGGER_GROUP" javaType="string" property="triggerGroup"/>
+        <result column="IS_VOLATILE" javaType="integer" property="isVolatile"/>
+        <result column="DESCRIPTION" javaType="string" property="description"/>
+        <result column="PREV_FIRE_TIME" javaType="long" property="prevFireTime"/>
+        <result column="TRIGGER_STATE" javaType="string" property="triggerState"/>
+        <result column="TRIGGER_TYPE" javaType="string" property="triggerType"/>
+        <result column="START_TIME" javaType="string" property="startTime"/>
+        <result column="END_TIME" javaType="string" property="endTime"/>
+        <result column="CALENDAR_NAME" javaType="string" property="calendarName"/>
+        <result column="MISFIRE_INSTR" javaType="integer"  property="misfireInstr"/>
+        <result column="JOB_NAME" javaType="string" property="jobName"/>
+        <result column="JOB_GROUP" javaType="string" property="jobGroup"/>
+        <result column="JOB_DATA" javaType="integer" property="jobData"/>
+     </resultMap>
+     
+     <!--查询触发器-->
+     <select id="selectTriggers" parameterClass="java.util.Map" resultMap="triggerMap">
+        select t.TRIGGER_NAME,t.TRIGGER_GROUP,t.IS_VOLATILE,DESCRIPTION,ti.PREV_FIRE_TIME,t.TRIGGER_STATE,t.TRIGGER_TYPE,
+              ti.START_TIME,ti.END_TIME,t.CALENDAR_NAME,t.MISFIRE_INSTR,t.JOB_NAME,t.JOB_GROUP,t.JOB_DATA
+        from EOS_QRTZ_TRIGGERS t 
+        left join EOS_QRTZ_TRIGGER_INFO ti on t.JOB_NAME=ti.JOB_NAME
+        where t.JOB_GROUP='eos:group:ats'
+        <isNotNull property='jobName'>
+            and t.JOB_NAME = #jobName#
+        </isNotNull>
+        order by t.JOB_NAME
+     </select>
+     
+     <!--插入错失触发任务 记录错失触发任务的信息-->
+     <insert id="insertFiredTriggerRecord">
+         INSERT INTO EOS_QRTZ_ERROR_RECORD(
+           RECORD_ID,
+           TRIGGER_NAME,
+           TRIGGER_GROUP,
+           IS_VOLATILE,
+           DESCRIPTION,
+           NEXT_FIRE_TIME,
+           PREV_FIRE_TIME,
+           TRIGGER_STATE,
+           TRIGGER_TYPE,
+           START_TIME,
+           END_TIME,
+           CALENDAR_NAME,
+           MISFIRE_INSTR,
+           JOB_NAME,
+           JOB_GROUP,
+           JOB_DATA,
+           CREATE_TIME
+         ) values(
+           SEQ_QRTZ_ERROR_RECORD.NEXTVAL,
+           #triggerName#,
+           #triggerGroup#,
+           #isVolatile#,
+           #description#,
+           #nextFireTime#,
+           #prevFireTime#,
+           #triggerState#,
+           #triggerType#,
+           #startTime#,
+           #endTime#,
+           #calendarName#,
+           #misfireInstr#,
+           #jobName#,
+           #jobGroup#,
+           #jobData#,
+           sysdate
+         )
+     </insert>
+     
+     <!--查询错失触发任务的记录-->
+     <select id="selectTriggerInfo" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+        select JOB_NAME
+        from EOS_QRTZ_TRIGGER_INFO
+        where JOB_NAME=#jobName#
+     </select>
+     
+     <!--更新触发器触发时间-->
+     <update id="updateTriggerPrevFireTime" parameterClass="commonj.sdo.DataObject">
+         update EOS_QRTZ_TRIGGER_INFO set PREV_FIRE_TIME =#newPrevFireTime#,UPDATE_TIME=sysdate 
+         <isNotNull property="startTime">
+           ,START_TIME=#startTime#
+         </isNotNull>
+         <isNotNull property="startTime">
+           ,END_TIME=#endTime#
+         </isNotNull>
+         where JOB_Name=#jobName# and JOB_GROUP=#jobGroup#
+     </update>
+     
+     <!--新增触发记录-->
+     <insert id="insertTriggerInfo" parameterClass="commonj.sdo.DataObject">
+         insert into EOS_QRTZ_TRIGGER_INFO(
+             JOB_NAME,
+             <isNotNull property="startTime">
+	           ,START_TIME=#startTime#
+	         </isNotNull>
+	         <isNotNull property="startTime">
+	           ,END_TIME=#endTime#
+	         </isNotNull>
+	         PREV_FIRE_TIME,
+	         JOB_GROUP,
+	         UPDATE_TIME )
+	     values(
+	         #jobName#,
+	         <isNotNull property="startTime">
+	          #startTime#
+	         </isNotNull>
+	         <isNotNull property="startTime">
+	          #endTime#
+	         </isNotNull>
+	         #prevFireTime#,
+	         #jobGroup#,
+	         sysdate
+	     )
+     </insert>
+     
+     <resultMap class="commonj.sdo.DataObject" id="errorRecordMap">
+        <result column="START_TIME" javaType="string" property="startTime"/>
+        <result column="END_TIME" javaType="string" property="endTime"/>
+        <result column="PREV_FIRE_TIME" javaType="long" property="prevFireTime"/>
+        <result column="TRIGGER_STATE" javaType="string" property="triggerState"/>
+        <result column="JOB_NAME" javaType="string" property="jobName"/>
+        <result column="CREATE_TIME" javaType="string" property="createTime"/>
+     </resultMap>
+     
+     <!--查询错失触发任务的记录-->
+     <select id="selectFiredTriggersRecord" parameterClass="java.util.Map" resultMap="errorRecordMap">
+        select NEXT_FIRE_TIME,PREV_FIRE_TIME,TRIGGER_STATE,JOB_NAME,START_TIME,END_TIME,
+               to_char(CREATE_TIME,'yy-mm-dd hh24:mi:ss') as CREATE_TIME 
+        from EOS_QRTZ_ERROR_RECORD 
+        where JOB_NAME=#jobName#
+        order by CREATE_TIME desc
+     </select>
+     
+</sqlMap>

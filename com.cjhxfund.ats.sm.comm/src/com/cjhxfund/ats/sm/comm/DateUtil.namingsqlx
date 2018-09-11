@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:罗倔怀 -->
+<sqlMap>
+        <!--根据条件模糊查询债券代码 start-->
+    <resultMap class="commonj.sdo.DataObject" id="isTradeDateMap">
+        <result column="isTradeDate" javaType="int" property="isTradeDate"/>
+    </resultMap>
+    <select id="isTradeDate" parameterClass="commonj.sdo.DataObject" resultMap="isTradeDateMap">
+      select 1 isTradeDate from trade.tmarkettradeday t where 
+    <isNotNull property="dateType">
+           t.vc_tradeday_type= #dateType# 
+     </isNotNull>
+    and t.c_trade_flag='1'
+    <isNotNull property="date">
+          and t.l_date= #date#
+     </isNotNull>
+    </select>
+    <!--根据条件模糊查询债券代码 end-->
+</sqlMap>

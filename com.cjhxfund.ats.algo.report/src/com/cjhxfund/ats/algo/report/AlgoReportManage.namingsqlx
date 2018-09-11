@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:fengjunpei -->
+<sqlMap>
+
+	 <!-- 查询当前算法金额,再插入另一张表,用于实时图表显示 -->
+	 <select id="queryEnDealBalance"  parameterClass="java.lang.String" resultClass="java.lang.String">
+		select sum(b.EN_DEAL_BALANCE) as "amount"
+		  from trade.TALGOORDER a, trade.TALGOENTRUSTS b
+		 where a.c_cancel_flag = '0'
+		   and a.vc_report_code = b.vc_report_code
+		   and b.l_date = to_char(sysdate, 'yyyymmdd')
+    </select>
+    <!-- 实时算法成交金额落地 -->
+    <insert id="insertEnDealBalance"  parameterClass="java.lang.String">
+    	insert into t_ats_local_charts_info (l_date, en_total_amount) values (sysdate, #totalAmount#)
+    </insert>
+    
+    <!-- 查询当天的实时算法成交金额 -->
+    <select id="queryLocalChartsInfo"  parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select to_char(a.l_date, 'HH24MI') as "createDate",
+			   a.en_total_amount as "totalAmount"
+		  from t_ats_local_charts_info a
+		 where to_char(a.l_date, 'yyyymmdd') = to_char(sysdate, 'yyyymmdd')
+	  	 order by a.l_date asc
+    </select>
+    
+    <!-- 查询每日算法成交总金额 -->
+    <select id="queryTotalAmountByAlgorithm"  parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select sum(b.EN_DEAL_BALANCE) as "totalAmount",
+       		   b.l_date as "createDate"
+		  from trade.thisalgoorder a, trade.thisalgoentrusts b
+		 where a.c_cancel_flag = '0'
+		   and a.L_ALGO_SERIAL_NO = b.L_ALGO_SERIAL_NO
+       	   and a.L_DATE = b.L_DATE
+         group by b.l_date
+         order by b.l_date asc
+    </select>
+    
+    <!-- 查询每日非算法成交金额 -->
+    <select id="queryTotalAmount"  parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select sum(a.en_busin_balance) as "totalAmount", 
+			   a.l_date as "createDate"
+		  from trade.thisentrusts a, trade.tstockinfo b
+		 where a.c_cancel_flag = '0'
+		   and a.vc_inter_code = b.vc_inter_code
+		   and b.c_stock_type = '1'
+		   and a.c_entrust_status in ('6', '7', '8')
+		 group by a.l_date
+    </select>
+
+</sqlMap>

@@ -1,0 +1,298 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/JQMHistory/common/commscripts.jsp" %>
+<%@include file="/ProductProcess/CFJYProductProcessForm_common.jsp" %>
+<!-- 
+  - Author(s): jiangkanqian
+  - Date: 2018-05-30 11:24:10
+  - Description:
+-->
+<head>
+<title>新增冲销平仓</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link id="css_icon" rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/coframe/org/css/org.css"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/JQMHistory/common/common.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/instruction/instructionUtil/instruction.js"></script>
+</head>
+<body>
+<div id="newChargeForm" style="padding-top:5px;width: 100%;">
+	<input class="nui-hidden" name="newCharge.lInstructNo" id="lInstructNo"/>
+	<input class="nui-hidden" name="newCharge.operatorType" id="operatorType" value="0"/>
+	<input class="nui-hidden" name="newCharge.lAttachId" id="lAttachId"/>
+	<table class="instructTable" border="0" style="width: 100%;">
+		<tr>
+			<td align="right" width="60px">
+				产品名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductCode" class="nui-textbox" name="newCharge.vcProductCode" 
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				组合名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcCombiCode" class="nui-textbox" name="newCharge.vcCombiCode" 
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				业务名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcBusinName" class="nui-textbox" name="newCharge.vcBusinName" 
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				业务类别:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcBusinType" class="nui-textbox" name="newCharge.vcBusinType" 
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				名义本金(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lNominalCapital" class="nui-textbox" name="newCharge.lNominalCapital" 
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				交易日期:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lTradeDate"  class="nui-datepicker" style="width: 80%;"
+                        name="newCharge.lTradeDate" required="true" 
+ 						 format="yyyyMMdd"/>
+			</td>
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销金额(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lChargeCapital" class="nui-textbox" name="newCharge.lChargeCapital" 
+				required="true" style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销类型:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcChargeType"  class="nui-combobox" 
+                        data = "[{id: 0, text: '双边冲销'}, {id: 1, text: '多边冲销'}]"
+                        name="newCharge.vcChargeType" required="true" style="width: 80%;"/>
+			</td>
+		</tr>
+	</table>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>附件:</strong></div>
+	<div colspan="3" class="td">
+		<iframe id="prodIfm" name="prodIfm" width="98%"  height="120px" frameborder="no" border="0" marginwidth="0" marginheight="0" scolling="no"></iframe>
+	</div>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>备注:</strong></div>
+	<div colspan="5">
+        <input class="nui-textarea"  name="newCharge.vcRemark" id="vcRemark" width="100%" height="90px"/>
+    </div>
+	
+	<div class="nui-toolbar" borderStyle="border:0;">
+		<div align="center" class="submitDiv">
+			<!-- <a class="nui-button"  iconCls="icon-tip" plain="true"  id="exactrisk" enabled="false">风控试算</a> --> 
+			<a class="nui-button"  iconCls="icon-ok" plain="true"  id="exactCommit" onclick="commit(this,1)">提交</a>  
+			<a class="nui-button"  iconCls="icon-cancel" plain="true"  onclick="onCancel()">取消</a>
+		</div>
+	</div>
+</div>	
+	
+
+
+	<script type="text/javascript">
+    	nui.parse();
+    	$(function() {
+	    	showFile();
+		});	
+    	
+    	function showFile(){
+           		var uuid = guid();
+           		nui.get("lAttachId").setValue(uuid);
+           		$("#prodIfm").attr("src", nui.context + "/fm/baseinfo/fileuploadComm/any_upload.jsp?attachType=77&attachBusType=1&bizId="+uuid);
+           }
+    	
+    	//生成uuid
+        function guid() {
+    		var time = new Date().getTime();
+    		var random = GetRandomNum(1,999999);
+    		var uuid = time.toString() + random.toString();
+    		return uuid;
+		}
+    	
+    	function GetRandomNum(Min,Max) {   
+			var Range = Max - Min;   
+			var Rand = Math.random();   
+			return(Min + Math.round(Rand * Range));   
+		}  
+    	   	
+    	//提交
+ 		function commit(instructJson,doClose){
+ 			 doCloseParam = doClose;
+		 	 //capsulationInstructParameter();
+		 	 var dataForm = new nui.Form("#newChargeForm");
+    		 dataForm.validate();
+			 if(dataForm.isValid()==false){
+				 return;
+			 } 			 
+			 var data = dataForm.getData(false, true);
+			 
+			 //判断修改指令/建议是否有做修改			
+			if(nui.get("operatorType").getValue() == "1"){
+				var flag = false;
+				var instructs = new nui.Form("#newChargeForm").getData(false,false);
+				for(var key1 in originalInstructionInfo){
+					for(var key in instructs){
+						if(key1 == key){
+							if(key1 && key){
+								if(originalInstructionInfo[key1] != instructs[key]){
+									flag = true;
+								}
+							}
+						}
+					}
+				}
+				if(!flag){
+					nui.alert("未做任何修改","提示");
+					return;
+				}
+			}	
+			//时间格式转换			 
+			 data.newCharge.lTradeDate = nui.formatDate(nui.get("lTradeDate").value, "yyyyMMdd");
+			 data.newCharge.lInstructId = '401';						 
+			 var instructJson = nui.encode(data);		 
+ 			 var tooltip = nui.loading("正在处理中,请稍等...","提示");
+ 			 nui.ajax({
+ 				url: "com.cjhxfund.ats.instruction.InterestSwap.InterestSwapInstruction.insertCharge.biz.ext",
+	            type: 'POST',
+	            data: instructJson,
+	            cache: false,
+	            contentType: 'text/json',
+	            success: function (text) {
+	            	nui.hideMessageBox(tooltip);
+	            	var returnJson = nui.decode(text);
+	            	if(returnJson.exception == null){
+	            		if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_SUCCESS%>"){
+	            			var riskMsg = returnJson.riskMsg;
+	            			if(riskMsg!=null && riskMsg.isAgainstRisk){
+	            				riskMsg["alertMsg"]="投资指令/建议下达成功！";
+	            				nui.open({
+			                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+			                        title: "投资指令/建议风控信息",
+			                        width: 800,
+			                        height: 422,
+			                        onload: function () {
+			                            var iframe = this.getIFrameEl();
+			                            iframe.contentWindow.SetData(riskMsg,3);
+			                        },
+			                        ondestroy: function (action) {
+			                        	if(doClose){
+			                        		window.CloseOwnerWindow();
+			                        	}
+			                        }
+			                    });
+	            			}else{
+		            			nui.alert("投资指令/建议下达成功！","提示",function(){
+		            				if(doClose){
+		            					window.CloseOwnerWindow();
+		            				}
+	                            	
+	                            });
+	            			}
+	            		}else if(returnJson.rtnCode == "203" || returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ORDER_USABLE_AMOUNT_INSUFFICIENT%>"){//校验存在问题
+	            			window.parent.parentConfirm(returnJson.rtnMsg+"</br>是否继续下单？","提示", function(action){
+		                		if(action == "ok") {
+                                	formalInstructionEntry(instructJson,doClose);
+                                }
+		                	});
+	            		}else if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ERROR%>"){
+	            			var riskMsg = returnJson.riskMsg;
+	            			if(riskMsg!=null && riskMsg.isAgainstRisk){//触发了风控
+	            				riskMsg["alertMsg"]="投资指令/建议下达失败！";
+	            				nui.open({
+			                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+			                        title: "投资指令/建议风控信息",
+			                        width: 800,
+			                        height: 422,
+			                        onload: function () {
+			                            var iframe = this.getIFrameEl();
+			                            iframe.contentWindow.SetData(riskMsg,3);
+			                        }
+			                    });
+	            			}else{
+	            				nui.alert(returnJson.rtnMsg,"提示",function(){
+		            					window.CloseOwnerWindow();
+	                            	
+	                            });
+	            			}
+	            		}else if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ORDER_NO_RCV_FR_O32%>"){
+	            			nui.alert("投资指令/建议下达成功！"+returnJson.rtnMsg,"提示",function(){
+                            	if(doClose){
+                            		window.CloseOwnerWindow();
+                            	}
+                            });
+	            		}else if(returnJson.rtnCode == "301"){
+	            			var riskInfo = returnJson.riskMsg;
+	            			riskInfo["alertMsg"]=returnJson.rtnMsg;
+	            			nui.open({
+		                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+		                        title: "投资指令/建议风险提示",
+		                        width: 800,
+		                        height: 422,
+		                        onload: function () {
+		                            var iframe = this.getIFrameEl();
+		                            iframe.contentWindow.SetData(riskInfo,1);
+		                        },
+		                        ondestroy: function (action) {
+		                            if (action == "ok") {
+	                                    formalInstructionEntry(instructJson,doClose);
+	                                }
+		                        }
+		                    });
+	            		}else{//触发风控，弹出风险提示框，展示风险信息
+	            			var riskInfo = returnJson.riskMsg;
+	            			nui.open({
+		                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+		                        title: "投资指令/建议风险提示",
+		                        width: 800,
+		                        height: 380,
+		                        onload: function () {
+		                            var iframe = this.getIFrameEl();
+		                            iframe.contentWindow.SetData(riskInfo,1);
+		                        },
+		                        ondestroy: function (action) {
+		                            if (action == "ok") {
+	                                    formalInstructionEntry(instructJson,doClose);
+	                                }
+		                        }
+		                    });
+	            		}
+	            	}else{
+	            	   nui.alert("系统异常","系统提示");
+	            	}
+	            }
+ 			 });
+ 			 
+   		 }
+    	
+    </script>
+</body>
+</html>

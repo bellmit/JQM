@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:chenpeng -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="fileResultMap">
+        <result column="sysid" javaType="string" property="sysid"/>
+        <result column="attach_name" javaType="string" property="name"/>
+        <result column="attach_add" javaType="string" property="attactUrl"/>
+        <result column="attach_size" javaType="string" property="attachSize"/>
+        <result column="whetherindia" javaType="string" property="whetherindia"/>
+        <result column="annexseal" javaType="string" property="annexseal"/>
+     </resultMap>
+     
+     <!-- 查询附件列表 -->
+    <select id="queryAttachmentList"  parameterClass="java.util.Map" resultMap="fileResultMap">
+    	select info.* from cf_jy_attach_info info  
+        where  info.biz_id=#bizId#  and info.attach_type =#attachType#
+        and info.version_number ='1' and info.attach_bus_type=#attachBusType#
+    </select>	 
+</sqlMap>

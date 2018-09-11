@@ -1,0 +1,136 @@
+package com.cjhxfund.jy.DataProcess;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.cjhxfund.commonUtil.StrUtil;
+import com.cjhxfund.jy.ProductProcess.ZhxxcxUtil;
+import com.eos.foundation.common.utils.DateUtil;
+
+public abstract class Excutor {
+	
+	public static String CLASS_PATH = "";
+	public static String ZHXXCX_FILE_PATH = "";
+	static {
+		String os = System.getProperty("os.name");
+		if(StringUtils.isNotEmpty(os) && os.toLowerCase().startsWith("win")){
+			CLASS_PATH = ZhxxcxUtil.class.getResource("/").getPath().substring(1);
+		}else{
+			CLASS_PATH = ZhxxcxUtil.class.getResource("/").getPath();
+		}
+		ZHXXCX_FILE_PATH = CLASS_PATH + "confFile" + File.separator + "sqlFile" + File.separator + "zhxxcx" + File.separator;
+	}
+	
+	public List<?> query(Connection conn,String sql,List<Object> parameter) {
+		ResultSet set =null;
+        PreparedStatement pre =null;
+        List<?> list = null;
+        String realSql = StrUtil.findContentStr(ZHXXCX_FILE_PATH+sql, null);
+        try {
+        	if(conn != null){
+        		pre = conn.prepareStatement(realSql); 
+        		//设置参数
+        		setParams(parameter, pre);
+        		set = pre.executeQuery();            
+        		list = resProcess(set);
+        	}           
+        } catch (SQLException e) {  
+            e.printStackTrace();  
+        } finally{
+               try{  
+                   if(set!=null){  
+                	   set.close();  
+                   }if(pre!=null){  
+                	   pre.close();  
+                   }
+                   /*
+                   if(conn!=null){  
+                	   conn.close();  
+                   }
+                   */  
+               }catch(Exception e2){  
+                   e2.printStackTrace();  
+               }  
+           }
+        return list;
+	}
+	
+	public void insertOrUpdate(Connection conn,String sql,List<Object> parameter){
+		ResultSet set =null;
+        PreparedStatement pre =null;
+        String realSql = StrUtil.findContentStr(ZHXXCX_FILE_PATH+sql, null);
+        try {  
+            pre = conn.prepareStatement(realSql); 
+            //设置参数
+            setParams(parameter, pre);
+            
+            set = pre.executeQuery();
+            
+            resProcess(set);
+            
+        } catch (SQLException e) {  
+            e.printStackTrace();  
+        } finally{
+               try{  
+                   if(set!=null){  
+                	   set.close();  
+                   }if(pre!=null){  
+                	   pre.close();  
+                   }if(conn!=null){  
+                	   conn.close();  
+                   }  
+               }catch(Exception e2){  
+                   e2.printStackTrace();  
+               }  
+           }	
+	}
+	
+	public List<?> resProcess(ResultSet set){
+		return null;
+	};
+	
+	public void setParams(List<Object> params, PreparedStatement stmt)
+			throws SQLException {
+		if (params != null && params.size() > 0) {
+			for (int i = 0; i < params.size(); i++) {
+				Object obj = params.get(i);
+				int j = (i + 1);
+				if (obj instanceof java.lang.String
+						|| obj instanceof java.lang.Character) {
+					stmt.setString(j, String.valueOf(obj));
+				} else if (obj instanceof java.sql.Date
+						|| obj instanceof java.util.Date
+						|| obj instanceof java.sql.Timestamp) {
+					stmt.setString(j, DateUtil.format((Date)obj, "yyyy-MM-dd HH:mm:ss"));
+				} else if (obj instanceof java.lang.Integer) {
+					stmt.setInt(j, (Integer) obj);
+				} else if (obj instanceof java.lang.Double) {
+					stmt.setDouble(j, (Double) obj);
+				} else if (obj instanceof java.lang.Float) {
+					stmt.setFloat(j, (Float) obj);
+				} else {
+					stmt.setObject(j, obj);
+				}
+			}
+		}
+	}
+
+	public List<?> query(Connection conn, String sql, List<Object> parameter,
+			int split) {
+		// TODO 自动生成的方法存根
+		return null;
+	}
+	
+
+	
+}

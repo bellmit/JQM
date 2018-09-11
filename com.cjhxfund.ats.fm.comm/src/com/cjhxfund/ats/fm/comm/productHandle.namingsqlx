@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:章璐 -->
+<sqlMap>
+    <resultMap class="com.cjhxfund.jy.ProductProcess.customEntityDataset.CombProduct" id="resultMap">
+        <result column="VC_PRODUCT_CODE" javaType="string" property="fundCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="string" property="fundName"/>
+        <result column="FUNDCODENAME" javaType="string" property="fundCodeName"/>
+        <result column="VC_COMBI_NO" javaType="string" property="vcCombiNo"/>
+        <result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/>
+        <result column="L_ASSET_ID" javaType="string" property="lAssetId"/>
+        <result column="FUNDINFO" javaType="string" property="fundInfo"/>
+    </resultMap>
+    <select id="selectProductHandle" parameterClass="java.util.Map" resultMap="resultMap">
+    	 select distinct t1.vc_product_code, 
+			                   t1.vc_product_name, 
+			                   t1.vc_product_code || '-' || t1.vc_product_name fundCodeName, 
+			                   t2.vc_combi_no, 
+			                   t2.vc_combi_name, 
+			                   t2.l_asset_id, 
+			                   t1.vc_product_code || '|' || t1.vc_product_name || '|' || t2.vc_combi_no || '|' || t2.vc_combi_name || '|' || t2.l_asset_id || '|' || t1.l_product_id || '|' || t2.l_combi_id fundInfo 
+			     from t_ats_product_info t1, t_ats_combi_info t2 
+			    where t1.l_product_id = t2.l_product_id 
+		<isNotNull property="searchKey"> 
+		        and (t1.vc_product_code like '%'||#searchKey#||'%' 
+		        or t1.vc_product_name like '%'||#searchKey#||'%' 
+		        or t2.vc_combi_no like '%'||#searchKey#||'%' 
+		        or t2.vc_combi_name like '%'||#searchKey#||'%')
+        </isNotNull>
+        <isNotNull property="productCodes"> 
+        		and t1.vc_product_code in ($productCodes$)
+        </isNotNull>
+        <isNotNull property="combiNos"> 
+        		and t1.vc_product_code in ($combiNos$)
+        </isNotNull>
+        <isNotNull property="cProductStatus"> 
+        		and t1.c_product_status = #cProductStatus#
+        </isNotNull>
+        		order by t1.vc_product_code asc
+    </select>
+</sqlMap>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+  <!-- 撤回功能使用 查询某个流程下某个环节，某个人的工作项 -->
+    <select id="queryWorkItem4Acitivity" parameterClass="java.util.Map" resultClass="com.eos.workflow.data.WFWorkItem">
+    	select t.workitemid  workItemID
+	    from wfworkitem t 
+	    where 1=1
+	    <isNotNull property="empid">
+	       and exists (select 1 from v_auth_partic_emp t1 where t1.workitemid = t.workitemid and t.participant = t1.participantid and to_char(t1.empid) = to_char(#empid#))
+	    </isNotNull>
+	    <isNotNull property="currentEmpid">
+	       and exists (select 1 from t_ats_approve_info t1 where t1.l_work_item_id = t.workitemid and t1.vc_operate_type in (3,4) and to_char(t1.user_id) = to_char(#currentEmpid#))
+	       and exists (select 1 from t_ats_approve_info t2 where t2.l_approve_id = (select max(l_approve_id) from t_ats_approve_info t1 where t1.l_work_item_id = t.workitemid and t1.vc_operate_type in (3,4))
+                                                 and to_char(t2.l_user_id) = to_char(#currentEmpid#))
+	    </isNotNull>
+	    <isNotNull property="activityInstID">
+	    and t.activityinstid = #activityInstID#
+	    </isNotNull>
+	    and t.processinstid = #processInstID#
+	    and t.currentstate in ($currentstate$)
+	    order by t.workitemid desc
+    </select>
+    <!-- 撤回功能使用 查询当前活动是否有多工作项 -->
+    <select id="queryActivity4CurrentMutiWorkitem" parameterClass="java.util.Map" resultClass="com.eos.workflow.data.WFActivityInst">
+    	select t.activityinstid  activityInstID
+    	from wfactivityinst t,wfworkitem t1
+		where t.processinstid = #processInstID#
+		and t.currentstate = 2
+		and t1.activityinstid = t.activityinstid
+		group by t.activityinstid
+		having count(t1.workitemid) > 1
+    </select>
+    <!-- 撤回功能使用 查询当前活动的多工作项 -->
+    <select id="queryActivity4CurrentWorkitem" parameterClass="java.util.Map" resultClass="com.eos.workflow.data.WFActivityInst">
+    	select t.activityinstid  activityInstID
+    	from wfactivityinst t,wfworkitem t1
+		where t.processinstid = #processInstID#
+		and t.currentstate = 2
+		and t1.activityinstid = t.activityinstid
+		group by t.activityinstid
+    </select>
+</sqlMap>

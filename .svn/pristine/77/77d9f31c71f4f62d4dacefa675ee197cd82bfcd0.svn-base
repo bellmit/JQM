@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page pageEncoding="UTF-8"%>
+
+<%@include file="/common/common.jsp" %>
+<%@page import="java.util.Date" %>
+<%@page import="java.text.SimpleDateFormat" %>
+<html>
+<head>
+	<title>任务维护</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	
+	<style type="text/css">
+		.nui-form-table th{
+			font-weight: normal;
+			padding-top: 9px\9;
+			padding-top:1px\9\0;
+		}
+	</style>
+	<%
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date tempDate = sf.parse(sf.format(new Date()));
+		tempDate.setYear(tempDate.getYear()+1);
+		String startDate = sf.format(new Date());
+		String endDate = sf.format(tempDate);
+	%>
+</head>
+<body>
+	<!-- 标识页面是查看(query)、修改(edit)、新增(add) -->
+	<input name="pageType" class="nui-hidden"/>
+	<div id="dataform1" style="padding-top:5px;">
+		<input class="nui-hidden" id="taskId" name="task.lId"/>
+		<input class="nui-hidden" id="vParame" name="task.vcParame"/>
+		<table style="width:100%;height:150px;table-layout:fixed;" class="nui-form-table" border="0">
+		   <tr>
+				<th class="" width="120" style="font-size:12px;">任务类型：</th>
+				<td>
+					<input class="nui-textbox" id="taskType" name="task.vcFkType"  style="width: 100%;" required="true" requiredErrorText="任务类型不能为空" vtype="maxLength:20"/>
+				</td>
+			</tr>
+			<tr>
+				<th class="" width="120" style="font-size:12px;">任务编号：</th>
+				<td>
+					<input class="nui-textbox" id="taskCode" name="task.vcTaskCode" required="true" requiredErrorText="任务编号不能为空" style="width: 100%;"  vtype="maxLength:120"/>
+				</td>
+			</tr>
+			<tr>
+				<th class="" width="120" style="font-size:12px;">显示任务名：</th>
+				<td>
+					<input class="nui-textbox" id="taskNameShow" name="task.vcTaskNameShow" required="true" requiredErrorText="显示任务名不能为空" style="width: 100%;" vtype="maxLength:120"/>
+				</td>
+			</tr>
+			<tr>
+				<th class="" width="120" style="font-size:12px;">是否监控：</th>
+				<td>
+					<input class="nui-dictcombobox" id="vcCheck" name="task.vcCheck" value="1" required="true"  dictTypeId="COMM_IS_CHECK" requiredErrorText="不能为空" style="width: 100%;"/>
+				</td>
+			</tr>
+			<tr>
+				<th class="" width="120" style="font-size:12px;">方法名前缀：</th>
+				<td>
+					<input class="nui-textbox" id="targetQname" name="task.vcTargetQname" required="true" requiredErrorText="方法名前缀不能为空" style="width: 100%;"  vtype="maxLength:128"/>
+				</td>
+			</tr>
+			<tr>
+				<th class="" width="120" style="font-size:12px;">方法名后缀：</th>
+				<td>
+					<input class="nui-textbox" id="targetOperation" name="task.vcTargetOperation" required="true" requiredErrorText="方法名后缀不能为空" style="width: 100%;"  vtype="maxLength:128"/>
+				</td>
+			</tr>
+			<tr>
+				<th class="" width="120" style="font-size:12px;">开始时间：</th>
+				<td>
+					<input class="nui-datepicker" id="startDate" name="task.dStartDate" value="<%=startDate%>" format="yyyy-MM-dd HH:mm:ss" style="width: 50%;" showTime="true" showOkButton="true" showClearButton="fase" required="true">
+				</td>
+			</tr>
+			<tr>
+				<th class="" width="120" style="font-size:12px;">结束时间：</th>
+				<td>
+					<input class="nui-datepicker" id="endDate" name="task.dEndDate" value="<%=endDate %>" format="yyyy-MM-dd HH:mm:ss" style="width: 50%;" showTime="true" showOkButton="true" showClearButton="fase" required="true">
+					<span style="margin-left: 10px;"></span>
+					<div id="wuEndTime" name="wuEndTime" class="nui-checkbox" readOnly="false" text="无结束时间" onvaluechanged="endTimeChang"></div>
+				</td>
+			</tr>
+		</table>
+		
+		<div class="nui-fit" style="height: 330px;width: 100%;">
+			<div class="nui-toolbar" style="padding:0px;" borderStyle="border:0;">
+				<table width="100%" border="0">
+					<tr>
+						<td style="text-align:left;" >
+							<a class="nui-button" iconCls="icon-add" onclick="addparame">+</a>
+							<span style="display:inline-block;width:10px;"></span>
+							<a class="nui-button" iconCls="icon-remove" onclick="removeparame">-</a>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="datagrid" class="nui-datagrid" style="width:100%;height:75%;"
+				allowCellEdit="true" allowCellSelect="true" multiSelect="true"
+				showPager="false">
+				<div property="columns">
+					<div type="checkcolumn"></div>
+					<div field="vParame" headerAlign="center" allowResize="true" width="50%">参数
+						<input property="editor" class="mini-textbox" style="width:100%;" />
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="nui-toolbar" style="padding:0px;" borderStyle="border:0;">
+			<table width="100%" border="0">
+				<tr>
+					<td style="text-align:center;" >
+						<a class="nui-button" iconCls="icon-save" onclick="onOk">保存</a>
+						<span style="display:inline-block;width:25px;"></span>
+						<a class="nui-button" iconCls="icon-cancel" onclick="onCancel()">取消</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<script type="text/javascript">
+		nui.parse();
+		//保存数据
+		function saveData(){
+			var taskType = nui.get("taskType").getValue();
+			taskType = taskType.toLocaleLowerCase();
+			taskType = taskType.replace(/\s/g, "");
+			if(taskType=="remind" || taskType=="monitor"){
+				nui.alert(taskType+" 类型为系统配置专用类型，请不要使用这样的类型添加任务","系统提示");
+				return;
+			}
+			//保存参数
+			saveparame();
+			if(!vtypeStartEndTime()){
+				return;
+			}
+			var urlStr = "";
+			var pageType = nui.getbyName("pageType").getValue();//获取当前页面是编辑还是新增状态
+			var form = new nui.Form("#dataform1");
+			form.setChanged(false);
+			if(pageType=="add"){
+				urlStr = "com.cjhxfund.ats.taskTimer.CommTask.addTask.biz.ext";
+			}
+			if(pageType=="edit"){
+				urlStr = "com.cjhxfund.ats.taskTimer.CommTask.updateTask.biz.ext";
+			}
+			if(urlStr==""){
+				nui.alert("保存的逻辑流路径为空，请联系管理员处理！","系统提示");
+				return;
+			}
+			form.validate();
+			if(form.isValid()==false) return;
+			var data = form.getData(false,true);
+			var json = nui.encode(data);
+			$.ajax({
+				url:urlStr,type:'POST',data:json,cache:false,contentType:'text/json',
+				success:function(text){
+					var returnJson = nui.decode(text);
+					if(returnJson.exception == null){
+						CloseWindow("saveSuccess");
+					}else{
+						nui.alert("保存失败", "系统提示");
+					}
+				}
+			});
+		}
+		
+		//页面间传输json数据
+		function setFormData(data){
+			//跨页面传递的数据对象，克隆后才可以安全使用
+			var infos = nui.clone(data);
+			//保存list页面传递过来的页面类型：add表示新增、edit表示编辑
+			nui.getbyName("pageType").setValue(infos.pageType);
+			
+			var json = infos.record;
+			var form = new nui.Form("#dataform1");//将普通form转为nui的form
+			form.setData(json);
+			form.setChanged(false);
+			initParame();
+			if(infos.pageType == "add"){
+				
+			}
+			if (infos.pageType == "edit"){debugger;
+				nui.get("taskCode").disable();
+				var taskCode = nui.get("taskCode");
+				taskCode.setAllowInput(false);
+				var endDate = infos.record.task.dEndDate;
+				if(endDate==null){
+				
+				    nui.get("wuEndTime").setChecked("true");
+				   // alert(nui.get("wuEndTime").checked);
+					nui.get("endDate").setValue("");
+					nui.get("endDate").disable();
+					
+					//var t = nui.get("wuEndTime");
+                    //t.setChecked(!t.getChecked());
+				}else{
+				
+					nui.get("endDate").enable();
+					nui.get("wuEndTime").setValue("false");
+				}
+				
+			}
+		}
+		
+		//关闭窗口
+		<%--
+		function CloseWindow(action){
+			if (action == "close"){
+		 		if (confirm("数据被修改了，是否先保存？")){
+		 			saveData();
+		 		}
+		 	}
+		 	if (window.CloseOwnerWindow){
+		 		return window.CloseOwnerWindow(action);
+		 	}else{
+		 		window.close();
+		 	}
+		}
+		--%>
+		var isSaved = true;
+		function CloseWindow(action){
+			if(action=="close"){
+				nui.confirm("关闭页面将不会保存数据，确定要关闭吗？", "提示", function(action){
+					if(action == "ok" ){
+						window.CloseOwnerWindow("close");
+					}
+				});
+				return false;
+			}else{
+				if(isSaved) action="success";// 如果已保存过，强制设置
+				if(window.CloseOwnerWindow) 
+		        return window.CloseOwnerWindow(action);
+				else return window.close();
+			}
+		}
+		
+		//确定保存或更新
+		function onOk(){
+			var pageType = nui.getbyName("pageType").getValue();//获取当前页面是编辑还是新增状态
+			var taskType = nui.get("taskType").getValue();
+			var taskCode = nui.get("taskCode").getValue();
+			var data={taskType:taskType,taskCode:taskCode};
+			var json = nui.encode(data);
+			if(pageType=="edit"){
+				saveData();
+				return;
+			}
+			//判断任务编号是否为空
+			if(taskCode!=""){
+				//判断编号是否存在
+				var url="com.cjhxfund.ats.taskTimer.CommTask.checkTaskCode.biz.ext";
+				$.ajax({
+					url:url,type:'POST',data:json,cache:false,contentType:'text/json',
+					success:function(text){
+						var returnJson = nui.decode(text);
+						
+						if(returnJson.state=="ok"){
+							saveData();//保存数据
+						}else if(returnJson.state=="err"){
+							nui.alert(taskType+"的"+taskCode+"编号已存在","系统提示");
+						}else{
+							nui.alert("没有执行逻辑流","系统提示");
+						}
+					}
+				});
+			}else{
+				saveData();//保存数据
+			}
+		}
+		
+		//取消编辑
+		function onCancel(){
+			nui.confirm("取消将不会保存数据，确定要取消吗？","系统提示",function(action){
+    			if(action=="ok"){
+    				CloseWindow("cancel");
+    			}
+    		});
+		}
+		
+		//添加参数
+		function addparame(){
+			var grid = nui.get("datagrid");
+			var row = grid.getData();
+			var newRow = { name: "New Row" };
+			grid.addRow(newRow, row.length);
+		}
+		//删除参数
+		function removeparame(){
+			var grid = nui.get("datagrid");
+			var rows = grid.getSelecteds();
+			if (rows.length > 0) {
+                grid.removeRows(rows, true);
+            }
+		}
+		//解析参数并回填到datagrid（参数列表）
+		function initParame(){
+			var data = nui.get("vParame").getValue();
+			if(data==null || data==""){
+				return;
+			}
+			var parame = data.split(",");
+			var tempData = "";
+			for(var i=0;i<parame.length;i++){
+				if(tempData==""){
+					tempData = "{vParame:"+parame[i]+"}";
+				}else{
+					tempData=tempData+","+"{vParame:"+parame[i]+"}";
+				}
+			}
+			tempData = "["+tempData+"]";
+			tempData = nui.decode(tempData);
+			var grid = nui.get("datagrid");
+			grid.setData(tempData);
+		}
+		//保存参数
+		function saveparame(){
+			var grid = nui.get("datagrid");
+			var rows = grid.getData();
+			var vParame = "";
+			for(var i=0;i<rows.length;i++){
+				if(vParame==""){
+					vParame = rows[i].vParame;
+				}else{
+					vParame = vParame+","+rows[i].vParame;
+				}
+			}
+			nui.get("vParame").setValue(vParame);
+		}
+		//校验开始时间要小于结束时间
+		function vtypeStartEndTime(){
+			var falg = true;
+			var startDate = nui.get("startDate").getValue();
+			if(startDate == "")return falg;
+			var endDate = nui.get("endDate").getValue();
+			if(endDate == "")return falg;
+			if(startDate >= endDate){
+				falg = false;
+				nui.alert("结束时间必须大于开始时间","系统提示");
+			}else{
+				falg = true;
+			}
+			return falg;
+		}
+		
+		//无结束时间触发
+		function endTimeChang(e){
+			var wuEndTime = nui.get("wuEndTime").getValue();
+			var endDate = nui.get("endDate");
+			if(wuEndTime=="true"){
+				endDate.setValue("");
+				endDate.disable();
+			}else{
+				endDate.enable();
+			}
+		}
+		
+	
+    
+	</script>
+</body>
+</html>

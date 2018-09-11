@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:童伟 -->
+<sqlMap>
+    <!-- 查询二级交易市场各状态条数（录单和复核） -->
+	<select id="queryTransactionRecordCount" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		
+	   	SELECT 
+			COUNT(*) as count
+		FROM
+			T_ATS_INQUIRY_RESULT_INSTRUCT a, T_ATS_INQUIRY_INSTRUCT c
+    	WHERE
+    		a.l_inquiry_id = c.l_inquiry_id
+    	AND
+			 (a.VC_PROCESS_STATUS = #vcProcessStatus1#
+			 <isNotNull property="riskApproveStatus">
+	       		or a.VC_PROCESS_STATUS = #riskApproveStatus#
+	      	</isNotNull>
+	      	<isNotNull property="alreadyEntering">
+	       		or a.VC_PROCESS_STATUS = #alreadyEntering#
+	      	</isNotNull>)
+	   		<isNotNull property="vcProductCode">
+	       		and a.VC_PRODUCT_CODE = #vcProductCode#
+	      	</isNotNull>
+	      	<isNotNull property="vcEntrustDirection">
+	       		and a.VC_ENTRUST_DIRECTION in ($vcEntrustDirection$)
+	      	</isNotNull>
+	      	<isNotNull property="cIsValid">
+	       		and a.C_IS_VALID = #cIsValid#
+	      	</isNotNull>
+	      	<isNotNull property="combiCode">
+	       		and a.VC_COMBI_CODE in ($combiCode$)
+	      	</isNotNull>
+	      	<isNotNull property="webType">
+	       		and (((a.l_trade_date = to_number(to_char(sysdate, 'yyyyMMdd')) or a.l_first_settle_date = to_number(to_char(sysdate, 'yyyyMMdd'))) and c.l_issue_date= to_number(to_char(sysdate, 'yyyyMMdd')))
+	         		or ((a.l_trade_date = to_number(to_char(sysdate, 'yyyyMMdd')) or a.l_first_settle_date = to_number(to_char(sysdate, 'yyyyMMdd'))) and c.l_issue_date &lt; to_number(to_char(sysdate, 'yyyyMMdd')) and a.vc_process_status in ('3','4','5','6','7','8','9')))
+	       	 	
+	      	</isNotNull>	
+	      	<isNotNull property="vcBizType">
+          		and a.vc_biz_type in ($vcBizType$)
+      		</isNotNull>
+	    UNION ALL
+	   	SELECT 
+			COUNT(DISTINCT b.l_instruct_id) as count
+		FROM
+			T_ATS_INQUIRY_RESULT_INSTRUCT a, T_ATS_INSTRUCT_OPERATOR b, T_ATS_INQUIRY_INSTRUCT c
+    	WHERE
+    		a.l_inquiry_id = b.l_instruct_id 
+    	AND
+    		c.l_inquiry_id = a.l_inquiry_id
+    	AND
+    	(a.VC_PROCESS_STATUS = #vcProcessStatus2#
+			 <isNotNull property="riskApproveStatus">
+	       		or a.VC_PROCESS_STATUS = #riskApproveStatus2#
+	      	</isNotNull>
+	      	<isNotNull property="alreadyEntering">
+	       		or a.VC_PROCESS_STATUS = #alreadyEntering#
+	      	</isNotNull>)
+	   		<isNotNull property="vcProductCode">
+	       		and a.VC_PRODUCT_CODE = #vcProductCode#
+	      	</isNotNull>
+	      	<isNotNull property="vcEntrustDirection">
+	       		and a.VC_ENTRUST_DIRECTION in ($vcEntrustDirection$)
+	      	</isNotNull>
+	      	<isNotNull property="userId">
+	       		and b.vc_user_id = #userId#
+	      	</isNotNull>	
+	      	<isNotNull property="cIsValid">
+	       		and a.C_IS_VALID = #cIsValid#
+	      	</isNotNull>  
+	      	<isNotNull property="webType">
+	       			and (((a.l_trade_date = to_number(to_char(sysdate, 'yyyyMMdd')) or a.l_first_settle_date = to_number(to_char(sysdate, 'yyyyMMdd'))) and c.l_issue_date= to_number(to_char(sysdate, 'yyyyMMdd')))
+	         		or ((a.l_trade_date = to_number(to_char(sysdate, 'yyyyMMdd')) or a.l_first_settle_date = to_number(to_char(sysdate, 'yyyyMMdd'))) and c.l_issue_date &lt; to_number(to_char(sysdate, 'yyyyMMdd')) and a.vc_process_status in ('3','4','5','6','7','8','9')))
+	       	 	
+	      	</isNotNull>
+	      	<isNotNull property="vcBizType">
+          		and a.vc_biz_type in ($vcBizType$)
+      		</isNotNull>
+	      	and b.c_is_valid = '0' and b.vc_operator_type = '1'
+	      UNION ALL 	
+	       	select count(*) as count from T_ATS_INQUIRY_INSTRUCT a, T_ATS_INQUIRY_RESULT_INSTRUCT t where t.l_inquiry_id = a.l_inquiry_id
+	       	<isNotNull property="queryCombiNos">
+	       		and t.VC_COMBI_CODE in ($queryCombiNos$)
+	       	</isNotNull>
+	       	<isNotNull property="cIsValid">
+	       		and (t.c_is_valid = '1' or (t.c_is_valid in ('3','4') and t.t_modify_time is null)) 	
+	       	</isNotNull>
+	       	<isNotNull property="vcEntrustDirection">
+	       		and t.VC_ENTRUST_DIRECTION in ($vcEntrustDirection$)
+	      	</isNotNull>
+	      	<isNotNull property="vcBizType">
+          		and t.vc_biz_type in ($vcBizType$)
+      		</isNotNull>
+	       	and (((t.l_trade_date = to_number(to_char(sysdate, 'yyyyMMdd')) or t.l_first_settle_date = to_number(to_char(sysdate, 'yyyyMMdd'))) and a.l_issue_date= to_number(to_char(sysdate, 'yyyyMMdd')))
+	         		or ((t.l_trade_date = to_number(to_char(sysdate, 'yyyyMMdd')) or t.l_first_settle_date = to_number(to_char(sysdate, 'yyyyMMdd'))) and a.l_issue_date &lt; to_number(to_char(sysdate, 'yyyyMMdd')) and t.vc_process_status in ('3','4','5','6','7','8','9')))      	 	
+	</select>
+</sqlMap>

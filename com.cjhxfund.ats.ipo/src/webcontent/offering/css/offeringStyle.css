@@ -1,0 +1,157 @@
+@charset "utf-8";
+/*CSS Document*/
+/*reset*/
+*{margin:0;padding:0;}
+body{font-size:12px;font-family:Verdana, Simsun;}
+ul,li{list-style:none;}
+.mini-fit{min-height:150px !important;}
+
+/*default*/
+.content{
+   /* min-height:450px;*/
+    width:100%;
+    border: 1px solid #C2C2C2;
+    padding-bottom:10px;
+}
+.header{
+    width:100%;
+    height:30px;
+    line-height:30px;
+    border-bottom: 1px solid #C2C2C2;
+    background: #E5E5E5;
+}
+.main{
+	position:relative;
+    box-sizing: border-box;
+    width:100%;
+    height:100%;
+    /*border: 1px solid #C2C2C2;*/
+    background: #F4F4F4;
+    left:0 !important;
+}
+.info_name{
+    display: inline-block;
+    color:#777777;
+    width:140px;
+}
+.info_name_type{
+    display: inline-block;
+    color:#777777;
+}
+em{
+    color:red;
+    margin-left:5px;
+}
+
+.form_list>li{
+    float:left;
+    margin:0 35px 14px 0;
+}
+.form_file{
+	height:185px;
+}
+.form_file>li{
+	float:left;
+    width:144px;
+}
+
+/*隐藏分页栏
+.mini-grid-pager{
+	display:none !important;
+}
+*/
+/*表头高度*/
+.mini-grid-table{
+	height:44px;
+}
+/*表头样式*/
+.mini-grid-headerCell{
+	background:#DEE6F1 !important;
+	border-bottom-color:#99BCE8;
+}
+/*表格外边框颜色*/
+.mini-panel-border,.mini-toolbar{    
+	border-color:#99bce8 !important;     
+}
+
+/*操作按钮
+.operate_button{
+	position:absolute;
+	bottom:30px;
+	right:30px;
+	margin-right:50px;
+	width:55px;
+	height:22px;
+	border:1px solid #AAAAAA;
+	border-radius:5px;
+	cursor:pointer;
+	font-weight:bold;
+	color:#434040;
+}
+*/
+.operate_button:hover{
+	color:#3DA2E1;
+}
+.prohibit_input .mini-textbox-border{
+	background:#E6E6E6;
+	border:0;
+}
+
+.fieldset{
+	border:0;
+	border-top:solid 1px #aaa;
+	padding:5px 0 0 20px;
+	background: #F4F4F4;
+}
+
+/*enquifyTrader*/
+/*发行人行*/
+.form_list_name{
+	padding:10px 0 15px 20px;
+	color:#777777;
+	
+}
+.form_list_name>li{
+	display:inline-block;
+	margin-right:30px;
+}
+.input_width{
+	width:220px !important;
+}
+
+.mini-buttonedit-border{
+	height:19px;
+}
+/*浏览*/
+.mini-buttonedit-button{
+	height:15px;
+}
+.operate_button{
+	outline:none;
+	width:55px;
+	height:22px;
+	border:1px solid #AAAAAA;
+	border-radius:5px;
+	cursor:pointer;
+	font-weight:bold;
+	color:#434040;
+	margin-left:10px;
+}
+.operate_button:hover{
+	color:#3DA2E1;
+	background:#E3E3E3;
+}
+.cstyle{
+	color:#000;
+}
+
+/*参与，不参与，剔除*/
+.strong{
+  	display:inline-block;
+  	border:1px solid #99BCE8;
+  	width:15px;
+  	height:15px;
+  	margin:0 10px 0 5px;
+  	vertical-align:middle; 
+}
+

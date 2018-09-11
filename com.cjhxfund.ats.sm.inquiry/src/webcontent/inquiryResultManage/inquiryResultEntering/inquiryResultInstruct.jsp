@@ -1,0 +1,876 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8" session="false" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/common.jsp" %>
+<!--
+  - Author(s): tongwei
+  - Date: 2017-09-21 09:44:58
+  - Description:
+-->
+<head>
+    <title>询价指令</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/common/css/instruct.css"/>      
+    <script type="text/javascript" src="<%= request.getContextPath() %>/scripts/com.cjhxfund.js.base/utils/DateUtil.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/scripts/com.cjhxfund.js.base/utils/SaveCondition.js"></script> 
+</head>
+<body style="height:100%; width:100%; overflow:hidden; margin:0;padding:0;">
+	<div id="layout1" class="nui-layout" style="width:100%; height:100%;" borderStyle="border:0px;">
+		<div>
+			<div class="search-condition">
+   				<div class="list">
+					<!-- 业务标签:当日指令/建议 -->
+					<input class="nui-hidden" id="entrustDirection" name="entrustDirection" value="'5','6'"/>
+					<!-- 指令/建议有效状态:1-有效, 2-无效-已修改   3-无效-已撤销    4-无效-被退回  -->
+   					<div id="form_today_instruct" class="nui-form" style="height:10%;max-width:100%" align="left">
+		                <table id="instruct_follow_condition" border="0" cellpadding="1" cellspacing="1" style="width:100%;table-layout:fixed;">
+		                	<tr>
+								<td width="50px" align="right"> 产品名称:</td>
+		                        <td colspan="1" width="15%" align="left">
+		                            <input id="vcProductCode" class="nui-buttonedit" name="vcProductCode" 
+		                            	emptyText="全部" showClose="true" style="width:95%"
+		                            	oncloseclick="onCloseClick" 
+		                            	onbuttonclick="ButtonClickGetFundName_inquiryResult"/>
+		                        </td>
+								<td width="60px" align="right">委托方向:</td>
+								<td colspan="1" width="11%" align="left">
+									<input id="vcEntrustDirection" name="vcEntrustDirection" class="nui-combobox"
+			                           textField="text"
+			                           valueField="value"
+			                           data="[{value: '5', text: '正回购'}, {value: '6', text: '逆回购'}]"
+			                           multiSelect="true"
+			                           emptyText="全部"
+			                           style="width:95%"
+			                           oncloseclick="onCloseClick"
+			                           showClose="true"/>
+			              		</td>
+								<td width="60px" align="right">交易状态:</td>
+								<td colspan="1" width="9%" align="left">
+									<input class="nui-combobox" id="instructValid"
+			                           name="instructValid"
+			                           textField="text"
+			                           valueField="cIsValid"
+			                           data="[{cIsValid: '0', text: '未提交'}, {cIsValid: '1', text: '有效'}, {cIsValid: '4', text: '无效-被退回'}, {cIsValid: '2', text: '无效-已修改'}, {cIsValid: '3', text: '无效-已撤销'}, {cIsValid: '5', text: '修改审核中'}, {cIsValid: '7', text: '无效-已过期'}]"
+			                           multiSelect="true"
+			                           emptyText="全部"
+			                           style="width:100%"
+			                           oncloseclick="onCloseClick"
+			                           showClose="true"/>
+								</td>
+								<td class="form_label" width="60px" align="right">录入日期:</td>
+								<td colspan="1" width="20%" align="left">
+									<input class="nui-datepicker" name="lResultDateMin" id="lResultDateMin" showClose="true" oncloseclick="onCloseClick" style="width:45%;"/>
+		                    		<span style="width:5%;">-</span>
+									<input class="nui-datepicker" name="lResultDateMax" id="lResultDateMax" showClose="true" oncloseclick="onCloseClick" style="width:45%;" />
+								</td>
+							</tr>
+							<tr>
+								<td colspan="8">
+		                           	<input class="nui-button" plain="false" text="查询" iconCls="icon-search" onclick="search()"/>
+									<input class="nui-button" plain="false" text="重置" iconCls="icon-reset" onclick="reset()"/>
+									<a class="nui-menubutton " plain="false" menu="#popupMenu"
+		                               id="searchCond"
+		                               name="searchCond"
+		                               data-options='{formId:"form_today_instruct"}'
+		                               iconCls="icon-add">保存查询条件</a>
+		                            <ul id="popupMenu" class="nui-menu" style="display:none;width:250px;"></ul>
+		                        </td>
+		                    </tr>
+						</table>
+					</div>
+		   		</div>
+			</div>
+			<div class="nui-toolbar" style="border-bottom:0;padding:0px;">
+		    	<table style="width:100%;table-layout:fixed;">
+		            <tr>
+		                <td style="width:75%;">
+		                	<a id="addInstruct" enabled="false" class="nui-button" plain="false" iconCls="icon-add" onclick="addInstruct()">增加</a>
+		                	<a id="copyAdd" enabled="false" class="nui-button" plain="false" iconCls="icon-add" onclick="copyInstruct()">复制增加</a>&nbsp;
+		                    <a id="delete" enabled="false" class="nui-button" plain="false" iconCls="icon-remove" onclick="onDelete()">删除</a>&nbsp;
+		                    <!--<a id="backConfirm" enabled="false" class="nui-button" plain="false" iconCls="icon-no" onclick="onBack()">取消提交</a>&nbsp;-->
+		                    <a id="export_todayInstruct" class="nui-button" plain="false" iconCls="icon-download" onclick="exportExcel()">导出</a>
+		                </td>
+		                <td align="right">
+		                    <a class='nui-button' plain='false' iconCls="icon-reload" onclick="autoRefreshFun()">刷新</a>
+		                    <input id="autoRefresh" class="nui-combobox" style="width:90px;" 
+			                    value="180" showNullItem="false" allowInput="false"
+			                    data="[
+			                    {id: 0, text: '不自动刷新' }, 
+			                    {id: 15, text: '每15秒刷新' }, 
+			                    {id: 30, text: '每30秒刷新' }, 
+			                    {id: 60, text: '每1分刷新' },
+								{id: 120, text: '每2分刷新' }, 
+								{id: 180, text: '每3分刷新' }, 
+								{id: 300, text: '每5分刷新' }, 
+								{id: 600, text: '每10分刷新' },
+								{id: 1200, text: '每20分刷新' }, 
+								{id: 1800, text: '每30分刷新' }]"/>&nbsp;&nbsp;
+		            	</td>
+		            </tr>
+		        </table>
+		    </div>
+			<%-- 列表操作工具结束... --%>
+			<div class="nui-fit" style="width:100%;height:100%;overflow:hidden;">
+				<div id="treegrid_todays_instruct" 
+					 class="nui-datagrid" 
+					 style="width:100%;height:100%;"
+					 url="com.cjhxfund.ats.sm.inquiry.inquiryResultManage.queryInquiryResult.biz.ext" 
+            		 idField="lResultId"
+					 dataField="inquiryResults"
+					 showPager="true" pageSize="20" frozenStartColumn="0" frozenEndColumn="6"
+				     sizeList="[20,50,100,200,500,1000]"
+				     sortField="" sortOrder=""
+					 multiSelect="true" 
+					 showReloadButton="false"
+					 onbeforeload="onBeforeLoad"
+					 onselectionchanged="selectionchanged"
+					 pagerButtons="#prompt_todays"
+				 	 virtualScroll="true"
+				 	 enableHotTrack="false"
+		             onselect="onSelect"
+		             ondeselect="onDeselect"
+		             onload="onGridLoad"
+		             >
+					<div property="columns">
+				    	<div type="checkcolumn" ></div>
+				    	<div name="action" align="center" headerAlign="center" headerallowSort="true" width="70px">操作</div> 
+				    	<div field="lResultNo" name="lResultNo" align="center" headerAlign="center" allowSort="true" width="80px">
+			                询价序号
+			            </div>
+			            <div field="vcProductName" headerAlign="center" allowSort="true" width="130px">
+			               产品名称
+			            </div>
+			            <div field="vcCombiName" headerAlign="center" allowSort="true" width="120px">
+			                组合名称
+			            </div>
+			            <div field="vcSettleSpeed" headerAlign="center" allowSort="true" width="70px" renderer="renderSettleSpeed">
+			                清算速度
+			            </div>
+			            <div field="vcBizType" headerAlign="center" width="120px" allowSort="true" renderer="renderBizType">
+			                业务类别
+			            </div>
+			            <div field="vcEntrustDirection" headerAlign="center" allowSort="true" width="85px" renderer="renderEntrustDirection">
+			                委托方向
+			            </div>
+			            <div field="vcCounterpartyName" headerAlign="center" allowSort="true" width="100px">
+			                交易对手
+			            </div>
+			            <div field="vcStockCode" headerAlign="center" allowSort="true" width="80px">
+			                债券代码
+			            </div>
+			            <div field="vcStockName" headerAlign="center" allowSort="true" width="130px">
+			                债券名称
+			            </div>
+			            <div field="lRepoDays" headerAlign="center" allowSort="true" width="80px">
+			                回购天数
+			            </div>
+		             	<div field="enFaceAmount" id="enFaceAmount" headerAlign="center" numberFormat="n4" allowSort="true" align="right" width="100px">
+			               回购金额(万元)
+			            </div>
+			             <div field="enRepoRate" headerAlign="center" allowSort="true" align="right" width="85px">
+			               回购利率(%)
+			            </div>
+			            <div field="lResultDate" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" width="80px">
+			                录入日期
+			            </div>
+			            <div field="lTradeDate" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" width="85px">
+			                交易日
+			            </div>
+			            <div field="lFirstSettleDate" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" width="85px">
+			               首次结算日
+			            </div>
+			            <div field="lMaturitySettleDate" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" width="85px">
+			                到期结算日
+			            </div>
+			            <div field="enSettleAmount" headerAlign="center" allowSort="true" numberFormat="n2" align="right" width="100px">
+			               到期结算金额(元)
+			            </div>
+			            <div field="vcQuoteMode" headerAlign="center" allowSort="true" width="85px" renderer="renderQuoteMode">
+			                报价方式
+			            </div>
+			             <div field="enWeightingValue" headerAlign="center" allowSort="true" align="right" width="85px">
+			               加点(bp)
+			            </div>
+			            <div field="cIsValid" headerAlign="center" allowSort="true" align="center" width="95px" renderer="renderInstructStatus">
+			                交易状态
+			            </div>
+			            <div field="tResultInputTime" allowSort="true" headerAlign="center" renderer="resultRenderReview" width="200px">
+			               录入 时间
+			            </div>
+			            <!--<div field="tResultInputTime" headerAlign="center" allowSort="true" align="center" renderer="resultRenderReview" width="200px">
+			                询价结果录入时间
+			            </div>-->
+			            <div field="tFsSendTime" headerAlign="center" allowSort="true" align="center" renderer="sendRenderReview" width="180px" >
+			                投资经理确认时间
+			            </div>
+			            <!-- 
+			            <div field="lFixValidStatus" headerAlign="center" renderer="fixValidStatusRenderReview" width="100px">
+				指令/建议推送状态
+				      	</div>
+				      	 -->
+			            <div field="tFsOperateTime" headerAlign="center" allowSort="true" align="center" renderer="operateRenderReview" width="200px">
+			                前台录单时间
+			            </div>
+			            <div field="tFsCheckTime" headerAlign="center" allowSort="true" align="center" renderer="checkRenderReview" width="200px">
+			                前台发送时间
+			            </div>
+			            <div field="tFsDealTime" headerAlign="center" allowSort="true" align="center" dateFormat="yyyy-MM-dd HH:mm:ss" width="150px">
+			                前台成交时间
+			            </div>
+			            <div field="vcBsDealStatus" headerAlign="center" allowSort="true" align="center" renderer="bsDealRenderReview" width="140px">
+			                后台成交状态
+			            </div>
+			            <div field="vcRemark" headerAlign="center" allowSort="true" align="center" width="85px">
+			                备注
+			            </div>
+				    </div>
+				</div>
+			</div>
+		    <div id="prompt_todays">
+		        <span class="separator"></span>
+		        <div class="inquirydata"></div>
+			 	<div style= "display:inline-block; margin-right: 8px;">已提交</div>
+		        <div class="investdata"></div>
+			 	<div style= "display:inline-block; margin-right: 8px;">投资经理已确认</div>
+			 	<!--<div class="approvedata"></div>
+		     	<div style= "display:inline-block; margin-right: 8px;">风控待审批</div>-->
+		       	<div class="transactionConfirmData"></div>
+		       	<div style= "display:inline-block; margin-right: 8px;">交易已确认</div>
+		       	<div class="waitdata"></div>
+		        <div style= "display:inline-block; margin-right: 8px;">交易已发送</div>
+		       	<div class="tradedate"></div>
+		        <div style= "display:inline-block; margin-right: 8px;">前台已成交</div>
+		      	<div class="closedata"></div>
+		        <div style= "display:inline-block;">后台已成交 </div>
+		     	<div class="invaliddata"></div>
+		        <div style= "display: inline-block; margin-right: 8px;">无效</div>
+		       	<div class="backdata"></div>
+		        <div style= "display:inline-block; margin-right: 8px;">已修改</div>
+		        
+		    </div> 
+		</div>
+		<%-- 详细开始... --%>
+		<div title="询价结果相关信息" region="south" showSplit="false" height="220px" showHeader="true" showSplitIcon="true" expanded="false">
+			<div class="nui-fit">
+			    <div id="tabs_instruct_follow_detail" class="nui-tabs" activeIndex="0" onactivechanged="activechanged" height="100%">
+			    	<div title="询价结果明细" name="inquiryResultDetail" url="<%= request.getContextPath() %>/inquiry/inquiryInstructDetail.jsp"></div>
+			    	<div title="质押券" url="<%= request.getContextPath() %>/inquiry/inquiryResultManage/inquiryResultComm/mortgageInfo.jsp"></div>
+			    	<div title="触犯风控" name="riskDetailTab" url="<%= request.getContextPath() %>/sm/comm/instruct/violateRiskCtrl.jsp"></div>
+			    </div>
+		    </div>
+		</div>
+	    <%-- 详细结束... --%>  
+	</div>	 
+	<!-- 导出参数 -->
+	<div>
+		<form id="export_FROM" method="post">
+			<!-- 指令/建议有效状态:1-有效, 2-无效-已修改   3-无效-已撤销    4-无效-被退回  -->
+			<input class="nui-hidden" name="sheetName" id="sheetName" value="询价结果指令">
+			<!--  导出类型（买卖指令/建议1,回购指令/建议2）-->
+			<input class="nui-hidden" name="exportType" id="exportType" value="2">
+			<input class="nui-hidden" name="exportVcEntrustDirection" id="exportVcEntrustDirection" value="">
+			<input class="nui-hidden" name="exportVcProductCode" id="exportVcProductCode" value="">	
+			<!--  页面类型:指令/建议查询1,指令/建议管理2,询价管理3 -->
+			<input class="nui-hidden" name="webType" id="webType" value="3">
+			<input class="nui-hidden" name="lInstructNo" id="lInstructNo" value="">
+			<input class="nui-hidden" name="exportTradeDateMin" id="exportTradeDateMin" value="">
+			<input class="nui-hidden" name="exportTradeDateMax" id="exportTradeDateMax" value="">
+			<input class="nui-hidden" name="exportInstructValid" id="exportInstructValid" value="">
+			<!-- 指令类型（1-询价指令，2-完整指令） -->
+			<input class="nui-hidden" name="exportInstructType" id="exportInstructType" value="1">
+		</form>	
+	</div>
+	<!-- 导出参数结束 -->
+		
+	<script type="text/javascript">
+	    nui.parse();
+    	// 当天日期
+    	var date = new Date();
+    	var todayDate = DateUtil.toNumStr(date);
+		nui.get("lResultDateMin").setValue(todayDate);
+		nui.get("lResultDateMax").setValue(todayDate);
+	    var today_instruct = new nui.Form("#form_today_instruct");
+    	var todays_instruct_grid = nui.get("treegrid_todays_instruct");
+    	var tabDetailRole = nui.get("tabs_instruct_follow_detail");//获取详情标签列表
+    	var isSigleSelectChanged = false;
+    	
+    	var autoRefreshValOld = nui.get("autoRefresh").getValue();//获取默认自动刷新时间
+	    var autoRefreshReturnVal= self.setInterval("autoRefreshFun()",eval(autoRefreshValOld)*1000);//设置自动刷新时间默认3分钟
+    	var selectArr = [];//已选的记录数组
+    	todays_instruct_grid.load();
+    	var operatorTag = null;
+    	
+    	//Grid加载完成后选中之前已选中的记录
+	    function onGridLoad(e) {
+	    	if(operatorTag != null && operatorTag =="delete"){
+	    		selectArr = [];
+	    	}
+    		var rows = selectArr;
+	        if(rows) todays_instruct_grid.selects(rows);
+	    }
+    	
+    	//行选中时发生
+	    function onSelect(e){
+	    	var record = e.record;
+	    	var isExist = false;
+	    	for(var i=0; i<selectArr.length; i++){
+	    		var row = selectArr[i];
+	    		if(row.lResultId==record.lResultId){
+	    			selectArr[i] = record;
+	    			isExist = true;//若之前已选中，则直接返回
+	    			break;
+	    		}
+	    	}
+	    	//若之前尚未选中该记录，则新增该记录到数组中
+	    	if(isExist==false){
+	    		selectArr.push(record);
+	    	}
+	    }
+	    
+	    //行取消选中时发生
+	    function onDeselect(e){
+	    	var record = e.record;
+	    	var selectArrTemp = selectArr;//将原数组赋予临时数组
+	    	selectArr = [];//将原数组清空，重新赋值
+	    	for(var i=0; i<selectArrTemp.length; i++){
+	    		var row = selectArrTemp[i];
+	    		if(row.lResultId!=record.lResultId){//将原来数组中不等于取消选中行的记录重新放回去
+	    			selectArr.push(row);
+	    		}
+	    	}
+	    }
+	    
+    	// 判断是否有录入权限
+		if(getProductInputHandleByRealType()){
+			nui.get("addInstruct").enable();
+		}
+		
+    	function search(){
+	    	todays_instruct_grid.load();//加载数据
+	    	parent.updateTab();
+    		clearDetail();
+    	}
+    	
+    	function reset(){
+    		today_instruct.clear();
+    		nui.get("lResultDateMin").setValue(todayDate);
+			nui.get("lResultDateMax").setValue(todayDate);
+    	}
+    	
+    	function onBeforeLoad(e) {
+        	var params = e.params;  //参数对象
+	        //可以传递自定义的属性
+			var initParam = new nui.Form("#form_today_instruct").getData(false,false);
+			if(initParam.lResultDateMin != null && initParam.lResultDateMin != ""){
+        		initParam.lResultDateMin = DateUtil.toNumStr(initParam.lResultDateMin);
+        	}
+        	if(initParam.lResultDateMax != null && initParam.lResultDateMax != ""){
+        		initParam.lResultDateMax = DateUtil.toNumStr(initParam.lResultDateMax);
+        	}
+        	initParam["vcProductCode"] = splitString(initParam["vcProductCode"]);
+	        params.paramObject = initParam;
+	    }
+	    
+    	//编辑列表
+    	todays_instruct_grid.on("drawcell", function (e) {
+	        var record = e.record,
+	        	column = e.column,
+	        	field = e.field,
+        		value = e.value;
+			//设置行样式，交易状态：1-有效；2-无效-已修改；3-无效-已撤销；4-有效-被退回；
+			if(record.cIsValid=="2" || record.cIsValid=="3"||record.cIsValid=="4"||record.cIsValid=="6"||record.cIsValid=="7"||record.cIsValid=="8"){
+				if(record.cIsValid=="2"){
+					e.rowCls = "instructStatus_2_zlgl";
+				}else {
+					e.rowCls = "instructStatus_3_4_5_6_zlgl";
+				}
+				// 无效指令操作栏显示修改
+				//if(record.vcProcessStatus=="-1"){
+					if(column.name == "action"){
+						if(record.inquiryInputJyyRelateTypeUser != null){
+							e.cellHtml = '<a class="nui-button" style="color:#6959CD; cursor:pointer;text-decoration:underline;" onclick="copyInstruct('+e.rowIndex+')">修改</a>';
+						}
+					}
+				//}
+			}else if(record.cIsValid=="5"){
+				e.rowCls = "instructStatus_3_4_5_6_zlgl";
+			}else if(record.cIsValid=="1"){//在指令/建议状态为有效的前提下控制流程样式
+				//流程处理状态:-2-询价结果待提交,-1-询价结果待确认,2A-预置指令/建议待激活,
+				//4-待风控审批,5-待交易录单,6-待录单复核,7-待前台成交,8-前台已成交,9-后台已成交
+				if(record.vcProcessStatus=="-1"){
+					e.rowCls = "processStatus_inquiry_commited";
+					if(column.name == "action"){
+						if(record.inquiryInputJyyRelateTypeUser != null){
+							e.cellHtml = '<a class="nui-button" style="color:#6959CD; cursor:pointer;text-decoration:underline;" onclick="onBack('+e.rowIndex+')">取消提交</a>';
+						}
+					}
+				}else if(record.vcProcessStatus=="4"){
+					e.rowCls = "processStatus_4_zlgl";
+				}else if(record.vcProcessStatus=="2A" || record.vcProcessStatus=="5"){
+					e.rowCls = "processStatus_5or6_zlgl";
+				}else if( record.vcProcessStatus=="6"){
+					e.rowCls = "processStatus_5_zlgl";
+				}else if(record.vcProcessStatus=="7"){
+					e.rowCls = "processStatus_7_zlgl";
+				}else if(record.vcProcessStatus=="8"){
+					e.rowCls = "processStatus_8_zlgl";
+				}else if(record.vcProcessStatus=="9"){
+					e.rowCls = "processStatus_9_zlgl";
+				}
+			}else if(record.cIsValid=="0" && record.vcProcessStatus=="-2"){
+				if(column.name == "action"){
+					if(record.inquiryInputJyyRelateTypeUser != null){
+						e.cellHtml = '<a class="nui-button" style="color:#6959CD; cursor:pointer;text-decoration:underline;" onclick="editClick('+e.rowIndex+')">修改/提交</a>';
+					}
+				}
+			}
+			if(field=="lResultDate" || field=="lTradeDate" || field=="lFirstSettleDate" || field=="lMaturitySettleDate"){
+				if(value){
+					e.cellHtml = nui.formatDate(DateUtil.numStrToDate(value.toString()),"yyyy-MM-dd");
+				}
+			}
+	    });
+	    
+	    //列表数据选中触发事件
+    	function selectionchanged(){
+    		var rows = selectArr;
+    		nui.get("copyAdd").disable();
+			nui.get("delete").disable();
+			if(rows.length == 1){
+				var row = rows[0];
+				if(row.inquiryInputJyyRelateTypeUser != null){
+					if(row.vcProcessStatus=="-2"){//询价结果待提交
+						nui.get("delete").enable();
+					}
+					nui.get("copyAdd").enable();
+				}
+				showDetail(row);
+			}else if(rows.length>1){//批量删除是否需要支持？批量取消提价是否需要支持
+				var notDeleteHandleCount = 0;
+				for(var i=0; i<rows.length; i++){
+					if(rows[i].inquiryInputJyyRelateTypeUser != null){
+						if(rows[i].vcProcessStatus!="-2"){//询价结果待提交
+							notDeleteHandleCount+= 1;
+						}
+					}else{
+						notDeleteHandleCount+= 1;
+					}
+				}
+				if(notDeleteHandleCount == 0){
+					nui.get("delete").enable();
+				}
+				clearDetail();
+			}else{
+				// 判断是否有录入权限
+				if(getProductInputHandleByRealType()){
+					nui.get("addInstruct").enable();
+				}
+				clearDetail();
+			}
+    	}
+    	
+    	// 添加指令/建议页面跳转
+		function addInstruct(){
+    		nui.open({
+    			url:"<%=request.getContextPath() %>/inquiry/inquiryResultManage/inquiryResultEntering/repurchase/collateraliseRepo.jsp",
+    			title:"新增询价结果", 
+    			width:913,
+    			height:570,
+    			allowResize:false,
+    			onload:function(){
+    			},
+    			ondestroy:function(action){
+    				search();
+    			}
+    		});	
+		}
+		
+		// 复制询价结果弹窗
+		function copyInstruct(rowid){
+		    var row = todays_instruct_grid.getRow(rowid);
+			if(rowid == undefined){
+				row = todays_instruct_grid.getSelected();			
+			}
+    		nui.open({
+	    		url:"<%=request.getContextPath() %>/inquiry/inquiryResultManage/inquiryResultEntering/repurchase/collateraliseRepo.jsp",
+    			title:"复制增加询价结果", 
+    			width:913,
+    			height:570,
+    			allowResize:false,
+    			onload:function(){
+    			    var iframe=this.getIFrameEl();
+    			    row["operatorType"] = "2"; //0-新建指令/建议 1-编辑指令/建议 2-复制指令/建议
+    			    iframe.contentWindow.SetData(row);
+    			},
+    			ondestroy:function(action){
+    				search();
+    			}
+    		});	
+		}
+		
+		// 修改指令/建议页面跳转
+		function modifyInstruct(row){
+    		nui.open({
+	    		url:"<%=request.getContextPath() %>/inquiry/inquiryResultManage/inquiryResultEntering/repurchase/collateraliseRepoM.jsp",
+	    			title:"修改询价结果", 
+	    			width:913,
+	    			height:570,
+	    			allowResize:false,
+	    			onload:function(){
+	    				var iframe = this.getIFrameEl();
+				        row["operatorType"] = "1"; //0-新建指令/建议 1-编辑指令/建议
+				        iframe.contentWindow.SetData(row);
+	    			},
+	    			ondestroy:function(action){
+	    				search();
+	    			}
+    		});	
+		}
+		
+    	//显示详细信息
+    	function showDetail(row){
+    		isSigleSelectChanged = true;
+    		var currentTabIFrameEl = tabDetailRole.getTabIFrameEl(tabDetailRole.getActiveTab());//重新获取当前显示的标签页
+    		currentTabIFrameEl.contentWindow.detail(row);//调用当前显示的标签页的显示详情方法
+    	}
+    	
+    	//清除详细信息
+    	function clearDetail(){
+    		isSigleSelectChanged = false;
+    		var currentTabIFrameEl = tabDetailRole.getTabIFrameEl(tabDetailRole.getActiveTab());//获取当前详情标签页
+    		if(currentTabIFrameEl.contentWindow.clearDetail){
+	    		currentTabIFrameEl.contentWindow.clearDetail();
+	    	}
+    	}
+    	
+    	//详情子界面第一次加载时调用
+    	function detailLoaded(){
+    		var currentTabIFrameEl = tabDetailRole.getTabIFrameEl(tabDetailRole.getActiveTab());
+    		if(isSigleSelectChanged == true){
+    			currentTabIFrameEl.contentWindow.detail(todays_instruct_grid.getSelected());
+    		}
+    	}
+    	
+    	//详情标签切换时处理逻辑
+    	function activechanged(){
+			var currentTabIFrameEl = tabDetailRole.getTabIFrameEl(tabDetailRole.getActiveTab());
+			if(typeof(currentTabIFrameEl) != "undefined"){
+				if(isSigleSelectChanged == true){
+					currentTabIFrameEl.contentWindow.detail(todays_instruct_grid.getSelected());
+				}else{
+					currentTabIFrameEl.contentWindow.clearDetail();
+				}
+			}
+    	}
+    	
+	    //删除询价结果
+	    function onDelete(){
+	    	var rows = selectArr;
+	    	if(rows.length == 0){
+				nui.alert("请先选中一条记录！","系统提示");
+				return;
+			}
+			for(var i=0; i<rows.length; i++){
+				if(rows[i].vcProcessStatus !="-2"){
+					nui.alert("只能删除还未提交的询价结果","系统提示");
+					return;
+				}
+			}
+			
+			nui.confirm("询价结果删除后无法还原，是否确定删除?","警告",function(action){
+				if(action=="ok"){
+					//执行删除操作
+					var a = nui.loading("正在处理中,请稍等...","提示");
+					nui.ajax({
+				    	url: "com.cjhxfund.ats.sm.inquiry.inquiryResultManage.deleteInquiryResultInstruction.biz.ext",
+				      	type: 'POST',
+				      	data: {inquriyData:rows},			
+				      	contentType: 'text/json',
+				      	success: function(text){
+				      		nui.hideMessageBox(a);
+				      		var returnJson = nui.decode(text);
+				      		if(returnJson.exception == null){
+								if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_SUCCESS%>"){
+									operatorTag = "delete";
+        							search();
+								}else if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ERROR%>"){
+        							nui.alert(returnJson.rtnMsg,"删除失败");
+								}else{
+									nui.alert("操作异常","系统提示");
+								}
+							}else{
+								nui.alert("系统异常","系统提示");
+							}
+				      	}
+			 		});
+				}
+			});
+		}
+		
+		//点击操作列
+		function editClick(rowid){
+			var row = todays_instruct_grid.getRow(rowid);
+			modifyInstruct(row);
+		}
+		
+		//行双击时弹出页面展示该指令/建议明细信息
+	    todays_instruct_grid.on("rowdblclick", function (e) {
+	    	var row = e.record;
+		    if (row) {
+		    	nui.open({
+		            url: nui.context+"/inquiry/inquiryResultManage/inquiryResultConfirm/repurchase/inquiryDetailShow_znhg_zyshg.jsp",
+		            title: "询价结果详细展示",
+		            width: 750,
+		            height: 666,
+		            onload: function () {
+		                var iframe = this.getIFrameEl();
+		                // 直接从页面获取，不用去后台获取
+		                iframe.contentWindow.setFormData(row,"input");
+		            },
+		            ondestroy: function (action) {//弹出页面关闭前
+						var iframe = this.getIFrameEl();
+			            //获取选中、编辑的结果
+			            var returnJson = iframe.contentWindow.getEditOrCommitValue();
+			            if(action == "ok" && returnJson != null){
+			            	nui.open({
+				    			url:"<%=request.getContextPath() %>/inquiry/inquiryResultManage/inquiryResultEntering/repurchase/collateraliseRepoM.jsp",
+				    			title:"修改询价结果", 
+				    			width:913,
+				    			height:570,
+				    			allowResize:false,
+				    			onload:function(){
+				    				var iframe = this.getIFrameEl();
+							        row["operatorType"] = "1"; //0-新建指令/建议 1-编辑指令/建议
+							        iframe.contentWindow.SetData(row);
+				    			},
+				    			ondestroy:function(action){
+				    				search();
+				    			}
+			    			});	
+			            }else{
+			            	search();
+			            }
+			        }
+		        });
+		    }
+	    });
+	    
+	    //查询--所有业务通用
+		function autoSearch(){
+			//获取之前选中记录的主键ID，刷新后继续选中之前记录
+			var rows_search = selectArr;
+			var rowIds_search = "";
+			for(var i=0; i<rows_search.length; i++){
+				rowIds_search += rows_search[i].lResultId;
+				if(i<rows_search.length-1){
+					rowIds_search += ",";
+				}
+			}
+			//开始查找记录
+		    var form = new nui.Form(today_instruct);
+		    var json = form.getData(false,false);
+		    todays_instruct_grid.load(json,function(){
+		    	//选中刷新前选中的记录
+		    	var rows = todays_instruct_grid.findRows(function (row) {
+		    		var exist = false;
+		    		if(rowIds_search!=null && rowIds_search!=""){
+		    			var rowIdsArr = rowIds_search.split(",");
+		    			for(var i=0; i<rowIdsArr.length; i++){
+		    				if (row.lResultId == rowIdsArr[i]){
+			                	exist = true;
+			                	break;
+			                }
+		    			}
+		    		}
+		    		return exist;
+	            });
+	            todays_instruct_grid.selects(rows);
+		    });
+		}
+		
+		// 导出指令/建议
+        function exportExcel(){
+        	var exportTradeDateMin = nui.get("lResultDateMin").getValue();
+			var exportTradeDateMax = nui.get("lResultDateMax").getValue();
+			var rows = selectArr;
+			// 定义指令/建议序号
+			var lInstructNo = "";
+			// 定义弹窗提示信息
+			var msg = "您未选中指令/建议，将导出全部指令/建议，确定要导出吗?";
+			if(rows.length>0){
+				msg = "确定要导出吗?";
+				// 拼接指令/建议序号
+				for(var i=0; i<rows.length; i++){
+					lInstructNo+= rows[i].lResultNo+",";
+				}
+				//去掉最后一个逗号
+			    if (lInstructNo.length > 0) {
+			        lInstructNo = lInstructNo.substr(0, lInstructNo.length - 1);
+			    }
+			}
+			// 设置导出form参数
+			if(lInstructNo != null){
+				document.getElementById("lInstructNo").value = lInstructNo;
+			}
+			var cIsValid = nui.get("instructValid").getValue();
+			var vcProductCode = nui.get("vcProductCode").getValue();
+			var vcEntrustDirection = nui.get("vcEntrustDirection").getValue();
+						
+			if(exportTradeDateMin != null && exportTradeDateMin != ""){
+        		document.getElementById("exportTradeDateMin").value = DateUtil.toNumStr(exportTradeDateMin);
+        	}else{
+        		document.getElementById("exportTradeDateMin").value = DateUtil.toNumStr(new Date());
+        	}
+        	if(exportTradeDateMax != null && exportTradeDateMax != ""){
+        		document.getElementById("exportTradeDateMax").value = DateUtil.toNumStr(exportTradeDateMax);
+        	}else{
+        		document.getElementById("exportTradeDateMax").value = DateUtil.toNumStr(new Date());
+        	}
+        	if(cIsValid != null && cIsValid != ""){
+        		document.getElementById("exportInstructValid").value = cIsValid;
+        	}
+        	if(vcEntrustDirection != null && vcEntrustDirection != ""){
+        		document.getElementById("exportVcEntrustDirection").value = vcEntrustDirection;
+        	}else{
+        		document.getElementById("exportVcEntrustDirection").value = nui.get("entrustDirection").getValue();;
+        	}
+        	if(vcProductCode != null && vcProductCode != ""){
+        		document.getElementById("exportVcProductCode").value = splitString(vcProductCode);
+        	}
+        	
+			// 页面流跳转
+			nui.confirm(msg,"系统提示",function(action){
+				if(action=="ok"){
+					nui.get("export_todayInstruct").disable();//禁用“导出”按钮
+					var form = document.getElementById("export_FROM");
+					form.action = "com.cjhxfund.ats.sm.comm.instructExcle.flow";
+			        form.submit();
+			        //启用“导出”按钮
+			        setTimeout("enableExport()",15000);
+				}
+			});
+		}
+		
+		function enableExport(){
+	  		nui.get("export_todayInstruct").enable();
+		}
+		
+	    //全屏显示
+		function fullScreen(){
+			
+		}
+		
+		//取消提交（指令退回）
+		function onBack(rowid) {
+			var row = todays_instruct_grid.getRow(rowid);
+			if(row.vcProcessStatus !="-1"){
+				nui.alert("只能取消待投资经理确认的询价结果","系统提示");
+				return;
+			}
+			if(row.cIsValid != "1"){
+				nui.alert("指令已无效，不能取消提交","系统提示");
+				return;
+			}
+			nui.confirm("询价结果取消提交后状态修改为待提交，是否确定取消提交?","警告",function(action){
+				if(action=="ok"){
+					//执行删除操作
+					var a = nui.loading("正在处理中,请稍等...","提示");
+					nui.ajax({
+				    	url: "com.cjhxfund.ats.sm.inquiry.inquiryResultManage.backInquiryResultInstruction.biz.ext",
+				      	type: 'POST',
+				      	data: {inquriyData:row},			
+				      	contentType: 'text/json',
+				      	success: function(text){
+				      		nui.hideMessageBox(a);
+				      		var returnJson = nui.decode(text);
+				      		if(returnJson.exception == null){
+								if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_SUCCESS%>"){
+        							search();
+								}else if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ERROR%>"){
+        							nui.alert(returnJson.rtnMsg,"删除失败");
+								}else{
+									nui.alert("操作异常","系统提示");
+								}
+							}else{
+								nui.alert("系统异常","系统提示");
+							}
+				      	}
+			 		});
+				}
+			});
+		}
+		
+		// 查询删除权限
+		function getProductHandleByInstructrionInput(vcProductCode,vcCombiCode) {
+			var url = "";
+			var result = false;
+			url = "com.cjhxfund.commonUtil.productUserRight.getUsersByProductCombiAndRelateTy.biz.ext";
+			nui.ajax({
+				url : url,
+				type : 'POST',
+				data : {
+					productCode : vcProductCode,
+					combiCode : vcCombiCode,
+					relateType : "03"
+				},
+				cache : false,
+				async : false,
+				contentType : 'text/json',
+				success : function(text) {
+					var returnJson = nui.decode(text);
+					if (returnJson.exception == null) {
+						var userIds = new Array();
+						userIds = returnJson.userIds.split(",");
+						for (var i = 0; i < userIds.length; i++) {
+							if (userIds[i] == returnJson.userId) {
+								result = true;
+								return;
+							}
+						}
+						result = false;
+					} else {
+						result = false;
+					}
+				}
+			});
+			return result;
+		}
+		
+		// 判断用户是否有录入权限
+		function getProductInputHandleByRealType(){
+			var result = false;
+			var url = "com.cjhxfund.ats.sm.comm.InstructionManager.getProductHandleUsersByRelateType.biz.ext";
+			nui.ajax({
+				url : url,
+				type : 'POST',
+				data : {
+					relateType : "03"
+				},
+				cache : false,
+				async : false,
+				contentType : 'text/json',
+				success : function(text) {
+					var returnJson = nui.decode(text);
+					if (returnJson.exception == null) {
+						var userIds = new Array();
+						userIds = returnJson.userIds.split(",");
+						for (var i = 0; i < userIds.length; i++) {
+							if (userIds[i] == returnJson.userId) {
+								result = true;
+								return;
+							}
+						}
+						result = false;
+					} else {
+						result = false;
+					}
+				}
+			});
+			return result;
+		}
+	</script>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/inquiry/inquiryResultManage/inquiryResultComm/inquiryConmm.js"></script>
+</body>
+</html>

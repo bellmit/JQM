@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="delegateWorkItem" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node1" name="注释1" displayName="注释" nodeType="note" type="note" content="征求意见&#xD;&#xA;&#xD;&#xA;代办方式&#xD;&#xA;（DELEG：代办；HELP：协办） " title="陈鹏&#x9;16-5-25 下午10:02">
+    <location x="62" y="285"/>
+    <size height="100" width="211"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" collapsed="false" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link15" name="link15" displayName="link10" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>invokeService3</targetNode>
+    </sourceConnections>
+    <location x="60" y="138"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" nodeType="label">
+    <location x="62" y="174"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" collapsed="false" type="end">
+    <targetConnections>link4</targetConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="450" y="138"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns>
+      <process:return id="0" language="com.cjhxfund.commonUtil.dataBase.TAtsApproveInfo" name="pmprcaprvinfo" type="query" valueType="DataObject">pmprcaprvinfo</process:return>
+      <process:return id="1" language="String" name="retcode" type="query" valueType="Primitive">retcode</process:return>
+      <process:return id="2" language="String" name="retmemo" type="query" valueType="Primitive">retmemo</process:return>
+    </process:returns>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" nodeType="label">
+    <location x="452" y="174"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService3" name="征求意见" displayName="DelegateManagerService.delegateWorkItem4SDO" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link2" name="link2" displayName="连接线" lineType="note" type="exception">
+      <sourceNode>invokeService3</sourceNode>
+      <targetNode>assign1</targetNode>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService3</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <targetConnections>link15</targetConnections>
+    <location x="176" y="140"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService3label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.agent_delegate.DelegateManagerComponent/DelegateManagerService.delegateWorkItem4SDO</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="workItemID" type="query" value="long" valueType="Java" pattern="reference">workitem/workItemID</process:inputVariable>
+      <process:inputVariable id="1" name="participants" type="query" value="commonj.sdo.DataObject[]" valueType="Java" pattern="reference">participantArr</process:inputVariable>
+      <process:inputVariable id="2" name="delegateType" type="query" value="java.lang.String" valueType="Java" pattern="reference">delegateType</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService3label" name="label" nodeType="label">
+    <location x="166" y="170"/>
+    <figSize height="17" width="49"/>
+    <node>invokeService3</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign1" name="赋值1" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link4" name="link4" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign1</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="301" y="210"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign1label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">-1</process:from>
+      <process:to type="query">retcode</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">征求意见失败！</process:from>
+      <process:to type="query">retmemo</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign1label" name="label" nodeType="label">
+    <location x="299" y="246"/>
+    <figSize height="17" width="32"/>
+    <node>assign1</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="赋值" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="300" y="138"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">participantArr[1]/name</process:from>
+      <process:to type="query">pmprcaprvinfo/vcOperatePeople</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="302" y="174"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="陈鹏" createTime="2015-08-07 10:54:51" date="2015-08-07Z" description="" name="协办任务" version="7.0.0.0"/>
+  <process:variables/>
+  <process:inputs varArgs="false">
+    <process:input description="工作项" isArray="false" modelType="com.eos.workflow.data.WFWorkItem" name="workitem"/>
+    <process:input anyType="commonj.sdo.DataObject" description="参与者" isArray="true" name="participantArr"/>
+    <process:input description="" isArray="false" name="delegateType" primitiveType="String"/>
+    <process:input description="审批意见列表" isArray="false" modelType="com.cjhxfund.commonUtil.dataBase.TAtsApproveInfo" name="pmprcaprvinfo"/>
+  </process:inputs>
+  <process:outputs>
+    <process:output description="审批意见列表" isArray="false" modelType="com.cjhxfund.commonUtil.dataBase.TAtsApproveInfo" name="pmprcaprvinfo"/>
+    <process:output description="" isArray="false" name="retcode" primitiveType="String"/>
+    <process:output description="" isArray="false" name="retmemo" primitiveType="String"/>
+  </process:outputs>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

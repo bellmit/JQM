@@ -1,0 +1,187 @@
+select t.l_fund_id, --基金序号
+       t.vc_fund_name, --基金名称
+       t.vc_combi_no, --组合编号
+       t.vc_combi_name, --组合名称
+       (select distinct (ttd.vc_entrustdir_name)
+          from trade.tentrustdirection ttd
+         where ttd.c_entrust_direction = t.c_entrust_direction) c_entrust_direction, --委托方向 15正回购 16逆回购
+       decode(t.c_hg_type, '1','首期成交','2','换券','3','到期续作','4','到期','5','提前到期','6','延期购回' ,t.c_hg_type) c_hg_type, --回购类型 
+       t.vc_report_code, --质押券代码
+       t.vc_stock_name, --质押券简称
+       t.l_deal_amount, --质押数量
+       t.en_balance, --质押券面值总额
+       t.L_DATE, --成交日期
+       t.L_REDEEM_LAWDATE, --法定购回日期
+       t.en_first_clear_balance, --成交金额
+       t.en_convert, --折算率
+       t.en_rate, --回购利率 
+       t.l_redeem_days, --回购天数
+       t.L_REDEEM_LIQUIDATE, --实际回购到期日
+       t.l_use_days, --实际占款天数
+       t.en_second_clear_balance, --到期结算金额 
+       t.l_first_settle_date, --首期结算日
+       t.l_second_settle_date, --到期结算日
+       t.L_END_DATE, --摘牌日
+       t.L_NEXTPAYMENT_DATE, --下一付息日
+       t.EN_BOND_INTEREST, --本期结算利息
+       t.VC_NAME, --对手方交易商简称
+       (select tmi.vc_market_name
+          from trade.tmarketinfo tmi
+         where tmi.c_market_no = t.c_market_no) c_market_no, --交易所
+       t.C_INSIDE_APPRAISE, --内部评级
+       (select td.vc_item_name
+          from trade.tdictionary td
+         where td.l_dictionary_no = '110000'
+           and td.c_lemma_item = t.C_OUTER_APPRAISE) C_OUTER_APPRAISE, --外部评级
+       t.L_OPERATOR_NO, --操作员
+       
+       t.vc_fund_code, --基金代码    
+       t.vc_inter_code, --证券内码
+       t.L_RIVAL_ID, --交易对手ID     
+       t.l_hg_date, --回购日期
+       t.c_fund_type, --基金类型
+       t.l_basecombi_id, --组合序号                                    
+       t.l_zyfund_id, --基金序号
+       t.l_zybasecombi_id --组合序号
+  from (select a.l_fund_id,
+               e.vc_inter_code,
+               a.L_RIVAL_ID,
+               a.L_DATE,
+               a.l_hg_date,
+               b.c_fund_type,
+               a.l_basecombi_id,
+               b.vc_fund_code,
+               b.vc_fund_name,
+               c.vc_combi_no,
+               c.vc_combi_name,
+               a.c_entrust_direction,
+               case
+                 when a.c_entrust_direction in ('15', '16') then
+                  '1'
+                 when a.c_entrust_direction in ('26', '27', '28', '29') then
+                  '2'
+                 when a.c_entrust_direction in ('30', '31') then
+                  '3'
+                 when a.c_entrust_direction in ('17', '18') then
+                  '4'
+                 when a.c_entrust_direction in ('37', '38') then
+                  '5'
+                 when a.c_entrust_direction in ('39', '40') then
+                  '6'
+               end c_hg_type,
+               e.vc_report_code vc_report_code,
+               e.vc_stock_name vc_stock_name,
+               e.L_MORTAGAGE_AMOUNT / 10 l_deal_amount, --手 
+               e.L_MORTAGAGE_AMOUNT * 100 en_balance, --质押券面值总额
+               a.EN_DEAL_BALANCE en_first_clear_balance, --成交金额
+               decode(e.L_MORTAGAGE_AMOUNT,
+                      0,
+                      0,
+                      a.EN_DEAL_BALANCE * 100 / (e.L_MORTAGAGE_AMOUNT * 100)) en_convert, --折算率
+               
+               a.EN_DEAL_PRICE    en_rate, --回购利率 
+               a.l_redeem_days, --回购天数 
+               a.L_REDEEM_LAWDATE, --法定购回日期
+               --a.L_REDEEM_LIQUIDATE, --实际购回日期
+               decode(nvl(a.L_REDEAL_DATE, 0),
+                      0,
+                      a.L_REDEEM_LIQUIDATE,
+                      a.L_REDEAL_DATE) L_REDEEM_LIQUIDATE, --实际购回日期
+               nvl(to_date(decode(nvl(a.l_redeal_date, 0),
+                                  0,
+                                  a.L_REDEEM_LIQUIDATE,
+                                  a.l_redeal_date),
+                           'YYYYMMDD') - to_date(a.l_Hg_Date, 'YYYYMMDD'),
+                   0) L_USE_DAYS, --实际占款天数
+               a.EN_DEAL_BALANCE *
+               (1 +
+               a.EN_DEAL_PRICE * trade.sf_date_diff(a.l_hg_date, a.L_SETTLE_DATE) / 100 / 365) en_second_clear_balance, --到期结算金额 
+               a.l_hg_date l_first_settle_date, --首期结算日
+               a.L_SETTLE_DATE l_second_settle_date, --到期结算日
+               tb.L_END_DATE, --摘牌日
+               tb.L_NEXTPAYMENT_DATE, --下一付息日
+               tb.EN_BOND_INTEREST * tb.L_RATE_DAYS EN_BOND_INTEREST, --本期结算利息
+               h.VC_NAME, --交易对手
+               a.c_market_no, --交易所
+               tb.C_INSIDE_APPRAISE, --内部评级
+               tb.C_OUTER_APPRAISE, --外部评级
+               a.L_OPERATOR_NO, --操作员
+               e.l_fund_id l_zyfund_id,
+               e.l_basecombi_id l_zybasecombi_id
+          from trade.thishgregister a,
+               trade.tfundinfo b,
+               trade.tcombi c,
+               (select e.l_serial_no,
+                       e.l_date,
+                       min(e.l_mortgage_date) L_MORTGAGE_DATE,
+                       case
+                         when count(distinct e.vc_inter_code) = 1 then
+                          min(s.vc_report_code)
+                         else
+                          '混合(' || to_char(count(1)) || ')'
+                       end vc_report_code,
+                       case
+                         when count(distinct e.vc_inter_code) = 1 then
+                          min(s.vc_stock_name)
+                         else
+                          '混合(' || to_char(count(1)) || ')'
+                       end vc_stock_name,
+                       case
+                         when count(distinct e.vc_inter_code) = 1 then
+                          min(e.vc_inter_code)
+                         else
+                          '混合(' || to_char(count(1)) || ')'
+                       end vc_inter_code,
+                       min(e.l_fund_id) l_fund_id,
+                       min(e.l_basecombi_id) l_basecombi_id,
+                       sum(e.L_MORTAGAGE_AMOUNT) L_MORTAGAGE_AMOUNT
+                  from trade.thgmortagage e, trade.thisstockinfo s
+                 where e.vc_inter_code = s.vc_inter_code
+                   and e.C_EFFECT_STATUS in ('1')
+                   and e.l_date = s.l_date
+                   and e.c_bail_type in ('1', '2')
+                   and e.L_DATE >= PARAM_BUSI_DATE_BEGIN
+                   and e.L_DATE <= PARAM_BUSI_DATE_END
+                 group by e.l_date, e.l_serial_no) e,
+               trade.thisbondproperty tb,
+               trade.ttraderival h
+         where a.l_fund_id = b.l_fund_id
+           and a.l_basecombi_id = c.l_combi_id
+           and a.l_serial_no = e.l_serial_no
+           and nvl(e.L_MORTGAGE_DATE, e.l_date) >= a.l_hg_date
+           and nvl(e.L_MORTGAGE_DATE, e.l_date) <= a.L_SETTLE_DATE
+           and e.vc_inter_code = tb.vc_inter_code(+)
+           and e.l_date = tb.l_date(+)
+           and a.L_RIVAL_ID = h.l_rival_id(+)
+              --   and a.c_market_no in ('5')
+           and a.c_market_no in ('1', '2')
+           and a.c_entrust_direction in ('15',
+                                         '16',
+                                         '17',
+                                         '18',
+                                         '26',
+                                         '27',
+                                         '28',
+                                         '29',
+                                         '30',
+                                         '31',
+                                         '37',
+                                         '38',
+                                         '39',
+                                         '40')
+           and a.l_hg_date >= PARAM_BUSI_DATE_BEGIN
+           and a.l_hg_date <= PARAM_BUSI_DATE_END
+           and (select count(*)
+                  from trade.TOPFUNDRIGHT
+                 where TOPFUNDRIGHT.l_basecombi_id = a.l_basecombi_id
+                   and TOPFUNDRIGHT.c_layer = '3'
+                   and TOPFUNDRIGHT.l_operator_no = 1000
+                   and instr(TOPFUNDRIGHT.vc_rights, '1') > 0) > 0
+           and exists
+         (select 1
+                  from trade.toperator
+                 where toperator.L_OPERATOR_NO = 1000
+                   and (instr(toperator.VC_MANAGE_RIGHT, a.c_stock_type) > 0 or
+                       trim(toperator.VC_MANAGE_RIGHT) is null))
+         order by a.l_fund_id) t
+ where 1 = 1

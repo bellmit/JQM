@@ -1,0 +1,373 @@
+package com.cjhxfund.commonUtil;
+
+import java.sql.Connection;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellRangeAddress;
+
+import com.eos.system.annotation.Bizlet;
+import commonj.sdo.DataObject;
+
+/**
+ * 普元Coframe补充功能
+ * @author huangmizhi
+ * @date 2015-10-16 11:14:33
+ */
+@Bizlet("")
+public class CoframeSupplement {
+	
+	
+	/**
+	 * 获取机构员工表的所有userId
+	 * @param conn 若未传入数据库连接，则获取默认连接
+	 * @return
+	 */
+	@Bizlet("")
+	public static Map<String,String> getOrgEmpUserIds(Connection conn){
+		boolean needClose = true;
+		Map<String,String> result = new HashMap<String,String>();
+		try {
+			if(conn==null || conn.isClosed()){
+				//若未传入数据库连接，则获取默认连接
+				conn = JDBCUtil.getConnByDataSourceId(JDBCUtil.DATA_SOURCE_DEFAULT);
+			}else{
+				needClose = false;
+			}
+			
+			//获取主键ID、用户ID
+			String sql = "select t.empid,t.userid from org_employee t";
+			
+			List<Map<String, String>> list = JDBCUtil.queryWithConn(conn, sql, null);
+			if(!list.isEmpty() && list.size()>0){
+				for(int i=0; i<list.size(); i++){
+					Map<String, String> map = list.get(i);
+					String empid = map.get("EMPID");
+					String userid = map.get("USERID");
+					
+					if(StringUtils.isNotEmpty(empid) && StringUtils.isNotEmpty(userid)){
+						result.put(empid, userid);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if(needClose){
+				JDBCUtil.releaseResource(conn, null, null);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 将业务数据导出Excel文件
+	 * @param workbook Excel工作薄
+	 * @param sheetName Sheet名称
+	 * @param sheetHeadTitle Sheet列标题数组
+	 * @param columnKeyArr 获取字段值关键key数组
+	 * @param changeObjArr 值转换格式对象数组
+	 * @param exportData 需导出的数据
+	 * @param sheetHeadFormat Sheet列标题样式
+	 * @param BoldUnderlineCENTRE 居中对齐样式
+	 * @param BoldUnderlineLEFT 左对齐样式
+	 * @author huangmizhi
+	 */
+	@Bizlet("")
+	public static void createExcelSheet(HSSFWorkbook workbook, String sheetName, String[] sheetHeadTitle, String[] columnKeyArr, Object[] changeObjArr, List<DataObject> exportData, HSSFCellStyle sheetHeadFormat, HSSFCellStyle BoldUnderlineCENTRE, HSSFCellStyle BoldUnderlineLEFT, HSSFCellStyle BoldUnderlineRight){
+		//将DataObject对象数据转换为字符串数组
+		List<String[]> changeData = changeArr(exportData, columnKeyArr, changeObjArr);
+		createExcelSheet(changeData, workbook, sheetName, sheetHeadTitle, sheetHeadFormat, BoldUnderlineCENTRE, BoldUnderlineLEFT, BoldUnderlineRight);
+	}
+	
+	/**
+	 * 将业务数据导出Excel文件
+	 * @param exportData 需导出的数据
+	 * @param workbook Excel工作薄
+	 * @param sheetName Sheet名称
+	 * @param sheetHeadTitle Sheet列标题数组
+	 * @param sheetHeadFormat Sheet列标题样式
+	 * @param BoldUnderlineCENTRE 居中对齐样式
+	 * @param BoldUnderlineLEFT 左对齐样式
+	 * @author huangmizhi
+	 */
+	@Bizlet("")
+	public static void createExcelSheet(List<String[]> exportData, HSSFWorkbook workbook, String sheetName, String[] sheetHeadTitle, HSSFCellStyle sheetHeadFormat, HSSFCellStyle BoldUnderlineCENTRE, HSSFCellStyle BoldUnderlineLEFT, HSSFCellStyle BoldUnderlineRight){
+		//创建Sheet
+		HSSFSheet sheet = workbook.createSheet(sheetName);
+		//创建第一行（标题行）
+		HSSFRow row0 = sheet.createRow(0);
+		//创建第一列（标题列）
+		for(int i=0; i<sheetHeadTitle.length; i++){
+			HSSFCell cell = row0.createCell((short)i);
+			cell.setCellValue((RichTextString)new HSSFRichTextString(sheetHeadTitle[i]));
+			cell.setCellStyle(sheetHeadFormat);
+		}
+		//导出数据
+		for(int i=0; i<exportData.size(); i++){
+			String[] strArr = exportData.get(i);
+			//创建数据行
+			HSSFRow row = sheet.createRow(i+1);
+			//创建数据列
+			for(int j=0; j<sheetHeadTitle.length; j++){
+				HSSFCell cell = row.createCell((short)j);
+				if(j==0){//序号
+					cell.setCellStyle(BoldUnderlineCENTRE);
+					cell.setCellValue((RichTextString)new HSSFRichTextString(String.valueOf(i+1)));
+				}else{
+					if(strArr[j-1].getBytes().length == strArr[j-1].length()){
+						cell.setCellStyle(BoldUnderlineRight);
+						cell.setCellValue((RichTextString)new HSSFRichTextString(strArr[j-1]));
+					}else{
+						cell.setCellStyle(BoldUnderlineLEFT);
+						cell.setCellValue((RichTextString)new HSSFRichTextString(strArr[j-1]));
+					}
+				}
+			}
+		}
+		//当所有表格都填充完毕，在进行自动列宽
+		for(int i=0; i<sheetHeadTitle.length; i++){
+			if(i==0){//序号
+				sheet.setColumnWidth((short)i, (short)2000);//设置列宽
+			}else{
+				sheet.autoSizeColumn((short)i, true);
+				if(sheet.getColumnWidth((short)i) < 3000){
+					sheet.setColumnWidth((short)i, (short)3000);
+				}else{
+					sheet.setColumnWidth((short)i, sheet.getColumnWidth((short)i)+2000);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 将GZB数据导出Excel文件
+	 * @param workbook Excel工作薄
+	 * @param map 活跃数据
+	 * @param sheetHeadTitle Sheet列标题数组
+	 * @param columnKeyArr 获取字段值关键key数组
+	 * @param changeObjArr 值转换格式对象数组
+	 * @param exportData 需导出的数据
+	 * @param sheetHeadFormat Sheet列标题样式
+	 * @param BoldUnderlineCENTRE 居中对齐样式
+	 * @param BoldUnderlineLEFT 左对齐样式
+	 * @author huangmizhi
+	 */
+	@Bizlet("")
+	public static void createGzbExcel(HSSFWorkbook workbook, HashMap<String, Object> map, String[] sheetHeadTitle, String[] columnKeyArr, Object[] changeObjArr, List<DataObject> exportData, HSSFCellStyle sheetHeadFormat, HSSFCellStyle BoldUnderlineCENTRE, HSSFCellStyle BoldUnderlineLEFT){
+		//将DataObject对象数据转换为字符串数组
+		List<String[]> changeData = changeArr(exportData, columnKeyArr, changeObjArr);
+			createGzbExcel(changeData, workbook, map, sheetHeadTitle, sheetHeadFormat, BoldUnderlineCENTRE, BoldUnderlineLEFT);
+	}
+	
+	/**
+	 * 将GZB数据导出Excel文件
+	 * @param exportData 需导出的GZB数据
+	 * @param workbook Excel工作薄
+	 * @param map 活跃数据
+	 * @param sheetHeadTitle Sheet列标题数组
+	 * @param sheetHeadFormat Sheet列标题样式
+	 * @param BoldUnderlineCENTRE 居中对齐样式
+	 * @param BoldUnderlineLEFT 左对齐样式
+	 * @author huangmizhi
+	 */
+	@Bizlet("")
+	public static void createGzbExcel(List<String[]> exportData, HSSFWorkbook workbook, HashMap<String, Object> map, String[] sheetHeadTitle, HSSFCellStyle sheetHeadFormat, HSSFCellStyle BoldUnderlineCENTRE, HSSFCellStyle BoldUnderlineLEFT){
+		//创建Sheet
+		HSSFSheet sheet = workbook.createSheet(map.get("sheetName").toString());
+		sheet.createFreezePane(2, 3);  //冻结
+		// 设置字体    
+	    HSSFFont headfont =workbook.createFont();    
+	    headfont.setFontName("黑体");    
+	    headfont.setFontHeightInPoints((short) 20);// 字体大小 
+	    headfont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);//加粗
+		HSSFCellStyle headstyle =workbook.createCellStyle();    
+	    headstyle.setFont(headfont);    
+	    headstyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 左右居中    
+	    headstyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 上下居中    
+		//创建第一行（表头）
+		HSSFRow row0 = sheet.createRow(0);
+		row0.setHeight((short) 550);
+		HSSFCell cell0 =row0.createCell(0);    
+	    cell0.setCellStyle(headstyle); 
+	    CellRangeAddress range = new CellRangeAddress(0, 0, 0, 10);    
+	    sheet.addMergedRegion(range);
+	    cell0.setCellValue(new HSSFRichTextString(map.get("sheetName").toString())); 
+	  //创建第二行（标题行）
+	    HSSFRow row1 =sheet.createRow(1);
+	    row1.setHeight((short) 300);
+	    HSSFCell cell1 =row1.createCell(0);
+	    HSSFCell cell10 = row1.createCell(9);
+	    HSSFCell cell11 = row1.createCell(10);
+	    cell1.setCellValue("估值日期："+map.get("busiDateEnd").toString());
+	    //cell10.setCellValue("单位净值：");
+	    cell11.setCellValue("单位：元");
+	    cell10.setCellValue("单位净值：");
+	    CellRangeAddress range1 = new CellRangeAddress(1, 1, 0, 1);
+	    sheet.addMergedRegion(range1);
+		//创建第二行（标题行）
+		HSSFRow row2 =sheet.createRow(2);
+		row2.setHeight((short) 400);
+		//创建第一列（标题列）
+		sheetHeadFormat.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框    
+		sheetHeadFormat.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框    
+		sheetHeadFormat.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框    
+		sheetHeadFormat.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框 
+		
+		BoldUnderlineCENTRE.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框    
+		BoldUnderlineCENTRE.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框    
+		BoldUnderlineCENTRE.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框    
+		BoldUnderlineCENTRE.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框 
+
+		BoldUnderlineLEFT.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框    
+		BoldUnderlineLEFT.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框    
+		BoldUnderlineLEFT.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框    
+		BoldUnderlineLEFT.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框 
+		
+		//设置字体格式
+		HSSFFont columnHeadFont = workbook.createFont();
+		columnHeadFont.setFontName("宋体");
+		columnHeadFont.setFontHeightInPoints((short) 10);// 字体大小
+		//左对齐
+		HSSFCellStyle BoldUnderlinecolor = workbook.createCellStyle();
+		BoldUnderlinecolor.setFont(columnHeadFont);
+		BoldUnderlinecolor.setLocked(true);
+		
+		HSSFPalette paletteRow = workbook.getCustomPalette();
+		paletteRow.setColorAtIndex(HSSFColor.YELLOW.index, (byte) 219, (byte) 238, (byte) 243); 
+		BoldUnderlinecolor.setFillForegroundColor(HSSFColor.YELLOW.index);
+		BoldUnderlinecolor.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		BoldUnderlinecolor.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框    
+		BoldUnderlinecolor.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框    
+		BoldUnderlinecolor.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框    
+		BoldUnderlinecolor.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框 
+		
+		for(int i=0; i<sheetHeadTitle.length-1; i++){
+			HSSFCell cell = row2.createCell((short)i);
+			cell.setCellValue((RichTextString)new HSSFRichTextString(sheetHeadTitle[i+1]));
+			cell.setCellStyle(sheetHeadFormat);
+		}
+		HSSFDataFormat format= workbook.createDataFormat();
+		//导出数据
+		for(int i=0; i<exportData.size(); i++){
+			String[] strArr = exportData.get(i);
+			//创建数据行
+			HSSFRow row = sheet.createRow(i+3);
+			row.setHeight((short) 300);
+			boolean addColor = false;
+			if(i%2 == 0){
+				addColor = true;
+			}
+			//创建数据列
+			for(int j=0; j<sheetHeadTitle.length-1; j++){
+				HSSFCell cell = row.createCell((short)j);
+				if(j>1 && j<10){
+					if(strArr[j].indexOf(",")>0 && strArr[j].indexOf(".")>0){
+						String a = strArr[j].replace(",", "");
+						cell.setCellValue(Double.parseDouble(a.toString()));
+					}else if(strArr[j].indexOf(".")>0){
+						cell.setCellValue(Double.parseDouble(strArr[j].toString()));
+					}else{
+						cell.setCellValue(strArr[j]);
+					}
+					BoldUnderlineLEFT.setDataFormat(format.getFormat("#,##0.00"));
+					BoldUnderlinecolor.setDataFormat(format.getFormat("#,##0.00"));
+				}else{
+					cell.setCellValue((RichTextString)new HSSFRichTextString(strArr[j]));
+				}
+				if(addColor){
+					cell.setCellStyle(BoldUnderlinecolor);
+				}else{
+					cell.setCellStyle(BoldUnderlineLEFT);
+				}
+				if(strArr[j] != null || strArr[j].length() > 0){
+					if(strArr[j].indexOf("今日单位净值")!=-1){
+						cell10.setCellValue("单位净值："+strArr[j+1]);
+					}
+				}
+			}
+		}
+		//标题放在最后创建，这样所有的数据都填充完毕就可以计算自动列宽
+		for(int i=0; i<sheetHeadTitle.length; i++){
+			sheet.autoSizeColumn((short)i, true);
+			if(sheet.getColumnWidth((short)i) < 3000){
+				sheet.setColumnWidth((short)i, (short)3000);
+			}else{
+				sheet.setColumnWidth((short)i, sheet.getColumnWidth((short)i)+1000);
+			}
+		}
+		
+		//插入一行
+		boolean isHandle = map.get("isHandle")==null?false:(Boolean)map.get("isHandle");
+		if(isHandle){
+			
+			HSSFFont newheadfont =workbook.createFont();    
+			newheadfont.setFontName("黑体");    
+			newheadfont.setFontHeightInPoints((short) 10);// 字体大小 
+			newheadfont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);//加粗
+			HSSFCellStyle newheadstyle =workbook.createCellStyle();    
+			newheadstyle.setFont(newheadfont);    
+			newheadstyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);// 左右居中    
+			newheadstyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 上下居中   
+			
+	        sheet.shiftRows(1, sheet.getLastRowNum(), 1); //1到最后一行，向下移动一行
+	        HSSFRow newRow = sheet.createRow(1);
+	        newRow.setHeight((short) 350);
+	        HSSFCell newCell = newRow.createCell(0);
+	        newCell.setCellStyle(newheadstyle); 
+		    range = new CellRangeAddress(0, 0, 0, 10);    
+		    sheet.addMergedRegion(range);
+	        newCell.setCellValue(map.get("sheetName1").toString());
+		}
+	}
+	
+	/**
+	 * 将DataObject对象数据转换为字符串数组
+	 * @param changeData 待转换的DataObject数据
+	 * @param columnKeyArr 获取字段值关键key数组
+	 * @param changeObjArr 值转换格式对象数组
+	 * @return
+	 * @author huangmizhi
+	 */
+	@Bizlet("")
+	public static List<String[]> changeArr(List<DataObject> changeData, String[] columnKeyArr, Object[] changeObjArr){
+		List<String[]> result = new ArrayList<String[]>();
+		for(int i=0; i<changeData.size(); i++){
+			DataObject dataObj = changeData.get(i);
+			String[] strArr = new String[columnKeyArr.length];
+			for(int j=0; j<columnKeyArr.length; j++){
+				String columnKey = columnKeyArr[j];
+				String value = StrUtil.changeNull(dataObj.getString(columnKey));
+				Object obj = changeObjArr[j];
+				if(obj instanceof DecimalFormat){
+					DecimalFormat df = (DecimalFormat)obj;
+					strArr[j] = StrUtil.addThousandth(value, df);
+				}else{
+					strArr[j] = value;
+				}
+			}
+			result.add(strArr);
+		}
+		return result;
+	}
+
+	public static void main(String[] args) {
+	}
+}

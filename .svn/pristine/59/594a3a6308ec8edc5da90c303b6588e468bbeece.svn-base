@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+	<parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="activityMap">
+        <result column="activityinstid" javaType="string" property="activityinstid"/>
+    </resultMap>
+    <select id="queryActivities" parameterClass="commonj.sdo.DataObject" resultMap="activityMap">
+    <![CDATA[
+    	select distinct activityinstid from wfactivityinst 
+    	where processinstid = $processinstid$
+   		and activitytype = 'manual'
+    	and currentstate = 2 
+    	and activityinstid <> $activityinstid$
+    ]]>
+    </select>
+</sqlMap>

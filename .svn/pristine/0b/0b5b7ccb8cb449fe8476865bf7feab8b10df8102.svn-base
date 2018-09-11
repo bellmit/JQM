@@ -1,0 +1,218 @@
+package com.cjhxfund.jy.DataProcess;
+
+public class PositionBasic {
+	
+	private Long lFundId;
+	private String lDate;	
+	private String vcFundCode;
+	private String vcFundName;
+	private String vcCombiNo;
+	private String vcCombiName;
+	private String vcInterCode;
+	private String vcReportCode;
+	private String vcStockName;
+	private Long lUsableAmount;
+	private Long lCurrentAmount;
+	private String cMarketNo;
+	private String vcInterCodeWind2;
+	private String bIssuercoe;
+	private String sName;
+	private String bDelistDate;
+	private Long bCnbd;
+	private String bIC1;
+	private String bIC2;
+	private String bPaymentDate;
+	private String bICD;
+	private String bGuarantorNature;
+	private String bRatingOutlook;
+	private String objectId;
+	private String bPtmyear;
+	private String sIndustryName2;
+	private String province;
+	private String bProvisionType;
+	
+	
+	public String getbIssuercoe() {
+		return bIssuercoe;
+	}
+	public void setbIssuercoe(String bIssuercoe) {
+		this.bIssuercoe = bIssuercoe;
+	}
+	public String getsName() {
+		return sName;
+	}
+	public void setsName(String sName) {
+		this.sName = sName;
+	}
+	public String getbDelistDate() {
+		return bDelistDate;
+	}
+	public void setbDelistDate(String bDelistDate) {
+		this.bDelistDate = bDelistDate;
+	}
+	public Long getbCnbd() {
+		return bCnbd;
+	}
+	public void setbCnbd(Long bCnbd) {
+		this.bCnbd = bCnbd;
+	}
+	public String getbIC1() {
+		return bIC1;
+	}
+	public void setbIC1(String bIC1) {
+		this.bIC1 = bIC1;
+	}
+	public String getbIC2() {
+		return bIC2;
+	}
+	public void setbIC2(String bIC2) {
+		this.bIC2 = bIC2;
+	}
+	public String getbPaymentDate() {
+		return bPaymentDate;
+	}
+	public void setbPaymentDate(String bPaymentDate) {
+		this.bPaymentDate = bPaymentDate;
+	}
+	public String getbICD() {
+		return bICD;
+	}
+	public void setbICD(String bICD) {
+		this.bICD = bICD;
+	}
+	public String getbGuarantorNature() {
+		return bGuarantorNature;
+	}
+	public void setbGuarantorNature(String bGuarantorNature) {
+		this.bGuarantorNature = bGuarantorNature;
+	}
+	public String getbRatingOutlook() {
+		return bRatingOutlook;
+	}
+	public void setbRatingOutlook(String bRatingOutlook) {
+		this.bRatingOutlook = bRatingOutlook;
+	}
+	public String getObjectId() {
+		return objectId;
+	}
+	public void setObjectId(String objectId) {
+		this.objectId = objectId;
+	}
+	public String getbPtmyear() {
+		return bPtmyear;
+	}
+	public void setbPtmyear(String bPtmyear) {
+		this.bPtmyear = bPtmyear;
+	}
+	public String getsIndustryName2() {
+		return sIndustryName2;
+	}
+	public void setsIndustryName2(String sIndustryName2) {
+		this.sIndustryName2 = sIndustryName2;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getbProvisionType() {
+		return bProvisionType;
+	}
+	public void setbProvisionType(String bProvisionType) {
+		this.bProvisionType = bProvisionType;
+	}
+	public Long getlFundId() {
+		return lFundId;
+	}
+	public void setlFundId(Long lFundId) {
+		this.lFundId = lFundId;
+	}
+	public String getlDate() {
+		return lDate;
+	}
+	public void setlDate(String lDate) {
+		this.lDate = lDate;
+	}
+	public String getVcFundCode() {
+		return vcFundCode;
+	}
+	public void setVcFundCode(String vcFundCode) {
+		this.vcFundCode = vcFundCode;
+	}
+	public String getVcFundName() {
+		return vcFundName;
+	}
+	public void setVcFundName(String vcFundName) {
+		this.vcFundName = vcFundName;
+	}
+	public String getVcCombiNo() {
+		return vcCombiNo;
+	}
+	public void setVcCombiNo(String vcCombiNo) {
+		this.vcCombiNo = vcCombiNo;
+	}
+	public String getVcCombiName() {
+		return vcCombiName;
+	}
+	public void setVcCombiName(String vcCombiName) {
+		this.vcCombiName = vcCombiName;
+	}
+	public String getVcInterCode() {
+		return vcInterCode;
+	}
+	public void setVcInterCode(String vcInterCode) {
+		this.vcInterCode = vcInterCode;
+	}
+	public String getVcReportCode() {
+		return vcReportCode;
+	}
+	public void setVcReportCode(String vcReportCode) {
+		this.vcReportCode = vcReportCode;
+	}
+	public String getVcStockName() {
+		return vcStockName;
+	}
+	public void setVcStockName(String vcStockName) {
+		this.vcStockName = vcStockName;
+	}
+	public Long getlUsableAmount() {
+		return lUsableAmount;
+	}
+	public void setlUsableAmount(Long lUsableAmount) {
+		this.lUsableAmount = lUsableAmount;
+	}
+	public Long getlCurrentAmount() {
+		return lCurrentAmount;
+	}
+	public void setlCurrentAmount(Long lCurrentAmount) {
+		this.lCurrentAmount = lCurrentAmount;
+	}
+	public String getcMarketNo() {
+		return cMarketNo;
+	}
+	public void setcMarketNo(String cMarketNo) {
+		this.cMarketNo = cMarketNo;
+	}
+	public String getVcInterCodeWind2() {
+		return vcInterCodeWind2;
+	}
+	public void setVcInterCodeWind2(String vcInterCodeWind2) {
+		this.vcInterCodeWind2 = vcInterCodeWind2;
+	}
+	
+	@Override
+	public String toString() {
+		return "PositionBasic [lFundId=" + lFundId + ", lDate=" + lDate + ", vcFundCode=" + vcFundCode
+				+ ", vcFundName=" + vcFundName + ", vcCombiNo=" + vcCombiNo + ", vcCombiName=" + vcCombiName
+				+ ", vcInterCode=" + vcInterCode + ", vcReportCode=" + vcReportCode + ", vcStockName=" + vcStockName
+				+ ", lUsableAmount=" + lUsableAmount + ", lCurrentAmount=" + lCurrentAmount + ", cMarketNo="
+				+ cMarketNo + ", vcInterCodeWind2=" + vcInterCodeWind2 + ", bIssuercoe=" + bIssuercoe
+				+ ", sName=" + sName + ", bDelistDate=" + bDelistDate + ", bCnbd=" + bCnbd + ", bIC1=" + bIC1
+				+ ", bIC2=" + bIC2 + ", bPaymentDate=" + bPaymentDate + ", bICD=" + bICD + ", bGuarantorNature=" + bGuarantorNature
+				+ ", bRatingOutlook=" + bRatingOutlook + ", objectId=" + objectId + ", bPtmyear=" + bPtmyear
+				+ ", sIndustryName2=" + sIndustryName2 + ", province=" + province + ", bProvisionType=" + bProvisionType
+				+ "]";
+	}
+	
+}

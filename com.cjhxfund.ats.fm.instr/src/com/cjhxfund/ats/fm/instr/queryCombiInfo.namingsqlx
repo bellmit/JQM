@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:杨敏 -->
+<sqlMap>
+	<!--查询产品 下拉列表使用-->
+    <select id="queryProductInfoByAll"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.l_product_id as pid ,t1.vc_product_code as id,t1.vc_product_name as text,t1.* from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  vc_relate_type in ('01','A6'))
+    </select>
+    <!--查询产品 下拉列表使用-->
+    <select id="queryProductInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.l_product_id as pid ,t1.vc_product_code as id,t1.vc_product_name as text,t1.* from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  vc_relate_type='01' 
+		<isNotNull property="user_id">
+		and vc_user_id=#user_id#
+		</isNotNull>
+		)
+    </select>
+    <!--查询组合 下拉列表使用-->
+    <select id="queryCombiInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select vc_combi_no as ID ,vc_combi_name as TEXT ,t.*,t2.l_asset_id,t2.vc_asset_name,t2.vc_asset_no from T_ATS_COMBI_INFO t left join T_ATS_ASSET_INFO t2 on t.l_asset_id=t2.l_asset_id where L_COMBI_ID in 
+       (select  L_COMBI_ID from T_ATS_PRODUCT_HANDLE  where  1=1 and VC_PRODUCT_CODE=#vcProductCode#  
+       <isNotNull property="user_id">
+       and vc_user_id=#user_id#
+       </isNotNull>
+       )
+    </select>
+    <!--查询产品 下拉列表使用-->
+    <select id="queryProductInfoByManageType"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t1.l_product_id as pid ,t1.vc_product_code as id,t1.vc_product_name as text,t1.* from T_ATS_PRODUCT_INFO t1 where vc_product_code in
+		(select vc_product_code from T_ATS_PRODUCT_HANDLE  where  1=1 and vc_relate_type='A6'
+		<isNotNull property="user_id">
+		and vc_user_id=#user_id#
+		</isNotNull>
+		) 
+		<isNotNull property="c_manage_type">
+		and t1.c_manage_type in ($c_manage_type$)
+		</isNotNull>
+    </select>
+    <!--查询组合 下拉列表使用-->
+    <select id="queryCombiInfoByManageType"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select vc_combi_no as ID ,vc_combi_name as TEXT ,t.*,t2.l_asset_id,t2.vc_asset_name,t2.vc_asset_no from T_ATS_COMBI_INFO t left join T_ATS_ASSET_INFO t2 on t.l_asset_id=t2.l_asset_id where L_COMBI_ID in 
+       (select  L_COMBI_ID from T_ATS_PRODUCT_HANDLE  where  1=1 and VC_PRODUCT_CODE=#vcProductCode#  
+       <isNotNull property="user_id">
+       and vc_user_id=#user_id#
+       </isNotNull>
+       )
+    </select>
+    <!--查询资产单元id-->
+    <select id="queryAsset"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select l_asset_id as id1,vc_asset_no||vc_asset_name as text1 from  T_ATS_ASSET_INFO  
+    </select>
+    <!--查询组合id-->
+    <select id="queryCombi"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select l_combi_id as id2,vc_combi_no||vc_combi_name as text2 from T_ATS_COMBI_INFO  
+    </select>
+    
+    <!--查询交易场所 下拉列表使用-->
+    <select id="queryMarkey"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.c_market_no as id,t.vc_market_name as text,t.* from T_ATS_MARKET_INFO t
+    </select>
+    
+    <!--查询发行人 下拉列表使用-->
+    <select id="queryIssuer"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.l_issuer_id as id,t.vc_issue_name as text,t.* from T_ATS_ISSUER_INFO t
+    </select>
+    
+    <!-- 获取上一环节参与者ID -->
+	<select id="queryFlowLastActor" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+      select t2.vc_user_name,t2.vc_comments from ( select * from t_ats_approve_info t  where t.l_process_inst_id=#processInstID# order by d_create_time desc) t2 where rownum=1
+    </select>
+    
+    <!-- 获取当前参与者 -->
+    <select id="queryFlowNextActor" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select connstr(distinct t.participantname) next from V_CURRENTWORKITEM t where t.processinstid =  #processInstID#
+       <isNotNull property="workItemID">
+       		and t.workitemid = #workItemID#
+       </isNotNull>
+    </select>
+    
+    <!-- 中标确认获取当前参与者ID与名字 -->
+    <select id="queryZBQRUser" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+       select connstr(distinct t.participantid) participantid,connstr(distinct t.participantname) participantname from V_CURRENTWORKITEM t where t.processinstid =  #processInstID#
+    </select>
+    
+    <!--查询新债信息 下拉列表使用-->
+    <select id="queryWindFieldInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select distinct t.vc_map_field_name as wname,t.vc_map_field_value as wvalue,t.vc_map_field_id as wid  from t_ats_dict_wind_map t 
+    </select>
+    
+    <!--查询业务字典 下拉列表使用-->
+    <select id="queryDictTypeInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.dicttypeid as did, t.dicttypename as dname, t.rank as rank
+		  from eos_dict_type t
+		 where t.dicttypeid in ('CF_JY_DJTGCS','creditRating','outRatingOrgan','rateType','payInterestType','tenderType','investorOptionType',
+                        		'ATS_FM_ISSUE_PROPERTY','paymentType','underwriteType','productType','multiCurrency','cashAddup','cashControlPoint',
+                            'stockControlPoint','investType','overdraftStatus','trustStatus','assetStatus','combiClass','combiStatus',
+                            'interestRateType','O32AssetClass','ATS_FM_PAYMENT','ATS_CF_JY_FREQUENCY','tradePlace','ATS_FM_ASSUER_TYPE','ATS_FM_ISSUE_PROPERTY')
+    </select>
+    <!--查询业务字典关联字段 下拉列表使用-->
+    <select id="queryDictIdInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.dictname as ename,t.dictid as dicid,t.dicttypeid as eid from eos_dict_entry t where t.dicttypeid=#typeId#
+    </select>
+    
+    <!--查询wind、032数据表中字段 下拉列表使用-->
+    <select id="queryWindO32Info"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.table_name as uname, lower(t.column_name) as ucname, t.comments as comments from user_col_comments t 
+    	 where column_name in ('C_MARKET_NO','C_INTEREST_TYPE','VC_PAYMENT_PLACE','C_PAY_INTEREST_TYPE','C_BID_TYPE','C_UNDERWRITE_TYPE','C_BOND_APPRAISE',
+             'VC_ISSUE_PROPERTY','C_ISSUE_APPRAISE','EN_PAY_INTEVAL','C_PAY_TYPE','C_ASSURE_TYPE') and t.TABLE_NAME=#tableName#
+    </select>
+</sqlMap>

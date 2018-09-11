@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.fm.comm,com.primeton.eos.richweb,com.
+ eos.foundation,com.eos.workflow,com.c
+ jhxfund.commonUtil
+Bundle-Vendor: 王沐寰
+eos-webCtxPath: fm/baseinfo
+Bundle-Version: 1.0.0
+Bundle-Name: 基础数据
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.fm.baseinfo
+

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+	<select id="getRunningProcessInfo"  parameterClass="java.util.HashMap"  resultClass="com.cjhxfund.fpm.bpsExpend.task.ProcessInst">
+      /**
+       *获取流转中任务环节和人员信息
+       **/
+		select  processinstid,rootprocinstid
+		,to_char(wm_concat(distinct activityinstname)) activityinstname
+		,to_char(wm_concat(distinct t.participantname)) participantname  
+		from  v_currentworkitem t
+    	where t.processinstid in ($processinstid$) or t.rootprocinstid in ($processinstid$)
+    	group by processinstid,rootprocinstid
+     </select>
+     <select id="getLastProcessFinishTime"  parameterClass="java.util.Map" resultClass="java.util.Date">
+      /**
+       *取流程的最新的完成时间
+       **/
+        select max(d_end_time) from t_ats_approve_info  t where t.l_process_inst_id = #processInstId#
+     </select>
+     
+    <select id="getLastWorkItemFinishTime" parameterClass="java.util.Map" resultClass="java.lang.String">
+     /**
+       *查询转办任务的结束时间
+       */
+         select max(d_end_time) from t_ats_approve_info t where t.l_work_item_id = #workitemID#
+      </select> 
+      <select id="getLastHelpFinishTime" parameterClass="java.util.Map" resultClass="java.lang.String">
+     /**
+       *查询征求意见任务的结束时间
+       */
+       	select max(d_end_time) from t_ats_approve_info t where  t.vc_operate_type = 4 and t.l_work_item_id = #workitemID#        
+      </select>  
+      <select id="getProcessDefId" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String">
+    	select processdefid from wfprocessinst where processInstID=$processInstID$
+    </select>
+      <select id="queryFlowActorList" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+       /**
+       *获取当前参与者
+       *add by chenxing
+       */
+         select distinct t.activityinstid,t.activityinstname,t.processinstid,t.activitydefid,to_char(t.participantname) nextuser from V_CURRENTWORKITEM t where t.processinstid = #processInstID#
+    </select>
+    
+     <select id="queryFlowPreActor" parameterClass="java.util.HashMap" resultClass="com.cjhxfund.fpm.bpsExpend.task.ProcessInst">
+       /**
+       *获取上一参与者
+       */
+       select vc_work_item_name as activityinstname,to_char(wm_concat(distinct vc_user_name)) as participantname from t_ats_approve_info t where t.l_work_item_id in ($workitemIds$)  group by vc_work_item_name 
+     </select>
+    
+      <select id="queryActivityJoiner" parameterClass="java.util.HashMap" resultClass="com.cjhxfund.fpm.bpsExpend.task.ProcessInst">
+       /**
+       *获取活动名称和参与者
+       *add by chenxing
+       */
+        select to_char(wm_concat(distinct p.activityinstname)) activityinstname,p.participantname as participantname  from wfwiparticipant p where p.workitemid in ($workitemIds$) and p.participanttype='emp' group by p.participantname
+        union
+        select to_char(wm_concat(distinct p.activityinstname)) activityinstname,r.empname as participantname from wfwiparticipant p,v_roleemp r where p.participantid=r.role_id and p.workitemid in ($workitemIds$) and p.participanttype='role'  group by r.empname
+      </select>
+      <select id="queryProcessCreator" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       /**
+       *获取流程创建者
+       *add by jiangkanqian
+       */
+         select creator from wfprocessinst where processinstid = #processInstID#
+    </select>
+    <select id="querySkipAuth" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String">
+       /**
+       *获取是否有跳过权限
+       *add by jiangkanqian
+       */
+         select skip_auth from t_ats_sys_bps_auth where process_def_name = #processDefName# and activity_def_id = #activityDefID# 
+    </select>
+</sqlMap>

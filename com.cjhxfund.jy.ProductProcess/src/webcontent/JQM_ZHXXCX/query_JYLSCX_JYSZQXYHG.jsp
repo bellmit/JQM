@@ -1,0 +1,265 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="false" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/JQMHistory/common/commscripts.jsp" %>
+<%@include file="/ProductProcess/zhxxcx/CFJY_zhxxcx_common.jsp" %>
+<%@page import="com.cjhxfund.commonUtil.DateUtil"%>
+<%
+	//默认当天是交易日
+	String businDay = DateUtil.currentDateString(DateUtil.YMD_NUMBER);
+	//判断今天是否为交易日
+	boolean isTradeDay = DateUtil.isTradeDay(null, DateUtil.currentDateString(DateUtil.YMD_NUMBER), null);
+	//若当天不是交易日（周末或节假日），则业务日期获取下个交易日
+	if(!isTradeDay){
+		businDay = DateUtil.getCalculateTradeDay(null, DateUtil.currentDateString(DateUtil.YMD_NUMBER), null, 1);
+	}
+	//获取上一个交易日
+	String preDate = DateUtil.getCalculateTradeDay(null, DateUtil.currentDateString(DateUtil.YMD_NUMBER), null, -1);
+%>
+<%--
+- Author(s): huangmizhi
+- Date: 2016-03-03 14:35:39
+- Description: 综合信息查询（数据取自O32）
+--%>
+<head>
+<title>交易所债券协议回购</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<link id="css_icon" rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/coframe/org/css/org.css"/>
+<script type="text/javascript" src="<%= request.getContextPath() %>/scripts/com.cjhxfund.js.base/utils/DateUtil.js"></script>
+</head>
+<body style="width:99.6%;height:99.6%;">
+<div style="margin:0px 2px 0px 2px;width:100%;height:100%;" >
+		
+		   <%-- 交易所债券协议回购查询条件开始... --%>
+		   <div class="search-condition">
+			   <div class="list">
+				 <form id="form_JYSZQXYHG" method="post">
+				 	<%-- 查询用户类型，若是投顾，则过滤产品权限 --%>
+				 	<input class="nui-hidden" name="paramObject/queryUserType" value="<%=request.getParameter("queryUserType")%>">
+				 	<%-- 查询类型 --%>
+				 	<input class="nui-hidden" name="paramObject/queryType" value="BONDREPURCHASE">
+	                <table id="table1" class="table" style="height:100%;table-layout:fixed;">
+	                	<tr>
+	                		<td class="form_label" width="10%">
+								成交日期:
+	                        </td>
+	                        <td colspan="1" width="30%">
+	                        	从<input id="lHgDateBegin_JYSZQXYHG" class="nui-datepicker" name="paramObject/lHgDateBegin" width="100px" required="false"/>
+								到<input id="lHgDateEnd_JYSZQXYHG" class="nui-datepicker" name="paramObject/lHgDateEnd" width="100px" required="false"/>
+	                        </td>
+	                        <td class="form_label" width="7%">
+								基金名称:
+	                        </td>
+	                        <td colspan="1" width="16%">
+	                            <input id="vcFundName_JYSZQXYHG" class="nui-buttonedit" name="paramObject/vCFundCode" onbuttonclick="ButtonClickGetFundName_JYSZQXYHG"/>
+	                        </td>
+	                        <td class="form_label" width="7%">
+								委托方向:
+	                        </td>
+	                        <td colspan="1" width="17%">
+	                        	<input id="cEntrustDirection_JYSZQXYHG" class="nui-combobox" name="paramObject/cEntrustDirection" 
+	                            textField="entrustName" valueField="entrustDirection" dataField="resData" multiSelect="true"
+	                            url="com.cjhxfund.jy.ProductProcess.ZhxxcxUtilBiz.queryEntrustDirection.biz.ext"/>
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                    	<td class="form_label" width="10%">
+								到期结算日期:
+	                        </td>
+	                        <td colspan="1" width="30%">
+	                        	从<input id="lSecondSettleDateBegin_JYSZQXYHG" class="nui-datepicker" name="paramObject/lSecondSettleDateBegin" width="100px" required="false"/>
+								到<input id="lSecondSettleDateEnd_JYSZQXYHG" class="nui-datepicker" name="paramObject/lSecondSettleDateEnd" width="100px" required="false"/>
+	                        </td>
+	                        <td class="form_label" width="7%">
+								质押券代码:
+	                        </td>
+	                        <td colspan="1" width="17%">
+	                            <input id="vCReportCode_JYSZQXYHG" class="nui-textbox" name="paramObject/vCReportCode"/>
+	                        </td>
+	                        <td colspan="4">
+	                        	<input class='nui-button' plain='false' text="查询" iconCls="icon-search" onclick="search_JYSZQXYHG()"/>
+	                        	<input class='nui-button' plain='false' text="重置" iconCls="icon-cancel"  onclick="resetDire_JYSZQXYHG()"/>
+	                            <input id="export_JYSZQXYHG" class='nui-button' plain='false' text="导出" iconCls="icon-download" onclick="export_JYSZQXYHG()"/>
+	                        </td>
+	                    </tr>
+					</table>
+				</form>
+			  </div>
+		   </div>
+		   <%-- 交易所债券协议回购查询条件结束!!! --%>
+		   
+		   <%-- 交易所债券协议回购列表开始... --%>
+           <div class="nui-fit">
+                <div 
+                        id="datagrid_JYSZQXYHG"
+                        dataField="resultObjectList"
+                        class="nui-datagrid"
+                        style="width:100%;height:100%;"
+                        url="com.cjhxfund.jy.ProductProcess.ZhxxcxUtilBiz.queryZHXX.biz.ext"
+                        pageSize="50"
+                        showPageInfo="true"
+                        allowSortColumn="true"
+                        sortMode="client"
+                        enableHotTrack="true"
+                        sizeList="[10,20,50,100]">
+
+                    <div property="columns">
+                        <div type="indexcolumn"></div>
+                        <div field="VC_FUND_NAME" headerAlign="center" allowSort="true" align="left" width="150px">
+                            基金名称
+                        </div>
+                        <div field="VC_COMBI_NAME" headerAlign="center" allowSort="true" align="left" width="100px">
+                            组合名称
+                        </div>
+                        <div field="C_ENTRUST_DIRECTION" headerAlign="center" allowSort="true" align="center" width="75px">
+                            委托方向
+                        </div>
+                        <div field="C_HG_TYPE" headerAlign="center" allowSort="true" align="center" width="75px">
+                            回购类型
+                        </div>
+                        <div field="VC_REPORT_CODE" headerAlign="center" allowSort="true" align="left" width="100px">
+                            质押券代码
+                        </div>
+                        <div field="VC_STOCK_NAME" headerAlign="center" allowSort="true" align="left" width="100px">
+                            质押券简称
+                        </div>
+                        <div field="L_DEAL_AMOUNT" headerAlign="center" allowSort="true" align="right" width="120px">
+                            质押数量（手）
+                        </div>
+                        <div field="EN_BALANCE" headerAlign="center" allowSort="true" align="right" width="120px">
+                           质押券面值总额
+                        </div>
+                        <div field="L_HG_DATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                           成交日期
+                        </div>
+                        <div field="L_REDEEM_LAWDATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                           法定购回日期
+                        </div>
+                        <div field="EN_FIRST_CLEAR_BALANCE" headerAlign="center" allowSort="true" align="right" width="120px">
+                            成交金额
+                        </div>
+                        <div field="EN_CONVERT" headerAlign="center" allowSort="true" align="right" width="120px">
+                            折算率(%)
+                        </div>
+                        <div field="EN_RATE" headerAlign="center" allowSort="true" align="right" width="120px">
+                            回购利率
+                        </div>
+                        <div field="L_REDEEM_DAYS" headerAlign="center" allowSort="true" align="right" width="85px">
+                            回购天数
+                        </div>
+                        <div field="L_REDEEM_LIQUIDATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                            实际回购到期日
+                        </div>
+                        <div field="L_USE_DAYS" headerAlign="center" allowSort="true" align="center" width="85px">
+                            实际占款天数
+                        </div>
+                        <div field="EN_SECOND_CLEAR_BALANCE" headerAlign="center" allowSort="true" align="right" width="120px">
+                            到期结算金额
+                        </div>
+                        <div field="L_FIRST_SETTLE_DATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                            首期结算日
+                        </div>
+                        <div field="L_SECOND_SETTLE_DATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                            到期结算日
+                        </div>
+                        <div field="L_END_DATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                            摘牌日
+                        </div>
+                        <div field="L_NEXTPAYMENT_DATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                            下一付息日
+                        </div>
+                        <div field="EN_BOND_INTEREST" headerAlign="center" allowSort="true" align="right" width="120px">
+                            本期结算利息
+                        </div>
+                        <div field="VC_NAME" headerAlign="center" allowSort="true" align="left" width="100px">
+                            对手方交易商简称
+                        </div>
+                        <div field="C_MARKET_NO" headerAlign="center" allowSort="true" align="left" width="100px">
+                            交易所
+                        </div>
+                        <div field="C_INSIDE_APPRAISE" headerAlign="center" allowSort="true" align="left" width="100px">
+                            内部评级
+                        </div>
+                        <div field="C_OUTER_APPRAISE" headerAlign="center" allowSort="true" align="left" width="100px">
+                            外部评级
+                        </div>
+                        <div field="L_OPERATOR_NO" headerAlign="center" allowSort="true" align="left" width="100px">
+                            操作员
+                        </div>
+                        <div field="L_DATE" headerAlign="center" allowSort="true" align="center" width="85px">
+                          日期
+                        </div>
+                        <!-- <div field="" headerAlign="center" allowSort="true" align="left" width="100px">
+                            质押券所在基金名称
+                        </div>
+                        <div field="" headerAlign="center" allowSort="true" align="left" width="100px">
+                            质押券所在组合名称
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <%-- 交易所债券协议回购列表结束!!! --%>
+		</div>
+
+<script type="text/javascript">
+    nui.parse();
+    var businDay = '<%=businDay%>';//当前交易日
+    var preDate = '<%=preDate%>';//上一个交易日
+    var grid_JYSZQXYHG = nui.get("datagrid_JYSZQXYHG");//交易所债券协议回购
+    nui.get("lHgDateBegin_JYSZQXYHG").setValue(businDay);//设置默认起始日期
+	nui.get("lHgDateEnd_JYSZQXYHG").setValue(businDay);//设置默认截止日期
+    var refreshInt = true;//刚刚打开页面时，投顾默认刷新，交易员默认不刷新
+    var queryUserTypeTemp = "<%=request.getParameter("queryUserType")%>";
+	if(queryUserTypeTemp!=null && queryUserTypeTemp!="" && queryUserTypeTemp!="null"){
+		refreshInt = false;
+	}
+	//初始化查询条件业务日期值为当天
+    var date = new Date();
+    
+    //tab标签切换时重新加载查询激活的tab标签的记录--所有业务通用
+	function activechangedFun(){
+		if(refreshInt==false){
+			return;
+		}
+		search_JYSZQXYHG();
+	}
+	
+	//系统自动刷新页面--所有业务通用
+    function autoRefreshFun(){
+    	refreshInt = true;//打开页面之后设置值为true
+    	activechangedFun();//同时刷新查询列表数据
+    }
+    self.setInterval("autoRefreshFun()",60000*5);//设置自动刷新时间默认5分钟
+	
+	<%-- 交易所债券协议回购查询开始... --%>
+	//查询
+	function search_JYSZQXYHG() {
+		search(grid_JYSZQXYHG, "#form_JYSZQXYHG");
+	}
+	//获取查询条件的基金名称
+	function ButtonClickGetFundName_JYSZQXYHG(e){
+	
+        ButtonClickGetFundName(this);
+	}
+	//表格行增加样式
+	grid_JYSZQXYHG.on("drawcell", function (e) {
+    	var record = e.record;
+    	var dateStr = nui.formatDate(date,"yyyyMMdd");
+		//设置行样式，当“法定购回日期”或“实际购回日期”或“购回交割日期”等于当天时，记录字体红色
+		if(dateStr==record.L_REDEEM_LIQUIDATE || dateStr==record.L_SETTLE_DATE){
+			e.rowCls = "warn_red";
+		}
+	});
+	//导出
+	function export_JYSZQXYHG(){
+		exportSubmit("export_JYSZQXYHG", "form_JYSZQXYHG", "交易所债券协议回购");
+	}
+	<%-- 交易所债券协议回购查询结束!!! --%>
+	//重置指令/建议信息
+	function resetDire_JYSZQXYHG(){
+		var form = new nui.Form("form_JYSZQXYHG");
+		form.reset();
+	}
+</script>
+</body>
+</html>

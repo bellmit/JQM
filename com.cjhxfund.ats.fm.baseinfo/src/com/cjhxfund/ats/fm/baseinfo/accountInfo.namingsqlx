@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:翟静 -->
+<sqlMap>
+    <!--
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    -->
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.applyTemplet.TAtsCompanyInfo" id="resultMap">
+        <result column="L_COMPANY_ID" javaType="int" property="lCompanyId"/>
+        <result column="VC_COMPANY_NAME" javaType="string" property="vcCompanyName"/>
+        <result column="VC_COMPANY_LEGALIZER" javaType="string" property="vcCompanyLegalizer"/>
+        <result column="VC_BUSINESS_LICENCE" javaType="string" property="vcBusinessLicence"/>
+        <result column="VC_POSTAL_ADDRESS" javaType="string" property="vcPostalAddress"/>
+        <result column="VC_REGISTERED_ADDRESS" javaType="string" property="vcRegisteredAddress"/>
+        <result column="VC_POST_CODE" javaType="string" property="vcPostCode"/>
+        <result column="VC_OPERATOR_NAME" javaType="string" property="vcOperatorName"/>
+        <result column="VC_OPERATOR_IDCARD" javaType="string" property="vcOperatorIdcard"/>
+        <result column="VC_TELEPHONE" javaType="string" property="vcTelephone"/>
+        <result column="VC_PHONE" javaType="string" property="vcPhone"/>
+        <result column="VC_EMAIL" javaType="string" property="vcEmail"/>
+        <result column="VC_REMARKS" javaType="string" property="vcRemarks"/>
+    </resultMap>
+    
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.applyTemplet.TAtsAccountInfo" id="resultMapBaseOnAccountInfo">
+        <result column="l_account_id" javaType="int" property="lAccountId"/>
+        <result column="l_product_id" javaType="int" property="lProductId"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_payment_place" javaType="string" property="vcPaymentPlace"/>
+        <result column="vc_account_type" javaType="string" property="vcAccountType"/>
+        <result column="vc_account_name" javaType="string" property="vcAccountName"/>
+        <result column="vc_account_no" javaType="string" property="vcAccountNo"/>
+        <result column="vc_trustee_seat_no_sh" javaType="string" property="vcTrusteeSeatNoSh"/>
+        <result column="vc_trustee_seat_no_sz" javaType="string" property="vcTrusteeSeatNoSz"/>
+        <result column="vc_trustee_place" javaType="string" property="vcTrusteePlace"/>
+        <result column="vc_large_payment_no" javaType="string" property="vcLargePaymentNo"/>
+        <result column="vc_bank_account" javaType="string" property="vcBankAccount"/>
+        <result column="c_source" javaType="string" property="cSource"/>
+        <result column="c_status" javaType="string" property="cStatus"/>
+        <result column="vc_remarks" javaType="string" property="vcRemarks"/>
+    </resultMap>
+    
+    <!--author:胥思明   获取账户信息 -->
+	<select id="getAccountByProduct" parameterClass="java.util.HashMap" resultMap="resultMapBaseOnAccountInfo">
+    	select l_account_id,
+	           l_product_id,
+	           vc_product_code,
+	           vc_product_name,
+	           case when vc_payment_place = '中债登' then '01' when vc_payment_place = '上清所' then '02' end as vc_payment_place,
+	           vc_account_type,
+	           vc_account_name,
+	           vc_account_no,
+	           vc_trustee_seat_no_sh,
+	           vc_trustee_seat_no_sz,
+	           vc_trustee_place,
+	           vc_large_payment_no,
+	           vc_remarks,
+	           vc_bank_account,
+	           c_source,
+               c_status
+       from t_ats_account_info
+	 WHERE c_status in (0,1,2,3,4)
+		  <isNotNull property="lProductId">
+		  		AND l_product_id like '%'||#lProductId#||'%' 
+		  </isNotNull>
+		  <isNotNull property="vcPaymentPlace">
+		  		AND vc_payment_place like '%'||#vcPaymentPlace#||'%' 
+		  </isNotNull>
+		   <isNotNull property="vcProductCode">
+		        AND vc_product_code like '%'||#vcProductCode#||'%' 
+		  </isNotNull>
+		   <isNotNull property="vcAccountType">
+		        AND vc_account_type like '%'||#vcAccountType#||'%' 
+		  </isNotNull>
+		   <isNotNull property="vcProductName">
+		        AND vc_product_name like '%'||#vcProductName#||'%'
+		  </isNotNull>
+		   <isNotNull property="vcAccountNo">
+		        AND vc_account_no like '%'||#vcAccountNo#||'%'
+		  </isNotNull>
+		  <isNotNull property="sortField">
+		  		order by $sortField$ 
+		  </isNotNull>
+		  <isNotNull property="sortOrder">
+		  		 $sortOrder$ 
+		  </isNotNull>
+	</select>
+	
+	    
+    <select id="getCompanyInfoWithPage" parameterClass="java.util.HashMap" resultMap="resultMap">
+	  select  
+	    L_COMPANY_ID,
+	    VC_COMPANY_NAME,
+	    VC_COMPANY_LEGALIZER,
+	    VC_BUSINESS_LICENCE,
+	    VC_POSTAL_ADDRESS,
+	    VC_REGISTERED_ADDRESS,
+	    VC_POST_CODE,
+	    VC_OPERATOR_NAME,
+	    VC_OPERATOR_IDCARD,
+	    VC_TELEPHONE,
+	    VC_PHONE,
+	    VC_EMAIL,
+	    VC_REMARKS
+	  from t_ats_company_info
+      WHERE 1=1
+		  <isNotNull property="lCompanyId">
+		  		AND L_COMPANY_ID like '%'||#lCompanyId#||'%' 
+		  </isNotNull>
+		   <isNotNull property="vcCompanyName">
+		        AND VC_COMPANY_NAME like '%'||#vcCompanyName#||'%' 
+		  </isNotNull>
+		   <isNotNull property="vcCompanyLegalizer">
+		        AND VC_COMPANY_LEGALIZER like '%'||#vcCompanyLegalizer#||'%'
+		  </isNotNull>
+		   <isNotNull property="vcBusinessLicence">
+		        AND VC_BUSINESS_LICENCE like '%'||#vcBusinessLicence#||'%'
+		  </isNotNull>
+		  <isNotNull property="vcOperatorName">
+		        AND VC_OPERATOR_NAME like '%'||#vcOperatorName#||'%'
+		  </isNotNull>
+		   <isNotNull property="vcRemarks">
+		  		AND VC_REMARKS like '%'||#vcRemarks#||'%'
+		  </isNotNull>
+		  <isNotNull property="sortField">
+		  		order by $sortField$ 
+		  </isNotNull>
+		  <isNotNull property="sortOrder">
+		  		 $sortOrder$ 
+		  </isNotNull>
+    </select>
+    
+</sqlMap>

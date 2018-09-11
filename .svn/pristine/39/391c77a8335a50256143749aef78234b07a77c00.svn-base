@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:杨敏 -->
+<sqlMap>
+     <resultMap class="com.cjhxfund.ats.fm.comm.comm.TAtsProductInfo" id="resultMapForProductInfo">
+        <result column="l_product_id" javaType="int" property="lProductId"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_product_caption" javaType="string" property="vcProductCaption"/>
+        <result column="l_default_asset" javaType="int" property="lDefaultAsset"/>
+        <result column="l_default_combi" javaType="int" property="lDefaultCombi"/>
+        <result column="l_open_date" javaType="int" property="lOpenDate"/>
+        <result column="l_end_date" javaType="int" property="lEndDate"/>
+        <result column="c_product_type" javaType="string" property="cProductType"/>
+        <result column="c_product_status" javaType="string" property="cProductStatus"/>
+        <result column="vc_remarks" javaType="string" property="vcRemarks"/>
+        <result column="en_product_share" javaType="double" property="enProductShare"/>
+        <result column="vc_currency_no" javaType="string" property="vcCurrencyNo"/>
+        <result column="vc_permit_market" javaType="string" property="vcPermitMarket"/>
+        <result column="c_multi_currency" javaType="string" property="cMultiCurrency"/>
+        <result column="c_cash_addup" javaType="string" property="cCashAddup"/>
+        <result column="l_business_date" javaType="int" property="lBusinessDate"/>
+        <result column="vc_cash_control_point" javaType="string" property="vcCashControlPoint"/>
+        <result column="vc_stock_control_point" javaType="string" property="vcStockControlPoint"/>
+        <result column="c_invest_type" javaType="string" property="cInvestType"/>
+        <result column="c_invest_advise_check" javaType="int" property="cInvestAdviseCheck"/>
+        <result column="c_invest_client_check" javaType="int" property="cInvestClientCheck"/>
+        <result column="vc_custodian_name" javaType="string" property="vcCustodianName"/>
+        <result column="vc_admin_name" javaType="string" property="vcAdminName"/>
+        <result column="vc_investment_advisor" javaType="string" property="vcInvestmentAdvisor"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="TreeORProductInfo">
+        <result column="l_product_id" javaType="int" property="lProductId"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_product_caption" javaType="string" property="vcProductCaption"/>
+        <result column="l_default_asset" javaType="int" property="lDefaultAsset"/>
+        <result column="l_default_combi" javaType="int" property="lDefaultCombi"/>
+        <result column="l_open_date" javaType="int" property="lOpenDate"/>
+        <result column="l_end_date" javaType="int" property="lEndDate"/>
+        <result column="c_product_type" javaType="string" property="cProductType"/>
+        <result column="c_product_status" javaType="string" property="cProductStatus"/>
+        <result column="vc_remarks" javaType="string" property="vcRemarks"/>
+        <result column="en_product_share" javaType="double" property="enProductShare"/>
+        <result column="vc_currency_no" javaType="string" property="vcCurrencyNo"/>
+        <result column="vc_permit_market" javaType="string" property="vcPermitMarket"/>
+        <result column="c_multi_currency" javaType="string" property="cMultiCurrency"/>
+        <result column="c_cash_addup" javaType="string" property="cCashAddup"/>
+        <result column="l_business_date" javaType="int" property="lBusinessDate"/>
+        <result column="vc_cash_control_point" javaType="string" property="vcCashControlPoint"/>
+        <result column="vc_stock_control_point" javaType="string" property="vcStockControlPoint"/>
+        <result column="c_invest_type" javaType="string" property="cInvestType"/>
+        <result column="c_invest_advise_check" javaType="int" property="cInvestAdviseCheck"/>
+        <result column="c_invest_client_check" javaType="int" property="cInvestClientCheck"/>
+        <result column="l_level" javaType="int" property="llevel"/>
+        <result column="vc_custodian_name" javaType="string" property="vcCustodianName"/>
+        <result column="vc_admin_name" javaType="string" property="vcAdminName"/>
+        <result column="vc_investment_advisor" javaType="string" property="vcInvestmentAdvisor"/>
+    </resultMap>
+   <select id="queryProductList" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForProductInfo">
+    	select p.l_product_id,
+           p.vc_product_code,
+           p.vc_product_name,
+           p.vc_product_caption,
+           p.l_default_asset,
+           p.l_default_combi,
+           p.l_open_date,
+           p.l_end_date,
+           p.c_product_type,
+           p.c_product_status,
+           p.vc_remarks,
+           p.en_product_share,
+           p.vc_currency_no,
+           p.vc_permit_market,
+           p.c_multi_currency,
+           p.c_cash_addup,
+           p.l_business_date,
+           p.vc_cash_control_point,
+           p.vc_stock_control_point,
+           p.c_invest_type,
+           p.c_invest_advise_check,
+           p.c_invest_client_check,
+           p.vc_custodian_name,
+           p.vc_admin_name,
+           p.vc_investment_advisor
+        from t_ats_product_info p ,T_ATS_PRODUCT_TREE pt 
+        where pt.l_product_id=p.l_product_id 
+  		<isNotNull prepend="AND" property="lParentId">
+           pt.l_parent_id = #lParentId#
+       	</isNotNull>
+    </select>
+    
+    <select id="queryProductOrTree" parameterClass="java.util.Map" resultMap="TreeORProductInfo">
+    	select p.l_product_id,
+           p.vc_product_code,
+           p.vc_product_name,
+           p.vc_product_caption,
+           p.l_default_asset,
+           p.l_default_combi,
+           p.l_open_date,
+           p.l_end_date,
+           p.c_product_type,
+           p.c_product_status,
+           p.vc_remarks,
+           p.en_product_share,
+           p.vc_currency_no,
+           p.vc_permit_market,
+           p.c_multi_currency,
+           p.c_cash_addup,
+           p.l_business_date,
+           p.vc_cash_control_point,
+           p.vc_stock_control_point,
+           p.c_invest_type,
+           p.c_invest_advise_check,
+           p.c_invest_client_check,
+           pt.l_level,
+           p.vc_custodian_name,
+           p.vc_admin_name,
+           p.vc_investment_advisor
+        from t_ats_product_info p ,T_ATS_PRODUCT_TREE pt 
+        where pt.l_product_id=p.l_product_id 
+  		<isNotNull prepend="AND" property="lProductId">
+           p.l_product_id = #lProductId#
+       	</isNotNull>
+    </select>
+    
+   <resultMap id="combineInstructInfo" class="commonj.sdo.DataObject">
+		<result column="vc_instruct_source" javaType="string" property="vcInstructSource"/><!-- 指令来源： 1-机器猫下的指令,2-CJAPI接口过来的数据,3-二级债 -->
+		<result column="l_instruct_no" javaType="long" property="lInstructNo"/><!-- 指令序号  -->
+        <result column="vc_biz_type" javaType="string" property="vcBizType"/><!-- 业务类型 -->
+        <result column="vc_instruct_type" javaType="string" property="vcInstructType"/><!-- 指令类型 -->
+        <result column="L_RESULT_ID" javaType="long" property="lResultId"/><!-- 询价结果ID -->
+        <result column="L_RESULT_NO" javaType="long" property="lResultNo"/><!-- 询价结果序号 -->
+        <result column="VC_CLORD_ID" javaType="string" property="vcClordId"/><!-- 第三方指令ID -->
+        <result column="VC_ORIGORD_ID" javaType="string" property="vcOrigordId"/><!-- 修改前第三方指令ID -->
+        <result column="L_FIX_VALID_STATUS" javaType="int" property="lFixValidStatus"/><!-- 指令发送O32状态 -->
+        <result column="VC_INSTRUCTIONNO" javaType="string" property="vcInstructionno"/><!-- O32内部指令序号 -->
+        <result column="L_MODIFY_ORDER" javaType="long" property="lModifyOrder"/><!-- 指令修改次序 -->
+        <result column="C_IS_VALID" javaType="string" property="cIsValid"/><!-- 指令状态-->
+        <result column="VC_RISK_APPROVE_STATUS" javaType="string" property="vcRiskApproveStatus"/><!-- 风控审批状态 -->
+        <result column="VC_REJECT_REASON" javaType="string" property="vcRejectReason"/><!-- 退回原因-->
+        <result column="L_PROCESSINST_ID" javaType="long" property="lProcessinstId"/><!-- 流程实例ID -->
+        <result column="VC_PROCESS_STATUS" javaType="string" property="vcProcessStatus"/><!-- 流程状态 -->
+        <result column="L_RESULT_DATE" javaType="long" property="lResultDate"/><!-- 询价结果录入日期 -->
+        <result column="T_RESULT_INPUT_TIME" javaType="Date" property="tResultInputTime"/><!-- 询价结果录入时间 -->
+        <result column="VC_RESULT_INPUTER_NAME" javaType="string" property="vcResultInputerName"/><!-- 询价结果录入人 -->
+        <result column="VC_FS_SENDER_NAME" javaType="string" property="vcFsSenderName"/><!-- 前台发送人（投资经理） -->
+        <result column="T_FS_SEND_TIME" javaType="Date" property="tFsSendTime"/><!-- 投资经理确认时间 -->
+        <result column="VC_MODIFIER_NAME" javaType="string" property="vcModifierName"/> <!-- 指令修改人-->
+        <result column="T_MODIFY_TIME" javaType="Date" property="tModifyTime"/><!-- 指令修改时间 -->
+        <result column="VC_REPEALER_NAME" javaType="string" property="vcRepealerName"/><!-- 指令撤销人 -->
+        <result column="T_REPEAL_TIME" javaType="Date" property="tRepealTime"/><!-- 指令撤销时间 -->
+        <result column="VC_FS_OPERATOR_NAME" javaType="string" property="vcFsOperatorName"/><!-- 前台录单人（录单确认人）-->
+        <result column="T_FS_OPERATE_TIME" javaType="Date" property="tFsOperateTime"/><!-- 前台录单时间（录单确认时间）-->        
+        <result column="VC_FS_CHECKER_NAME" javaType="string" property="vcFsCheckerName"/><!-- 前台复核人（录单复核人）-->
+        <result column="T_FS_CHECK_TIME" javaType="Date" property="tFsCheckTime"/><!-- 前台复核时间（录单复核时间）-->
+        <result column="VC_FS_DEAL_ID" javaType="string" property="vcFsDealId"/><!-- 前台成交编号 -->
+        <result column="VC_FS_DEAL_STATUS" javaType="string" property="vcFsDealStatus"/><!-- 前台成交状态 -->
+        <result column="T_FS_DEAL_TIME" javaType="Date" property="tFsDealTime"/><!-- 前台成交时间 -->
+        <result column="VC_BS_DEAL_STATUS" javaType="string" property="vcBsDealStatus"/><!-- 后台成交状态 -->
+        <result column="VC_REMARK" javaType="string" property="vcRemark"/>
+        <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/><!-- 产品代码 -->
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/><!-- 产品名称 -->
+        <result column="VC_ASSET_CODE" javaType="string" property="vcAssetCode"/><!-- 资产单元代码 -->
+        <result column="VC_COMBI_CODE" javaType="string" property="vcCombiCode"/><!-- 组合代码 -->
+        <result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/><!-- 组合名称 -->
+        <result column="VC_STOCK_INNER_CODE" javaType="string" property="vcInterCode"/><!-- O32债券内码 -->
+        <result column="VC_STOCK_CODE" javaType="string" property="vcStockCode"/><!-- 债券代码 -->
+        <result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/><!-- 债券名称 -->
+        <result column="VC_MARKET" javaType="string" property="vcMarket"/><!-- 交易市场 -->
+        <result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/><!-- 债券类型 -->
+        <result column="VC_STOCKTYPE_NAME" javaType="string" property="vcStocktypeName"/><!-- 债券类型名称 -->
+        <result column="VC_ORG_RATING" javaType="string" property="vcOrgRating"/><!-- 主体评级 （结果）-->
+        <result column="VC_BOND_RATING" javaType="string" property="vcBondRating"/><!-- 债券评级（结果） -->
+        <result column="EN_MATURITY_YIELD" javaType="string" property="enMaturityYield"/><!-- 到期收益率（结果） -->
+        <result column="EN_OPTION_YIELD" javaType="string" property="enOptionYield"/><!-- 行权收益率（结果） -->
+        <result column="EN_FACE_AMOUNT" javaType="string" property="enFaceAmount"/><!-- 交易券面金额（买卖、质押式）-->
+        <result column="EN_FULL_PRICE_AMOUNT" javaType="string" property="enFullPriceAmount"/><!-- 回购金额(买断式回购业务) -->
+        <result column="VC_QUOTE_MODE" javaType="string" property="vcQuoteMode"/><!-- 报价方式 -->
+        <result column="EN_NET_PRICE" javaType="string" property="enNetPrice"/><!-- 净价 -->     
+        <result column="EN_FULL_PRICE" javaType="string" property="enFullPrice"/><!-- 全价 -->
+        <result column="EN_NET_PRICE_AMOUNT" javaType="string" property="enNetPriceAmount"/><!-- 净价金额 -->
+        <result column="L_LEFT_DAYS" javaType="string" property="lLeftDays"/><!-- 剩余期限 -->
+        <result column="EN_DURATION" javaType="double" property="enDuration"/><!-- 久期 -->
+        <result column="VC_ENTRUST_DIRECTION" javaType="string" property="vcEntrustDirection"/><!-- 委托方向 -->
+        <result column="L_TRADE_DATE" javaType="long" property="lTradeDate"/><!-- 交易日期 -->
+        <result column="L_FIRST_SETTLE_DATE" javaType="long" property="lFirstSettleDate"/><!--（首次）结算日 -->
+        <result column="L_MATURITY_SETTLE_DATE" javaType="long" property="lMaturitySettleDate"/><!-- 到期结算日 -->
+        <result column="EN_REPO_RATE" javaType="string" property="enRepoRate"/><!-- 回购利率 -->
+        <result column="EN_WEIGHTING_VALUE" javaType="double" property="enWeightingValue"/><!-- 加权加点值 -->
+        <result column="L_REPO_DAYS" javaType="string" property="lRepoDays"/><!-- 回购天数 -->
+        <result column="EN_REPO_INTEREST" javaType="long" property="enRepoInterest"/><!-- 回购利息 -->
+        <result column="L_CONTRACT_PERIODS" javaType="long" property="lContractPeriods"/><!-- 占款天天数 -->
+        <result column="EN_SETTLE_AMOUNT" javaType="double" property="enSettleAmount"/><!-- 到期结算金额 -->
+        <result column="VC_SETTLE_SPEED" javaType="string" property="vcSettleSpeed"/><!-- 清算速度 -->
+        <result column="VC_COUNTERPARTY_ID" javaType="string" property="vcCounterpartyId"/><!-- 交易对手编号-->
+        <result column="VC_COUNTERPARTY_NAME" javaType="string" property="vcCounterpartyName"/><!-- 交易对手名称-->
+      	<result column="VC_COUNTERPARTY_TRADER" javaType="string" property="vcCounterpartyTrader"/><!-- 对方交易员-->
+      	<result column="VC_AGREEMT_CODE" javaType="string" property="vcAgreemtCode"/><!-- 约定号-->
+      	<result column="VC_RIVAL_SEAT" javaType="string" property="vcRivalSeat"/><!-- 对手席位-->
+      	<result column="VC_LIMIT_LEFT" javaType="string" property="vcLimitLeft"/><!-- 剩余期限-->
+      	<result column="VC_COUNTERPARTY_ORGAN" javaType="string" property="vcCounterpartyOrgan"/><!-- 对手主体机构 -->
+      	<result column="VC_ADVISER_CONFIRM" javaType="string" property="vcAdviserConfirm"/><!-- 投顾确认  -->
+        <result column="VC_ENTRUST_CONFIRM" javaType="string" property="vcEntrustConfirm"/><!-- 委托人确认  -->
+      	<result column="C_FIX_ENABLE" javaType="string" property="cFixEnable"/><!-- 是否通过fix下到O32：1-通过fix，0-不通过fix -->
+      	<result column="T_BS_DEAL_TIME" javaType="Date" property="tBsDealTime"/><!-- 后台成交时间 -->
+	</resultMap>
+    <!-- 二级债业务指令信息(指令导出) -->
+    <select id="querySmInstructionInfo" parameterClass="commonj.sdo.DataObject" resultMap="combineInstructInfo">
+          select t.*,(select wmsys.wm_concat(h.VC_USER_ID)
+          from T_ATS_PRODUCT_HANDLE h
+         where h.VC_RELATE_TYPE = '02'
+           and h.VC_PRODUCT_CODE = t.vc_product_code
+           and h.vc_combi_no = t.vc_combi_code) user_id_rela_type02 from vw_all_instruct t
+	      	where 
+            1 = 1
+			<isNotNull property="tradeDate_begin">
+	        	and t.l_trade_date &gt;= #tradeDate_begin#
+	      	</isNotNull>
+	      	<isNotNull property="tradeDate_end">
+	        	and t.l_trade_date &lt;= #tradeDate_end#
+	      	</isNotNull>
+	      	<isNotNull property="vcProductCode">
+	        	and t.vc_product_code in ($vcProductCode$)
+	      	</isNotNull>
+            <isNotNull property="vcCombiNos">
+          		and t.vc_combi_code in ($vcCombiNos$)
+      	 	</isNotNull>
+      		order by t.l_result_no desc, decode(t.c_is_valid,'1','1','2') asc, t.t_result_input_time desc
+    </select>
+	
+	<resultMap class="commonj.sdo.DataObject" id="exportInquiryMortagages">
+    	<result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/><!-- 产品名称  -->
+    	<result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/><!-- 组合名称  -->
+		<result column="VC_STOCK_CODE" javaType="string" property="vcStockCode"/><!-- 债券代码  -->
+        <result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/><!-- 债券名称 -->
+        <result column="VC_EXCHANGE" javaType="string" property="vcExchange"/><!-- 证券所属交易所 -->
+        <result column="VC_DEPOSITORY" javaType="string" property="vcDepository"/><!-- 托管机构 -->
+        <result column="EN_FACE_AMOUNT" javaType="string" property="enFaceAmount"/><!-- 券面金额 -->
+        <result column="EN_MORTAGAGE_RATIO" javaType="string" property="enMortagageRatio"/><!-- 质押比率 -->
+        <result column="EN_NET_PRICE_INIT" javaType="double" property="enNetPriceInit"/><!-- 首次净价 -->
+        <result column="EN_NET_PRICE_FINAL" javaType="double" property="enNetPriceFinal"/><!-- 到期净价 -->
+        <result column="EN_FIRST_YIELD" javaType="double" property="enFirstYield"/><!-- 首次收益率（%） -->
+        <result column="EN_MATURITY_YIELD" javaType="double" property="enMaturityYield"/><!-- 到期收益率（%)-->
+        <result column="L_MORTAGAGE_ID" javaType="long" property="lMortagageId"/><!-- id -->
+
+	</resultMap>
+    <!-- 导出获取指令询价结果质押券 -->
+    <select id="exportGetResultMortagages" parameterClass="java.lang.String" resultMap="exportInquiryMortagages">
+		 select
+		 	m.l_mortagage_id,
+		 	m.vc_product_name,
+       		   m.vc_combi_name,
+       		   m.vc_stock_code,
+		       m.vc_stock_name,
+		       m.vc_exchange,
+		       m.vc_depository,
+		       m.en_face_amount,
+		       m.en_mortagage_ratio,
+		       m.en_net_price_init,
+		       m.en_net_price_final,
+		       m.EN_FIRST_YIELD,
+		       m.EN_MATURITY_YIELD
+		  from t_ats_inquiry_result_mortagage m
+		 where m.l_result_id=#value#
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="productProcessHandleMap">
+		<result column="user_id_rela_type02" javaType="string" property="userIdRelaType02"/><!-- 投顾权限用户 -->
+	</resultMap>
+    <!-- 根据指令id获取指令有产品权限的用户 -->
+    <select id="getProductProcessHandle" parameterClass="java.lang.Long" resultMap="productProcessHandleMap">
+    	select  (select wmsys.wm_concat(t.VC_USER_ID)
+          from T_ATS_PRODUCT_HANDLE t
+         where t.VC_RELATE_TYPE = '02'
+           and t.VC_PRODUCT_CODE = t1.comb_product_code
+           and t.vc_combi_no = t1.vc_combi_no) user_id_rela_type02
+  		from CF_JY_PRODUCT_PROCESS t1
+  		where t1.process_Id = #processId#
+    </select>
+    
+</sqlMap>

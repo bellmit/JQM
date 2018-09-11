@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:刘玉龙 -->
+<sqlMap>
+
+    <resultMap class="com.cjhxfund.ats.fm.comm.comm.TAtsProductInfo" id="resultMapForProductInfo">
+        <result column="l_product_id" javaType="int" property="lProductId"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_product_caption" javaType="string" property="vcProductCaption"/>
+        <result column="l_default_asset" javaType="int" property="lDefaultAsset"/>
+        <result column="l_default_combi" javaType="int" property="lDefaultCombi"/>
+        <result column="l_open_date" javaType="int" property="lOpenDate"/>
+        <result column="l_end_date" javaType="int" property="lEndDate"/>
+        <result column="c_product_type" javaType="string" property="cProductType"/>
+        <result column="c_product_status" javaType="string" property="cProductStatus"/>
+        <result column="vc_remarks" javaType="string" property="vcRemarks"/>
+        <result column="en_product_share" javaType="double" property="enProductShare"/>
+        <result column="vc_currency_no" javaType="string" property="vcCurrencyNo"/>
+        <result column="vc_permit_market" javaType="string" property="vcPermitMarket"/>
+        <result column="c_multi_currency" javaType="string" property="cMultiCurrency"/>
+        <result column="c_cash_addup" javaType="string" property="cCashAddup"/>
+        <result column="l_business_date" javaType="int" property="lBusinessDate"/>
+        <result column="vc_cash_control_point" javaType="string" property="vcCashControlPoint"/>
+        <result column="vc_stock_control_point" javaType="string" property="vcStockControlPoint"/>
+        <result column="c_invest_type" javaType="string" property="cInvestType"/>
+        <result column="c_invest_advise_check" javaType="int" property="cInvestAdviseCheck"/>
+        <result column="c_invest_client_check" javaType="int" property="cInvestClientCheck"/>
+        <result column="c_source" javaType="int" property="cSource"/>
+        <result column="vc_custodian_name" javaType="string" property="vcCustodianName"/>
+        <result column="vc_admin_name" javaType="string" property="vcAdminName"/>
+        <result column="vc_operation_name" javaType="string" property="vcOperationName"/>
+        <result column="vc_operation_tel" javaType="string" property="vcOperationTel"/>
+        <result column="vc_operation_phone" javaType="string" property="vcOperationPhone"/>
+        <result column="vc_operation_email" javaType="string" property="vcOperationEmail"/>
+        <result column="c_manage_type" javaType="string" property="cManageType"/>
+        <result column="c_instruction_transfer_modus" javaType="string" property="cInstructionTransferModus"/>
+        <result column="vc_authorized_signature" javaType="string" property="vcAuthorizedSignature"/>
+        <result column="vc_print_attach_id" javaType="string" property="vcPrintAttachId"/>
+        <result column="sealAttachPath" javaType="string" property="sealAttachPath"/>
+        <result column="vc_corpor_belong_to" javaType="string" property="vcCorporBelongTo"/>
+        
+    </resultMap>
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.productInfo.TAtsAssetInfo" id="resultMapForAssetInfo">
+        <result column="l_asset_id" javaType="int" property="lAssetId"/>
+        <result column="l_product_id" javaType="int" property="lProductId"/>
+        <result column="vc_asset_name" javaType="string" property="vcAssetName"/>
+        <result column="c_overdraft" javaType="string" property="cOverdraft"/>
+        <result column="vc_remarks" javaType="string" property="vcRemarks"/>
+        <result column="c_trust" javaType="int" property="cTrust"/>
+        <result column="vc_asset_no" javaType="string" property="vcAssetNo"/>
+        <result column="vc_invest_overdraft" javaType="string" property="vcInvestOverdraft"/>
+        <result column="c_asset_status" javaType="int" property="cAssetStatus"/>
+        <result column="c_credit_asset" javaType="int" property="cCreditAsset"/>
+        <result column="c_third_party_custody" javaType="int" property="cThirdPartyCustody"/>
+    </resultMap>
+    
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultMapBaseOnCombiInfo">
+        <result column="l_combi_id" javaType="int" property="lCombiId"/>
+        <result column="vc_combi_no" javaType="string" property="vcCombiNo"/>
+        <result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+        <result column="c_combi_class" javaType="string" property="cCombiClass"/>
+        <result column="l_product_id" javaType="int" property="lProductId"/>
+        <result column="l_asset_id" javaType="int" property="lAssetId"/>
+        <result column="vc_asset_name" javaType="string" property="vcAssetName"/>
+        <result column="l_setup_date" javaType="int" property="lSetupDate"/>
+        <result column="l_end_date" javaType="int" property="lEndDate"/>
+        <result column="c_combi_status" javaType="string" property="cCombiStatus"/>
+        <result column="vc_remark" javaType="string" property="vcRemark"/>
+        <result column="c_invest_type" javaType="string" property="cInvestType"/>
+        <result column="vc_stocktype_right" javaType="string" property="vcStocktypeRight"/>
+        <result column="vc_entrdire_right" javaType="string" property="vcEntrdireRight"/>
+        <result column="vc_permit_market" javaType="string" property="vcPermitMarket"/>
+        <result column="vc_permit_busin_class" javaType="string" property="vcPermitBusinClass"/>
+        <result column="vc_timestamp" javaType="string" property="vcTimestamp"/>
+    </resultMap>
+    
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.applyTemplet.TAtsAccountInfo" id="resultMapBaseOnAccountInfo">
+        <result column="l_account_id" javaType="int" property="lAccountId"/>
+        <result column="l_product_id" javaType="int" property="lProductId"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_payment_place" javaType="string" property="vcPaymentPlace"/>
+        <result column="vc_account_type" javaType="string" property="vcAccountType"/>
+        <result column="vc_account_name" javaType="string" property="vcAccountName"/>
+        <result column="vc_account_no" javaType="string" property="vcAccountNo"/>
+        <result column="vc_trustee_seat_no_sh" javaType="string" property="vcTrusteeSeatNoSh"/>
+        <result column="vc_trustee_seat_no_sz" javaType="string" property="vcTrusteeSeatNoSz"/>
+        <result column="vc_trustee_place" javaType="string" property="vcTrusteePlace"/>
+        <result column="vc_large_payment_no" javaType="string" property="vcLargePaymentNo"/>
+        <result column="vc_remarks" javaType="string" property="vcRemarks"/>
+    </resultMap>
+    
+    <select id="queryProductList" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForProductInfo">
+    	select p.l_product_id,
+		       p.vc_product_code,
+		       p.vc_product_name,
+		       p.vc_product_caption,
+		       p.l_default_asset,
+		       p.l_default_combi,
+		       p.l_open_date,
+		       p.l_end_date,
+		       p.c_product_type,
+		       p.c_product_status,
+		       p.vc_remarks,
+		       p.en_product_share,
+		       p.vc_currency_no,
+		       p.vc_permit_market,
+		       p.c_multi_currency,
+		       p.c_cash_addup,
+		       p.l_business_date,
+		       p.vc_cash_control_point,
+		       p.vc_stock_control_point,
+		       p.c_invest_type,
+		       p.c_invest_advise_check,
+		       p.c_invest_client_check,
+		       p.c_source,
+	           p.vc_custodian_name,
+	           p.vc_admin_name,
+	           p.vc_operation_name,
+	           p.vc_operation_tel,
+	           p.vc_operation_phone,
+	           p.vc_operation_email,
+	           p.c_manage_type,
+	           p.c_instruction_transfer_modus,
+	           p.vc_authorized_signature,
+	           p.vc_print_attach_id,
+	           p.c_instruction_transfer_modus,
+	           p.vc_authorized_signature,
+	           vc_corpor_belong_to,
+	           (select a.vc_attach_add from t_ats_attach_info a where a.l_attach_id = p.vc_print_attach_id) sealAttachPath
+  		from t_ats_product_info p 
+  		where 1=1
+  		<isNotNull prepend="AND" property="vcProductCode">
+           p.vc_product_code like '%'||#vcProductCode#||'%' 
+       	</isNotNull>
+       	<isNotNull prepend="AND" property="vcProductName">
+           p.vc_product_name like '%'||#vcProductName#||'%'
+       	</isNotNull>
+       	<isNotNull prepend="AND" property="cProductType">
+           p.c_product_type = #cProductType#
+       	</isNotNull>
+  		<isNotNull prepend="AND" property="cInvestType">
+           p.c_invest_type = #cInvestType#
+       	</isNotNull>
+       	<isNotNull prepend="AND" property="cProductStatus">
+           p.c_Product_Status = #cProductStatus#
+       	</isNotNull>
+       	<isNotNull prepend="AND" property="cManageType">
+           p.c_Manage_Type = #cManageType#
+       	</isNotNull>
+       	<isNotNull prepend="AND" property="vcCorporBelongTo">
+           p.VC_CORPOR_BELONG_TO = #vcCorporBelongTo#
+       	</isNotNull>
+    </select>
+
+ 	<select id="getAssetByProduct" parameterClass="string" resultMap="resultMapForAssetInfo">
+    	select a.l_asset_id,
+		       a.l_product_id,
+		       a.vc_asset_name,
+		       a.c_overdraft,
+		       a.vc_remarks,
+		       a.c_trust,
+		       a.vc_asset_no,
+		       a.vc_invest_overdraft,
+		       a.c_asset_status,
+		       a.c_credit_asset,
+		       a.c_third_party_custody
+		  from t_ats_asset_info a
+		 where a.l_product_id = #lProductId#    
+	</select>
+
+	<select id="getCombiByProduct" parameterClass="string" resultMap="resultMapBaseOnCombiInfo">
+    	select c.l_combi_id,
+		       c.vc_combi_no,
+		       c.vc_combi_name,
+		       c.c_combi_class,
+		       c.l_product_id,
+		       c.l_asset_id,
+		       a.vc_asset_name,
+		       c.l_setup_date,
+		       c.l_end_date,
+		       c.c_combi_status,
+		       c.vc_remark,
+		       c.c_invest_type,
+		       c.vc_stocktype_right,
+		       c.vc_entrdire_right,
+		       c.vc_permit_market,
+		       c.vc_permit_busin_class,
+		       c.vc_timestamp
+		  from t_ats_combi_info c left join t_ats_asset_info a on c.l_asset_id = a.l_asset_id
+		 where c.l_product_id = #lProductId#   
+	</select>
+	
+	<!--author:胥思明   根据产品ID获取账户信息 -->
+	<select id="getAccountByProduct" parameterClass="string" resultMap="resultMapBaseOnAccountInfo">
+    	select c.l_account_id,
+	           c.l_product_id,
+	           c.vc_product_code,
+	           c.vc_product_name,
+	           c.vc_payment_place,
+	           c.vc_account_type,
+	           c.vc_account_name,
+	           c.vc_account_no,
+	           c.vc_trustee_seat_no_sh,
+	           c.vc_trustee_seat_no_sz,
+	           c.vc_trustee_place,
+	           c.vc_large_payment_no,
+	           c.vc_remarks
+       from t_ats_account_info c left join t_ats_product_info a on c.vc_product_code = a.vc_product_code
+	 where c.vc_product_code = #vcProductCode# 
+	</select>
+
+     <!--查询产品是否已经被引用-->
+    <select id="queryProductTree"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.l_product_id from t_ats_product_tree t where t.l_product_id=#lProductId#
+    </select>
+    
+    <!-- 更新产品信息 -->
+    <update id="updateProductManageType" parameterClass="commonj.sdo.DataObject">
+    	update 
+    		t_ats_product_info t 
+    	set 
+    		t.l_product_id=t.l_product_id
+    	<isNotNull property="cManageType">
+           ,t.c_manage_type = #cManageType#
+       	</isNotNull>
+       	<isNotNull property="cInstructionTransferModus">
+           ,t.c_instruction_transfer_modus = #cInstructionTransferModus#
+       	</isNotNull>
+       	<isNotNull property="vcAuthorizedSignature">
+           ,t.vc_authorized_signature = #vcAuthorizedSignature#
+       	</isNotNull>
+       	<isNotNull property="vcPrintAttachId">
+           ,t.vc_print_attach_id = #vcPrintAttachId#
+       	</isNotNull>
+       	<isNotNull property="vcCorporBelongTo">
+           ,t.vc_Corpor_Belong_To = #vcCorporBelongTo#
+       	</isNotNull>
+    	 where 
+    	 	t.l_product_id=#lProductId#
+    </update>
+    
+    <!--查询产品信息-->
+    <select id="queryProductInfoByApply"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	 select t.vc_product_caption ,
+    	 	t.c_manage_type,
+	        (select e.dictname from eos_dict_entry e where e.dicttypeid = 'instructionTransferModus' and e.dictid =t.c_instruction_transfer_modus) c_instruction_transfer_modus,        
+	        t.vc_authorized_signature,
+	        (select a.vc_attach_add from t_ats_attach_info a where
+	                a.l_attach_id = t.vc_print_attach_id) vc_print_attach_id
+	          from t_ats_product_info t
+         where t.vc_product_code = #vcProductCode#
+    </select>
+</sqlMap>

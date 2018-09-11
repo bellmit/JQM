@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+     <update id="updateAttachment4Process" parameterClass="java.util.Map">
+		update pm_attach_biz info
+		set info.aprv_info_id=#aprvInfoId#
+		where info.file_id in (select a.sysid from pm_sys_attach_info a where a.sysid in ($sysid$) and a.insert_user=#userId#) 
+		and info.aprv_info_id is null
+	</update>
+</sqlMap>

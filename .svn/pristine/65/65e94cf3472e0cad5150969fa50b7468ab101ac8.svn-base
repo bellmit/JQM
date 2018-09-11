@@ -1,0 +1,1945 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:周靖 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="queryFundSetmtResultMap">
+		<result column="l_trace_id" javaType="int" property="traceId"/>
+		<result column="vc_data_source" javaType="string" property="dataSource"/>
+		<result column="l_product_id" javaType="int" property="productId"/>
+		<result column="vc_product_code" javaType="string" property="productCode"/>
+		<result column="vc_product_name" javaType="string" property="productName"/>
+		<result column="vc_asset_code" javaType="string" property="assetCode"/>
+		<result column="vc_asset_name" javaType="string" property="assetName"/>
+		<result column="vc_biz_type" javaType="string" property="bizType"/>
+		<result column="vc_bs_setmt_status" javaType="string" property="bsSetmtStatus"/>
+		<result column="en_deal_amount" javaType="double" property="dealAmount"/>
+		<result column="en_setmt_amount" javaType="double" property="setmtAmount"/>
+		<result column="vc_counterparty_id" javaType="String" property="counterpartyId"/>
+		<result column="vc_counterparty_name" javaType="string" property="counterpartyName"/>
+		<result column="vc_market" javaType="string" property="market"/>
+		<result column="vc_stock_inner_code" javaType="string" property="stockInnerCode"/>
+		<result column="vc_stock_code" javaType="string" property="stockCode"/>
+		<result column="vc_stock_name" javaType="string" property="stockName"/>
+		<result column="vc_deal_no" javaType="string" property="vcDealNo"/>
+		<result column="l_deal_date" javaType="int" property="dealDate"/>
+		<result column="l_setmt_date" javaType="int" property="setmtDate"/>
+		<result column="l_deal_quantity" javaType="int" property="dealQuantity"/>
+		<result column="c_cancel_flag" javaType="String" property="cancelFlag"/>
+		<result column="c_entrust_direction" javaType="string" property="cEntrustDirection"/>
+		<result column="vc_remark" javaType="string" property="remark"/>
+		<result column="c_busin_class" javaType="string" property="cBusinClass"/>
+		<result column="l_result_no" javaType="int" property="lResultNo"/>
+		<result column="vc_depository" javaType="string" property="vcDepository"/>
+		<result column="vc_clord_id" javaType="string" property="vcClordId"/>
+		<result column="l_combi_id" javaType="int" property="lCombiId"/>
+		<result column="vc_combi_code" javaType="string" property="vcCombiCode"/>
+		<result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+		<result column="l_trade_date" javaType="int" property="lTradeDate"/>
+		<result column="t_fs_deal_time" javaType="date" property="tFsDealTime"/>
+		<result column="l_setmt_date_repo_case" javaType="int" property="lSetmtDateRepoCase"/>
+		<result column="en_face_amount" javaType="double" property="enFaceAmount"/>
+		<result column="vc_deal_status" javaType="string" property="vcDealStatus"/>
+		<result column="t_update_time" javaType="date" property="tUpdateTime"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap1">
+	    <result column="VC_BS_SETMT_STATUS" javaType="string" property="bsSetmtStatus"/>
+	</resultMap>
+	<!--条件查询涉及资金交收的指令跟踪信息（分页）     查询表（T_ATS_FUND_SETMT_TRACE）	  数据源：default  传入参数：根据传入的参数匹配查询条件        返回参数：所有字段-->
+    <select id="queryFundSetmtTrace" parameterClass="commonj.sdo.DataObject" resultMap="queryFundSetmtResultMap">
+		select t.l_trace_id,
+	       t.vc_data_source,
+	       t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.l_asset_id,
+	       t.vc_asset_code,
+	       t.vc_asset_name,
+	       t.vc_biz_type,
+	       t.vc_bs_setmt_status,
+	       t.en_deal_amount,
+	       t.en_setmt_amount,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_market,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_deal_no,
+	       t.l_deal_date,
+	       t.l_setmt_date,
+	       t.l_deal_quantity,
+	       t.c_cancel_flag,
+	       t.c_entrust_direction,
+	       t.vc_remark,
+	       t.c_busin_class,
+	       t.l_result_no,
+	       t.vc_depository,
+	       t.vc_clord_id,
+	       t.l_combi_id,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.l_trade_date,
+	       t.t_fs_deal_time,
+	       t.l_setmt_date_repo_case,
+	       t.en_face_amount,
+	       t.vc_deal_status, 
+	       t.t_update_time
+		from T_ATS_FUND_SETMT_TRACE t
+		where 1 = 1
+		<isNotNull property="productCode"><!--产品代码-->
+			and  t.vc_product_code in ($productCode$)
+		</isNotNull>
+		<isNotNull property="bizType"><!--业务类型，取“现金、证券流业务类别定义表T_CONF_CASHSTOCKFLOW_FLAG”数据-->
+			and t.vc_biz_type in ($bizType$)
+		</isNotNull>
+		<isNotNull property="bsSetmtStatus"><!--后台交收状态：交收成功；交收失败；交收延期；担保交收；-->
+			and t.vc_bs_setmt_status in ($bsSetmtStatus$)
+		</isNotNull>
+		<isNotNull property="cEntrustDirection"><!--委托方向-->
+			and t.c_entrust_direction in ($cEntrustDirection$)
+		</isNotNull>
+		<isNotNull property="counterpartyId"><!--交易对手编号-->
+			and t.vc_counterparty_id = #counterpartyId#
+		</isNotNull>
+		<isNotNull property="market"><!--交易市场-->
+			and t.vc_market in ($market$)
+		</isNotNull>
+		<isNotNull property="stockCode"><!--证券代码-->
+			and t.vc_stock_code = #stockCode#
+		</isNotNull>
+		<isNotNull property="dealDate"><!--交易日期-->
+			and t.l_deal_date &gt;= #dealDate#
+		</isNotNull>
+		<isNotNull property="dealDate1"><!--交易日期-->
+			and t.l_deal_date &lt;= #dealDate1#
+		</isNotNull>
+		<isNotNull property="setmtDate"><!--交收日期-->
+			and t.l_setmt_date &gt;= #setmtDate#
+		</isNotNull>
+		<isNotNull property="setmtDate1"><!--交收日期-->
+			and t.l_setmt_date &lt;= #setmtDate1#
+		</isNotNull>
+		<isNotNull property="vcDepository"><!--托管机构-->
+			and t.vc_depository in ($vcDepository$)
+		</isNotNull>
+		order by t.l_trace_id desc
+    </select>
+	<!--条件查询涉及资金交收的指令跟踪信息（分页）     查询表（T_ATS_FUND_SETMT_TRACE）	  数据源：default  传入参数：根据传入的参数匹配查询条件        返回参数：所有字段-->
+    <select id="queryFundSetmtTracejys" parameterClass="commonj.sdo.DataObject" resultMap="queryFundSetmtResultMap">
+		select t.l_trace_id,
+	       t.vc_data_source,
+	       t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.l_asset_id,
+	       t.vc_asset_code,
+	       t.vc_asset_name,
+	       t.vc_biz_type,
+	       t.vc_bs_setmt_status,
+	       t.en_deal_amount,
+	       t.en_setmt_amount,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_market,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_deal_no,
+	       t.l_deal_date,
+	       t.l_setmt_date,
+	       t.l_deal_quantity,
+	       t.c_cancel_flag,
+	       t.c_entrust_direction,
+	       t.vc_remark,
+	       t.c_busin_class,
+	       t.l_result_no,
+	       t.vc_depository,
+	       t.vc_clord_id,
+	       t.l_combi_id,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.l_trade_date,
+	       t.t_fs_deal_time,
+	       t.l_setmt_date_repo_case,
+	       t.en_face_amount,
+	       t.vc_deal_status, 
+	       t.t_update_time
+		from T_ATS_FUND_SETMT_TRACE t
+		where 1 = 1
+		and t.c_cancel_flag='0'
+		and t.vc_market in (1,2)
+		<isNotNull property="prodstr"><!--产品代码权限-->
+			and  t.vc_product_code in ($prodstr$)
+		</isNotNull>
+		<isNotNull property="productCode"><!--产品代码-->
+			and  t.vc_product_code in ($productCode$)
+		</isNotNull>
+		<isNotNull property="bizType"><!--业务类型，取“现金、证券流业务类别定义表T_CONF_CASHSTOCKFLOW_FLAG”数据-->
+			and t.vc_biz_type in ($bizType$)
+		</isNotNull>
+		<isNotNull property="bsSetmtStatus"><!--后台交收状态：交收成功；交收失败；交收延期；担保交收；-->
+			and nvl(t.vc_bs_setmt_status,'13') in ($bsSetmtStatus$)
+		</isNotNull>
+		<isNotNull property="cEntrustDirection"><!--委托方向-->
+			and t.c_entrust_direction in ($cEntrustDirection$)
+		</isNotNull>
+		<isNotNull property="counterpartyId"><!--交易对手编号-->
+			and t.vc_counterparty_id = #counterpartyId#
+		</isNotNull>
+		<isNotNull property="market"><!--交易市场-->
+			and t.vc_market in ($market$)
+		</isNotNull>
+		<isNotNull property="stockCode"><!--证券代码-->
+			and t.vc_stock_code = #stockCode#
+		</isNotNull>
+		<isNotNull property="dealDate"><!--交易日期-->
+			and t.l_deal_date &gt;= #dealDate#
+		</isNotNull>
+		<isNotNull property="dealDate1"><!--交易日期-->
+			and t.l_deal_date &lt;= #dealDate1#
+		</isNotNull>
+		<isNotNull property="setmtDate"><!--交收日期-->
+			and t.l_setmt_date &gt;= #setmtDate#
+		</isNotNull>
+		<isNotNull property="setmtDate1"><!--交收日期-->
+			and t.l_setmt_date &lt;= #setmtDate1#
+		</isNotNull>
+		<isNotNull property="vcDepository"><!--托管机构-->
+			and t.vc_depository in ($vcDepository$)
+		</isNotNull>
+		order by t.l_trace_id desc
+    </select>
+    <!--条件查询涉及资金交收的指令跟踪信息（分页）     查询表（T_ATS_FUND_SETMT_TRACE）	  数据源：default  传入参数：根据传入的参数匹配查询条件        返回参数：所有字段-->
+    <select id="queryFundSetmtTraceyhj" parameterClass="commonj.sdo.DataObject" resultMap="queryFundSetmtResultMap">
+		select t.l_trace_id,
+	       t.vc_data_source,
+	       t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.l_asset_id,
+	       t.vc_asset_code,
+	       t.vc_asset_name,
+	       t.vc_biz_type,
+	       t.vc_bs_setmt_status,
+	       t.en_deal_amount,
+	       t.en_setmt_amount,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_market,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_deal_no,
+	       t.l_deal_date,
+	       t.l_setmt_date,
+	       t.l_deal_quantity,
+	       t.c_cancel_flag,
+	       t.c_entrust_direction,
+	       t.vc_remark,
+	       t.c_busin_class,
+	       t.l_result_no,
+	       t.vc_depository,
+	       t.vc_clord_id,
+	       t.l_combi_id,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.l_trade_date,
+	       t.t_fs_deal_time,
+	       t.l_setmt_date_repo_case,
+	       t.en_face_amount,
+	       t.vc_deal_status, 
+	       t.t_update_time
+		from T_ATS_FUND_SETMT_TRACE t
+		where 1 = 1
+		and t.c_cancel_flag = '0'
+		and t.vc_market in (5,6)
+		<isNotNull property="prodstr"><!--产品代码权限-->
+			and  t.vc_product_code in ($prodstr$)
+		</isNotNull>
+		<isNotNull property="productCode"><!--产品代码-->
+			and  t.vc_product_code in ($productCode$)
+		</isNotNull>
+		<isNotNull property="bizType"><!--业务类型，取“现金、证券流业务类别定义表T_CONF_CASHSTOCKFLOW_FLAG”数据-->
+			and t.vc_biz_type in ($bizType$)
+		</isNotNull>
+		<isNotNull property="bsSetmtStatus"><!--后台交收状态：交收成功；交收失败；交收延期；担保交收；-->
+			and nvl(t.vc_bs_setmt_status,'13') in ($bsSetmtStatus$)
+		</isNotNull>
+		<isNotNull property="cEntrustDirection"><!--委托方向-->
+			and t.c_entrust_direction in ($cEntrustDirection$)
+		</isNotNull>
+		<isNotNull property="counterpartyId"><!--交易对手编号-->
+			and t.vc_counterparty_id = #counterpartyId#
+		</isNotNull>
+		<isNotNull property="market"><!--交易市场-->
+			and t.vc_market in ($market$)
+		</isNotNull>
+		<isNotNull property="stockCode"><!--证券代码-->
+			and t.vc_stock_code = #stockCode#
+		</isNotNull>
+		<isNotNull property="dealDate"><!--交易日期-->
+			and t.l_deal_date &gt;= #dealDate#
+		</isNotNull>
+		<isNotNull property="dealDate1"><!--交易日期-->
+			and t.l_deal_date &lt;= #dealDate1#
+		</isNotNull>
+		<isNotNull property="setmtDate"><!--交收日期-->
+			and t.l_setmt_date &gt;= #setmtDate#
+		</isNotNull>
+		<isNotNull property="setmtDate1"><!--交收日期-->
+			and t.l_setmt_date &lt;= #setmtDate1#
+		</isNotNull>
+		<isNotNull property="vcDepository"><!--托管机构-->
+			and t.vc_depository in ($vcDepository$)
+		</isNotNull>
+		order by t.l_trace_id desc
+    </select>
+    <!-- 根据成交编号列表查询资金交收表数据 -->
+    <select id="queryFundSetmtTraceByDealNoList" parameterClass="java.lang.String" resultMap="queryFundSetmtResultMap">
+		select t.l_trace_id,
+	       t.vc_data_source,
+	       t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.l_asset_id,
+	       t.vc_asset_code,
+	       t.vc_asset_name,
+	       t.vc_biz_type,
+	       t.vc_bs_setmt_status,
+	       t.en_deal_amount,
+	       t.en_setmt_amount,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_market,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_deal_no,
+	       t.l_deal_date,
+	       t.l_setmt_date,
+	       t.l_deal_quantity,
+	       t.c_cancel_flag,
+	       t.c_entrust_direction,
+	       t.vc_remark,
+	       t.c_busin_class,
+	       t.l_result_no,
+	       t.vc_depository,
+	       t.vc_clord_id,
+	       t.l_combi_id,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.l_trade_date,
+	       t.t_fs_deal_time,
+	       t.l_setmt_date_repo_case,
+	       t.en_face_amount,
+	       t.vc_deal_status, 
+	       t.t_update_time
+      from t_ats_fund_setmt_trace t
+	 where t.vc_deal_no in ($dealNo$)
+	   and t.c_entrust_direction in ('3','4','5', '6', '15', '16')
+	   and t.l_deal_date = to_number(to_char(sysdate,'yyyyMMdd'))
+    </select>
+    <!-- 根据成交编号，获取相对应的第三方指令编号 -->
+    <select id ="querySourceNothroughTrealdeal" parameterClass="commonj.sdo.DataObject"
+		resultClass="commonj.sdo.DataObject">
+    	select t2.VC_SOURCE_NO from trade.TREALDEAL t,trade.tinstruction t2
+		where t.l_daily_instruction_no = t2.l_daily_instruction_no
+		and t.VC_DEAL_NO=#vcFsDealId#
+    </select>
+    <select id ="querySourceNothroughTbankrealdeal" parameterClass="commonj.sdo.DataObject"
+		resultClass="commonj.sdo.DataObject">
+    	select t.VC_SOURCE_NO from trade.TBANKREALDEAL t
+		where t.VC_DEAL_NO=#vcFsDealId#
+    </select>
+    
+    <!-- 第三方指令编号查重，添加业务时使用 -->
+    <select id="checkVcDealNo"  parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String">
+    	select count(1) from T_ATS_FUND_SETMT_TRACE where VC_DEAL_NO =#vcFsDealId#
+    </select>
+    
+    <!-- 查询第三方指令编号，后台成交监听excel时使用 -->
+    <select id="queryClordid" parameterClass="java.lang.String" resultClass="java.lang.String">
+		select t3.VC_SOURCE_NO from 
+			  (
+				  select  t1.VC_SOURCE_NO from 
+				  TRADE.TBANKREALDEAL t2 ,TRADE.TINSTRUCTION t1
+				  where t2.VC_DEAL_NO = #vcDealNo# 
+				  and t2.L_DAILY_INSTRUCTION_NO=t1.L_DAILY_INSTRUCTION_NO 
+				  order by t1.L_INDEX_DAILY_MODIFY desc
+			  ) t3 where rownum=1 
+	</select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="O32DataResultMap">
+    	<!-- 以下字段为更新询价结果指令表使用 -->
+    	<result column="VC_FS_DEAL_ID" javaType="String" property="vcFsDealId"/>
+    	<result column="VC_SOURCE_NO" javaType="String" property="vcClordId"/>
+    	<result column="L_TRADE_DATE" javaType="int" property="lTradeDate"/>
+    	<result column="C_BUSIN_CLASS" javaType="String" property="cBusinClass"/>
+    	<!-- 后台赋值 -->
+    	<result column="VC_FS_DEAL_STATUS" javaType="String" property="vcFsDealStatus"/>
+    	<!-- L_DATE+L_BUSINESS_TIME拼接 -->
+    	<result column="T_FS_DEAL_TIME" javaType="String" property="tFsDealTime"/>
+    	<!-- 以下字段为资金交收跟踪表使用 -->
+    	<result column="VC_DATA_SOURCE" javaType="String" property="vcDataSource"/> 
+    	<result column="L_PRODUCT_ID" javaType="int" property="lProductId"/> 
+    	<result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+    	<result column="VC_PRODUCT_NAME" javaType="String" property="vcProductName"/>
+    	<result column="L_ASSET_ID" javaType="int" property="lAssetId"/> 
+    	<result column="VC_ASSET_CODE" javaType="String" property="vcAssetCode"/>
+    	<result column="VC_ASSET_NAME" javaType="String" property="vcAssetName"/>
+    	<!-- 查出cEntrustDirection，联合T_ATS_CONF_CASHSTOCKFLOW_FLAG表中的VC_ENTRUST_DIRECTION
+    		查询出VC_BUSIN_CAPTION作为VC_BIZ_TYPE -->
+    	<result column="C_ENTRUST_DIRECTION" javaType="String" property="cEntrustDirection"/>
+    	<result column="VC_BIZ_TYPE" javaType="String" property="vcBizType"/>
+    	<result column="VC_BS_SETMT_STATUS" javaType="String" property="vcBsSetmtStatus"/>
+    	<result column="EN_DEAL_AMOUNT" javaType="double" property="enDealAmount"/>
+    	<result column="EN_SETMT_AMOUNT" javaType="double" property="enSetmtAmount"/>
+    	<result column="VC_COUNTERPARTY_ID" javaType="String" property="vcCounterpartyId"/>
+    	<result column="VC_COUNTERPARTY_NAME" javaType="String" property="vcCounterpartyName"/>
+    	<!-- 这里查出编号，目前先显示数字 -->
+    	<result column="VC_MARKET" javaType="String" property="vcMarket"/>
+    	<result column="VC_STOCK_INNER_CODE" javaType="String" property="vcStockInnerCode"/>
+    	<result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+    	<result column="VC_STOCK_NAME" javaType="String" property="vcStockName"/>
+    	<result column="L_DEAL_DATE" javaType="int" property="lDealDate"/>
+    	<result column="L_SETMT_DATE" javaType="int" property="lSetmtDate"/>
+    	<result column="L_SETMT_DATE_REPO_CASE" javaType="int" property="lSetmtDateRepoCase"/>
+    	<result column="L_DEAL_QUANTITY" javaType="int" property="lDealQuantity"/>
+    	<result column="C_CANCEL_FLAG" javaType="String" property="cCancelFlag"/>
+    	<result column="EN_FACE_AMOUNT" javaType="String" property="enFaceAmount"/>
+    	<!-- 主要用于锁定券前台成交时候加锁 -->
+    	<result column="L_COMBI_ID" javaType="int" property="lCombiId"/> 
+    	<result column="VC_COMBI_CODE" javaType="String" property="vcCombiCode"/>
+    	<result column="VC_COMBI_NAME" javaType="String" property="vcCombiName"/>
+    	<result column="VC_DEPOSITORY" javaType="String" property="vcDepository"/>
+    </resultMap>
+    <!-- 获取O32指令记录数据（包含当天下达回购的到期指令） -->
+    <select id ="queryUpdatingInfobyDate" resultMap="O32DataResultMap">
+	    	<!--前台成交协议式回购(首期业务) -->
+			select t1.vc_deal_no as vc_fs_deal_id,                                          
+			       t1.l_date || ' ' || lpad(t1.l_business_time, 6, '0') as t_fs_deal_time,                
+			       t2.vc_source_no,                                                         
+			       '' as vc_fs_deal_status,                                                 
+			       'O32成交数据' as vc_data_source,                                           
+			       t1.l_fund_id as l_product_id,                                            
+			       t3.vc_fund_code as vc_product_code,                                      
+			       t3.vc_fund_name as vc_product_name,                                      
+			       t4.l_asset_id,                                                           
+			       t5.vc_asset_no as vc_asset_code,                                         
+			       t5.vc_asset_name,                                                        
+			       t4.l_combi_id,                                                           
+			       t4.vc_combi_no as vc_combi_code,                                         
+			       t4.vc_combi_name,                                                        
+			       t1.c_entrust_direction,                                                  
+			       '' as vc_biz_type,                                                       
+			       '' as vc_bs_setmt_status,                                                
+			       t1.en_balance as en_deal_amount,                                         
+			       t7.en_settle_balance as en_setmt_amount,                                 
+			       t6.l_rival_id as vc_counterparty_id,                                     
+			       t6.vc_name as vc_counterparty_name,                                      
+			       t1.c_market_no as vc_market,                                             
+			       '' as vc_stock_inner_code,                                               
+			       t9.vc_report_code as vc_stock_code,                                      
+			       t9.vc_stock_name,                                                        
+			       t1.l_date as l_deal_date,                                                
+			       t7.l_settle_date as l_setmt_date,                                        
+			       null as l_setmt_date_repo_case,                                          
+			       t1.l_deal_amount*10 as l_deal_quantity,                                  
+			       case t1.c_valid
+			         when '1' then
+			          '0'
+			         when '2' then
+			          '1'
+			       end as c_cancel_flag,                                                    
+			       t7.l_trade_date,                                                         
+			       t1.c_busin_class,                                                        
+			       to_char(t7.en_net_balance/10000) as en_face_amount,
+			       (case t1.c_market_no
+			         when '1' then
+			          '03'
+			         when '2' then
+			          '04'
+			         else
+			          '99'
+			         end) as vc_depository                                
+			  from (((((((trade.trealdeal t1 left join trade.tinstruction t2 on
+			        t1.l_date = t2.l_date and t1.l_daily_instruction_no = t2.l_daily_instruction_no and t1.l_index_daily_modify = t2.l_index_daily_modify) left join
+			        trade.tfundinfo t3 on t3.l_fund_id = t1.l_fund_id) left join
+			        trade.tcombi t4 on t4.l_combi_id = t1.l_basecombi_id) left join
+			        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+			        trade.ttraderival t6 on t6.l_rival_id = t1.l_trade_rival_no) left join
+			        trade.tpendsettle t7 on
+			        t7.vc_original_no = to_char(t1.l_realdeal_serial_no) and
+			        t7.l_busin_flag in
+			        (73109, 73111, 73160, 73114, 73282, 73283, 73284, 73285,                
+			         73112,73113,73114,73122,73123)) left join
+			        trade.thgmortagage t8 on t8.l_serial_no = t7.l_serial_no)
+			 inner join trade.tstockinfo t9
+			    on t9.vc_inter_code = t8.vc_inter_code
+			   and t1.l_date = (select l_init_date from trade.tsysteminfo)
+			   and t1.c_valid = '1'
+			   and t1.c_busin_class in ('1','I')
+			   and t1.c_market_no in ('1', '2')
+			   and t1.c_entrust_direction in ('15', '16','35', '36','39','40')
+			   and t2.c_instruction_status = '1'
+			union
+			<!--前台成交协议式回购(到期业务) -->
+			select t1.vc_deal_no as vc_fs_deal_id,                                          
+			       t1.l_date || ' ' || lpad(t1.l_business_time, 6, '0') as t_fs_deal_time,                
+			       t2.vc_source_no,                                                         
+			       '' as vc_fs_deal_status,                                                 
+			       'O32成交数据' as vc_data_source,                                          
+			       t1.l_fund_id as l_product_id,                                            
+			       t3.vc_fund_code as vc_product_code,                                      
+			       t3.vc_fund_name as vc_product_name,                                      
+			       t4.l_asset_id,                                                           
+			       t5.vc_asset_no as vc_asset_code,                                         
+			       t5.vc_asset_name,                                                        
+			       t4.l_combi_id,                                                           
+			       t4.vc_combi_no as vc_combi_code,                                         
+			       t4.vc_combi_name,                                                        
+			       t1.c_entrust_direction,                                                  
+			       '' as vc_biz_type,                                                       
+			       '' as vc_bs_setmt_status,                                                
+			       t1.en_balance as en_deal_amount,                                         
+			       t7.en_settle_balance as en_setmt_amount,                                 
+			       t6.l_rival_id as vc_counterparty_id,                                     
+			       t6.vc_name as vc_counterparty_name,                                      
+			       t1.c_market_no as vc_market,                                             
+			       '' as vc_stock_inner_code,                                               
+			       t9.vc_report_code as vc_stock_code,                                      
+			       t9.vc_stock_name,                                                        
+			       t1.l_date as l_deal_date,                                                
+			       t7.l_settle_date as l_setmt_date,                                        
+			       t7.l_settle_date as l_setmt_date_repo_case,                                          
+			       t1.l_deal_amount*10 as l_deal_quantity,                                  
+			       case t1.c_valid
+			         when '1' then
+			          '0'
+			         when '2' then
+			          '1'
+			       end as c_cancel_flag,                                                    
+			       t7.l_trade_date,                                                         
+			       t1.c_busin_class,                                                        
+			       to_char(t7.en_net_balance/10000) as en_face_amount,
+			       (case t1.c_market_no
+			         when '1' then
+			          '03'
+			         when '2' then
+			          '04'
+			         else
+			          '99'
+			         end) as vc_depository                               
+			  from (((((((trade.trealdeal t1 left join trade.tinstruction t2 on
+			        t1.l_date = t2.l_date and t1.l_daily_instruction_no = t2.l_daily_instruction_no and t1.l_index_daily_modify = t2.l_index_daily_modify) left join
+			        trade.tfundinfo t3 on t3.l_fund_id = t1.l_fund_id) left join
+			        trade.tcombi t4 on t4.l_combi_id = t1.l_basecombi_id) left join
+			        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+			        trade.ttraderival t6 on t6.l_rival_id = t1.l_trade_rival_no) left join
+			        trade.tpendsettle t7 on
+			        t7.vc_original_no = to_char(t1.l_realdeal_serial_no) and
+			        t7.l_busin_flag in
+			        (73109, 73111, 73160, 73114, 73282, 73283, 73284, 73285,
+			         73112,73113,73114,73122,73123))left join
+			        trade.tinstructionhgmortagage t8 on 
+			         t8.l_daily_instruction_no = t2.l_daily_instruction_no)
+			 inner join trade.tstockinfo t9
+			    on t9.vc_inter_code = t8.vc_inter_code
+			   and t1.l_date = (select l_init_date from trade.tsysteminfo)
+			   and t1.c_valid = '1'
+			   and t1.c_busin_class = 'I'
+			   and t1.c_market_no in ('1', '2')
+			   and t1.c_entrust_direction in ('17', '18','37','38')
+			   and t2.c_instruction_status = '1'
+			union
+			<!-- 前台成交交易所业务轮询语句(包括上海大宗、固收、深圳综合协议平台) -->
+			select t1.vc_deal_no as vc_fs_deal_id,
+			       t1.l_date || ' ' || lpad(t1.l_business_time, 6, '0') as t_fs_deal_time,
+			       t2.vc_source_no,
+			       '' as vc_fs_deal_status,
+			       'O32成交数据' as vc_data_source,
+			       t1.l_fund_id as l_product_id,
+			       t3.vc_fund_code as vc_product_code,
+			       t3.vc_fund_name as vc_product_name,
+			       t4.l_asset_id,
+			       t5.vc_asset_no as vc_asset_code,
+			       t5.vc_asset_name,
+			       t4.l_combi_id,
+			       t4.vc_combi_no as vc_combi_code,
+			       t4.vc_combi_name,
+			       t1.c_entrust_direction,
+			       '' as vc_biz_type,
+			       '' as vc_bs_setmt_status,
+			       t1.l_deal_amount*t1.en_deal_price as en_deal_amount,
+			       t7.en_settle_balance as en_setmt_amount,
+			       t6.l_rival_id as vc_counterparty_id,
+			       t6.vc_name as vc_counterparty_name,
+			       t1.c_market_no as vc_market,
+			       '' as vc_stock_inner_code,
+			       t8.vc_report_code as vc_stock_code,
+			       t8.vc_stock_name,
+			       t1.l_date as l_deal_date,
+			       t7.l_settle_date as l_setmt_date,
+			       null as l_setmt_date_repo_case,
+			       t1.l_deal_amount*10 as l_deal_quantity,
+			       case t1.c_valid
+			         when '1' then
+			          '0'
+			         when '2' then
+			          '1'
+			       end as c_cancel_flag,                                                    
+			       t7.l_trade_date,                                                         
+			       t1.c_busin_class，
+			       to_char(t7.en_net_balance/10000) as en_face_amount,
+			       (case t1.c_market_no
+			         when '1' then
+			          '03'
+			         when '2' then
+			          '04'
+			         else
+			          '99'
+			         end) as vc_depository                                                                                         
+			  from (((((trade.trealdeal t1 left join trade.tinstruction t2 on
+			  		t1.l_date = t2.l_date and t1.l_daily_instruction_no = t2.l_daily_instruction_no and t1.l_index_daily_modify = t2.l_index_daily_modify) left join
+			        trade.tfundinfo t3 on t3.l_fund_id = t1.l_fund_id) left join
+			        trade.tcombi t4 on t4.l_combi_id = t1.l_basecombi_id) left join
+			        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+			        trade.ttraderival t6 on t6.l_rival_id = t1.l_trade_rival_no) left join
+			        trade.tpendsettle t7 on t7.vc_original_no = to_char(t1.l_realdeal_serial_no)
+			 inner join trade.tstockinfo t8
+			    on t8.vc_inter_code = t1.vc_inter_code
+			   and t1.l_date = (select l_init_date from trade.tsysteminfo)
+			   and t1.c_valid != '2' 
+			   and t1.c_market_no in ('1','2') 
+			   and t1.c_busin_class in ('1','E','I')
+			   and t1.c_entrust_direction in ('3', '4')
+			   and t8.c_asset_class = '3'
+			   and t2.c_instruction_status = '1'
+			union all
+			<!-- 前台成交银行间业务轮询语句(包括买卖和回购业务,回购业务包含首期和到期指令) -->
+			select t10.vc_deal_no as vc_fs_deal_id,
+		       t10.l_date || ' ' || lpad(t10.l_time, 6, '0') as t_fs_deal_time,
+		       t2.vc_source_no as vc_clord_id,
+		       '' as vc_fs_deal_status,
+		       'O32成交数据' as vc_data_source,
+		       t10.l_fund_id as l_product_id,
+		       t3.vc_fund_code as vc_product_code,
+		       t3.vc_fund_name as vc_product_name,
+		       t4.l_asset_id,
+		       t5.vc_asset_no as vc_asset_code,
+		       t5.vc_asset_name,
+		       t4.l_combi_id,
+		       t4.vc_combi_no as vc_combi_code,
+		       t4.vc_combi_name,
+		       t9.c_entrust_direction,
+		       '' as vc_biz_type,
+		       '' as vc_bs_setmt_status,
+		       (case t10.c_busin_class
+		         when 'O' then
+		          t10.EN_MATURE_NET_PRICE * t10.L_DEAL_AMOUNT
+		         else
+		          t10.en_deal_balance
+		       end) as en_deal_amount,
+		       t9.en_settle_balance as en_setmt_amount,
+		       t6.l_rival_id as vc_counterparty_id,
+		       t6.vc_name as vc_counterparty_name,
+		       t9.c_market_no as vc_market,
+		       '' as vc_stock_inner_code,
+		       t8.vc_report_code,
+		       t8.vc_stock_name,
+		       t10.l_date as l_deal_date,
+		       t9.l_settle_date as l_setmt_date,
+		       t10.l_second_settle_date as l_setmt_date_repo_case,
+		       t10.en_balance / 100 as l_deal_quantity,
+		       t10.c_cancel_flag,
+		       t10.l_first_settle_date as l_trade_date,
+		       t10.c_busin_class,
+		       to_char(t10.en_second_clear_balance) as en_face_amount,
+		       (case t9.c_trustee
+		         when '1' then
+		          '01'
+		         when '2' then
+		          '02'
+		         else
+		          '99'
+		       end) as vc_depository
+		  from (((((((trade.tbankrealdeal t10 inner join trade.tinstruction t2 on
+		        t10.l_date = t2.l_date and
+		        t10.l_daily_instruction_no = t2.l_daily_instruction_no and
+		        t10.l_index_daily_modify = t2.l_index_daily_modify) left join
+		        trade.tfundinfo t3 on t3.l_fund_id = t10.l_fund_id) left join
+		        trade.tcombi t4 on t4.l_combi_id = t10.l_basecombi_id) left join
+		        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+		        trade.ttraderival t6 on t6.l_rival_id = t10.l_trade_rival_no) left join
+		        trade.tinstructionstock t7 on
+		        t7.l_date = t2.l_date and
+		        t7.l_daily_instruction_no = t2.l_daily_instruction_no and
+		        t10.l_index_daily_modify = t7.l_index_daily_modify and
+		        t7.c_entrust_direction in ('3', '4')) left join trade.tstockinfo t8 on
+		        t8.vc_inter_code = (case t10.c_busin_class
+		          when 'O' then
+		           t7.vc_inter_code
+		          else
+		           t10.vc_inter_code
+		        end))
+		 inner join trade.tpendsettle t9
+		    on t9.vc_original_no = t10.l_serial_no
+		 where t10.l_date = (select l_init_date from trade.tsysteminfo)
+		   and t9.c_entrust_direction in ('3', '4', '5', '6', '7', '8')
+		   and t8.l_date = (select l_init_date from trade.tsysteminfo)
+		   and t10.c_cancel_flag != '1'
+		   and t2.c_instruction_status = '1'
+		   and t10.c_busin_class in ('2', 'O')
+	</select>
+    <!-- 获取O32当天前台成交数据 -->
+    <select id ="queryO32DealDatas" parameterClass="commonj.sdo.DataObject" resultMap="O32DataResultMap">
+		select t.* from 
+			(select t1.vc_deal_no as vc_fs_deal_id,
+			       t1.l_date || ' ' || lpad(t1.l_business_time, 6, '0') as t_fs_deal_time,
+			       t2.vc_source_no,
+			       '' as vc_fs_deal_status,
+			       'O32成交数据' as vc_data_source,
+			       t1.l_fund_id as l_product_id,
+			       t3.vc_fund_code as vc_product_code,
+			       t3.vc_fund_name as vc_product_name,
+			       t4.l_asset_id,
+			       t5.vc_asset_no as vc_asset_code,
+			       t5.vc_asset_name,
+			       t4.l_combi_id,
+			       t4.vc_combi_no as vc_combi_code,
+			       t4.vc_combi_name,
+			       t1.c_entrust_direction,
+			       '' as vc_biz_type,
+			       '' as vc_bs_setmt_status,
+			       t1.en_balance as en_deal_amount,
+			       t7.en_settle_balance as en_setmt_amount,
+			       t6.l_rival_id as vc_counterparty_id,
+			       t6.vc_name as vc_counterparty_name,
+			       t1.c_market_no as vc_market,
+			       '' as vc_stock_inner_code,
+			       t9.vc_report_code as vc_stock_code,
+			       t9.vc_stock_name,
+			       t1.l_date as l_deal_date,
+			       t7.l_settle_date as l_setmt_date,
+			       null as l_setmt_date_repo_case,
+			       t1.l_deal_amount * 10 as l_deal_quantity,
+			       case t1.c_valid
+			         when '1' then
+			          '0'
+			         when '2' then
+			          '1'
+			       end as c_cancel_flag,
+			       t7.l_trade_date,
+			       t1.c_busin_class,
+			       to_char(t7.en_net_balance / 10000) as en_face_amount,
+			       (case t1.c_market_no
+			         when '1' then
+			          '03'
+			         when '2' then
+			          '04'
+			         else
+			          '99'
+			       end) as vc_depository
+			  from (((((((trade.trealdeal t1 left join trade.tinstruction t2 on
+			        t1.l_daily_instruction_no = t2.l_daily_instruction_no) left join
+			        trade.tfundinfo t3 on t3.l_fund_id = t1.l_fund_id) left join
+			        trade.tcombi t4 on t4.l_combi_id = t1.l_basecombi_id) left join
+			        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+			        trade.ttraderival t6 on t6.l_rival_id = t1.l_trade_rival_no) left join
+			        trade.tpendsettle t7 on
+			        t7.vc_original_no = to_char(t1.l_realdeal_serial_no) and
+			        t7.l_busin_flag in (73109,73111,73160,73114,73282,73283,73284,
+			                        73285,73112,73113,73114,73122,73123)) left join 
+			        trade.thgmortagage t8 on
+			        t8.l_serial_no = t7.l_serial_no)
+			 inner join trade.tstockinfo t9
+			    on t9.vc_inter_code = t8.vc_inter_code
+			   and t1.l_date = (select l_init_date from trade.tsysteminfo)
+			   and t1.c_valid = '1'
+			   and t1.c_busin_class in ('1', 'I')
+			   and t1.c_market_no in ('1', '2')
+			   and t1.c_entrust_direction in ('15', '16')
+			   and t2.c_instruction_status = '1'
+			union
+			select t1.vc_deal_no as vc_fs_deal_id,
+			       t1.l_date || ' ' || lpad(t1.l_business_time, 6, '0') as t_fs_deal_time,
+			       t2.vc_source_no,
+			       '' as vc_fs_deal_status,
+			       'O32成交数据' as vc_data_source,
+			       t1.l_fund_id as l_product_id,
+			       t3.vc_fund_code as vc_product_code,
+			       t3.vc_fund_name as vc_product_name,
+			       t4.l_asset_id,
+			       t5.vc_asset_no as vc_asset_code,
+			       t5.vc_asset_name,
+			       t4.l_combi_id,
+			       t4.vc_combi_no as vc_combi_code,
+			       t4.vc_combi_name,
+			       t1.c_entrust_direction,
+			       '' as vc_biz_type,
+			       '' as vc_bs_setmt_status,
+			       t1.en_balance as en_deal_amount,
+			       t7.en_settle_balance as en_setmt_amount,
+			       t6.l_rival_id as vc_counterparty_id,
+			       t6.vc_name as vc_counterparty_name,
+			       t1.c_market_no as vc_market,
+			       '' as vc_stock_inner_code,
+			       t9.vc_report_code as vc_stock_code,
+			       t9.vc_stock_name,
+			       t1.l_date as l_deal_date,
+			       t7.l_settle_date as l_setmt_date,
+			       t7.l_settle_date as l_setmt_date_repo_case,
+			       t1.l_deal_amount * 10 as l_deal_quantity,
+			       case t1.c_valid
+			         when '1' then
+			          '0'
+			         when '2' then
+			          '1'
+			       end as c_cancel_flag,
+			       t7.l_trade_date,
+			       t1.c_busin_class,
+			       to_char(t7.en_net_balance / 10000) as en_face_amount,
+			       (case t1.c_market_no
+			         when '1' then
+			          '03'
+			         when '2' then
+			          '04'
+			         else
+			          '99'
+			       end) as vc_depository
+			  from (((((((trade.trealdeal t1 left join trade.tinstruction t2 on
+			        t1.l_daily_instruction_no = t2.l_daily_instruction_no) left join
+			        trade.tfundinfo t3 on t3.l_fund_id = t1.l_fund_id) left join
+			        trade.tcombi t4 on t4.l_combi_id = t1.l_basecombi_id) left join
+			        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+			        trade.ttraderival t6 on t6.l_rival_id = t1.l_trade_rival_no) left join
+			        trade.tpendsettle t7 on
+			        t7.vc_original_no = to_char(t1.l_realdeal_serial_no) and
+			        t7.l_busin_flag in (73109,73111,73160,73114,73282,73283,
+			                     73284,73285,73112,73113,73114,73122,73123)) left join 
+			        trade.tinstructionhgmortagage t8 on
+			        t8.l_daily_instruction_no = t2.l_daily_instruction_no)
+			 inner join trade.tstockinfo t9
+			    on t9.vc_inter_code = t8.vc_inter_code
+			   and t1.l_date = (select l_init_date from trade.tsysteminfo)
+			   and t1.c_valid = '1'
+			   and t1.c_busin_class = 'I'
+			   and t1.c_market_no in ('1', '2')
+			   and t1.c_entrust_direction in ('17', '18')
+			   and t2.c_instruction_status = '1'
+			union
+			select t1.vc_deal_no as vc_fs_deal_id,
+			       t1.l_date || ' ' || lpad(t1.l_business_time, 6, '0') as t_fs_deal_time,
+			       t2.vc_source_no,
+			       '' as vc_fs_deal_status,
+			       'O32成交数据' as vc_data_source,
+			       t1.l_fund_id as l_product_id,
+			       t3.vc_fund_code as vc_product_code,
+			       t3.vc_fund_name as vc_product_name,
+			       t4.l_asset_id,
+			       t5.vc_asset_no as vc_asset_code,
+			       t5.vc_asset_name,
+			       t4.l_combi_id,
+			       t4.vc_combi_no as vc_combi_code,
+			       t4.vc_combi_name,
+			       t1.c_entrust_direction,
+			       '' as vc_biz_type,
+			       '' as vc_bs_setmt_status,
+			       t1.l_deal_amount*t1.en_deal_price as en_deal_amount,
+			       t7.en_settle_balance as en_setmt_amount,
+			       t6.l_rival_id as vc_counterparty_id,
+			       t6.vc_name as vc_counterparty_name,
+			       t1.c_market_no as vc_market,
+			       '' as vc_stock_inner_code,
+			       t8.vc_report_code as vc_stock_code,
+			       t8.vc_stock_name,
+			       t1.l_date as l_deal_date,
+			       t7.l_settle_date as l_setmt_date,
+			       null as l_setmt_date_repo_case,
+			       t1.l_deal_amount * 10 as l_deal_quantity,
+			       case t1.c_valid
+			         when '1' then
+			          '0'
+			         when '2' then
+			          '1'
+			       end as c_cancel_flag,
+			       t7.l_trade_date,
+			       t1.c_busin_class， to_char(t7.en_net_balance / 10000) as en_face_amount,
+			       (case t1.c_market_no
+			         when '1' then
+			          '03'
+			         when '2' then
+			          '04'
+			         else
+			          '99'
+			       end) as vc_depository
+			  from (((((trade.trealdeal t1 left join trade.tinstruction t2 on
+			        t1.l_daily_instruction_no = t2.l_daily_instruction_no) left join
+			        trade.tfundinfo t3 on t3.l_fund_id = t1.l_fund_id) left join
+			        trade.tcombi t4 on t4.l_combi_id = t1.l_basecombi_id) left join
+			        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+			        trade.ttraderival t6 on t6.l_rival_id = t1.l_trade_rival_no)
+			  left join trade.tpendsettle t7
+			    on t7.vc_original_no = to_char(t1.l_realdeal_serial_no)
+			 inner join trade.tstockinfo t8
+			    on t8.vc_inter_code = t1.vc_inter_code
+			   and t1.l_date = (select l_init_date from trade.tsysteminfo)
+			   and t1.c_valid != '2'
+			   and t1.c_market_no in ('1', '2')
+			   and t1.c_busin_class in ('1', 'E', 'I')
+			   and t1.c_entrust_direction in ('3', '4')
+			   and t8.c_asset_class = '3'
+			   and t2.c_instruction_status = '1'
+			union all
+			select t10.vc_deal_no as vc_fs_deal_id,
+			       t10.l_date || ' ' || lpad(t10.l_time, 6, '0') as t_fs_deal_time,
+			       t2.vc_source_no as vc_clord_id,
+			       '' as vc_fs_deal_status,
+			       'O32成交数据' as vc_data_source,
+			       t10.l_fund_id as l_product_id,
+			       t3.vc_fund_code as vc_product_code,
+			       t3.vc_fund_name as vc_product_name,
+			       t4.l_asset_id,
+			       t5.vc_asset_no as vc_asset_code,
+			       t5.vc_asset_name,
+			       t4.l_combi_id,
+			       t4.vc_combi_no as vc_combi_code,
+			       t4.vc_combi_name,
+			       t9.c_entrust_direction,
+			       '' as vc_biz_type,
+			       '' as vc_bs_setmt_status,
+			       (case t10.c_busin_class
+			          when 'O' then
+			           t10.EN_MATURE_NET_PRICE*t10.L_DEAL_AMOUNT
+			          else
+			           t10.en_deal_balance
+			        end) as en_deal_amount,
+			       t9.en_settle_balance as en_setmt_amount,
+			       t6.l_rival_id as vc_counterparty_id,
+			       t6.vc_name as vc_counterparty_name,
+			       '5' as vc_market,
+			       '' as vc_stock_inner_code,
+			       t8.vc_report_code,
+			       t8.vc_stock_name,
+			       t10.l_date as l_deal_date,
+			       t9.l_settle_date as l_setmt_date,
+			       t10.l_second_settle_date as l_setmt_date_repo_case,
+			       t10.en_balance / 100 as l_deal_quantity,
+			       t10.c_cancel_flag,
+			       t10.l_first_settle_date as l_trade_date,
+			       t10.c_busin_class,
+			       to_char(t10.en_second_clear_balance) as en_face_amount,
+			       (case t9.c_trustee
+			         when '1' then
+			          '01'
+			         when '2' then
+			          '02'
+			         else
+			          '99'
+			       end) as vc_depository
+			  from (((((((trade.tbankrealdeal t10 left join trade.tinstruction t2 on
+			        t10.l_daily_instruction_no = t2.l_daily_instruction_no) left join
+			        trade.tfundinfo t3 on t3.l_fund_id = t10.l_fund_id) left join
+			        trade.tcombi t4 on t4.l_combi_id = t10.l_basecombi_id) left join
+			        trade.tasset t5 on t5.l_asset_id = t4.l_asset_id) left join
+			        trade.ttraderival t6 on t6.l_rival_id = t10.l_trade_rival_no) left join
+			        trade.tinstructionstock t7 on
+			        t7.l_daily_instruction_no = t2.l_daily_instruction_no and
+			        t7.l_date = t2.l_date and t7.c_busin_class = 'O' and
+			        t7.c_entrust_direction in ('3', '4')) left join trade.tstockinfo t8 on
+			        t8.vc_inter_code = (case t10.c_busin_class
+			          when 'O' then
+			           t7.vc_inter_code
+			          else
+			           t10.vc_inter_code
+			        end))
+			 inner join trade.tpendsettle t9
+			    on t9.vc_original_no = t10.l_serial_no
+			   and t9.c_entrust_direction in ('3', '4', '5', '6', '7', '8')
+			   and t10.l_date = (select l_init_date from trade.tsysteminfo)
+			   and t10.c_cancel_flag != '1'
+			   and t10.c_busin_class in ('2', 'O')
+			   and t2.c_instruction_status = '1' 
+			   and t9.c_market_no='5') t
+			where 1=1
+			<isNotNull property="productCode"><!--产品代码-->
+				and t.vc_product_code in ($productCode$)
+			</isNotNull>
+			<isNotNull property="stockCode"><!--债券代码-->
+				and t.vc_stock_code = #stockCode#
+			</isNotNull>
+			<isNotNull property="vcDepository"><!--登记管理机构-->
+				and t.vc_depository in ($vcDepository$)
+			</isNotNull>
+			<isNotNull property="market"><!--交易市场-->
+				and t.vc_market in ($market$)
+			</isNotNull>
+			<isNotNull property="cEntrustDirection"><!--委托方向-->
+				and t.c_entrust_direction in ($cEntrustDirection$)
+			</isNotNull>
+			<isNotNull property="dealNo"><!--成交编号-->
+				and t.vc_fs_deal_id = #dealNo#
+			</isNotNull>
+	</select>
+    <!-- 前台成交时新增资金交收跟踪接口表 -->
+    <insert id ="addIntfDealO32" parameterClass="commonj.sdo.DataObject">
+    	insert into T_ATS_INTF_DEAL_O32 (
+    		L_TRACE_ID,
+    		VC_DATA_SOURCE,
+    		L_PRODUCT_ID,
+    		VC_PRODUCT_CODE,
+    		VC_PRODUCT_NAME,
+    		L_ASSET_ID,
+    		VC_ASSET_CODE,
+    		VC_ASSET_NAME,
+    		VC_BIZ_TYPE,
+    		VC_BS_SETMT_STATUS,
+    		EN_DEAL_AMOUNT,
+    		EN_SETMT_AMOUNT,
+    		VC_COUNTERPARTY_ID,
+    		VC_COUNTERPARTY_NAME,
+    		VC_MARKET,
+    		VC_STOCK_INNER_CODE,
+    		VC_STOCK_CODE,
+    		VC_STOCK_NAME,
+    		VC_DEAL_NO,
+    		L_DEAL_DATE,
+    		L_SETMT_DATE,
+    		L_DEAL_QUANTITY,
+    		VC_REMARK,
+    		C_CANCEL_FLAG,
+    		C_ENTRUST_DIRECTION,
+    		C_BUSIN_CLASS,
+    		VC_DEPOSITORY,
+    		VC_CLORD_ID,
+    		L_COMBI_ID,
+    		VC_COMBI_CODE,
+    		VC_COMBI_NAME,
+    		L_TRADE_DATE,
+    		T_FS_DEAL_TIME,
+    		L_SETMT_DATE_REPO_CASE,
+    		EN_FACE_AMOUNT,
+    		VC_DEAL_STATUS,
+    		T_UPDATE_TIME
+    	) values (
+    		#lTraceId#,
+    		#vcDataSource#,
+    		#lProductId#,
+    		#vcProductCode#,
+    		#vcProductName#,
+    		#lAssetId#,
+    		#vcAssetCode#,
+    		#vcAssetName#,
+    		#vcBizType#,
+    		#vcBsSetmtStatus#,
+    		#enDealAmount#,
+    		#enSetmtAmount#,
+    		#vcCounterpartyId#,
+    		#vcCounterpartyName#,
+    		#vcMarket#,
+    		#vcStockInnerCode#,
+    		#vcStockCode#,
+    		#vcStockName#,
+    		#vcFsDealId#,
+    		#lDealDate#,
+    		#lSetmtDate#,
+    		#lDealQuantity#,
+    		#vcRemark#,
+    		#cCancelFlag#,
+    		#cEntrustDirection#,
+    		#cBusinClass#,
+    		#vcDepository#,
+    		#vcClordId#,
+    		#lCombiId#,
+    		#vcCombiCode#,
+    		#vcCombiName#,
+    		#lTradeDate#,
+    		to_timestamp_TZ(#tFsDealTime#,'yyyymmdd hh24miss'),
+    		#lSetmtDateRepoCase#,
+    		#enFaceAmount#,
+    		#vcDealStatus#,
+    		to_date(#tUpdateTime#,'yyyy-MM-dd HH24:MI:ss')
+    	)
+    </insert>
+    
+    <!-- 前台成交时清空资金交收跟踪接口表 -->
+    <delete id="deleteIntfDealO32">
+    	delete t_ats_intf_deal_o32
+    </delete>
+    
+    <!-- 前台成交时新增资金交收跟踪接口表 -->
+    <insert id ="addFundSetmtTraceFromIntf">
+    	insert into t_ats_fund_setmt_trace
+		  (l_trace_id,
+		   c_cancel_flag,
+		   vc_data_source,
+		   l_product_id,
+		   vc_product_code,
+		   vc_product_name,
+		   l_asset_id,
+		   vc_asset_code,
+		   vc_asset_name,
+		   vc_biz_type,
+		   vc_bs_setmt_status,
+		   en_deal_amount,
+		   en_setmt_amount,
+		   vc_counterparty_id,
+		   vc_counterparty_name,
+		   vc_market,
+		   vc_stock_inner_code,
+		   vc_stock_code,
+		   vc_stock_name,
+		   vc_deal_no,
+		   l_deal_date,
+		   l_setmt_date,
+		   l_deal_quantity,
+		   vc_remark,
+		   c_busin_class,
+		   c_entrust_direction,
+		   l_result_no,
+		   vc_depository,
+		   vc_clord_id,
+		   l_combi_id,
+		   vc_combi_code,
+		   vc_combi_name,
+		   l_trade_date,
+		   t_fs_deal_time,
+		   l_setmt_date_repo_case,
+		   en_face_amount,
+		   vc_deal_status,
+		   t_update_time)
+		  select seqstltraceid.nextval,
+		         t.c_cancel_flag,
+		         t.vc_data_source,
+		         t.l_product_id,
+		         t.vc_product_code,
+		         t.vc_product_name,
+		         t.l_asset_id,
+		         t.vc_asset_code,
+		         t.vc_asset_name,
+		         t.vc_biz_type,
+		         t.vc_bs_setmt_status,
+		         t.en_deal_amount,
+		         t.en_setmt_amount,
+		         t.vc_counterparty_id,
+		         t.vc_counterparty_name,
+		         t.vc_market,
+		         t.vc_stock_inner_code,
+		         t.vc_stock_code,
+		         t.vc_stock_name,
+		         t.vc_deal_no,
+		         t.l_deal_date,
+		         t.l_setmt_date,
+		         t.l_deal_quantity,
+		         t.vc_remark,
+		         t.c_busin_class,
+		         t.c_entrust_direction,
+		         t.l_result_no,
+		         t.vc_depository,
+		         t.vc_clord_id,
+		         t.l_combi_id,
+		         t.vc_combi_code,
+		         t.vc_combi_name,
+		         t.l_trade_date,
+		   		 t.t_fs_deal_time,
+		         t.l_setmt_date_repo_case,
+		         t.en_face_amount,
+		         '0' as vc_deal_status,     
+		         t.t_update_time
+		    from t_ats_intf_deal_o32 t
+		   where not exists (select vc_deal_no
+		            from t_ats_fund_setmt_trace a
+		           where a.vc_deal_no = t.vc_deal_no
+		             and a.t_fs_deal_time = t.t_fs_deal_time)
+    </insert>
+    
+    <!--查询待处理的资金交收跟踪管理表数据-->
+    <select id="queryFsByDealStatus"  resultMap="queryFundSetmtResultMap">
+		select t.l_trace_id,
+	       t.vc_data_source,
+	       t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.l_asset_id,
+	       t.vc_asset_code,
+	       t.vc_asset_name,
+	       t.vc_biz_type,
+	       t.vc_bs_setmt_status,
+	       t.en_deal_amount,
+	       t.en_setmt_amount,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_market,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_deal_no,
+	       t.l_deal_date,
+	       t.l_setmt_date,
+	       t.l_deal_quantity,
+	       t.c_cancel_flag,
+	       t.c_entrust_direction,
+	       t.vc_remark,
+	       t.c_busin_class,
+	       t.l_result_no,
+	       t.vc_depository,
+	       t.vc_clord_id,
+	       t.l_combi_id,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.l_trade_date,
+	       t.t_fs_deal_time,
+	       t.l_setmt_date_repo_case,
+	       t.en_face_amount,
+	       t.vc_deal_status, 
+	       t.t_update_time
+		from T_ATS_FUND_SETMT_TRACE t
+		where t.vc_deal_status = '0'
+		  and t.c_cancel_flag = '0'
+		  and t.c_entrust_direction in ('3','4','5','6','15','16')
+		  and t.l_deal_date = to_char(sysdate,'yyyyMMdd')
+    </select>
+    
+    <!-- 根据之前查询出的买卖方向cEntrustDirection从T_ATS_CONF_CASHSTOCKFLOW_FLAG
+    	获取VC_BUSIN_CAPTION作为VC_BIZ_TYPE -->
+    <select id = "queryVcBusinCaptionbyVcEntrustDirection" 
+    	parameterClass="commonj.sdo.DataObject"
+    	resultClass="java.lang.String">
+    	select 
+    		VC_BUSIN_CAPTION as VC_BIZ_TYPE 
+    	from T_ATS_CONF_CASHSTOCKFLOW_FLAG
+    	where VC_ENTRUST_DIRECTION	 =#cEntrustDirection#
+    </select>
+    
+    <!-- 前台成交从O32获取数据时，查询两天为回溯的成交信息，执行成交退回操作 -->
+    <select id = "queryCancelData" resultClass="commonj.sdo.DataObject">
+    	select t.vc_deal_no,
+	       t.l_daily_instruction_no,
+	       t.l_date || ' ' || lpad(t.l_business_time, 6, '0') as t_fs_deal_time,
+	       t.c_entrust_direction,
+	       case t.c_valid
+	         when '1' then
+	          '0'
+	         when '2' then
+	          '1'
+	         else
+	          t.c_valid
+	       end as  c_cancel_flag
+	  from trade.TREALDEAL t
+	 where t.C_VALID = '2'
+	   and to_date(t.L_DATE || ' ' || lpad(t.L_BUSINESS_TIME, 6, '0'),
+	               'YYYYMMDD HH24MISS') >= sysdate - 1
+	union all
+	select t.vc_deal_no,
+	       t.l_daily_instruction_no,
+	       t.l_date || ' ' || lpad(t.l_time, 6, '0') as t_fs_deal_time,
+	       t.c_entrust_direction,
+	       t.c_cancel_flag
+	  from trade.TBANKREALDEAL t
+	 where t.C_CANCEL_FLAG = '1'
+	   and to_date(t.L_DATE || ' ' || lpad(t.L_TIME, 6, '0'),
+	               'YYYYMMDD HH24MISS') >= sysdate - 1
+    </select>
+     <!-- 前台成交从O32获取数据时，查询一条投资最新状态为回溯的成交信息，进行指令成交退回操作 -->
+    <select id = "queryCurrentCancelData" resultClass="commonj.sdo.DataObject">
+    	   select at.*
+			  from (select t.vc_deal_no,
+			               t.l_date,
+			               t.l_daily_instruction_no,
+			               t.l_date || ' ' || lpad(t.l_business_time, 6, '0') as t_fs_deal_time,
+			               t.c_entrust_direction,
+			               case t.c_valid
+			                 when '2' then
+			                  '1'
+			                 else
+			                  '0'
+			               end as c_cancel_flag,
+			               row_number() over(partition by t.l_daily_instruction_no order by t.l_date, t.l_business_time desc) rowindex
+			          from trade.TREALDEAL t
+			         where t.l_date = (select l_init_date from trade.tsysteminfo)
+			        union all
+			        select t.vc_deal_no,
+			               t.l_date,
+			               t.l_daily_instruction_no,
+			               t.l_date || ' ' || lpad(t.l_time, 6, '0') as t_fs_deal_time,
+			               t.c_entrust_direction,
+			               t.c_cancel_flag,
+			               row_number() over(partition by t.l_daily_instruction_no order by t.l_date, t.l_time desc) rowindex
+			          from trade.TBANKREALDEAL t
+			         where t.l_date = (select l_init_date from trade.tsysteminfo)) at
+			 where at.rowindex = 1
+			   and at.c_cancel_flag = '1'
+
+    </select>
+    <!-- 废弃操作：更新C_CANCEL_FLAG -->
+    <update id ="updateCancelData" parameterClass="commonj.sdo.DataObject">
+    	update T_ATS_FUND_SETMT_TRACE t
+		   set t.C_CANCEL_FLAG = #C_CANCEL_FLAG#
+		 where t.VC_DEAL_NO = #VC_DEAL_NO#
+		   and t.t_FS_DEAL_TIME =
+		       to_timestamp_TZ(#T_FS_DEAL_TIME#, 'yyyymmdd hh24miss')
+    </update>
+    
+    <!--后台手工置交收，更新资金交收状态     操作表：T_ATS_FUND_SETMT_TRACE   数据源：default  
+    	传入字段：VC_BS_SETMT_STATUS（交收状态）  Vc_Remark（备注）  l_trace_id（ID） -->
+    <update id="updateFundSetmtTrace" parameterClass="commonj.sdo.DataObject">
+     	update T_ATS_FUND_SETMT_TRACE t 
+     	set
+     		t.VC_BS_SETMT_STATUS = #setmtStatus#,
+     		t.VC_REMARK = #remark#
+     		where t.L_TRACE_ID = #traceId#
+     		and t. C_CANCEL_FLAG = '0'
+    </update>
+    
+    <!-- 更新后台交收状态，后台成交监听excel时使用 -->
+    <update id="updateFundSetmtTracethroughExcel" 
+    	parameterClass="com.cjhxfund.ats.sm.comm.BackStageTraderInfo">
+    	update T_ATS_FUND_SETMT_TRACE t set 
+    	t.VC_BS_SETMT_STATUS = #backStageTraderStatus#,T_UPDATE_TIME=sysdate
+		where t.VC_DEAL_NO = #vcDealNo# 
+		and t. C_CANCEL_FLAG = '0' 
+		<isNotNull property="cRepoType">
+		and t.C_ENTRUST_DIRECTION = #cRepoType#
+		</isNotNull>
+	</update>
+	<!-- 担保交收记录前台成交后自动更新后台成交状态 -->
+    <update id="updateFundSetmtTracethwhenGuaranteeSetmt" parameterClass="commonj.sdo.DataObject">
+    	update T_ATS_FUND_SETMT_TRACE t set 
+    	t.VC_BS_SETMT_STATUS = #vcBsSetmtStatus#
+		where t.VC_DEAL_NO = #vcDealNo# 
+		and t. C_CANCEL_FLAG = '0'
+	</update>
+    <!-- 查询委托方向，后台成交监听excel时使用 -->
+    <select  id="searchEntrustDirection" parameterClass="java.lang.String" resultClass="java.lang.String">
+		select t.C_ENTRUST_DIRECTION 
+		from TRADE.TBANKREALDEAL t
+		where t.VC_DEAL_NO = #vcDealNo# 
+	</select>
+	    <!-- 查询委托方向，后台成交监听excel时使用 -->
+    <select  id="searchEntrustDirection_end" parameterClass="java.lang.String" resultClass="java.lang.String">
+	    select  t1.c_entrust_direction
+	      from trade.tbankrealdeal t, trade.tpendsettle t1
+	     where 1=1
+	       and t.l_serial_no = t1.vc_original_no
+	       and t1.c_entrust_direction in ('7','8')
+	       and t.vc_deal_no = #vcDealNo#
+	</select>
+	<!-- 查询当前资金交收跟踪表后台交收状态，后台成交监听excel时使用 -->
+	<select  id="searchVcBsSetmtStatus" parameterClass="java.lang.String" 
+		resultClass="java.lang.String">
+		select t.vc_bs_deal_status 
+		from t_ats_inquiry_result_instruct t
+		where t.vc_fs_deal_id = #vcDealNo#
+	</select>
+	<!-- 查询当前资金交收跟踪表后台交收状态，后台成交监听excel时使用 -->
+	<select  id="searchBackStatusBySetmtTrace" parameterClass="java.util.HashMap" 
+		resultClass="java.lang.String">
+		 select t.VC_BS_SETMT_STATUS from T_ATS_FUND_SETMT_TRACE t where t.VC_DEAL_NO = #vcDealNo# and t.c_entrust_direction = #entrustDirection#
+	</select>
+	<!-- 获取O32当前系统时间 -->
+	<select  id="getO32Sysdate"  resultClass="java.util.Date">
+		select sysdate from dual
+	</select>
+	<!-- 协议式回购查询在途回购质押券表成交状态 -->
+    <resultMap class="commonj.sdo.DataObject" id="mapBsDealIdList">
+		<result column="L_RESULT_ID" javaType="string" property="lResultId"/><!-- 结果指令序号 -->
+        <result column="VC_BS_DEAL_ID" javaType="string" property="vcBsDealId"/><!-- 成交编号-->
+        <result column="VC_BS_DEAL_STATUS" javaType="string" property="vcBsDealStatus"/><!-- 成交状态 -->
+	</resultMap>
+	<select id="queryBsDealIdList" parameterClass="commonj.sdo.DataObject" resultMap="mapBsDealIdList">
+		select t.l_result_id, 
+			   t.vc_bs_deal_id, 
+			   t.vc_bs_deal_status
+		  from t_ats_inquiry_result_mortagage t
+		 where t.l_result_id = #lResultId#
+	</select>
+	<!-- 根据成交编号查询业务类别-->
+    <resultMap class="commonj.sdo.DataObject" id="mapBizTypeByDealId">
+		<result column="VC_BIZ_TYPE" javaType="string" property="bvBizType"/><!-- 业务类别 -->
+        <result column="VC_BS_DEAL_ID" javaType="date" property="vcBsDealId"/><!-- 成交编号-->
+        <result column="VC_ENTRUST_DIRECTION" javaType="string" property="vcEntrustDirection"/><!-- 委托方向 -->
+	</resultMap>
+	<select id="getBizTypeByDealId" parameterClass="commonj.sdo.DataObject" resultMap="mapBizTypeByDealId">
+		select t.vc_biz_type, t.vc_entrust_direction
+		  from t_ats_inquiry_instruct t
+		 where t.l_inquiry_id = (select l_inquiry_id
+		                           from t_ats_inquiry_result_instruct
+		                          where vc_bs_deal_id = #vcBsDealId#)
+	</select>
+	<!-- 根据成交编号查询质押券信息列表 -->
+    <resultMap class="commonj.sdo.DataObject" id="mapBsDealIdListByFsId">
+		<result column="L_RESULT_ID" javaType="string" property="lResultId"/><!-- 结果指令序号 -->
+        <result column="VC_BS_DEAL_ID" javaType="string" property="vcBsDealId"/><!-- 成交编号-->
+        <result column="VC_BS_DEAL_STATUS" javaType="string" property="vcBsDealStatus"/><!-- 成交状态 -->
+	</resultMap>
+	<select id="queryLResultId" parameterClass="commonj.sdo.DataObject" resultMap="mapBsDealIdListByFsId">
+		select t.l_result_id, 
+			   t.vc_bs_deal_id, 
+			   t.vc_bs_deal_status
+		  from t_ats_inquiry_result_mortagage t
+		 where t.vc_bs_deal_id = #vcDealNo#
+	</select>
+	
+	<!-- 获取协议式回购质押券表前台成交编号和前台成交状态(前台成交)匹配个数 -->
+	<select id="getUpdateRepoIdCount" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		select t.*
+		  from t_ats_inquiry_result_mortagage t, t_ats_inquiry_result_instruct a
+		 where t.l_result_id = a.l_result_id
+		   and a.vc_entrust_direction = #vcEntrustDirection#
+		   and a.vc_biz_type = '7'
+		   and a.c_is_valid = '1'
+		   and a.l_trade_date = #lTradeDate#
+		   and a.vc_product_code = #vcProductCode#
+		   and t.vc_stock_code = #vcStockCode#
+		   and t.vc_exchange = #vcMarket#
+		   and to_char(t.en_face_amount) = #enFaceAmount#
+	</select>
+	
+	<!-- 更新协议式回购质押券信息表中前台成交编号和前台成交状态(前台成交)  -->
+    <update id="updateRepoId" parameterClass="commonj.sdo.DataObject">
+    	update t_ats_inquiry_result_mortagage t
+		   set t.vc_bs_deal_id = #vcDealNo#,
+		   	   t.vc_bs_deal_status = #vcFsDealStatus#
+		 where exists (select a.*
+		          from t_ats_inquiry_result_instruct  b
+		         where t.l_result_id = b.l_result_id
+		           and b.vc_entrust_direction = #vcEntrustDirection#
+		           and b.vc_biz_type = '7'
+		           and b.c_is_valid = '1'
+		           and b.l_trade_date = #lTradeDate#
+		           and b.vc_product_code = #vcProductCode#
+		           and t.vc_stock_code = #vcStockCode#
+		           and t.vc_exchange = #vcMarket#
+		           and to_char(t.en_face_amount) = #enFaceAmount#)
+    	<!--update t_ats_inquiry_result_mortagage t
+		   set t.l_result_id = t.l_result_id,
+		   	   t.vc_bs_deal_id = #vcFsDealId#,
+		       t.vc_bs_deal_status = #vcFsDealStatus#
+		 where (select a.vc_entrust_direction
+                      from t_ats_inquiry_result_instruct a
+                     where a.l_result_id = t.l_result_id) = #vcEntrustDirection#
+       	   and (select b.vc_biz_type 
+           		 from t_ats_inquiry_result_instruct b
+           		where b.l_result_id = t.l_result_id) = "7"
+		   and (select c.l_trade_date
+                      from t_ats_inquiry_result_instruct c
+                     where c.l_result_id = t.l_result_id) = #lTradeDate#
+		   and t.vc_product_code = #vcProductCode#
+		   and t.vc_stock_code = #vcStockCode#
+		   and to_char(t.en_face_amount) = #enFaceAmount# -->
+	</update>
+	
+	
+	<!-- 更新协议式回购询价结果指令表成交状态(前台成交) -->
+    <update id="updateFsDealStatus" 
+    	parameterClass="commonj.sdo.DataObject">
+    	update t_ats_inquiry_result_instruct b
+		   set b.vc_fs_deal_id = #vcDealNo#,
+		   	   b.vc_fs_deal_status = #vcFsDealStatus#,
+		   	   b.vc_process_status='8',
+		   	   b.t_fs_deal_time = to_timestamp_TZ(#tFsDealTime#,'yyyymmdd hh24miss')
+		 where b.l_result_id = #lResultId#
+	</update>
+	<!-- 更新协议式回购在途回购质押券表后台成交状态(手工置交收) -->
+    <update id="updateBsProtocolRepo" 
+    	parameterClass="commonj.sdo.DataObject">
+    	update t_ats_inquiry_result_mortagage b
+		   set b.vc_bs_deal_status = #vcBsDealStatus#
+		 where b.vc_bs_deal_id = #vcBsDealId#
+	</update>
+	<!-- 更新协议式回购询价结果指令表成交状态(手工置交收) -->
+    <update id="updateBsDealStatus" 
+    	parameterClass="commonj.sdo.DataObject">
+    	update t_ats_inquiry_result_instruct b
+		   set b.vc_bs_deal_status = #vcBsDealStatus#
+		 where b.l_result_id = #lResultId#
+	</update>
+	
+	<!-- 获取买断式回购询价结果指令表前台成交编号和前台成交状态(前台成交)匹配个数 -->
+	<select id="getUpdateFsRepoDealStatusCount" parameterClass="commonj.sdo.DataObject" resultClass="int">
+		select b.*
+		 from t_ats_inquiry_result_instruct b
+		where b.vc_entrust_direction = #vcEntrustDirection#
+		   and b.vc_product_code = #productCode#
+		   <!--and b.vc_stock_code = #vcStockCode#-->
+		   and b.en_settle_amount = #enFaceAmount#
+		   and b.l_trade_date = #lTradeDate#
+		   and b.vc_biz_type='6'
+		   and b.c_is_valid='1'
+	</select>
+	<!-- 获取买断式回购询价结果指令表前台成交编号和前台成交状态(前台成交)匹配个数 -->
+	
+	<!-- 更新买断式回购询价结果指令表前台成交编号和前台成交状态(前台成交) -->
+    <update id="updateFsRepoDealStatus" 
+    	parameterClass="commonj.sdo.DataObject">
+    	update t_ats_inquiry_result_instruct b
+		   set b.vc_fs_deal_id = #vcDealNo#,
+		       b.vc_fs_deal_status = #vcFsDealStatus#,
+		       b.t_fs_deal_time = to_date(#tFsDealTimeToString#,'yyyy-mm-dd hh24:mi:ss'),
+		       b.vc_process_status='8',
+		       b.en_deal_amount = #dealAmount#
+		 where b.vc_entrust_direction = #vcEntrustDirection#
+		   and b.vc_product_code = #productCode#
+		   <!--and b.vc_stock_code = #vcStockCode#-->
+		   and b.en_settle_amount = #enFaceAmount#
+		   and b.l_trade_date = #lTradeDate#
+		   and b.vc_biz_type='6'
+		   and b.c_is_valid='1'
+	</update>
+	<!-- 更新买断式回购询价结果指令表前台成交编号和前台成交状态(手工置交收) -->
+	
+	
+    <update id="updateBsRepoDealStatus" 
+    	parameterClass="commonj.sdo.DataObject">
+    	update t_ats_inquiry_result_instruct b
+		   set b.vc_bs_deal_status = #vcBsDealStatus#
+		 where b.vc_fs_deal_id = #vcBsDealId#
+	</update>
+	<!-- 查询后台更新是否成功 -->
+    <select  id="getBackStageUpdateFlag" parameterClass="com.cjhxfund.ats.sm.comm.BackStageTraderInfo" 
+		resultClass="java.lang.Integer">
+		select count(*)
+		  from t_ats_inquiry_result_instruct t
+		 where t.VC_FS_DEAL_ID = #vcDealNo#
+		   and t.VC_BS_DEAL_STATUS = #backStageTraderStatus#
+		   and t.T_BS_DEAL_TIME = TO_DATE(#backStageTraderCd#,'yyyy-mm-dd hh24:mi:ss')
+		   and t.C_IS_VALID = '1' 
+	</select>
+	
+	<!-- 后台成交查询上清中债落地数据start -->
+	<!--结算合同下载表-->
+	<resultMap class="commonj.sdo.DataObject" id="resultTallyContract">
+		<result column="VC_TXID" javaType="string" property="contractBusinessId"/>
+		<result column="VC_BIZTP" javaType="string" property="vcBizTp"/>
+        <result column="VC_CTRCTSTS" javaType="string" property="contractRemark"/>
+    </resultMap>
+	<select  id="queryTallyContract" parameterClass="commonj.sdo.DataObject" resultMap="resultTallyContract">
+		select t.vc_txid,			<!--成交编号-->
+			   t.VC_BIZTP,
+	       	   t.vc_ctrctsts		<!--合同状态描述-->
+		  from stage.t_ats_bs_tally_contract t
+		 where to_char(t.l_updatedt) = to_char(sysdate,'yyyyMMdd')
+		 <isNotNull property="vcInstrid">
+        	and t.vc_instridtoctrct = #vcInstrid#
+      	</isNotNull>
+	</select>
+	<!--结算指令下载表-->
+	<resultMap class="commonj.sdo.DataObject" id="resultTallyOrder">
+		<result column="VC_TXID" javaType="string" property="businessId"/>
+        <result column="VC_TXDRCTN" javaType="string" property="tradeDirection"/>
+        <result column="VC_LASTUPDTM" javaType="string" property="latestUpdateTime"/>
+        <result column="VC_FRSTDLVRYDT" javaType="string" property="vcFrstdlvrydt"/>
+        <result column="VC_INSTRID" javaType="string" property="vcInstrid"/>
+        <result column="VC_CHCKER" javaType="string" property="checker"/>
+        <result column="VC_CNFRMOR" javaType="string" property="confirmer"/>
+    </resultMap>
+	<select  id="queryTallyOrder" resultMap="resultTallyOrder">
+		select t.vc_txid,			<!--成交编号-->
+	       	   t.vc_txdrctn,		<!--买卖方向-->
+		       t.vc_lastupdtm,		<!--最后更新时间-->
+		       t.vc_frstdlvrydt,    <!--首次交割时间-->
+		       t.vc_instrid,		<!--指令编号-->
+		       t.vc_chcker,			<!--复核员-->
+       		   t.vc_cnfrmor  		<!--确认员-->
+		  from stage.t_ats_bs_tally_order t
+		 where to_char(t.l_updatedt) = to_char(sysdate,'yyyyMMdd')
+	</select>
+	<!--现券交易列表-->
+	<resultMap class="commonj.sdo.DataObject" id="resultBondTrade">
+		<result column="VC_TXID" javaType="string" property="businessId"/>
+        <result column="VC_TXDT" javaType="string" property="setmtDate"/>
+        <result column="VC_BUYERSTS" javaType="string" property="buyerStatus"/>
+        <result column="VC_SELLERSTS" javaType="string" property="sellerStatus"/>
+    </resultMap>
+	<select  id="queryBondTrade" resultMap="resultBondTrade">
+		select t.vc_txid,			<!--成交编号-->
+		       t.vc_txdt,			<!--成交日期-->
+		       t.vc_buyersts,		<!--买状态-->
+		       t.vc_sellersts		<!--卖方状态-->
+		  from stage.t_ats_bs_bond_trade t
+		 where to_char(t.l_updatedt) = to_char(sysdate,'yyyyMMdd')
+	</select>
+	<!--质押式回购列表-->
+	<resultMap class="commonj.sdo.DataObject" id="resultPledgeStyleRepo">
+		<result column="VC_TXID" javaType="string" property="businessId"/>
+        <result column="VC_TXDT" javaType="string" property="setmtDate"/>
+        <result column="VC_SELLREPOSTS" javaType="string" property="buyerStatus"/>
+        <result column="VC_REVREPOSTS" javaType="string" property="sellerStatus"/>
+    </resultMap>
+	<select  id="queryPledgeStyleRepo" resultMap="resultPledgeStyleRepo">
+		select t.vc_txid,			<!--成交编号-->
+		       t.vc_txdt,			<!--成交日期-->
+		       t.vc_sellreposts,	<!--正回购方状态-->
+		       t.vc_revreposts		<!--逆回购方状态-->
+		  from stage.t_ats_bs_pledge_style_repo t
+		 where to_char(t.l_updatedt) = to_char(sysdate,'yyyyMMdd')
+	</select>
+	<!--全额结算指令列表-->
+	<resultMap class="commonj.sdo.DataObject" id="resultFullTallyOrder">
+        <result column="VC_TXID" javaType="string" property="businessId"/>
+        <result column="VC_BIZTP" javaType="string" property="bizTp"/>
+        <result column="VC_FRSTORSCND" javaType="string" property="frstorscnd"/>
+        <result column="VC_PRODSTTLMSTS" javaType="string" property="productClearingStatus"/>
+        <result column="VC_FUNDSTTLMSTS" javaType="string" property="fundClearingStatus"/>
+    </resultMap>
+	<select  id="queryFullTallyOrder" resultMap="resultFullTallyOrder">
+		select t.vc_txid,				<!--成交编号-->
+			   t.vc_biztp,				<!--業務品種-->
+			   t.vc_frstorscnd,
+		       t.vc_prodsttlmsts,		<!--结算指令状态-->
+		       t.vc_fundsttlmsts		<!--资金结算状态-->
+		  from stage.t_ats_bs_full_tally_order t
+		 where to_char(t.l_updatedt) = to_char(sysdate,'yyyyMMdd')
+	</select>
+	<!--买断式回购列表-->
+	<resultMap class="commonj.sdo.DataObject" id="resultBuyoutRepurchase">
+        <result column="VC_TXID" javaType="string" property="businessId"/>
+        <result column="VC_TXDT" javaType="string" property="setmtDate"/>
+        <result column="VC_SELLREPOSTS" javaType="string" property="buyerStatus"/>
+        <result column="VC_REVREPOSTS" javaType="string" property="sellerStatus"/>
+    </resultMap>
+	<select  id="queryBuyoutRepurchase" resultMap="resultBuyoutRepurchase">
+		select t.vc_txid,			<!--成交编号-->
+		       t.vc_txdt,			<!--成交日期-->
+		       t.vc_sellreposts,	<!--正回购方状态-->
+		       t.vc_revreposts		<!--逆回购方状态-->
+		  from stage.t_ats_bs_buyout_repurchase t
+		 where to_char(t.l_updatedt) = to_char(sysdate,'yyyyMMdd')
+	</select>
+	<!-- 后台成交查询上清中债落地数据end -->
+	
+	<!-- 手工添加业务根据结果指令序号查询指令信息-->
+	<resultMap class="commonj.sdo.DataObject" id="resultInstructInfoMap">
+        <result column="L_RESULT_NO" javaType="long" property="lResultNo"/><!-- 询价结果序号 -->
+        <result column="L_INQUIRY_ID" javaType="long" property="lInquiryId"/><!-- 询价指令ID -->
+        <result column="VC_CLORD_ID" javaType="string" property="vcClordId"/><!-- 第三方指令ID -->
+        <result column="L_PROCESSINST_ID" javaType="long" property="lProcessinstId"/><!-- 流程实例ID -->
+        <result column="L_PRODUCT_ID" javaType="long" property="lProductId"/><!-- 产品ID -->
+        <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/><!-- 产品代码 -->
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/><!-- 产品名称 -->
+        <result column="L_ASSET_ID" javaType="long" property="lAssetId"/><!-- 资产单元ID -->
+        <result column="VC_ASSET_CODE" javaType="string" property="vcAssetCode"/><!-- 资产单元代码 -->
+        <result column="VC_ASSET_NAME" javaType="string" property="vcAssetName"/><!-- 资产单元名称 -->
+        <result column="L_COMBI_ID" javaType="long" property="lCombiId"/><!-- 组合ID -->
+        <result column="VC_COMBI_CODE" javaType="string" property="vcCombiCode"/><!-- 组合代码 -->
+        <result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/><!-- 组合名称 -->
+        <result column="VC_STOCK_CODE" javaType="string" property="vcStockCode"/><!-- 债券代码 -->
+        <result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/><!-- 债券名称 -->
+        <result column="L_TRADE_DATE" javaType="long" property="lTradeDate"/><!-- 交易日期 -->
+        <result column="VC_ENTRUST_DIRECTION" javaType="string" property="cEntrustDirection"/><!-- 委托方向 -->
+        <result column="VC_MARKET" javaType="string" property="vcMarket"/><!-- 交易市场 -->
+        <result column="VC_BIZ_TYPE" javaType="string" property="vcBizType"/><!-- 业务类型 -->
+        <result column="VC_COUNTERPARTY_NAME" javaType="string" property="vcCounterpartyName"/><!-- 交易对手名称-->
+    </resultMap>
+	<select  id="queryInstructInfoByResultNo" parameterClass="commonj.sdo.DataObject" resultMap="resultInstructInfoMap">
+		select t.l_result_no,					<!--指令序号-->
+		       t.l_inquiry_id,					<!--询价指令编号-->
+		       t.vc_clord_id,					<!--第三方指令编号-->
+		       t.l_processinst_id,				<!--流程ID-->
+		       t.l_product_id,					<!--产品编号-->
+		       t.vc_product_code,				<!--产品代码-->
+		       t.vc_product_name,				<!--产品名称-->
+		       t.l_asset_id,					<!--资产单元编号-->
+		       t.vc_asset_code,					<!--资产单元代码-->
+		       t.vc_asset_name,					<!--资产单元名称-->
+		       t.l_combi_id,					<!--组合编号-->
+		       t.vc_combi_code,					<!--组合代码-->
+		       t.vc_combi_name,					<!--组合名称-->
+		       t.vc_stock_code,					<!--债券代码-->
+		       t.vc_stock_name,					<!--债券名称-->
+		       t.l_trade_date,					<!--交易日期-->
+		       t.vc_entrust_direction,			<!--委托方向-->
+		       t.vc_market,						<!--交易市场-->
+		       t.vc_biz_type,					<!--业务类别-->
+		       t.vc_counterparty_name			<!--交易对手-->
+		  from t_ats_inquiry_result_instruct t
+		 where t.c_is_valid = '1'				<!--指令状态：1有效-->
+		   and t.l_result_no=#lResultNo#		<!--指令序号-->
+	</select>
+	<select  id="queryMortagageInfoByStockCode" parameterClass="commonj.sdo.DataObject" resultMap="resultInstructInfoMap">
+		select t.l_result_no,					<!--指令序号-->
+		       t.l_inquiry_id,					<!--询价指令编号-->
+		       t.vc_clord_id,					<!--第三方指令编号-->
+		       t.l_processinst_id,				<!--流程ID-->
+		       t.l_product_id,					<!--产品编号-->
+		       t.vc_product_code,				<!--产品代码-->
+		       t.vc_product_name,				<!--产品名称-->
+		       t.l_asset_id,					<!--资产单元编号-->
+		       t.vc_asset_code,					<!--资产单元代码-->
+		       t.vc_asset_name,					<!--资产单元名称-->
+		       t.l_combi_id,					<!--组合编号-->
+		       t.vc_combi_code,					<!--组合代码-->
+		       t.vc_combi_name,					<!--组合名称-->
+		       b.vc_stock_code,					<!--债券代码-->
+		       b.vc_stock_name,					<!--债券名称-->
+		       t.l_trade_date,					<!--交易日期-->
+		       t.vc_entrust_direction,			<!--委托方向-->
+		       t.vc_market,						<!--交易市场-->
+		       t.vc_biz_type,					<!--业务类别-->
+		       t.vc_counterparty_name			<!--交易对手-->
+		  from t_ats_inquiry_result_instruct t,t_ats_inquiry_result_mortagage b
+		 where t.l_result_no = b.l_result_no	<!--指令序号-->
+		   and t.c_is_valid = '1'				<!--指令状态：1有效-->
+		   and t.l_result_no = #lResultNo#		<!--指令序号-->
+		   and b.vc_stock_code = #vcStockCode#  <!--债券代码-->
+	</select>
+	<!-- 手工添加业务更新结果指令表前台更新(银行间买卖、质押式回购、买断式回购、上海大宗、固收、深圳综合协议平台业务)-->
+	<update  id="updateInstructInfoByResultNo" parameterClass="commonj.sdo.DataObject">
+		update t_ats_inquiry_result_instruct t
+	       set t.vc_fs_deal_id = #vcDealNo#,
+		   	   t.vc_fs_deal_status = '1',
+		   	   t.t_fs_deal_time = to_date(REPLACE(#tFsDealTime#, 'T' ,' '),'yyyy-mm-dd hh24:mi:ss')
+		 where t.c_is_valid = '1'						<!--指令状态：1有效-->
+		   and t.l_result_no=to_number(#lResultNo#)		<!--指令序号-->
+	</update>
+	<!-- 查询手工添加业务结果指令表是否更新成功 -->
+    <select  id="getManuallyUpdateFlag" parameterClass="commonj.sdo.DataObject" 
+		resultClass="java.lang.Integer">
+		select count(*)
+		  from t_ats_inquiry_result_instruct t
+		 where t.vc_fs_deal_id = #vcDealNo#
+		   and t.t_fs_deal_time = to_timestamp_TZ(#backStageTraderCd#,'yyyy-mm-dd hh24:mi:ss')
+		   and t.vc_fs_deal_status = '1'
+		   and t.c_is_valid = '1'
+	</select>
+	<!-- 手工添加业务更新结果指令质押券表(协议式回购业务)-->
+	<update  id="updateMortagageInfoBylMortagageId" parameterClass="commonj.sdo.DataObject">
+		update t_ats_inquiry_result_mortagage t
+		   set t.vc_fs_deal_id = #vcBsDealId#
+		 where 1 = 1				
+		   and t.l_mortagage_id = #lMortagageId#
+	</update>
+	
+	<!-- 手工添加业务查询委托方向 -->
+    <select  id="getBizType" parameterClass="commonj.sdo.DataObject" 
+		resultClass="java.lang.String">
+		select vc_biz_type
+		  from t_ats_inquiry_result_instruct t
+		 where t.l_result_no = #lResultNo#
+		   and t.C_IS_VALID = '1'
+	</select>
+	<!-- 获取流程实例ID -->
+    <select id ="queryLProcessinstIdbyLResultNo" parameterClass="java.lang.String" 
+		resultClass="java.lang.String">
+    	select t.L_PROCESSINST_ID from T_ATS_INQUIRY_RESULT_INSTRUCT t
+		 where to_char(t.l_result_no) = #lResultNo#
+		   and t.c_is_valid = '1'
+    </select>
+    <!-- 获取流程状态 -->
+    <select id ="queryProcessinstStatusByLResultNo" parameterClass="commonj.sdo.DataObject" 
+		resultClass="java.lang.String">
+    	select t.vc_process_status from t_ats_inquiry_result_instruct t
+		where to_char(t.l_result_no) = #lResultNo#
+		  and t.c_is_valid = '1'
+    </select>
+    <!-- 前台成交时新增资金交收跟踪表:手工添加业务 -->
+    <insert id ="addFundSetmtTracewhenAdd" parameterClass="commonj.sdo.DataObject">
+    	insert into T_ATS_FUND_SETMT_TRACE (
+    		L_TRACE_ID,
+    		VC_DATA_SOURCE,
+    		VC_PRODUCT_CODE,
+    		VC_PRODUCT_NAME,
+    		VC_BIZ_TYPE,
+    		EN_DEAL_AMOUNT,
+    		EN_SETMT_AMOUNT,
+    		VC_COUNTERPARTY_ID,
+    		VC_COUNTERPARTY_NAME,
+    		VC_MARKET,
+    		VC_STOCK_CODE,
+    		VC_STOCK_NAME,
+    		VC_DEAL_NO,
+    		L_DEAL_DATE,
+    		L_SETMT_DATE,
+    		L_DEAL_QUANTITY,
+    		VC_REMARK,
+    		C_CANCEL_FLAG,
+    		C_ENTRUST_DIRECTION,
+    		C_BUSIN_CLASS,
+    		VC_ASSET_NAME,
+    		VC_ASSET_CODE,
+    		L_RESULT_NO
+    	) values (
+    		#lTraceId#,
+    		#vcDataSource#,
+    		#vcProductCode#,
+    		#vcProductName#,
+    		#vcBizType#,
+    		#enDealAmount#,
+    		#enSetmtAmount#,
+    		#vcCounterpartyId#,
+    		#vcCounterpartyName#,
+    		#vcMarket#,
+    		#vcStockCode#,
+    		#vcStockName#,
+    		#vcDealNo#,
+    		#lDealDate#,
+    		#lSetmtDate#,
+    		#lDealQuantity#,
+    		#vcRemark#,
+    		#cCancelFlag#,
+    		#cEntrustDirection#,
+    		#cBusinClass#,
+    		#vcAssetName#,
+    		#vcAssetCode#,
+    		#lResultNo#
+    	)
+    </insert>
+    <!--查询指令信息(手工添加业务) -->
+    <resultMap class="commonj.sdo.DataObject" id="mapInstructInfos">
+    	<result column="L_RESULT_NO" javaType="long" property="lResultNo"/><!-- 询价结果序号 -->
+        <result column="VC_ENTRUST_DIRECTION" javaType="string" property="cEntrustDirection"/><!-- 委托方向 -->
+        <result column="VC_MARKET" javaType="string" property="vcMarket"/><!-- 交易市场 -->
+        <result column="VC_BIZ_TYPE" javaType="string" property="vcBizType"/><!-- 业务类别 -->
+        <result column="VC_FS_DEAL_ID" javaType="string" property="vcFsDealId"/><!-- 前台成交编号 -->
+        <result column="VC_BS_DEAL_STATUS" javaType="string" property="vcBsDealStatus"/><!-- 后台成交状态 -->
+    	<result column="C_IS_VALID" javaType="string" property="cIsValid"/><!-- 指令状态-->
+    	<result column="C_FIX_ENABLE" javaType="string" property="cFixEnable"/><!-- 是否开启fix-->
+    	<result column="VC_PROCESS_STATUS" javaType="string" property="vcProcessStatus"/><!-- 流程状态 -->
+    </resultMap>
+    <!--指令信息 -->
+    <select id ="queryInstructInfos" parameterClass="commonj.sdo.DataObject" resultMap="mapInstructInfos">
+    	select t.l_result_no,					<!--指令序号-->
+		   t.vc_entrust_direction,				<!--委托方向-->
+    		   t.vc_market,						<!--交易市场-->
+    		   t.vc_biz_type,					<!--业务类别-->
+    		   t.vc_fs_deal_id,					<!--前台成交编号-->
+    		   t.vc_bs_deal_status,				<!--后台成交状态-->
+    		   t.c_is_valid,					<!--指令状态-->
+    		   t.c_fix_enable,					<!--是否开启fix-->
+    		   t.vc_process_status				<!--流程状态-->
+    	  from T_ATS_INQUIRY_RESULT_INSTRUCT t
+		 where t.l_result_no = #lResultNo#
+		   and t.c_is_valid = '1'
+		   and instr('567',t.vc_process_status)>0
+    </select>
+    <!--质押券信息(协议式回购) -->
+    <select id ="queryMortagageInfos" parameterClass="commonj.sdo.DataObject" resultMap="mapInstructInfos">
+    	select a.l_result_no,						<!--指令序号-->
+		   	   a.vc_entrust_direction,				<!--委托方向-->
+    		   a.vc_market,							<!--交易市场-->
+    		   a.vc_biz_type,						<!--业务类别-->
+    		   b.vc_bs_deal_id as vc_fs_deal_id,	<!--前台成交编号-->
+    		   a.vc_bs_deal_status,					<!--后台成交状态-->
+    		   a.c_is_valid,						<!--指令状态-->
+    		   a.c_fix_enable,						<!--是否开启fix-->
+    		   a.vc_process_status					<!--流程状态-->
+    	  from t_ats_inquiry_result_instruct a,t_ats_inquiry_result_mortagage b
+		 where a.l_result_no = b.l_result_no
+		   and a.l_result_no = #lResultNo#
+		   and b.vc_stock_code = #vcStockCode#
+		   and a.c_is_valid = '1'
+		   and instr('567',t.vc_process_status)>0
+    </select>
+    <!-- 手工添加业务、前台成交、指令要素匹配进行结果指令序号反写到资金交收表-->
+	<update  id="updateInstructNoToSetmt" parameterClass="commonj.sdo.DataObject">
+		update t_ats_fund_setmt_trace t
+	       set t.l_result_no=#lResultNo#,
+	       	   t.vc_deal_no=#vcDealNo#
+		 where t.l_trace_id=#traceId#
+	</update>
+	<!--查询资产单元下拉列表使用-->
+    <select id="queryAssetInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.l_asset_id,
+		       t.vc_asset_name as TEXT,
+		       t.vc_asset_no   as ID
+		  from t_ats_asset_info t
+		 where l_asset_id in
+		       (select l_asset_id
+		          from t_ats_product_handle
+		         where vc_relate_type = '08'
+		           and vc_product_code = #vcProductCode#
+			       <isNotNull property="user_id">
+			       and vc_user_id=#user_id#
+			       </isNotNull>
+			   )
+    </select>
+    <!-- 前台成交将指令序号回填到资金交收表(其他)-->
+	<update  id="updateInstructNoForElse" parameterClass="commonj.sdo.DataObject">
+		update t_ats_fund_setmt_trace t
+		   set t.l_result_no =
+		       (select l_result_no
+		          from t_ats_inquiry_result_instruct
+		         where vc_clord_id = #vcClordId#),
+		       t.vc_deal_status = '1'
+		where t.vc_deal_no = #vcDealNo#
+		  and t.l_deal_date = #dealDate#
+		  and t.c_entrust_direction = #vcEntrustDirection#
+	</update>
+    <!-- 前台成交将指令序号回填到资金交收表(买断式回购)-->
+	<update  id="updateInstructNoForBuyoutRepo" parameterClass="commonj.sdo.DataObject">
+		update t_ats_fund_setmt_trace t
+		   set t.l_result_no = #instructNo#,
+		   	   t.vc_deal_status = '1'
+		 where t.vc_deal_no = #vcDealNo#
+		 and t.l_deal_date = #dealDate#
+		 and t.c_entrust_direction = #vcEntrustDirection#
+	</update>
+	
+	<!-- 根据成交编号查询资金交收表记录 -->
+    <select id="querySetmtInfo" parameterClass="commonj.sdo.DataObject" resultMap="queryFundSetmtResultMap">
+		select t.l_trace_id,
+	       t.vc_data_source,
+	       t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.l_asset_id,
+	       t.vc_asset_code,
+	       t.vc_asset_name,
+	       t.vc_biz_type,
+	       t.vc_bs_setmt_status,
+	       t.en_deal_amount,
+	       t.en_setmt_amount,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_market,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_deal_no,
+	       t.l_deal_date,
+	       t.l_setmt_date,
+	       t.l_deal_quantity,
+	       t.c_cancel_flag,
+	       t.c_entrust_direction,
+	       t.vc_remark,
+	       t.c_busin_class,
+	       t.l_result_no,
+	       t.vc_depository,
+	       t.vc_clord_id,
+	       t.l_combi_id,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.l_trade_date,
+	       t.t_fs_deal_time,
+	       t.l_setmt_date_repo_case,
+	       t.en_face_amount,
+	       t.vc_deal_status, 
+	       t.t_update_time
+      from t_ats_fund_setmt_trace t
+	 where 
+	 1 = 1
+	 	<isNotNull property="vcDealNo">
+	 		and t.vc_deal_no = #vcDealNo#
+		</isNotNull>
+		<isNotNull property="lResultNo">
+	 		and t.l_result_no = #lResultNo#
+		</isNotNull>
+	 	<isNotNull property="entrustDirection">
+	   		and t.c_entrust_direction in ($entrustDirection$)
+		</isNotNull>
+	   and t.l_deal_date = to_number(to_char(sysdate,'yyyyMMdd'))
+    </select>
+    
+    <!--判断交易所指令是否担保交收：清算速度（T+1 担保交收、 T+0 非担保交收）-->
+    <select id="assertGuaranteeSetmt"  parameterClass="java.lang.String" resultClass="java.lang.String" >
+    	select nvl((select t.l_settle_speed
+             from trade.tinstruction t, trade.trealdeal td
+            where t.l_date = td.l_date
+              and t.l_daily_instruction_no = td.l_daily_instruction_no
+              and t.l_index_daily_modify = td.l_index_daily_modify
+                 and td.vc_deal_no = #value#
+              and rownum = 1),
+           0) l_settle_speed
+  from dual
+    </select>
+    
+</sqlMap>

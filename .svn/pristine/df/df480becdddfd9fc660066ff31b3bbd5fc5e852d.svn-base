@@ -1,0 +1,191 @@
+package com.cjhxfund.ats.taskTimer;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import com.eos.foundation.eoscommon.ScheduleUtil;
+import com.eos.system.annotation.Bizlet;
+
+import commonj.sdo.DataObject;
+
+@Bizlet()
+public class QueryTimerStatusUtil {
+	@Bizlet()
+	public DataObject[] queryTimerStatus(DataObject[] gftimers){
+		List<DataObject> list = new ArrayList<DataObject>();
+		for(int i=0;i<gftimers.length;i++){
+			DataObject tempObj = gftimers[i];
+			int timerId = tempObj.getInt("lTimerId");
+			//查询调度器名称
+			DataObject temptimer = com.eos.foundation.data.DataObjectUtil.createDataObject("com.cjhxfund.ats.taskTimer.dataTask.ZanTingAndJiXuTimerEntity");
+			temptimer.setInt("lTimerId", timerId);
+			com.eos.foundation.database.DatabaseUtil.expandEntityByTemplate("default",temptimer,temptimer);
+			if(temptimer.getString("vcScheudlerName") == null || temptimer.getString("vcScheudlerName").equals("")){
+				continue;
+			}
+			String scheudlerName = temptimer.getString("vcScheudlerName");
+			String taskName = tempObj.getString("vcTaskName");
+			//获取定时器任务详情
+			Map temp = com.eos.foundation.eoscommon.ScheduleUtil.get(scheudlerName,taskName);
+			if(temp==null){
+				com.eos.foundation.database.DatabaseUtil.deleteEntity("default",gftimers[i]);
+				continue;
+			}
+			String taskState = temp.get("taskState").toString();
+			String isStateful = temp.get("isStateful").toString();
+			
+			tempObj.setString("vcTimerRunType", taskState);
+			tempObj.setString("isStateful", isStateful);
+			
+			
+			//更新广发定时器表
+			DataObject timer = com.eos.foundation.data.DataObjectUtil.createDataObject("com.cjhxfund.ats.taskTimer.dataTask.TCommSysTimer");
+			timer.setInt("lTimerId", timerId);
+			timer.setString("vcTimerRunType", taskState);
+			
+			com.eos.foundation.database.DatabaseUtil.updateEntity("default",timer);
+			list.add(tempObj);
+		}
+		return list.toArray(new DataObject[list.size()]);
+	}
+	
+	@Bizlet("获取定时器监控状态")
+	public static DataObject[] getTaskJkStatus(DataObject[] tasks,DataObject[] timerLogs){
+		try{
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String nowDate = sdf1.format(new Date());
+			Date nowTime = new Date();
+			for(DataObject obj:tasks){
+				String timerCode = obj.getString("vcTaskName");
+				if(timerCode==null||timerCode.equals("")){
+					continue;
+				}
+				String vcTriggerType = obj.getString("vcTriggerType");//触发模式
+				String vcBegin = obj.getString("vcBegin");//触发开始时间，不为间隔触发模式下，则为定时触发时间
+				String vcEnd = obj.getString("vcEnd");//触发结束时间，不为间隔触发模式下，则为空
+				String vcFrequency = obj.getString("vcFrequency");//间隔时间
+				String strBegin = "";
+				String strEnd = "";
+				Date beginTime = new Date();
+				Date endTime = new Date();
+				if(vcTriggerType.equals("0")){
+					strBegin = nowDate+" "+vcBegin;
+					beginTime = sdf2.parse(strBegin);
+				}else if(vcTriggerType.equals("1")){
+					strBegin = nowDate+" "+vcBegin+":00";
+					strEnd = nowDate+" "+vcEnd+":00";
+					beginTime = sdf2.parse(strBegin);
+					endTime = sdf2.parse(strEnd);
+				}
+				if(vcTriggerType.equals("0")){//触发模式为定时触发
+					boolean flag = false;
+					for(DataObject log:timerLogs){
+						if(log.getString("vcTimerName").equals(obj.getString("vcTaskName"))){//当天只要有执行，就是已触发，没有就是没有触发
+							flag = true;
+							break;
+						}
+					}
+					
+					if((nowTime.getTime()-beginTime.getTime())/1000<10*60){//时间在定时触发时间10分钟之内
+						if(flag){
+							obj.setString("vcStatus", "1");//已执行正常
+						}else{
+							obj.setString("vcStatus", "2");//未执行正常
+						}
+					}else if((nowTime.getTime()-beginTime.getTime())/1000>=10*60){//时间在定时触发时间10分钟之外
+						if(flag){
+							obj.setString("vcStatus", "1");//已执行正常
+						}else{
+							obj.setString("vcStatus", "3");//未执行异常
+						}
+					}else{
+						obj.setString("vcStatus", "2");//未执行正常
+					}
+				}else if(vcTriggerType.equals("1")){//触发模式为间隔触发，每N分钟执行
+					boolean flag = false;
+					int index = Integer.parseInt(vcFrequency)*2*60;
+					for(DataObject log:timerLogs){
+						if(log.getString("vcTimerName").equals(obj.getString("vcTaskName"))){
+							Date executeDate = log.getDate("dStartTime");//定时器触发时间
+							if(nowTime.getTime()>endTime.getTime()){//时间在间隔结束时间之后
+								Long lTime = (endTime.getTime()-executeDate.getTime())/1000;
+								int num = Math.abs(lTime.intValue());
+								if(num<=index){
+									flag = true;
+								}
+							}else if(beginTime.getTime()<=nowTime.getTime() && nowTime.getTime()<=endTime.getTime()){//在正常触发间隔时间内
+								Long lTime = (nowTime.getTime()-executeDate.getTime())/1000;
+								int num = Math.abs(lTime.intValue());
+								if(num<=index){
+									flag = true;
+								}
+							}
+						}
+					}
+					if(nowTime.getTime()<beginTime.getTime()){//时间在间隔开始时间之前
+						obj.setString("vcStatus", "2");//未执行正常
+					}else if(nowTime.getTime()>endTime.getTime()){//时间在间隔结束时间之后
+						if(flag){
+							obj.setString("vcStatus", "1");//已执行正常
+						}else{
+							obj.setString("vcStatus", "6");//已执行异常
+						}
+					}else if(beginTime.getTime()<=nowTime.getTime() && nowTime.getTime()<=endTime.getTime()){//在正常触发间隔时间内
+						if(flag){
+							obj.setString("vcStatus", "4");//执行中正常
+						}else{
+							obj.setString("vcStatus", "5");//执行中异常
+						}
+					}
+				}
+			}
+			return tasks;
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println("获取定时器监控状态报错" + new Date());
+			return tasks;
+		}
+	}
+	
+	@Bizlet("获取定时器状态")
+	public static DataObject[] getTimerRunState(DataObject[] tasks){
+		try{
+			for(DataObject obj:tasks){
+				String scheudlerName = obj.getString("vcScheudlerName");
+				String taskName = obj.getString("vcTaskName");
+				if(taskName==null||taskName.equals("")){
+					continue;
+				}
+				//获取定时器任务详情
+				Map<String,Object> temp = ScheduleUtil.get(scheudlerName,taskName);
+				String taskState = temp.get("taskState").toString();
+				obj.setString("vcRunState", taskState);
+			}
+			return tasks;
+		}catch(Exception e){
+			e.printStackTrace();
+			System.out.println("获取定时器状态报错" + new Date());
+			return tasks;
+		}
+	}
+	
+	@Bizlet("定时器排序")
+	public static List<DataObject> getDataObjectList(DataObject[] tasks){
+		List<DataObject> list = new ArrayList<DataObject>();
+		for(DataObject obj:tasks){
+			String vcRunStatus = obj.getString("vcStatus");
+			if(vcRunStatus==null||vcRunStatus.equals("")){
+				list.add(obj);
+			}else if(vcRunStatus.equals("3")||vcRunStatus.equals("5")||vcRunStatus.equals("6")){
+				list.add(0, obj);
+			}else{
+				list.add(obj);
+			}
+		}
+		return list;
+	}
+}

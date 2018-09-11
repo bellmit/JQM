@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:liupinghui -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <!-- 登录日志查询  -->
+	<select id="queryUserLoginLog" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+		select l.VC_USERNAME,
+			l.VC_USERCODE,
+	       	l.VC_IP,
+	       	to_char(l.D_LOGINTIME, 'yyyy-MM-dd HH24:mi:ss')as D_LOGINTIME,
+	       	to_char(l.D_OUTTIME, 'yyyy-MM-dd HH24:mi:ss')as D_OUTTIME,
+	       	round( (l.D_OUTTIME-l.D_LOGINTIME  )* 24 * 60,2)  as VC_LOGINMINUTES ,
+	       	VC_OUTREASON
+	  	from T_ATS_LOGIN_LOG l
+	 	where 1 = 1
+	    <isNotNull property="loginBegindate">
+	    	and to_date (to_char(l.D_LOGINTIME ,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[  >=   ]]>to_date('$loginBegindate$','yyyy-mm-dd')
+	    </isNotNull>
+	    <isNotNull property="loginEnddate"> 
+			and to_date (to_char(l.D_LOGINTIME ,'yyyy-mm-dd'),'yyyy-mm-dd') <![CDATA[  <=   ]]>to_date('$loginEnddate$','yyyy-mm-dd')
+		</isNotNull>
+		<isNotNull property="logoutBegindate">  
+		    and to_date (to_char(l.D_OUTTIME ,'yyyy-mm-dd'),'yyyy-mm-dd')<![CDATA[  >=   ]]>to_date('$logoutBegindate$','yyyy-mm-dd')
+		</isNotNull>
+		<isNotNull property="logoutEnddate"> 
+			and to_date (to_char(l.D_OUTTIME ,'yyyy-mm-dd'),'yyyy-mm-dd')<![CDATA[  <=    ]]>to_date('$logoutEnddate$','yyyy-mm-dd')
+		</isNotNull>
+		<isNotNull property="outreason"> 
+			<isEqual prepend="and" property="outreason" compareValue="overtime">
+		    	l.VC_OUTREASON  not in('normal','reboot') or  l.VC_OUTREASON is null
+		    </isEqual>
+		    <isNotEqual prepend="and" property="outreason" compareValue="overtime">
+		    	l.VC_OUTREASON=#outreason#
+		    </isNotEqual>
+		</isNotNull>
+		<isNotNull property="username"> 
+			and l.VC_USERNAME like  '%'||trim ('$username$')||'%'  
+		</isNotNull>
+		<isNotNull property="userid"> 
+			and l.VC_USERCODE like  '%'||trim ('$userid$')||'%' 
+		</isNotNull>  
+		<isNotNull property="ip"> 
+			and l.VC_IP like  '%'||trim ('$ip$')||'%' 
+		</isNotNull>
+		<isNull property="sortField"> 
+			order by l.D_LOGINTIME   desc  
+		</isNull>
+		<isNotNull property="sortField"> 
+			order by $sortField$ $sortOrder$  
+		</isNotNull>
+	</select> 
+	
+	<!-- 用户操作日志查询  -->
+	<select id="queryUserOperationLog" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+	select * from (
+    	select t.l_id,
+	      	t.vc_userid,
+	      	t.vc_ip_address,
+	      	t.vc_menu_id,
+	      	t.vc_menu_code,
+	      	to_char(t.d_operate_time, 'yyyy-MM-dd HH24:mi:ss')as d_operate_time,
+	      	case t.vc_userid when 'sysadmin' then 'sysadmin'  else e.empname end as  empname,
+	      	a.menuname as menuname,
+	      	a.parentsid,
+	      	p.menulabel as p_menuname
+    	from T_ATS_OPERATION_LOG t 
+      	left join  ORG_EMPLOYEE e on t.vc_userid=e.userid
+      	left join app_menu a on a.menuid=t.vc_menu_id
+	  	left join app_menu p on p.menuid=a.parentsid
+	)A where 1 = 1
+		<isNotNull property="operaBegindate">
+			and to_date (substr(d_operate_time,1,10) ,'yyyy-MM-dd') <![CDATA[  >=   ]]>to_date('$operaBegindate$','yyyy-MM-dd')
+		</isNotNull>
+		<isNotNull property="operaEnddate"> 
+			and to_date (substr(d_operate_time,1,10) ,'yyyy-MM-dd') <![CDATA[  <=   ]]>to_date('$operaEnddate$','yyyy-MM-dd')
+		</isNotNull>
+		<isNotNull property="username"> 
+			and empname like  '%'||trim ('$username$')||'%'  
+		</isNotNull>
+		<isNotNull property="userid"> 
+			and vc_userid like  '%'||trim ('$userid$')||'%' 
+		</isNotNull>  
+		<isNotNull property="ip"> 
+			and vc_ip_address like  '%'||trim ('$ip$')||'%' 
+		</isNotNull>
+		<isNotNull property="menuname"> 
+			and menuname  like  '%'||trim ('$menuname$')||'%' 
+		</isNotNull>
+		<isNotNull property="pmenuname"> 
+			and p_menuname  like  '%'||trim ('$pmenuname$')||'%' 
+		</isNotNull>
+		<isNull property="sortField"> 
+			order by l_id  desc  
+		</isNull>
+		<isNotNull property="sortField"> 
+			order by $sortField$ $sortOrder$  
+		</isNotNull>
+	</select> 
+</sqlMap>

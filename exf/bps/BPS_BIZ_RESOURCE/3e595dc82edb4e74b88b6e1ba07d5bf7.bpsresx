@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource>
+  <catalogID>3e595dc82edb4e74b88b6e1ba07d5bf7</catalogID>
+  <bizCommResources>
+    <businessCommRes>
+      <resourceUUID>3a9a6099229346ea97dc18a7357b49f9</resourceUUID>
+      <resourceName>获取系统配置的参与者值</resourceName>
+      <catalogUUID>3e595dc82edb4e74b88b6e1ba07d5bf7</catalogUUID>
+      <resourceImpl>com.cjhxfund.ats.fm.instr.SetRelative.getParticipant</resourceImpl>
+      <resourceType>pojo</resourceType>
+      <resourceScope>10010000</resourceScope>
+      <resourceRemark></resourceRemark>
+      <parameters/>
+      <busiResType>02</busiResType>
+    </businessCommRes>
+  </bizCommResources>
+  <bizRules>
+    <businessRule>
+      <ruleUUID>7e7815635922456b8dbe18bd28f18b59</ruleUUID>
+      <ruleName>系统参数配置参与者规则</ruleName>
+      <catalogUUID>3e595dc82edb4e74b88b6e1ba07d5bf7</catalogUUID>
+      <ruleType>02</ruleType>
+      <provider>BPSRULE</provider>
+      <description>系统参数配置参与者规则 </description>
+      <ruleContents>
+        <addUp>0</addUp>
+        <ruleContent>
+          <pri>1</pri>
+          <ruleCondition>
+            <contentType>1</contentType>
+          </ruleCondition>
+          <ruleResult>
+            <contentType>FUN</contentType>
+            <expr>$OPT:3a9a6099229346ea97dc18a7357b49f9($CTX[CTX201])</expr>
+            <desc>@一级债.获取系统配置的参与者值(『活动定义编号』)</desc>
+          </ruleResult>
+        </ruleContent>
+      </ruleContents>
+      <ruleResRels>
+        <ruleResRel>
+          <resourceType>business-operation</resourceType>
+          <resourceID>3a9a6099229346ea97dc18a7357b49f9</resourceID>
+          <resourceName>一级债.获取系统配置的参与者值</resourceName>
+        </ruleResRel>
+      </ruleResRels>
+    </businessRule>
+  </bizRules>
+  <bizCalendars/>
+</resource>

@@ -1,0 +1,321 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="false" %>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+	 <style type="text/css">
+     .mini-grid-cell2{
+     	text-align: center;
+     	color: red;
+     	font-size: 12pt;
+     }
+      #sendUser .mini-buttonedit-border{
+    		border:solid 1px #a5acb5;
+    	}
+     	#sendUser .mini-textbox-border{
+    		border:solid 1px #a5acb5;
+    	}
+     	#sendUser .mini-buttonedit-icon{
+     		display:block;
+     	}
+     	#sendUser .mini-buttonedit-button{
+     		display:block;
+     	}
+    </style>
+	<!-- 
+	  - Author(s): zengjing
+	  - Date: 2017-08-03 10:33:56
+	  - Description:
+	-->
+<div title="流程信息" id="processInfo" class="nui-panel" iconCls="icon-edit" style="width:100%;" showCollapseButton="true" collapseOnTitleClick="true">
+	<div id="processForm" style="padding-top: 5px;" >
+        <table id="processTable" style="width: 98%; table-layout: fixed;" class="nui-form-table">
+			<tr>
+			        <th class="nui-form-label" style="width: 13%;"id="partTh1"></th>
+					<td style="padding-left: 5px;width: 20%" id="partTd1" valign="top"></td>
+					<th class="nui-form-label" style="width: 8%"id="partTh2"></th>
+					<td style="padding-left: 5px;width: 20%;" id="partTd2" valign="top"></td>
+					<th class="nui-form-label" style="width:8%"id='partTh3'></th>
+					<td style="padding-left: 5px;width:20%" id="partTd3" valign="top"></td>
+			</tr>
+			<tr id="operateTr">
+				<th class="nui-form-label" style="width: 13%;">操作：</th>
+				<td colspan="5"  style="padding-left: 5px;width: 86%">
+					<a class="nui-button" id="abandon" iconCls="icon-close" onclick="abandonPro('processInstID','pageType','parTabId')">废弃</a>
+					<a class="nui-button" id="undo" iconCls="icon-undo" onclick="undo('','')">撤回</a>
+				</td>
+			</tr>
+			
+	         <tr class="odd">
+		        <th class="nui-form-label" style="vertical-align: top;width:13%;"> 附件： </th>
+	            <td colspan="5">
+	            	<!-------------------------- --> 
+				</td>
+            </tr>
+            </table>    
+			 <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+			<tr>
+           		<th class="nui-form-label" style="vertical-align: top;width:13%;">审批意见：</th>
+           		
+           		
+           		<td colspan="5"  style="padding-left: 8px">
+					 
+		 		</td>
+           	</tr>
+           	
+         	<tr>
+           		<td colspan="6"  style="padding-left: 28px">
+					<div id="processGrid" class="nui-datagrid" dataField="pmprcaprvinfos" style="width: 97%;  max-height:270px; height:270px; margin-bottom: 50px"
+						url="com.cjhxfund.fpm.bpsExpend.aprvInfo.queryAprvInfo.biz.ext"
+						multiSelect="true" allowSortColumn="false" showPager="false" allowCellSelect="true" allowResizeColumn="false" allowCellWrap="true">
+						<div property="columns"  style="overflow:auto;">
+							<div field="vcWorkItemName" headerAlign="center" allowSort="true" width="13%"		visible="true">任务项</div>
+							<div field="vcUserName" name="userName" headerAlign="center"  width="7%"	allowSort="true" visible="true">参与者</div>
+							<div field="vcOperateType" headerAlign="center" allowSort="true" renderer="onOperateType"  width="7%">操作</div>
+							<div field="vcOperatePeople" headerAlign="center" allowSort="true"  width="10%">转办/征求接收人</div>
+							<div field="vcComments" headerAlign="center" allowSort="true" width="33%"		visible="true">处理意见</div>
+							<div field="dStartTime" headerAlign="center" allowSort="true" width="12%"		visible="true" dateFormat="yyyy-MM-dd HH:mm:ss ">开始时间</div>
+							<div field="dEndTime" headerAlign="center" allowSort="true" width="12%"	visible="true" dateFormat="yyyy-MM-dd HH:mm:ss ">结束时间</div>
+						</div>
+					</div>  
+		 		</td>
+           	</tr>
+           	
+		</table>  
+	</div>
+</div>
+<script type="text/javascript">
+	nui.parse();		
+		
+	var processInstID = '${param.processInstID}';
+
+	function initProcessView(){
+		var jsonstr;
+		//审批意见
+		var processGrid = nui.get("processGrid");
+    	jsonstr = {processinstid:processInstID};
+    	processGrid.load(jsonstr); 	
+    	//初始化流程参数
+		initProcessParam();
+		//初始化参与者显示
+		reSetActor();
+	}		
+	
+	function initProcessParam(){
+		var url1 = "com.cjhxfund.fpm.bpsExpend.process.getProByProID.biz.ext";
+		var json = nui.encode({processInstID:processInstID});
+		//common/commonUtil.js 通用方法
+		var d1 = pm_ajax(json,url1,false);
+		console.log(d1);
+		//设置参与者	
+		for(var i=1;i<=3;i++){
+			if(d1.nextActor){
+				$("#partTh"+i).text("当前参与者：");
+				$("#partTd"+i).text(d1.nextActor);
+				d1.nextActor=null;
+				continue;
+			}
+			if(d1.lastActor){
+				$("#partTh"+i).text("上一参与者：");
+				$("#partTd"+i).text(d1.lastActor);
+				d1.lastActor=null;
+				continue;
+			}
+			if(d1.procNextAct){
+				$("#partTh"+i).text("下一参与者：");
+				$("#partTd"+i).text(d1.procNextAct);
+				d1.procNextAct=null;
+				continue;
+			}
+		}
+		//设置操作按钮显隐
+		if(d1.processInst.currentState==2){
+			$("#operateTr").show();
+			//废弃按钮
+			if(d1.bizProcess.vcUserId==d1.currentUserId){
+				$("#abandon").show();
+			}else{
+				$("#abandon").hide();
+			}
+			//撤回按钮
+			if(d1.processInst.relateData=="y"){
+				$("#undo").show();
+			}else{
+				$("#undo").hide();
+			}
+		} else {
+			$("#operateTr").hide();
+		}
+	}
+ 	
+ 	//重新设置参与者人员
+	function reSetActor(){
+		for(var i=1;i<=3;i++){
+			if(document.getElementById("partTd"+i)!=null){
+				var nextActor = document.getElementById("partTd"+i).innerHTML;
+				if(nextActor.indexOf("@")!=-1){
+				   nextActor = nextActor.replaceAll("@","<br>");
+				}
+				document.getElementById("partTd"+i).innerHTML = nextActor;
+			}
+		}
+	}
+	
+	
+	function onOperateType(e){
+  		return nui.getDictText("ATS_OPERATE_TYPE", e.row.vcOperateType);
+  	} 
+  	
+  	
+  	    
+	//废弃功能
+    //将localType参数，改为pageType参数，杨志文，20161020
+    function abandonPro(processInstID,pageType,parTabId){
+        var urlStr="com.cjhxfund.fpm.bpsExpend.abandon.checkAbandonProcessInst.biz.ext";
+        var json = nui.encode({processInstID:processInstID});
+        var result = pm_ajax(json,urlStr,false);
+        //console.log(result.processType);
+        //console.log(result.procFlag);
+        if(result!=null && result.procFlag=="Y"){
+		    	if(confirm("是否确定废弃该流程？")){
+		    	    abandonProcessData(json,parTabId);
+		    	 }else{
+		    		 return false;
+		    	 } 
+		 }else{
+		   // 过虑产品名称变更子流程不能废弃
+           if(result!=null && result.processType=="12"){
+		        nui.alert("子流程不能被废弃","提示");
+		   }else{
+		       if(confirm("是否确定废弃该流程？")){
+		    	    abandonProcessData(json,parTabId);
+		       }else{
+		    		return false;
+		       } 
+		   }
+		 }
+      }
+    function abandonProcessData(reqData,parTabId){
+            var urlStr = "com.cjhxfund.fpm.bpsExpend.abandon.abandonProcessInstByProcessInstID.biz.ext";
+			nui.ajax({
+				type:"post",
+				url:urlStr,
+				data:reqData,
+				cache:false,
+				async:false,
+				contentType:'text/json',
+				success:function(text){
+					//关闭tab页面或返回我的任务
+	                removeTabOrBackMyTasks('processNew',parTabId);
+				}
+			});
+    }
+    //撤回功能
+	function undo(processInstID,parTabId){
+		if(confirm("是否确定撤回流程提交？")){
+    		var urlStr = "com.cjhxfund.fpm.bpsExpend.drawBack.drawBackWorkItem.biz.ext";
+    		var json = nui.encode({processInstID:processInstID});
+    		nui.ajax({
+    			type:"post",
+    			url:urlStr,
+    			data:json,
+    			cache:false,
+    			async:false,
+    			contentType:'text/json',
+    			success:function(text){
+    				//关闭tab页面或返回我的任务
+                    removeTabOrBackMyTasks('processNew',parTabId);
+    			}
+    		});
+    	 }
+    	 else{
+    		 return false;
+    	 } 
+	}
+    
+      //传阅功能
+     function passRound(processInstID,localType){
+    	 var btnEdit = nui.get("sendUser");
+         nui.open({
+	         url: contextPath +"/bpsExpend/empSelect/multSeletSend.jsp",
+	         title: "员工列表",
+	         width: 650,
+	         height: 480,
+	         onload: function () {
+	             var iframe = this.getIFrameEl();
+	             var btnEditValue = btnEdit.getValue();
+	             var data = [];
+	             if(btnEditValue!=null&&btnEditValue!=""){
+	             	var empArr = btnEditValue.split(";");
+	             	if(empArr!=null&&empArr.length>0){
+	             		for(var i=0;i<empArr.length;i++){
+	             			var emp = empArr[i];
+	             			if(emp!=null&&emp!=""){
+	             				var eArr = emp.split(",");
+	             				var json = {"empid":eArr[0],"username":eArr[1]};
+	             				data.push(json);
+	             			}
+	             		}
+	             	}
+	             }
+	             iframe.contentWindow.setData(data);
+	         },
+	         ondestroy: function (action) {
+	             if (action == "ok") {
+	                 var iframe = this.getIFrameEl();
+	                 var emps = iframe.contentWindow.getData();
+	                 emps = nui.clone(emps); 
+	                 if (emps) {
+	                 	var empValue = "";
+	                 	 var empValueArr =	emps.value.split(",");
+	                      var empNameArr =	emps.name.split(","); 	
+	                 	for(var i=0;i<empValueArr.length;i++){
+	                 		if(empValueArr[i]!=""&&empValueArr[i]!="")
+	                 			empValue += empValueArr[i] +","+empNameArr[i];
+	                 		if(i<empValueArr.length-1){
+	                 			empValue += ";";
+	                 		}
+	                 	}
+	                     btnEdit.setValue(empValue);
+	                     btnEdit.setText(emps.name);
+	                     sendTips(empValue,emps.name,processInstID,localType);
+	                 }
+	             }
+	         }
+	     });   			
+     }
+     
+     //TODO 传阅逻辑需要修改
+     //发送传阅
+     function sendTips(sendUser,sendUserText,processInstID,localType){
+    	 if(!sendUser){
+    		 alert("请选择传阅人员！");
+    		 return;
+    	 } else {
+    		 if(confirm("请确定是否传阅至："+sendUserText)){
+    			 
+        	 }else{
+	    		return false;
+	    	 }
+    	 }
+    	 var json = nui.encode({sendUser:sendUser,processInstID:processInstID});
+    	 nui.ajax({
+ 			type:"post",
+ 			url: "com.cjhxfund.fpm.bpsExpend.taskNotification.sendPassRoundNotice.biz.ext",
+ 			data:json,
+ 			cache:false,
+ 			async:false,
+ 			contentType:'text/json',
+ 			success:function(text){
+ 				if(confirm("发送信息成功，是否关闭本页面？")){
+ 			       setTimeout(function () {
+ 			    	  var rootMini = window.parent.mini;
+ 	 			      var tabs = rootMini.get("mainTabs");
+ 	 			      var tab = tabs.getActiveTab();
+ 	 			      tabs.removeTab(tab.name);
+ 		            }, 1);
+ 	        	 }else{
+ 		    		return false;
+ 		    	 }
+ 			}
+ 		});
+     }
+</script>		

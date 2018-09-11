@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:liangjilong -->
+<sqlMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultMapForParamCheck">
+		<result column="L_PARAM_CHECK_ID" javaType="string" property="lParamCheckId"/>
+		<result column="VC_INTERFACE_NAME" javaType="string" property="vcInterfaceName"/>
+		<result column="VC_PARAM_NAME" javaType="string" property="vcParamName"/>
+		<result column="VC_PARAM_TYPE" javaType="string" property="vcParamType"/>
+		<result column="VC_IS_NEED" javaType="string" property="vcIsNeed"/>
+		<result column="VC_INTERFACE_REAL_NAME" javaType="string" property="vcInterfaceRealName"/>
+		<result column="VC_PARAM_REAL_NAME" javaType="string" property="vcParamRealName"/>
+		<result column="VC_PARAM_LENGTH" javaType="string" property="vcParamLength"/>
+    </resultMap>
+
+
+
+	<!--查询所有检测参数-->
+    <select id="queryParamCheckAll"  parameterClass="com.cjhxfund.cjapi.CJAPIData.TAtsCjapiParamCheck" resultMap="resultMapForParamCheck">
+   		SELECT
+		      ltrim(rtrim(A.L_PARAM_CHECK_ID)) L_PARAM_CHECK_ID,
+		      ltrim(rtrim(A.VC_INTERFACE_NAME)) VC_INTERFACE_NAME,
+		      ltrim(rtrim(A.VC_PARAM_NAME)) VC_PARAM_NAME,
+		      ltrim(rtrim(A.VC_PARAM_TYPE)) VC_PARAM_TYPE,
+		      ltrim(rtrim(A.VC_IS_NEED)) VC_IS_NEED,
+		      ltrim(rtrim(A.VC_INTERFACE_REAL_NAME)) VC_INTERFACE_REAL_NAME,
+		      ltrim(rtrim(A.VC_PARAM_REAL_NAME)) VC_PARAM_REAL_NAME,
+		      ltrim(rtrim(A.VC_PARAM_LENGTH)) VC_PARAM_LENGTH
+		FROM T_ATS_CJAPI_PARAM_CHECK A
+    </select>
+    
+	<!--检测参数sql查询-->
+    <select id="queryParamCheckList"  parameterClass="com.cjhxfund.cjapi.CJAPIData.TAtsCjapiParamCheck" resultMap="resultMapForParamCheck">
+   		SELECT
+		      ltrim(rtrim(A.L_PARAM_CHECK_ID)) L_PARAM_CHECK_ID,
+		      ltrim(rtrim(A.VC_INTERFACE_NAME)) VC_INTERFACE_NAME,
+		      ltrim(rtrim(A.VC_PARAM_NAME)) VC_PARAM_NAME,
+		      ltrim(rtrim(A.VC_PARAM_TYPE)) VC_PARAM_TYPE,
+		      ltrim(rtrim(A.VC_IS_NEED)) VC_IS_NEED,
+		      ltrim(rtrim(A.VC_INTERFACE_REAL_NAME)) VC_INTERFACE_REAL_NAME,
+		      ltrim(rtrim(A.VC_PARAM_REAL_NAME)) VC_PARAM_REAL_NAME,
+		      ltrim(rtrim(A.VC_PARAM_LENGTH)) VC_PARAM_LENGTH
+		FROM T_ATS_CJAPI_PARAM_CHECK A
+		
+		WHERE 1=1
+		
+		<isNotNull prepend="AND" property="vcInterfaceName">
+	         A.VC_INTERFACE_NAME like '%'||#vcInterfaceName#||'%' 
+	    </isNotNull>
+	    <isNotNull prepend="AND" property="vcInterfaceRealName">
+	         A.VC_INTERFACE_REAL_NAME like '%'||#vcInterfaceRealName#||'%' 
+	    </isNotNull>
+	    <isNotNull prepend="AND" property="vcParamName">
+	         A.VC_PARAM_NAME like '%'||#vcParamName#||'%' 
+	    </isNotNull>
+	    <isNotNull prepend="AND" property="vcParamRealName">
+	         A.VC_PARAM_REAL_NAME like '%'||#vcParamRealName#||'%' 
+	    </isNotNull>
+	     <isNotNull prepend="AND" property="vcParamType">
+	         A.VC_PARAM_TYPE like '%'||#vcParamType#||'%' 
+	    </isNotNull>
+    
+    </select>
+</sqlMap>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+	 <select id="queryTaskList" parameterClass="java.util.HashMap"  resultClass="com.cjhxfund.fpm.bpsExpend.task.Task">
+     	/**
+       *2017-05-09 sql重构 zengjing
+       *2017-09-28 sql在加入中间表查询 chenxing
+       *
+       *功能点1：根据流程类型，处理待办任务名称
+       *功能点2：根据待办任务拼接规则多个字段查询
+       *功能点3：过滤征求意见状态下的主流程
+       *功能点4：过滤专户补录流程时的主流程
+       *功能点5：流程引擎协办和代办情况的查询
+       *功能点6：根据流程最后的处理时间倒序排列
+       *注意：sql中使用了数据库的视图 v_roleemp
+       **/
+    select 
+    t.workitemid taskId,
+    t.activityinstname processActivityName
+    ,t.prod_name productName
+    ,'task' taskType
+    ,t.process_def_name processDefName
+    ,t.processinstid processInstID
+	,(case when instr(t.workitemname,'--')=0 then t.bizprocess_name||'--'||t.activityinstname
+      when instr(t.workitemname,'--征求意见')>0 then t.bizprocess_name||'--'||t.activityinstname
+      else t.bizprocess_name||t.workitemname||'--'||t.activityinstname
+      end ) processInstName
+    ,t.sortTime arrivalTime
+    ,t.endtime endTime
+    ,t.creatorName creator
+    ,t.sortTime sortTime
+    ,t.biz_type processType
+    ,t.type_name accountType
+    ,t.prod_subtype_name bussinessType
+    ,(case when instr(substr(t.bizprocess_name,0,4),'加急')>0
+     then
+           substr(t.bizprocess_name,0,4)
+     end) as isFast
+    from (
+     select t1.workitemid,t1.workitemname,t1.endtime,t1.processinstid,t1.activityinstid,t1.processdefid,t1.processdefname,t1.activityinstname,
+    t5.process_creator,(select empname from org_employee where empid=t5.process_creator) creatorName,t5.bizprocess_name,t5.process_def_name,t5.biz_type,
+    nvl((select max(end_time) from pm_prc_aprv_info  t where t.process_inst_id = t1.processinstid),t1.createtime) sortTime,
+    t5.prod_name prod_name,t6.type_name,t6.prod_subtype_name 
+    from wfworkitem t1,wfwiparticipant t2,pm_biz_process t5,v_queryAccountInfo t6 
+    where t1.currentstate in (4,10)/*待处理的工作项状态*/
+    and t1.workitemid = t2.workitemid
+    and t1.processinstid = t5.processinst_id
+    and t1.processinstid = t6.open_process_inst_id(+) 
+    and ((t1.bizstate in (0,3,4) and t2.partiintype in('GET','EXE')) or (t1.bizstate = 2 and t2.partiintype = 'EXE'))/*流程协办和转办的特殊业务状态收集*/
+    and not exists (select 1 from pm_prc_work_info t4 where t4.workitem_id = t1.workitemid and t4.is_help = 1)/*过滤征求意见*/
+    and t2.participant = t1.participant
+    and exists (select 1 from Wfprocessinst t3 where t3.processinstid = t1.processinstid and t3.currentstate = 2 /*运行中流程状态*/
+                                                 and t3.Processinstname != 'com.cjhxfund.fpm.design.supply.spclInfoSupply')/*处理子流程*/
+    <isNotNull property="processType">
+	   and t5.biz_type = #processType#
+	</isNotNull>   
+	<isNotNull property="prodName">
+	   and t5.prod_name like '%'||#prodName#||'%' 
+	</isNotNull>   
+                                       
+    and t2.participanttype = 'emp'
+    and exists (select 1 from org_employee e where to_char(e.empid) = to_char(t2.participantid) and to_char(e.empid) = to_char(#personID#))
+    union
+    
+    select t1.workitemid,t1.workitemname,t1.endtime,t1.processinstid,t1.activityinstid,t1.processdefid,t1.processdefname,t1.activityinstname,
+    t5.process_creator,(select empname from org_employee where empid=t5.process_creator) creatorName,t5.bizprocess_name,t5.process_def_name,t5.biz_type,
+    nvl((select max(end_time) from pm_prc_aprv_info  t where t.process_inst_id = t1.processinstid),t1.createtime) sortTime,
+    t5.prod_name prod_name,t6.type_name,t6.prod_subtype_name  
+    from wfworkitem t1,wfwiparticipant t2,pm_biz_process t5,v_queryAccountInfo t6 
+    where t1.currentstate in (4,10)
+    and t1.workitemid = t2.workitemid
+    and t1.processinstid = t5.processinst_id
+    and t1.processinstid = t6.open_process_inst_id(+)  
+    and ((t1.bizstate in (0,3,4) and t2.partiintype in('GET','EXE')) or (t1.bizstate = 2 and t2.partiintype = 'EXE'))
+    and not exists (select 1 from pm_prc_work_info t4 where t4.workitem_id = t1.workitemid and t4.is_help = 1)
+    and t2.participant = t1.participant
+    and exists (select 1 from Wfprocessinst t3 where t3.processinstid = t1.processinstid
+                                                 and t3.Processinstname != 'com.cjhxfund.fpm.design.supply.spclInfoSupply') 
+	 <isNotNull property="processType">
+	   and t5.biz_type = #processType#
+	</isNotNull>   
+	<isNotNull property="prodName">
+	   and t5.prod_name like '%'||#prodName#||'%' 
+	</isNotNull>                                                 
+    and t2.participanttype = 'role'
+    and exists (select 1 from v_roleemp r where to_char(r.role_id) = to_char(t2.participantid) and to_char(r.empid) = to_char(#personID#))
+	) t 
+	<isEqual property="orderDirect" compareValue="desc">
+          order by $propertyName$ desc NULLS last
+    </isEqual>
+    <isEqual property="orderDirect" compareValue="asc">
+          order by $propertyName$ asc
+    </isEqual>
+    <isNull property="orderDirect">
+         order by t.sortTime desc NULLS last
+    </isNull>
+     </select>
+      <select id="queryRunningTaskList" parameterClass="java.util.HashMap"  resultClass="com.cjhxfund.fpm.bpsExpend.task.ProcessInst">
+       /**
+       *2017-05-09 sql重构 zengjing
+       *2017-09-28 sql在加入中间表查询 chenxing
+       *依赖数据库视图 v_wfparticipant v_auth_partic_emp v_roleemp
+       *添加查询个人征求意见
+       **/
+      select t.* from (
+      select t.processinst_id processinstid,t.bizprocess_name processinstname,t2.processinstdesc,e.empname creator,t.process_createtime createtime,
+      t.biz_type processType,
+      t.prod_name productname,
+      '' activityinstname,
+      '' participantname,
+      nvl(t1.endtime,t.process_createtime) lastendtime,t6.type_name accountType,t6.prod_subtype_name bussinessType,
+      (case when instr(substr(t.bizprocess_name,0,4),'加急')>0
+       then
+           substr(t.bizprocess_name,0,4)
+       end) as isFast
+      from pm_biz_process t ,org_employee e,v_queryAccountInfo t6,
+      (select max(a.end_time) endtime ,process_inst_id from pm_prc_aprv_info a group by a.process_inst_id) t1,wfprocessinst t2
+      where t.process_creator = e.empid 
+      and t.processinst_id=t2.processinstid
+      and t2.currentstate = 2
+      and t.processinst_id = t1.process_inst_id 
+      and t.processinst_id = t6.open_process_inst_id(+)  
+      and t.process_def_name != 'com.cjhx.fpm.task.help'
+      and t.process_def_name != 'com.cjhxfund.fpm.design.supply.spclInfoSupply'
+      and exists (select 1 from v_wfparticipant t1 where t1.processinstid = t.processinst_id and to_char(t1.empid) = #personID#)
+      and not exists (select 1 from v_wfparticipant t1 where t1.processinstid = t.processinst_id and t1.iscurrent = 1 and to_char(t1.empid) = #personID#)
+	  <isNotNull property="processType">
+	    and t.biz_type = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.prod_name like '%'||#prodName#||'%' 
+	 </isNotNull>   
+      union
+    
+     select t.processinst_id processinstid,t.bizprocess_name processinstname,t2.processinstdesc,e.empname creator,t.process_createtime createtime,
+      t.biz_type processType,
+      t.prod_name productname,
+      '' activityinstname,
+      '' participantname,
+      nvl(t1.endtime,t.process_createtime) lastendtime,t6.type_name accountType,t6.prod_subtype_name bussinessType,
+      (case when instr(substr(t.bizprocess_name,0,4),'加急')>0
+		then
+		   substr(t.bizprocess_name,0,4)
+		end) as isFast  
+      from pm_biz_process t ,org_employee e,
+      (select max(a.end_time) endtime ,process_inst_id from pm_prc_aprv_info a group by a.process_inst_id) t1,wfprocessinst t2,v_queryAccountInfo t6
+      where t.process_creator = e.empid
+      and t.processinst_id=t2.processinstid
+      and t2.currentstate = 2
+      and t.processinst_id = t1.process_inst_id
+      and t.processinst_id = t6.open_process_inst_id(+)  
+      and t.process_def_name != 'com.cjhx.fpm.task.help'
+      and t.process_def_name != 'com.cjhxfund.fpm.design.supply.spclInfoSupply'
+      and exists (select 1 from pm_prc_work_info p where p.processinst_id =t.processinst_id  and p.is_help = 1 and to_char(p.user_id) = #personID#)
+	  <isNotNull property="processType">
+	    and t.biz_type = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.prod_name like '%'||#prodName#||'%' 
+	 </isNotNull>  
+	  ) t
+	  <isEqual property="orderDirect" compareValue="desc">
+          order by $propertyName$ desc
+      </isEqual>
+      <isEqual property="orderDirect" compareValue="asc">
+          order by $propertyName$ asc
+      </isEqual>
+      <isNull property="orderDirect">
+         order by lastendtime desc
+      </isNull>
+     </select> 
+     <select id="queryFinishTaskList"  parameterClass="java.util.Map" resultClass="com.cjhxfund.fpm.bpsExpend.task.ProcessInst">
+      /**
+       *2016-10-25增加去除补录主流程sql陈文豪
+       *2017-09-29增加中间表的查询 chenxing
+       *查询已完成的流程
+       */
+      select t.* from (  
+      select t.processinst_id processinstid,t.bizprocess_name processinstname,t2.processinstdesc,t.process_createtime createtime,t2.endtime,e.empname creator,
+      'task' taskType,t.prod_name productname,t.biz_type processType,t6.type_name accountType,t6.prod_subtype_name bussinessType,
+       (case when instr(substr(t.bizprocess_name,0,4),'加急')>0
+       then
+         substr(t.bizprocess_name,0,4)
+      end) as isFast 
+      from pm_biz_process t,org_employee e ,wfprocessinst t2,v_queryAccountInfo t6 
+      where t.process_creator = e.empid
+      and t.processinst_id=t2.processinstid
+      and t2.currentstate = 7
+      and t.processinst_id = t6.open_process_inst_id(+)  
+      and t.process_def_name not like '%com.cjhx.fpm.task.help%'
+      and t.process_def_name != 'com.cjhxfund.fpm.design.supply.spclInfoSupply'
+      <isNotNull property="processType">
+	    and t.biz_type = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.prod_name like '%'||#prodName#||'%' 
+	 </isNotNull>  
+      and exists (select 1 from v_wfparticipant t1 where t1.processinstid = t.processinst_id  and to_char(t1.empid) = #personID#)
+      ) t
+      <isEqual property="orderDirect" compareValue="desc">
+          order by $propertyName$ desc
+      </isEqual>
+      <isEqual property="orderDirect" compareValue="asc">
+          order by $propertyName$ asc
+      </isEqual>
+      <isNull property="orderDirect">
+          order by t.endtime desc
+      </isNull>
+     </select>
+      <select id="getUnviewedNotice"  parameterClass="java.util.Map"  resultClass="com.cjhxfund.fpm.bpsExpend.task.Task">
+      /**
+       * 查询待阅
+       */
+       select t.* from (select t.taskId,t.arrivalTime,t.endTime,t.sortTime,t.taskType,t.processInstID,t.processInstName,t.processType,
+       (case when instr(t.productName,'（原') &gt; 0
+        then
+           substr(t.productName,0,(instr(t.productName,'（原')-1))
+        when instr(t.productName,'（曾用名') &gt; 0
+        then
+             substr(t.productName,0,(instr(t.productName,'（曾用名')-1))
+        else
+           t.productName
+        end) productName,t.dealDevice,t.creator,t.message,t.type_name accountType,t.prod_subtype_name bussinessType,
+        (case when instr(substr(t.processInstName,0,4),'加急')>0
+       	then
+            substr(t.processInstName,0,4)
+         end) as isFast   
+        from (
+          (select t.*,t6.type_name,t6.prod_subtype_name from v_notice_unview t, v_queryAccountInfo t6 where 
+             t.recipient like '%{'||#personID#||'}%' and (t.procinstid &lt;&gt; -2 and t.procinstid=t6.open_process_inst_id(+)))
+          union
+          (select t.*,t6.type_name,t6.prod_subtype_name from v_notice_unview t, v_queryAccountInfo t6 where 
+             t.recipient like '%{'||#personID#||'}%' and (t.procinstid=-2 and t.accout_id=t6.acct_id(+)))
+        ) t
+        ) t where 1=1
+      <isNotNull property="processType">
+	    and t.processType = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.productName like '%'||#prodName#||'%' 
+	 </isNotNull>  
+	   <isEqual property="orderDirect" compareValue="desc">
+          order by $propertyName$ desc
+       </isEqual>
+       <isEqual property="orderDirect" compareValue="asc">
+          order by $propertyName$ asc
+       </isEqual>
+       <isNull property="orderDirect">
+          	order by t.arrivalTime desc
+       </isNull>
+     </select>
+      <select id="getViewedNotice"  parameterClass="java.util.Map" resultClass="com.cjhxfund.fpm.bpsExpend.task.Task">
+      /**
+       * 查询已阅
+       */
+       select t.* from (
+        select  t.taskId,t.arrivalTime,t.endTime,t.sortTime,t.taskType,t.processInstID,t.processInstName,t.processType,
+          (case when instr(t.productName,'（原') &gt; 0
+        then
+           substr(t.productName,0,(instr(t.productName,'（原')-1))
+        when instr(t.productName,'（曾用名') &gt; 0
+        then
+             substr(t.productName,0,(instr(t.productName,'（曾用名')-1))
+        else
+           t.productName
+        end) productName,t.dealDevice,t.creator,t.type_name accountType,t.prod_subtype_name bussinessType,
+         (case when instr(substr(t.processInstName,0,4),'加急')>0
+       	then
+            substr(t.processInstName,0,4)
+         end) as isFast  
+        from (
+     	(select t.*,t6.type_name,t6.prod_subtype_name from v_notice_view t,v_queryAccountInfo t6 where t.recipient like '%{'||#personID#||'}%' 
+     	and (t.procinstid &lt;&gt; -2 and t.procinstid=t6.open_process_inst_id(+)))
+        union
+        (select t.*,t6.type_name,t6.prod_subtype_name from v_notice_view t , v_queryAccountInfo t6 where t.recipient like '%{'||#personID#||'}%' 
+        and (t.procinstid=-2 and t.accout_id=t6.acct_id(+)))
+        ) t ) t where 1=1 
+      <isNotNull property="processType">
+	    and t.processType = #processType#
+	 </isNotNull>   
+	 <isNotNull property="prodName">
+	   and t.productName like '%'||#prodName#||'%' 
+	 </isNotNull>  
+	   <isEqual property="orderDirect" compareValue="desc">
+          order by $propertyName$ desc
+       </isEqual>
+       <isEqual property="orderDirect" compareValue="asc">
+          order by $propertyName$ asc
+       </isEqual>
+       <isNull property="orderDirect">
+          	order by t.arrivalTime desc
+       </isNull>
+     </select>
+     <select id="getAccoutType"  parameterClass="java.lang.Long" resultClass="com.cjhxfund.fpm.bpsExpend.task.accountTypeEnty">
+         select v.type_name accountType,v.prod_subtype_name bussinessType from v_queryAccountInfo v where v.open_process_inst_id=#procInstId#
+     </select>
+</sqlMap>

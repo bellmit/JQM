@@ -1,0 +1,26 @@
+<mapping>
+	<method name="bidConfirm">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="primaryCallBack">
+		<parameter index="0" name="investNo" />
+		<parameter index="1" name="orderProcess" />
+		<parameter index="2" name="orderStatus" />
+		<parameter index="3" type="commonj.sdo.DataObject" name="infoDataObj" componentType="commonj.sdo#DataObject" />
+		<parameter index="4" name="vcInvestCode" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="primaryOrderFeedback">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="primaryOrderIssued">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="primaryOrderModify">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+</mapping>

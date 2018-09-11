@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:刘玉龙 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="L_FINANCE_GAP_ID" javaType="int" property="lFinanceGapId"/>
+        <result column="L_DATE" javaType="int" property="lDate"/>
+        <result column="L_PRODUCT_ID" javaType="int" property="lProductId"/>
+        <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/>
+        <result column="L_ASSET_ID" javaType="int" property="lAssetId"/>
+        <result column="VC_ASSET_CODE" javaType="string" property="vcAssetCode"/>
+        <result column="VC_ASSET_NAME" javaType="string" property="vcAssetName"/>
+        <result column="en_gap_amount" javaType="double" property="enGapAmount"/>
+        <result column="en_deviation_amount" javaType="double" property="enDeviationAmount"/>
+        <result column="VC_TERM_PREFERENCE" javaType="string" property="vcTermPreference"/>
+        <result column="VC_AVAIL_BONDS" javaType="string" property="vcAvailBonds"/>
+        <result column="en_spot_trade_amount" javaType="double" property="enSpotTradeAmount"/>
+        <result column="en_rzhg_amount" javaType="double" property="enRzhgAmount"/>
+        <result column="en_rqhg_amount" javaType="double" property="enRqhgAmount"/>
+        <result column="EN_INITIAL_POSITION" javaType="double" property="enInitialPosition"/>
+        <result column="EN_DUE" javaType="double" property="enDue"/>
+        <result column="EN_T1_DUE" javaType="double" property="enT1Due"/>
+        <result column="EN_YHJ_SP_RZGH" javaType="double" property="enYhjSpRzgh"/>
+        <result column="EN_YHJ_CB_RZGH" javaType="double" property="enYhjCbRzgh"/>
+        <result column="EN_JYS_SH_XYRZGH" javaType="double" property="enJysShXyrzgh"/>
+        <result column="EN_JYS_SZ_XYRZGH" javaType="double" property="enJysSzXyrzgh"/>
+        <result column="EN_YHJ_RQGH" javaType="double" property="enYhjRqgh"/>
+        <result column="EN_YHJ_ZQ_T1CJ" javaType="double" property="enYhjZqT1cj"/>
+        <result column="EN_YHJ_DXDF" javaType="double" property="enYhjDxdf"/>
+        <result column="EN_JYS_SZ_XYRQGH" javaType="double" property="enJysSzXyrqgh"/>
+        <result column="EN_CKZQ" javaType="double" property="enCkzq"/>
+        <result column="EN_ZJSH" javaType="double" property="enZjsh"/>
+        <result column="rn" javaType="int" property="rn"/>
+    </resultMap>
+    <!-- 查询资金头寸 -->
+    <select id="queryPositionGap" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+    	select f.* from (
+	    	select t.l_finance_gap_id,
+			       t.l_date,
+			       t.l_product_id,
+			       t.vc_product_code,
+			       t.vc_product_name,
+			       t.l_asset_id,
+			       t.vc_asset_code,
+			       t.vc_asset_name,
+			       floor((nvl(t.en_initial_position, 0) / 10000 +
+			             nvl(tp.en_spot_trade_amount, 0) + nvl(tp.en_rzhg_amount, 0) +
+			             nvl(tp.en_rqhg_amount, 0) +
+			             nvl(t.en_deviation_amount, 0) +
+			             nvl(t.en_yhj_rqgh, 0) / 10000 +
+			             nvl(t.en_yhj_zq_t1cj, 0) / 10000 +
+			             nvl(t.en_jys_sz_xyrqgh, 0) +
+			             nvl(t.en_ckzq, 0) / 10000 + nvl(t.en_zjsh, 0) +
+			             nvl(t.en_yhj_dxdf, 0) / 10000) / 10) * 10 en_gap_amount,
+			       t.en_deviation_amount,
+			       t.vc_term_preference,
+			       t.vc_avail_bonds,
+			       nvl(tp.en_spot_trade_amount,0) en_spot_trade_amount,
+			       nvl(tp.en_rzhg_amount,0) en_rzhg_amount,
+			       nvl(tp.en_rqhg_amount,0) en_rqhg_amount,
+			       t.en_initial_position,
+			       t.en_due,
+			       t.en_t1_due,
+			       t.en_yhj_sp_rzgh,
+			       t.en_yhj_cb_rzgh,
+			       t.en_jys_sh_xyrzgh,
+			       t.en_jys_sz_xyrzgh,
+			       t.en_yhj_rqgh,
+			       t.en_yhj_zq_t1cj,
+			       t.en_yhj_dxdf,
+			       t.en_jys_sz_xyrqgh,
+			       t.en_ckzq,
+			       t.en_zjsh,
+			       row_number() over(partition by t.vc_product_name order by t.l_date desc) rn
+			  from (t_ats_finance_gap t
+			  left join (select tip.l_date,
+		                        tip.l_asset_id,
+		                        sum(decode(tip.vc_biz_type, '5', 0, '6', 0,'7', 0, '8', 0, 1) *
+		                            decode(decode(ti.vc_entrust_direction,'3','2','4','1','5','1','6','2',tip.vc_fund_direction), '2', -1, 1) *
+		                            nvl(
+				                        decode(ti.en_face_amount,0,0,null,null,
+		                                	(ti.en_face_amount/100)*decode(ti.en_full_price,0,1,null,1,ti.en_full_price))
+		                            ,tip.en_invest_amount)) en_spot_trade_amount,
+		                        sum(decode(tip.vc_biz_type, '5', 1, '6', 1, '7', 1, '8', 1, 0) *
+		                            decode(decode(ti.vc_entrust_direction,'3','2','4','1','5','1','6','2',tip.vc_fund_direction), '1', 1, 0) *
+		                            nvl(
+				                        decode(ti.en_face_amount,0,0,null,null,
+		                                	(ti.en_face_amount/100)*decode(ti.en_full_price,0,1,null,1,ti.en_full_price))
+		                            ,tip.en_invest_amount)) en_rzhg_amount,
+		                        sum(decode(tip.vc_biz_type, '5', 1, '6', 1, '7', 1, '8', 1, 0) *
+		                            decode(decode(ti.vc_entrust_direction,'3','2','4','1','5','1','6','2',tip.vc_fund_direction), '2', -1, 0) *
+		                            nvl(
+				                        decode(ti.en_face_amount,0,0,null,null,
+		                                	(ti.en_face_amount/100)*decode(ti.en_full_price,0,1,null,1,ti.en_full_price))
+                                    ,tip.en_invest_amount)) en_rqhg_amount
+		                   from t_ats_invest_plan tip
+		                   left join t_ats_inquiry_result_instruct ti
+		                     on tip.l_invest_no = ti.l_result_no
+		                    and ti.c_is_valid in ('0','1')
+		                  where tip.c_vaild_status = '1' and nvl(tip.l_invest_no,0) = nvl(ti.l_result_no,0)
+		                  group by tip.l_date, tip.l_asset_id) tp
+			    on t.l_date = tp.l_date
+			   and t.l_asset_id = tp.l_asset_id)
+		   left join (select distinct l_asset_id
+					   from t_ats_product_handle
+					  where vc_relate_type = '02'
+					    and vc_user_id = #vcUserId#) p
+			on t.l_asset_id = p.l_asset_id
+		  where 1=1
+			and ((select count(*)
+		           from cap_role r, cap_partyauth p, cap_user u
+		          where r.role_code = 'sysadmin'
+		            and r.role_id = p.role_id
+		            and p.party_id = u.user_id
+		            and p.party_type = 'user'
+		            and u.user_id = #vcUserId#) = 1 or
+		       (select count(*)
+		           from cap_role r, cap_partyauth p, org_employee e
+		          where r.role_code = 'sysadmin'
+		            and r.role_id = p.role_id
+		            and p.party_id = e.empid
+		            and p.party_type = 'emp'
+		            and e.userid = #vcUserId#) = 1 or
+		       (select count(*)
+	             from org_employee t, org_organization org
+	            where t.orgid = org.orgid
+	              and org.orgcode = 'CJHX_JYB'
+	              and t.userid = #vcUserId#) = 1  or p.l_asset_id is not null)
+			<isNotNull property="lTradeDateMax">
+	    		and t.l_date = #lTradeDateMax#
+	  		</isNotNull>
+	  		<isNotNull property="vcProductCode">
+	    		and t.vc_product_code in ($vcProductCode$)
+	  		</isNotNull>
+	  		<isNotNull property="vcAssetCode">
+	    		and t.vc_asset_code in ($vcAssetCode$)
+	  		</isNotNull>) f 
+	  where 1=1
+  		<isNotNull property="minEnGapAmount">
+    		and f.en_gap_amount >= to_number(#minEnGapAmount#)
+  		</isNotNull>
+  		<isNotNull property="maxEnGapAmount">
+    		and f.en_gap_amount &lt;= to_number(#maxEnGapAmount#)
+  		</isNotNull>
+  		
+    </select>
+	
+    <resultMap class="commonj.sdo.DataObject" id="planMap">
+        <result column="L_PLAN_ID" javaType="int" property="lPlanId"/>
+        <result column="L_DATE" javaType="int" property="lDate"/>
+        <result column="L_PRODUCT_ID" javaType="int" property="lProductId"/>
+        <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/>
+        <result column="L_ASSET_ID" javaType="int" property="lAssetId"/>
+        <result column="VC_ASSET_CODE" javaType="string" property="vcAssetCode"/>
+        <result column="VC_ASSET_NAME" javaType="string" property="vcAssetName"/>
+        <result column="VC_BIZ_TYPE" javaType="string" property="vcBizType"/>
+        <result column="VC_MARKET_NO" javaType="string" property="vcMarketNo"/>
+        <result column="VC_ENTRUST_DIRECTION" javaType="string" property="vcEntrustDirection"/>
+        <result column="VC_FUND_DIRECTION" javaType="string" property="vcFundDirection"/>
+        <result column="EN_INVEST_AMOUNT" javaType="double" property="enInvestAmount"/>
+        <result column="L_INVEST_NO" javaType="long" property="lInvestNo"/>
+        <result column="L_RESULT_ID" javaType="long" property="lResultId"/>
+        <result column="INQUIRY_STATUS" javaType="string" property="inquiryStatus"/>
+        <result column="C_INQUIRY_OPERATE" javaType="string" property="cInquiryOperate"/>
+    </resultMap>
+    <select id="queryInvestPlan" parameterClass="commonj.sdo.DataObject" resultMap="planMap">
+    	select t.l_plan_id,
+		       t.l_date,
+		       t.l_product_id,
+		       t.vc_product_code,
+		       t.vc_product_name,
+		       t.l_asset_id,
+		       t.vc_asset_code,
+		       t.vc_asset_name,
+		       t.vc_biz_type,
+		       t.vc_market_no,
+		       nvl(ti.vc_entrust_direction,t.vc_entrust_direction) vc_entrust_direction,
+		       decode(ti.vc_entrust_direction,'3','2','4','1','5','1','6','2',t.vc_fund_direction) vc_fund_direction,
+		       nvl(ti.en_face_amount,t.en_invest_amount) en_invest_amount,
+		       ti.c_is_valid inquiry_status,
+		       ti.l_result_id,
+		       t.l_invest_no,
+		       tp.l_asset_id,
+		       decode(t.l_asset_id, tp.l_asset_id,'1','0') c_inquiry_operate 
+		  from (t_ats_invest_plan t left join
+		        (select distinct l_asset_id
+		           from t_ats_product_handle
+		          where vc_relate_type = '03'
+		            and vc_user_id = #vcUserId#) tp on t.l_asset_id = tp.l_asset_id)
+		  left join t_ats_inquiry_result_instruct ti
+		    on t.l_invest_no = ti.l_result_no
+		   and ti.c_is_valid in ('0','1')
+		  where t.c_vaild_status = 1 and nvl(t.l_invest_no,0) = nvl(ti.l_result_no,0)
+		<isNotNull property="lDate">
+    		and t.l_date = #lDate#
+  		</isNotNull>
+  		<isNotNull property="lAssetId">
+    		and t.l_asset_id = #lAssetId#
+  		</isNotNull>
+  		order by t.t_create_time desc
+    </select>
+  
+  	<delete id="deleteCurrentDate" parameterClass="java.util.HashMap">
+		delete from t_ats_finance_gap t where t.l_date=#currentDate#
+	</delete>
+	
+	<update id="updateInvestPlan" parameterClass="java.util.HashMap">
+		update t_ats_invest_plan t set t.c_vaild_status='2' where t.l_invest_no=#lInvestNo#
+	</update>
+	
+  	<resultMap class="commonj.sdo.DataObject" id="InitialFinanceGapMap">
+        <result column="lDate" javaType="int" property="lDate"/>
+        <result column="lProductId" javaType="int" property="lProductId"/>
+        <result column="vcProductCode" javaType="string" property="vcProductCode"/>
+        <result column="vcProductName" javaType="string" property="vcProductName"/>
+        <result column="lAssetId" javaType="int" property="lAssetId"/>
+        <result column="vcAssetCode" javaType="string" property="vcAssetCode"/>
+        <result column="vcAssetName" javaType="string" property="vcAssetName"/>
+        <result column="enInitialPosition" javaType="double" property="enInitialPosition"/>
+        <result column="enDue" javaType="double" property="enDue"/>
+        <result column="enT1Due" javaType="double" property="enT1Due"/>
+        <result column="enYhjSpRzgh" javaType="double" property="enYhjSpRzgh"/>
+        <result column="enYhjCbRzgh" javaType="double" property="enYhjCbRzgh"/>
+        <result column="enJysShXyrzgh" javaType="double" property="enJysShXyrzgh"/>
+        <result column="enYhjRqgh" javaType="double" property="enYhjRqgh"/>
+        <result column="enYhjZqT1cj" javaType="double" property="enYhjZqT1cj"/>
+        <result column="enYhjDxdf" javaType="double" property="enYhjDxdf"/>
+        <result column="enCkzq" javaType="double" property="enCkzq"/>
+        <result column="tCreateTime" javaType="date" property="tCreateTime"/>
+    </resultMap>
+    <select id="getInitialPositionGap" parameterClass="java.util.HashMap" resultMap="InitialFinanceGapMap">
+    	select #currentDate#               lDate,
+	           tc.l_fund_id                lProductId,
+	           tc.vc_fundcode              vcProductCode,
+	           tc.vc_fundname              vcProductName,
+	           tc.l_asset_id               lAssetId,
+	           tc.vc_asset_no              vcAssetCode,
+	           tc.vc_asset_name            vcAssetName,
+	           tc.t0_pos                   enInitialPosition,
+	           nvl(ta.en_net_balance0, 0.00) enDue,
+	           nvl(ta.en_net_balance1, 0.00) enT1Due,
+	           nvl(ty.en_ret_zj_sp, 0.00) enYhjSpRzgh,
+	           nvl(ty.en_ret_zj_cb, 0.00) enYhjCbRzgh,
+	           nvl(txy.en_second_clear_balance, 0.00) enJysShXyrzgh,
+	           tc.en_yhj_rqgh enYhjRqgh,
+	           tc.en_yhj_zq_t1cj enYhjZqT1cj,
+	           nvl(tdx.en_yhj_dxdf, 0.00) enYhjDxdf,
+	           nvl(tzh.en_balance, 0.00) enCkzq,
+	           #tCreateTime#               tCreateTime
+	      from (((((select t.l_fund_id,
+	                      t.vc_fundcode,
+	                      t.vc_fundname,
+	                      t.l_asset_id,
+	                      ts.vc_asset_no,
+	                      ts.vc_asset_name,
+	                      t.t0_pos,
+	                      t.en_yhj_rqgh,
+	                      t.en_yhj_zq_t1cj
+	                 from o32_cj.to32_pos_check_rs_new t, trade.tasset ts
+	                where t.l_asset_id = ts.l_asset_id) tc left join
+	            (select t.l_fund_id,
+	                      c.l_asset_id,
+	                      sum(decode(t.l_busin_flag, 71902, 1, -1) *
+	                          decode(t.l_settle_date, #currentDate#, 1, 0) *
+	                          t.en_settle_balance) en_net_balance0,
+	                      sum(decode(t.l_busin_flag, 71902, 1, -1) *
+	                          decode(t.l_settle_date, #currentDate#, 0, 1) *
+	                          t.en_settle_balance) en_net_balance1
+	                 from trade.tpendsettle t, trade.tcombi c
+	                where t.l_basecombi_id = c.l_combi_id
+	                  and t.l_busin_flag in (71902, 71903)
+	                  and t.l_settle_date in (#currentDate#, #nextTradeDate#)
+	                group by t.l_fund_id, c.l_asset_id) ta on
+	            tc.l_asset_id = ta.l_asset_id) left join
+	            (select to_char(nvl(a.l_settle_date, 0)) l_settle_date,
+	                     a.l_fund_id,
+	                     e.l_asset_id,
+	                     sum(decode(a.c_trustee, '2', 1, 0) *
+	                         decode(b.c_fund_direction, '1', -1, 1) *
+	                         (a.en_deal_balance + a.en_redeem_interest)) en_ret_zj_sp,
+	                     sum(decode(a.c_trustee, '1', 1, 0) *
+	                         decode(b.c_fund_direction, '1', -1, 1) *
+	                         (a.en_deal_balance + a.en_redeem_interest)) en_ret_zj_cb
+	                from trade.THGREGISTER a, trade.TENTRUSTDIRECTION b, trade.TSTOCKINFO c, trade.TCOMBI e
+	               where a.c_entrust_direction = b.c_entrust_direction
+	                 and a.c_market_no = b.c_market_no
+	                 and a.vc_inter_code = c.vc_inter_code
+	                 and a.l_basecombi_id = e.l_combi_id
+	                 and a.c_market_no = '5'
+	                 and e.c_combi_status not in ('2', '3')
+	                 and c.c_stock_type not in ('x', 'A', 'z')
+	                 and c.c_asset_class &lt;&gt; '6'
+	                 and b.c_stock_direction = '2'
+	                 and a.c_trustee in ('1', '2')
+	                 and a.l_settle_date = #currentDate#
+	                 and (a.c_redeal_flag = '0' or
+	                     (a.c_redeal_flag = '1' and a.l_redeem_liquidate = #currentDate#))
+	               group by a.l_settle_date, a.l_fund_id, e.l_combi_id, e.l_asset_id) ty on
+	            tc.l_asset_id = ty.l_asset_id) left join
+	            (select a.l_fund_id,
+	                    f.l_asset_id,
+	                    sum(case
+	                          when a.l_busin_flag = 41707 and k.L_BEGIN_AMOUNT &lt;&gt; 0 then
+	                           a.en_settle_balance *
+	                           (k.L_BEGIN_AMOUNT - nvl(th.L_MORTAGAGE_AMOUNT, 0)) /
+	                           k.L_BEGIN_AMOUNT
+	                          else
+	                           a.en_settle_balance
+	                        end) en_yhj_dxdf
+	               from trade.tpendsettle a,
+	                    trade.tasset s,
+	                    trade.tcombi f,
+	                    trade.tstockinfo t,
+	                    trade.tbusinflag tb,
+	                    (select k.l_fund_id,
+	                            k.vc_inter_code,
+	                            sum(k.L_BEGIN_AMOUNT) L_BEGIN_AMOUNT
+	                       from trade.tunitstock k
+	                      group by k.l_fund_id, k.vc_inter_code) k,
+	                    (select th.vc_inter_code,
+	                            sum(th.l_mortagage_amount) l_mortagage_amount
+	                       from trade.THGMORTAGAGE th, trade.thgregister tg
+	                      where th.c_effect_status = '1'
+	                        and tg.c_redeal_flag = '0'
+	                        and th.l_serial_no = tg.l_serial_no
+	                        and tg.l_hg_date = th.l_date
+	                        and th.c_status = '1'
+	                      group by th.vc_inter_code) th
+	              where a.l_basecombi_id = f.l_combi_id
+	                and f.l_asset_id = s.l_asset_id
+	                and a.vc_inter_code = t.vc_inter_code
+	                and a.l_fund_id = k.l_fund_id
+	                and a.vc_inter_code = k.vc_inter_code
+	                and a.l_busin_flag = tb.l_busin_flag
+	                and a.vc_inter_code = th.vc_inter_code(+)
+	                and a.l_busin_flag in (41707, 41708)
+	                and a.c_market_no = '5'
+	                and a.c_status in ('1')
+	                and a.l_settle_date = #currentDate#
+	              group by a.l_fund_id, f.l_asset_id) tdx on
+	            tc.l_asset_id = tdx.l_asset_id)
+	        left join (select a.l_fund_id,
+	                          c.l_asset_id,
+	                          sum(-1 * a.EN_DEAL_BALANCE *
+	                              (1 +
+	                              a.EN_DEAL_PRICE *
+	                              trade.sf_date_diff(a.l_hg_date, a.L_SETTLE_DATE) / 100 / 365)) en_second_clear_balance,
+	                          a.L_SETTLE_DATE l_second_settle_date
+	                     from trade.thgregister a,
+	                          trade.tcombi c,
+	                          (select e.l_serial_no,
+	                                  case
+	                                    when count(distinct e.vc_inter_code) = 1 then
+	                                     min(e.vc_inter_code)
+	                                    else
+	                                     '混合(' || to_char(count(1)) || ')'
+	                                  end vc_inter_code,
+	                                  min(e.l_fund_id) l_fund_id,
+	                                  min(e.l_basecombi_id) l_basecombi_id,
+	                                  sum(e.L_MORTAGAGE_AMOUNT) L_MORTAGAGE_AMOUNT
+	                             from trade.thgmortagage e, trade.tstockinfo s
+	                            where e.vc_inter_code = s.vc_inter_code
+	                              and e.C_EFFECT_STATUS = '1'
+	                              and e.c_bail_type in ('1', '2')
+	                            group by e.l_serial_no) e,
+	                          trade.tbondproperty tb
+	                    where a.l_basecombi_id = c.l_combi_id
+	                      and a.l_serial_no = e.l_serial_no
+	                      and e.vc_inter_code = tb.vc_inter_code(+)
+	                      and a.c_market_no in ('1')
+	                      and a.l_settle_date = #currentDate#
+	                      and a.c_entrust_direction = '15'
+	                    group by a.l_fund_id, c.l_asset_id, a.l_settle_date) txy
+	          on tc.l_asset_id = txy.l_asset_id) 
+	    left join (select tc.l_asset_id, sum(nvl(a.en_balance, 0)) en_balance
+					  from trade.tdepositreceipt a,
+					       trade.tcombi          tc,
+					       trade.tstockinfo      c,
+					       trade.tbankinfo       d
+					 where a.l_bank = d.l_bank_no
+					   and a.l_basecombi_id = tc.l_combi_id
+					   and a.vc_inter_code = c.vc_inter_code
+	        		   and a.l_end_date = #currentDate#
+					 group by tc.l_asset_id) tzh on tc.l_asset_id = tzh.l_asset_id
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="getProducrHandleListSql">
+        <result column="l_product_id" javaType="string" property="lProductId"/><!-- 产品序号，如：1001 -->
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/><!-- 产品代码，如：001199 -->
+        <result column="vc_product_name" javaType="string" property="vcProductName"/><!-- 产品名称，如：创金合信聚利债券（工行） -->
+	</resultMap>
+    <select  id="queryProductHandle" parameterClass="java.util.HashMap" resultMap="getProducrHandleListSql">
+    	select distinct tp.l_product_id, tp.vc_product_code, tp.vc_product_name
+		  from t_ats_product_handle t, t_ats_product_info tp
+		 where t.l_product_id = tp.l_product_id
+		   and ((select count(*)
+		           from cap_role r, cap_partyauth p, cap_user u
+		          where r.role_code = 'sysadmin'
+		            and r.role_id = p.role_id
+		            and p.party_id = u.user_id
+		            and p.party_type = 'user'
+		            and u.user_id = #vcUserId#) = 1 or
+		       (select count(*)
+		           from cap_role r, cap_partyauth p, org_employee e
+		          where r.role_code = 'sysadmin'
+		            and r.role_id = p.role_id
+		            and p.party_id = e.empid
+		            and p.party_type = 'emp'
+		            and e.userid = #vcUserId#) = 1 or
+		        (select count(*)
+		           from org_employee t, org_organization org
+		          where t.orgid = org.orgid
+		            and org.orgcode = 'CJHX_JYB'
+		            and t.userid = #vcUserId#)=1 or
+		        (t.vc_relate_type='02' and t.vc_user_id=#vcUserId#))
+		<isNotNull property="productCode">
+			and (t.vc_product_code like '%'||#productCode#||'%'  or t.vc_product_name like '%'||#productCode#||'%')
+		</isNotNull>
+    </select>
+    
+    <select  id="queryAsset" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+    	select p.vc_product_name, t.vc_asset_name, t.vc_asset_no id, t.vc_asset_name||'【'||p.vc_product_name||'】' text
+		  from t_ats_asset_info t, t_ats_product_info p
+		 where t.l_product_id = p.l_product_id
+		 and p.vc_product_code in ($vcProductCodes$)
+    </select>
+    
+</sqlMap>

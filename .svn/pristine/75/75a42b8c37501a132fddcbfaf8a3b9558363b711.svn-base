@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:程弼超 -->
+<sqlMap>
+	<!-- 查询任务 -->
+    <select id="queryTasks" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		select * from WFWORKITEM A left join T_ATS_BIZ_PROCESS B
+  		on A.PROCESSINSTID = B.L_PROCESS_INST_ID
+ 		where 1=1
+ 		<isNotNull property="VC_PRODUCT_CODE">
+ 			and B.VC_PRODUCT_CODE = #VC_PRODUCT_CODE#
+ 		</isNotNull>
+ 		<isNotNull property="VC_COMBI_NO">
+ 			and B.VC_COMBI_NO = #VC_COMBI_NO#
+ 		</isNotNull>
+ 		<isNotNull property="VC_PROCESS_TYPE">
+ 			and B.VC_PROCESS_TYPE in ($VC_PROCESS_TYPE$)
+ 		</isNotNull>
+ 		<isNotNull property="PARTINAME">
+ 			and A.PARTINAME like '%'||#PARTINAME#||'%'
+ 		</isNotNull>
+ 		<isNotNull property="WORKITEMNAME">
+ 			and A.WORKITEMNAME like '%'||#WORKITEMNAME#||'%'
+ 		</isNotNull>
+ 		<isNotNull property="ABSTRACT">
+ 			and B.ABSTRACT like '%'||#ABSTRACT#||'%'
+ 		</isNotNull>
+ 		<isEqual property="stateType" compareValue="1"><!-- 查待领取和待执行的任务 -->
+			and A.CURRENTSTATE in (4,10)
+		</isEqual>
+		<isEqual property="stateType" compareValue="2"><!-- 查待领取的任务 -->
+			and A.CURRENTSTATE = 4
+		</isEqual>
+		<isEqual property="stateType" compareValue="3"><!-- 查待执行的任务 -->
+			and A.CURRENTSTATE = 10
+		</isEqual>
+		<isEqual property="stateType" compareValue="4"><!-- 查已完成的任务 -->
+			and A.CURRENTSTATE = 12
+		</isEqual>
+		<isEqual property="stateType" compareValue="5"><!-- 查已挂起的任务 -->
+			and A.CURRENTSTATE = 8
+		</isEqual>
+		<isEqual property="stateType" compareValue="6"><!-- 查已终止和已撤销的任务 -->
+			and A.CURRENTSTATE in (13,19)
+		</isEqual>
+		<isEqual property="stateType" compareValue="7"><!-- 查已终止的任务 -->
+			and A.CURRENTSTATE = 13
+		</isEqual>
+		<isEqual property="stateType" compareValue="8"><!-- 查已撤销的任务 -->
+			and A.CURRENTSTATE = 19
+		</isEqual>
+		<isNotNull property="sortField">
+ 			order by $sortField$
+ 		</isNotNull>
+ 		<isNotNull property="sortOrder">
+ 			$sortOrder$
+ 		</isNotNull>
+	</select>
+	
+   <!-- 查询当前流程实例  待办工作项信息 -->
+   <select id="queyrProcessWorkitem" parameterClass="commonj.sdo.DataObject" resultClass="com.eos.workflow.data.WFWorkItem">
+   		select * from WFWORKITEM t where t.currentstate in ('4', '10') and t.processinstid = #processId#
+   </select>
+   
+   <resultMap class="commonj.sdo.DataObject" id="workItemInfoMap">
+  		<result column="actionurl" javaType="string" property="url"/><!-- 跳转路径 -->
+  		<result column="processinstid" javaType="string" property="processInstID"/><!-- 流程id -->
+  		<result column="workitemid" javaType="string" property="workItemID"/><!-- 工作项id-->
+  		<result column="l_biz_id" javaType="string" property="bizId"/><!-- 业务id -->
+  		<result column="vc_process_type" javaType="string" property="processtype"/><!-- 流程类型 -->
+  		<result column="l_stock_invest_no" javaType="string" property="stockInvestNo"/>
+  		<result column="currentstate" javaType="string" property="currentState"/>  		
+  		<result column="l_invest_no" javaType="string" property="investNo"/>
+   		<result column="participantid" javaType="string" property="vcUserId"/><!-- 参与人id -->
+   </resultMap>
+   <!-- 根据工作项id查询工作项信息 -->
+   <select id="getWorkItemInfoByworkItemId" parameterClass="commonj.sdo.DataObject" resultMap="workItemInfoMap">
+   		select    		
+           wf.actionurl,
+           wf.processinstid,
+           wf.workitemid,
+   		   vk.l_biz_id,
+           vk.vc_process_type,
+           vk.l_stock_invest_no,
+   		   wf.currentstate,
+   		   vk.l_invest_no,
+   		   wf.participantid
+		   		from v_finishwork vk, v_currentworkitem wf
+		 		where vk.l_process_inst_id = wf.processinstid
+		   		and wf.currentstate in ('4', '10')
+		   		and vk.vc_process_type in ('101', '102', '103')
+		   		and wf.participantid like '%$userId$%'
+		   		and wf.workitemid = #workItemID#
+		   		and wf.processinstid = #processId#
+   </select>
+   
+   <!-- 根据流程id查询工作项id -->
+   <select id="getWorkItemIdByProcessId" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+   		select * from WFWORKITEM t where t.currentstate in ('4', '10') and t.processinstid = #lProcessinstId#
+   </select>
+</sqlMap>

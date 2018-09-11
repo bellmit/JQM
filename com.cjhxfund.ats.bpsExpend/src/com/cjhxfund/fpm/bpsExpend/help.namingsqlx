@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengjing -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="operate_type" javaType="string" property="operateType"/>
+        <result column="user_name" javaType="string" property="userName"/>
+     </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="processMap">
+        <result column="bizprocessName" javaType="string" property="bizprocessName"/>
+        <result column="bizType" javaType="string" property="bizType"/>
+        <result column="prodCode" javaType="string" property="prodCode"/>
+        <result column="prodName" javaType="string" property="prodName"/>
+     </resultMap>
+    
+    <select id="queryReqUseName" parameterClass="java.lang.String" resultMap="resultMap">
+         select t1.operate_type, t1.user_name
+         from (select t.operate_type, t.user_name
+         from  t_ats_prc_work_info t
+         where t.operate_type in (3,4)
+         and t.workitem_id = #workitemID#
+         order by sysid desc) t1
+         where rownum = 1
+      </select> 
+       <select id="queryBizProcess" parameterClass="java.lang.String" resultMap="processMap">
+           select wf.processinstname as bizprocessName,p.vc_process_type as bizType,p.vc_product_code as prodCode,p.vc_product_name as prodName 
+			from t_ats_biz_process p
+			left join wfprocessinst wf on wf.processinstid=p.l_process_inst_id
+			where p.l_process_inst_id=#processInstId#
+       </select>
+</sqlMap>

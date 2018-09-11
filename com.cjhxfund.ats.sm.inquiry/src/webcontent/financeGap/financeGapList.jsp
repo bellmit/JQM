@@ -1,0 +1,381 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/common.jsp" %>
+<!-- 
+  - Author(s): 刘玉龙
+  - Date: 2017-12-06 10:40:50
+  - Description:
+-->
+<head>
+<style type="text/css">
+.mini-grid-groupRow{
+	display: none;
+}
+</style>
+<title>头寸缺口查询列表</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="<%= request.getContextPath() %>/scripts/com.cjhxfund.js.base/utils/SaveCondition.js"></script> 
+    <script type="text/javascript" src="<%= request.getContextPath() %>/JQMHistory/common/common.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/scripts/com.cjhxfund.js.base/utils/DateUtil.js"></script>
+    
+</head>
+<body style="height:100%; width:100%; overflow:hidden; margin:0;padding:0;">
+	<div id="layout" class="nui-layout" style="width:100%; height:100%;" borderStyle="border:0px;">
+		<div>
+			<!-- 头寸缺口查询条件开始。。。。。。。。。。。 -->
+			<div class="search-condition">
+				<div id="condition_form" class="nui-form" style="height:10%;max-width:100%" align="left">
+					<table id="position_gap_condition" border="0" cellpadding="1" cellspacing="1" style="width:100%;table-layout:fixed;">
+						<tr>
+							<td width="60px" align="right">产品名称:</td>
+							<td colspan="1" width="15%" align="left">
+	                            <input id="vcProductCode" 
+	                            	class="nui-buttonedit" 
+	                            	name="vcProductCode" 
+	                            	emptyText="全部" 
+	                            	showClose="true" 
+	                            	style="width:95%"
+	                            	oncloseclick="onCloseClick" 
+	                            	onbuttonclick="ButtonClickGetFundName"/>
+	                        </td>
+	                        <td width="60px" align="right">单元名称:</td>
+	                        <td colspan="1" width="15%" align="left">
+	                        	<!-- <div id="vcAssetCode" name="vcAssetCode" class="nui-combobox" style="width:95%"
+	                        		 popupWidth="250px" textField="TEXT" valueField="ID"
+	                        		 showClose="true" oncloseclick="onCloseClick"
+	                        		 multiSelect="true"
+			                         emptyText="全部" 
+			                         showNullItem="false"
+			                         allowInput="false">     
+							        <div property="columns">
+							            <div header="产品名称" field="VC_PRODUCT_NAME" width="100px"></div>
+							            <div header="资产名称" field="VC_ASSET_NAME"></div>
+							        </div>
+							    </div> -->
+	                        	<input name="vcAssetCode" 
+	                        		class="nui-combobox" 
+	                        		id="vcAssetCode"
+			                        textField="TEXT" 
+			                        valueField="ID" 
+			                        multiSelect="true"
+			                        dataField="data"
+			                        emptyText="全部" 
+			                        showNullItem="false"
+			                        allowInput="false" 
+			                        popupWidth="250px"
+			                        showClose="true" 
+			                        style="width:95%"
+			                        oncloseclick="onCloseClick"/>
+	                        </td>
+	                        <td width="100px" align="right">缺口范围(万元):</td>
+	                        <td colspan="1" width="15%" align="left">
+	                            <input class="nui-textbox" name="minEnGapAmount" id="minEnGapAmount" onvalidation="onAmountValidation" style="width:45%;"/>
+		                    	<span style="width:5%;">-</span>
+								<input class="nui-textbox" name="maxEnGapAmount" id="maxEnGapAmount" onvalidation="onAmountValidation" style="width:45%;" />
+	                        </td>
+	                        <td width="40px" align="right">日期:</td>
+	                        <td colspan="1" width="122px" align="left">
+	                        	<input class="nui-datepicker" name="lTradeDateMax" id="lTradeDateMax" showClose="true" oncloseclick="onCloseClick" style="width:95%;"/>
+	                        </td>
+	                        <td>
+	                        	<input class="nui-button" plain="false" text="查询" iconCls="icon-search" onclick="search"/>
+	                        	<a class="nui-menubutton " plain="false" menu="#popupMenu"
+	                               id="searchCond"
+	                               name="searchCond"
+	                               data-options='{formId:"position_gap_condition"}'
+	                               iconCls="icon-add">保存查询条件</a>
+	                            <ul id="popupMenu" class="nui-menu" style="display:none;width:180px;"></ul>
+	                        </td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<!-- 头寸缺口查询条件结束。。。。。。。。。。。 -->
+			
+			<div class="nui-toolbar" style="border-bottom:0;padding:0px;">
+				<table style="width:100%;">
+	                <tr>
+	                    <td style="width:100%;">
+	                        <a class="mini-button" iconCls="icon-save" onclick="saveData()" plain="true">保存</a>            
+	                    </td>
+	                </tr>
+	            </table>
+			</div>
+			<div class="nui-fit" style="width:100%;height:100%;overflow:hidden;">
+				<div id="datagrid_position" 
+					class="nui-datagrid" 
+					style="width:100%;height:100%;"
+					url="com.cjhxfund.ats.sm.inquiry.financeGapManage.queryFinanceGapWithPage.biz.ext" 
+					idField="lFinanceGapId" 
+					dataField="financeGaps"
+					showPager="true" 
+					pageSize="20" 
+					sizeList="[20,50,100,200,500,1000]"
+					frozenStartColumn="0" 
+					frozenEndColumn="4" 
+					allowCellEdit="true"
+					allowCellSelect="true" 
+					allowCellValid="true" 
+					oncellvalidation="onCellValidation"
+					multiSelect="false" 
+					showReloadButton="true" 
+					sortMode="client"
+					onbeforeload="onBeforeLoad" 
+					onselectionchanged="selectionchanged"
+				 	onload="loadAfter" 
+				 	virtualScroll="true"
+				 	enableHotTrack="true"
+				 	onheadercellclick="onheadercellclick"
+				 	>
+			    	<div property="columns">
+				    	<div type="checkcolumn">选择</div>
+				    	<div field="lDate" headerAlign="center" align="center" width="80px">
+							日期
+			            </div>
+				    	<div field="vcProductName" name="vcProductName" headerAlign="center" align="center" width="80px">
+							产品名称
+			            </div>
+			            <div field="vcAssetName" headerAlign="center" width="130px">
+							单元名称
+			            </div>
+			            <div field="enGapAmount" headerAlign="center" allowSort="true" dataType="int" align="right" numberFormat="n2" width="130px">
+							T+0资金缺口(万元)
+			            </div>
+			            <div field="enDeviationAmount" headerAlign="center" align="right" numberFormat="n2" width="100px">
+							手工调整金(万元)
+	                    	<input property="editor" class="nui-textbox" style="width:100%;"/>
+	                    </div>
+			            <div field="vcTermPreference" headerAlign="center" width="130px">
+			            	期限偏好
+			             	<input property="editor" class="nui-textarea" style="width:100%;"/>
+			            </div>
+			            <div field="vcAvailBonds" headerAlign="center" width="130px">
+			            	可质押券
+			            	<input property="editor" class="nui-textarea" style="width:100%;"/>
+			            </div>
+			            <div field="enSpotTradeAmount" headerAlign="center" align="right" numberFormat="n2" width="120px">
+							T+0交易需求(万元)
+			            </div>
+			            <div field="enRzhgAmount" headerAlign="center" align="right" numberFormat="n2" width="130px">
+							正回购询价录入(万元)
+			            </div>
+			            <div field="enRqhgAmount" headerAlign="center" align="right" numberFormat="n2" width="130px">
+							逆回购询价录入(万元)
+			            </div>
+			            <div field="enInitialPosition" headerAlign="center" align="right" numberFormat="n2" width="150px">
+							O32可用头寸-日初(元)
+			            </div>
+			            <div header="应付赎回款-TA日初(元)" headerAlign="center">
+			            	<div property="columns">
+			                    <div field="enDue" headerAlign="center" align="right" numberFormat="n2" width="90px">今日付款</div>
+			                    <div field="enT1Due" headerAlign="center" align="right" numberFormat="n2" width="90px">明日付款</div>
+			                </div>
+			            </div>
+			            <div header="当日正回购到期-日初(元)" headerAlign="center">
+			            	<div property="columns">
+			                    <div field="enYhjSpRzgh" headerAlign="center" align="right" numberFormat="n2" width="80px">上清</div>
+			                    <div field="enYhjCbRzgh" headerAlign="center" align="right" numberFormat="n2" width="80px">中债</div>
+			                    <div field="enJysShXyrzgh" headerAlign="center" align="right" numberFormat="n2" width="80px">上交所</div>
+			                    <div field="enJysSzXyrzgh" headerAlign="center" align="right" numberFormat="n2" width="120px">深交所(万元)
+			                    	<input property="editor" class="nui-textbox" style="width:100%;"/>
+			                    </div>
+			                </div>
+			            </div>
+			            <div header="银行间入款未交收-日初(元)" headerAlign="center">
+			            	<div property="columns">
+			            		<div field="enYhjRqgh" headerAlign="center" align="right" numberFormat="n2" width="100px">当日逆回购到期</div>
+			                    <div field="enYhjZqT1cj" headerAlign="center" align="right" numberFormat="n2" width="150px">昨日T+1卖券/正回购首期</div>
+			                    <div field="enYhjDxdf" headerAlign="center" align="right" numberFormat="n2" width="120px">当日债券兑付兑息</div>
+			            	</div>
+			            </div>
+			            <div header="其他入款项-日初" headerAlign="center">
+			            	<div property="columns">
+			            		<div field="enJysSzXyrqgh" headerAlign="center" align="right" numberFormat="n2" width="225px">深交所协议正回购首期/逆回购到期(万元)
+			                    	<input property="editor" class="nui-textbox" style="width:100%;"/>
+			                    </div>
+			                    <div field="enCkzq" headerAlign="center" align="right" numberFormat="n2" width="100px">存款支取</div>
+			                    <div field="enZjsh" headerAlign="center" align="right" numberFormat="n2" width="100px">基金赎回(万元)
+			                    	<input property="editor" class="nui-textbox" style="width:100%;"/>
+			                    </div>
+			            	</div>
+			            </div>
+			    	</div>   
+				</div>
+			</div>
+		</div>
+		<%-- 详细开始... --%>
+		<div title="投资计划安排" region="south" showSplit="false" height="250px" showHeader="false" showSplitIcon="true" expanded="true">
+			<div class="nui-fit">
+			    <div id="tabs_invest_plan_detail" class="nui-tabs" activeIndex="0" height="100%">
+			    	<div title="投资计划安排" url="<%= request.getContextPath() %>/inquiry/financeGap/investPlanList.jsp"></div>
+			    </div>
+		    </div>
+		</div>
+	    <%-- 详细结束... --%>  
+	</div>
+	<script type="text/javascript">
+    	nui.parse();
+    	var positionGrid = nui.get("datagrid_position");
+    	var tabDetailRole = nui.get("tabs_invest_plan_detail");//获取详情标签列表
+    	var todayDate = DateUtil.toNumStr(new Date());
+		nui.get("lTradeDateMax").setValue(todayDate);
+    	//var selectArr = [];//存储已选的记录数组
+    	//positionGrid.groupBy("vcProductName" ,"asc");
+    	positionGrid.load();
+    	
+    	function search(){
+    		positionGrid.load();
+    	}
+    	
+    	function onBeforeLoad(e){
+    		var params = e.params;  //参数对象
+    		var initParam = new nui.Form("#condition_form").getData(false,false);
+    		if(initParam.lTradeDateMax != null && initParam.lTradeDateMax != ""){
+        		initParam.lTradeDateMax = DateUtil.toNumStr(initParam.lTradeDateMax);
+        	}
+        	initParam["minEnGapAmount"] = initParam["minEnGapAmount"].replace(/,/g,'');
+        	initParam["maxEnGapAmount"] = initParam["maxEnGapAmount"].replace(/,/g,'');
+        	initParam["vcProductCode"] = splitString(initParam["vcProductCode"]);
+        	initParam["vcAssetCode"] = splitString(initParam["vcAssetCode"]);
+        	params.conditionParam=initParam;
+    	}
+    	
+    	positionGrid.on("drawcell", function (e) {
+    		field = e.field,
+		 	value = e.value;
+        	if(field=="lDate"){
+				if(value){
+					e.cellHtml = nui.formatDate(DateUtil.numStrToDate(value.toString()),"yyyy-MM-dd");
+				}
+			}
+			if(field=="enGapAmount"){
+				if(value<0){
+					e.cellStyle = "color:#FF0000";
+				}
+			}
+    	});
+    	
+    	
+    	function loadAfter(e){
+    		var row = positionGrid.getSelected();
+    		var currentTabIFrameEl = tabDetailRole.getTabIFrameEl(tabDetailRole.getActiveTab());
+    		positionGrid.mergeColumns(["vcProductName"]);
+    		if(typeof(currentTabIFrameEl) != "undefined"){
+    			currentTabIFrameEl.contentWindow.detail(row);
+    		}
+    	}
+    	function selectionchanged(){
+    		var row = positionGrid.getSelected();
+    		var currentTabIFrameEl = tabDetailRole.getTabIFrameEl(tabDetailRole.getActiveTab());
+    		currentTabIFrameEl.contentWindow.detail(row);//调用当前显示的标签页的显示详情方法
+    	}
+    	
+    	function reloadPositionGrid(){
+    		var rowold = positionGrid.getSelected();
+    		positionGrid.reload(function(){
+    			var rownew = positionGrid.findRow(function(row){
+    				if(row.lFinanceGapId == rowold.lFinanceGapId) return true;
+				});
+    			positionGrid.setSelected(rownew);
+    		});
+    	}
+    	
+    	function onCellValidation(e) {
+    		if(e.field == "vcTermPreference" || e.field == "vcAvailBonds"){
+    			if(e.value!=null && e.value!="" && e.value.replace(/[\u0391-\uFFE5]/g,"aa").length>1024){
+    				e.isValid = false;
+                    e.errorText = "输入参数过长";
+    			}
+    		}else if (e.field == "enDeviationAmount" || e.field == "enZjsh" || e.field == "enJysSzXyrzgh" || e.field == "enJysSzXyrqgh") {
+                var re = /^(\-|\+)?\d+(\.\d+)?$/;//数字类型
+                if (e.value !=null && e.value!="" && !re.test(e.value)) {
+                    e.isValid = false;
+                    e.errorText = "必须输入金额";
+                }else{
+                	if(e.value!=null && e.value!="" && formatNumber(e.value,2,0).length>19){
+                		e.isValid = false;
+                    	e.errorText = "输入参数过长,整数位最多16位";
+                	}else
+                	if(e.value!=null && e.value!="" ){
+                		e.record[e.field] = formatNumber(e.value,2,0);
+                	}
+                }
+            }
+        }
+    	
+    	nui.get("vcProductCode").on("valuechanged",function(e){
+    		var vcProductCodes = splitString(e.value);
+    		nui.ajax({
+        		data: {vcProductCodes: vcProductCodes},
+        		url: "com.cjhxfund.ats.sm.inquiry.financeGapManage.queryFinanceGapAsset.biz.ext",
+        		success:function(resp){
+        			var returnJson = nui.decode(resp);
+					if(returnJson.exception == null){
+						var assets = resp.data;
+						nui.get("vcAssetCode").load(assets);
+					}
+	              }
+		    });
+    	});
+    	
+    	function onAmountValidation(e){
+    		var value = e.value.replace(/,/g,'');
+    		var point = 0;
+    		if (e.isValid && value){
+    			var re1 = /^(\-|\+)?\d+(\.\d+)?$/;//数字类型
+                if (!re1.test(value)) {
+                    e.errorText = "请输入数字";
+                    e.isValid = false;
+                    e.sender.setValue("");
+                    return;
+                }
+                if(value.split(".").length>1){
+    				point = value.split(".")[1].length;
+    				point = point>4?4:point;
+    			}
+                e.sender.setValue(formatNumber(value,0,1));
+            }
+    	}
+    	
+    	function saveData() {
+    		positionGrid.validate();
+    		if (positionGrid.isValid() == false) {
+                //alert("请校验输入单元格内容");
+                var error = positionGrid.getCellErrors()[0];
+                positionGrid.beginEditCell(error.record, error.column);
+                nui.alert("请检测输入单元格内容");
+                return;
+            }
+            var data = positionGrid.getChanges();
+            positionGrid.loading("保存中，请稍后......");
+            nui.ajax({
+                url: "com.cjhxfund.ats.sm.inquiry.financeGapManage.saveFinanceInputInfo.biz.ext",
+                data: {data: data},
+                type: "post",
+                success: function (text) {
+                    positionGrid.reload();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                }
+            });
+        }
+    	
+    	function redirectComfirm(data){
+    		nui.confirm("确定要跳转到询价结果录入界面吗？","系统提示",function(action){
+				if(action=="ok"){
+					window.parent.dynamicRedirect(data);
+				}
+			});
+    	}
+        function onheadercellclick(e){
+        	positionGrid.groupBy("vcProductName" ,"asc");
+        	positionGrid.sortBy("enGapAmount", e.sender.sortOrder);
+        }
+    </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/inquiry/financeGap/js/financeGap.js"></script>
+</body>
+</html>

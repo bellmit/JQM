@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="noRepectSendSomething" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node4" name="注释4" displayName="注释" nodeType="note" type="note" content="sendData:&#xD;&#xA;to收件人&#xD;&#xA;cc抄送人&#xD;&#xA;mailTitle邮件标题&#xD;&#xA;mailContent邮件内容" title="wjh&#x9;18-1-31 下午4:32">
+    <location x="390" y="330"/>
+    <size height="118" width="149"/>
+  </nodes>
+  <nodes xsi:type="model:Note" id="node2" name="注释2" displayName="注释" nodeType="note" type="note" content="退办时下一工作项不能用服务获取" title="Hui&#x9;16-7-8 下午1:47">
+    <sourceConnections xsi:type="process:tLink" id="link21" name="link21" displayName="连接线" type="note">
+      <sourceNode>node2</sourceNode>
+      <targetNode>assign7</targetNode>
+    </sourceConnections>
+    <location x="236" y="22"/>
+    <size height="73" width="163"/>
+  </nodes>
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="根据sendType自动判断需不需要发送&#xD;&#xA;发送邮件需修改sysParam的mail类型state字段的值为on或off" title="Hui&#x9;16-5-13 下午1:22">
+    <targetConnections>link16</targetConnections>
+    <location x="704" y="6"/>
+    <size height="106" width="149"/>
+  </nodes>
+  <nodes xsi:type="model:Note" id="node1" name="注释1" displayName="注释" collapsed="false" nodeType="note" type="note" content="sendType的值为：&#xD;&#xA;邮件：auditMail/backMail/viewMail/*suggestMail/finishMail&#xD;&#xA;通知：XauditNoticeX/viewNotice/finishNotice/reviewNotice&#xD;&#xA;短信：Note&#xD;&#xA;例：auditMail,autoNotice，即发送邮件和发送通知" title="Hui&#x9;16-5-12 下午3:39">
+    <location x="87" y="330"/>
+    <size height="123" width="260"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link6" name="link6" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <location x="61" y="135"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link5</targetConnections>
+    <location x="1229" y="135"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="63" y="171"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="1231" y="171"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="赋值" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link12" name="link12" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>invokePojo7</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link6</targetConnections>
+    <location x="209" y="135"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">activityInst/activityInstName</process:from>
+      <process:to type="query">currentActivity</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">m:userObject/userId</process:from>
+      <process:to type="query">emp/empid</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">com.cjhxfund.fpm.bpsExpend.task.TAtsPrcWorkInfo</process:from>
+      <process:to type="query">workCriteria/_entity</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">activityInst/activityInstID</process:from>
+      <process:to type="query">workCriteria/_expr[1]/activityinstId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">activityInst/processInstID</process:from>
+      <process:to type="query">workCriteria/_expr[2]/processinstId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">createTime</process:from>
+      <process:to type="query">workCriteria/_orderby/_property</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">desc</process:from>
+      <process:to type="query">workCriteria/_orderby/_sort</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">sendData/sendType</process:from>
+      <process:to type="query">sendType</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">sendData/noticeTitle</process:from>
+      <process:to type="query">noticeTitle</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">sendData/noticeContent</process:from>
+      <process:to type="query">noticeContent</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="211" y="171"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo3" name="查询当前发送人" displayName="expandEntity" type="invoke" index="0" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link7" name="环节额外抄送" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo3</sourceNode>
+      <targetNode>invokePojo0</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link13</targetConnections>
+    <targetConnections>link27</targetConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="651" y="135"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo3label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.expandEntity</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="dataObject" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">emp</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="int" valueType="Java"/>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo3label" name="label" nodeType="label">
+    <location x="620" y="171"/>
+    <figSize height="17" width="85"/>
+    <node>invokePojo3</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess2" name="发送系统通知" displayName="sendBaseBiz" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link16" name="link16" displayName="连接线" isDefault="false" type="note">
+      <sourceNode>subprocess2</sourceNode>
+      <targetNode>node0</targetNode>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess2</sourceNode>
+      <targetNode>subprocess3</targetNode>
+    </sourceConnections>
+    <targetConnections>link11</targetConnections>
+    <location x="870" y="136"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess2label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.sendBaseBiz</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="sendType" type="query" value="String" valueType="Primitive" pattern="reference">sendType</process:inputVariable>
+        <process:inputVariable id="1" name="title" type="query" value="String" valueType="Primitive" pattern="reference">noticeTitle</process:inputVariable>
+        <process:inputVariable id="2" name="sendContext" type="query" value="String" valueType="Primitive" pattern="reference">noticeContent</process:inputVariable>
+        <process:inputVariable id="3" name="participants" type="query" value="com.eos.workflow.omservice.WFParticipant[]" valueType="Java" pattern="reference">participants</process:inputVariable>
+        <process:inputVariable id="4" name="nextWorkItem" type="query" value="com.eos.workflow.data.WFWorkItem[]" valueType="DataObject" pattern="reference">nextWorkItem</process:inputVariable>
+        <process:inputVariable id="5" name="activityInst" type="query" value="com.eos.workflow.data.WFActivityInst" valueType="Java" pattern="reference">activityInst</process:inputVariable>
+        <process:inputVariable id="6" name="processInst" type="query" value="com.eos.workflow.data.WFProcessInst" valueType="Java" pattern="reference">processInst</process:inputVariable>
+        <process:inputVariable id="7" name="emp" type="query" value="com.cjhxfund.fpm.bpsExpend.coframe.OrgEmployee" valueType="DataObject" pattern="reference">emp</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess2label" name="label" nodeType="label">
+    <location x="847" y="171"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess2</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService0" name="获取下一活动工作项" displayName="WorkItemManagerService.queryNextWorkItemsByActivityInstID4SDO" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link13" name="link13" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService0</sourceNode>
+      <targetNode>invokePojo3</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link8" name="link8" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService0</sourceNode>
+      <targetNode>subprocess5</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="NOTNULLANDEMPTY">
+          <process:leftOperand type="query">nextWorkItem</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link24</targetConnections>
+    <location x="503" y="138"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService0label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.WorkItemManagerComponent/WorkItemManagerService.queryNextWorkItemsByActivityInstID4SDO</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="actInstID" type="query" value="long" valueType="Java" pattern="reference">activityInst/activityInstID</process:inputVariable>
+      <process:inputVariable id="1" name="fetchParticipant" type="literal" value="boolean" valueType="Java" pattern="reference">true</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="commonj.sdo.DataObject[]" valueType="Java">nextWorkItem</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService0label" name="label" nodeType="label">
+    <location x="463" y="168"/>
+    <figSize height="17" width="109"/>
+    <node>invokeService0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo5" name="获取退办活动工作项" displayName="获取退办活动工作项" collapsed="false" type="invoke" index="2" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link25" name="link25" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo5</sourceNode>
+      <targetNode>subprocess6</targetNode>
+    </sourceConnections>
+    <targetConnections>link19</targetConnections>
+    <location x="550" y="45"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo5label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.queryEntitiesByTemplate</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="template" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">nextworkitem</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="commonj.sdo.DataObject[]" valueType="Java">nextWorkItem</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo5label" name="label" nodeType="label">
+    <location x="507" y="81"/>
+    <figSize height="17" width="109"/>
+    <node>invokePojo5</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign7" name="赋值6" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link19" name="link19" displayName="link16" isDefault="true" type="transition">
+      <sourceNode>assign7</sourceNode>
+      <targetNode>invokePojo5</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link23</targetConnections>
+    <targetConnections>link21</targetConnections>
+    <location x="464" y="45"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign7label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">activityInst/processInstID</process:from>
+      <process:to type="query">nextworkitem/processInstID</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">workInfo[1]/rollbackActivityDefId</process:from>
+      <process:to type="query">nextworkitem/activityDefID</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">10</process:from>
+      <process:to type="query">nextworkitem/currentState</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign7label" name="label" nodeType="label">
+    <location x="462" y="81"/>
+    <figSize height="17" width="32"/>
+    <node>assign7</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo7" name="获取workInfo" displayName="queryEntitiesByCriteriaEntity" type="invoke" index="2" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link24" name="link24" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo7</sourceNode>
+      <targetNode>invokeService0</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link23" name="link23" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokePojo7</sourceNode>
+      <targetNode>assign7</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>workInfo.length>0&amp;&amp;&quot;2&quot;.equals(workInfo[0].getString(&quot;operateType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link12</targetConnections>
+    <location x="362" y="136"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo7label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.queryEntitiesByCriteriaEntity</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="criteriaEntity" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">workCriteria</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="commonj.sdo.DataObject[]" valueType="Java">workInfo</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo7label" name="label" nodeType="label">
+    <location x="335" y="172"/>
+    <figSize height="17" width="77"/>
+    <node>invokePojo7</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess3" name="发送短信" displayName="sendMobileCode" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link9" name="link9" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess3</sourceNode>
+      <targetNode>subprocess4</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="953" y="136"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess3label</nodeLabel>
+    <process:flow index="0" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.sendMobileCode</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="sendType" type="query" value="String" valueType="Primitive" pattern="reference">sendType</process:inputVariable>
+        <process:inputVariable id="1" name="nextActivityInstName" type="query" value="String" valueType="Primitive" pattern="reference">nextActivityInstName</process:inputVariable>
+        <process:inputVariable id="2" name="currentActivity" type="query" value="String" valueType="Primitive" pattern="reference">currentActivity</process:inputVariable>
+        <process:inputVariable id="3" name="processInst" type="query" value="com.eos.workflow.data.WFProcessInst" valueType="Java" pattern="reference">processInst</process:inputVariable>
+        <process:inputVariable id="4" name="participants" type="query" value="com.eos.workflow.omservice.WFParticipant[]" valueType="Java" pattern="reference">participants</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="flag" type="query" value="Int" valueType="Primitive">flag</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess3label" name="label" nodeType="label">
+    <location x="942" y="171"/>
+    <figSize height="17" width="49"/>
+    <node>subprocess3</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess4" name="发送邮件" displayName="createProcessMails" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess4</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link9</targetConnections>
+    <location x="1134" y="136"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess4label</nodeLabel>
+    <process:flow index="0" synchronization="false" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.createProcessMails</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="nextWorkItem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="DataObject" pattern="reference">nextworkitem</process:inputVariable>
+        <process:inputVariable id="1" name="processInst" type="query" value="com.eos.workflow.data.WFProcessInst" valueType="Java" pattern="reference">processInst</process:inputVariable>
+        <process:inputVariable id="2" name="nextActivityInstName" type="query" value="String" valueType="Primitive" pattern="reference">nextActivityInstName</process:inputVariable>
+        <process:inputVariable id="3" name="currentActivity" type="query" value="com.eos.workflow.data.WFActivityInst" valueType="Java" pattern="reference">activityInst</process:inputVariable>
+        <process:inputVariable id="4" name="sendType" type="query" value="String" valueType="Primitive" pattern="reference">sendType</process:inputVariable>
+        <process:inputVariable id="5" name="sendMailData" type="query" value="java.util.HashMap" valueType="Java" pattern="reference">sendData</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess4label" name="label" nodeType="label">
+    <location x="1123" y="171"/>
+    <figSize height="17" width="49"/>
+    <node>subprocess4</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess5" name="nextActivities" displayName="nextActivities" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link27" name="link27" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess5</sourceNode>
+      <targetNode>invokePojo3</targetNode>
+    </sourceConnections>
+    <targetConnections>link8</targetConnections>
+    <location x="571" y="240"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess5label</nodeLabel>
+    <process:flow index="1" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.nextActivities</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="nextWorkItem" type="query" value="com.eos.workflow.data.WFWorkItem[]" valueType="DataObject" pattern="reference">nextWorkItem</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="nextActivities" type="query" value="String" valueType="Primitive">nextActivityInstName</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess5label" name="label" nodeType="label">
+    <location x="547" y="275"/>
+    <figSize height="17" width="75"/>
+    <node>subprocess5</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess6" name="nextActivities1" displayName="nextActivities" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess6</sourceNode>
+      <targetNode>invokePojo3</targetNode>
+    </sourceConnections>
+    <targetConnections>link25</targetConnections>
+    <location x="649" y="45"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess6label</nodeLabel>
+    <process:flow index="1" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.nextActivities</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="nextWorkItem" type="query" value="com.eos.workflow.data.WFWorkItem[]" valueType="DataObject" pattern="reference">nextWorkItem</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="nextActivities" type="query" value="String" valueType="Primitive">nextActivityInstName</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess6label" name="label" nodeType="label">
+    <location x="621" y="80"/>
+    <figSize height="17" width="82"/>
+    <node>subprocess6</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo0" name="加工sendType" displayName="setSendType" type="invoke" index="3" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link11" name="link11" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo0</sourceNode>
+      <targetNode>subprocess2</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link7</targetConnections>
+    <location x="780" y="135"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo0label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.SendMobileCode.setSendType</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="sendType" type="query" value="java.lang.String" valueType="Java" pattern="reference">sendType</process:inputVariable>
+      <process:inputVariable id="1" name="nextActivityInstName" type="query" value="java.lang.String" valueType="Java" pattern="reference">nextActivityInstName</process:inputVariable>
+      <process:inputVariable id="2" name="currentActivity" type="query" value="java.lang.String" valueType="Java" pattern="reference">currentActivity</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.String" valueType="Java">sendType</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo0label" name="label" nodeType="label">
+    <location x="751" y="171"/>
+    <figSize height="17" width="81"/>
+    <node>invokePojo0</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="wjh" createTime="2016-01-27 11:19:46" date="2016-01-27Z" description="" name="发送信息" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="审批意见表" historyStateLocation="client" isArray="false" modelType="com.cjhxfund.fpm.bpsExpend.task.TAtsApproveInfo" name="pmprcaprvinfo"/>
+    <process:variable description="员工表" historyStateLocation="client" isArray="false" modelType="com.cjhxfund.fpm.bpsExpend.coframe.OrgEmployee" name="emp"/>
+    <process:variable description="下一活动名" historyStateLocation="client" isArray="false" name="nextActivityInstName" primitiveType="String"/>
+    <process:variable description="当前活动名" historyStateLocation="client" isArray="false" name="currentActivity" primitiveType="String"/>
+    <process:variable anyType="com.eos.workflow.data.WFWorkItem" description="当前工作项" historyStateLocation="client" isArray="false" name="workitem"/>
+    <process:variable description="下一活动工作项" historyStateLocation="client" isArray="true" modelType="com.eos.workflow.data.WFWorkItem" name="nextWorkItem"/>
+    <process:variable description="下一活动工作项" historyStateLocation="client" isArray="false" modelType="com.eos.workflow.data.WFWorkItem" name="nextworkitem"/>
+    <process:variable description="是否发邮件" historyStateLocation="client" isArray="false" name="mailAuth" primitiveType="String"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" modelType="com.primeton.das.criteria.criteriaType" name="workCriteria"/>
+    <process:variable description="工作项表" historyStateLocation="client" isArray="true" modelType="com.cjhxfund.fpm.bpsExpend.task.TAtsPrcWorkInfo" name="workInfo"/>
+    <process:variable description="环境字段，0（生产），1（开发测试），2（业务测试）,3（预生产），4（生产）" historyStateLocation="client" isArray="false" name="type" primitiveType="String"/>
+    <process:variable description="发送类型（邮件、短信、通知）" historyStateLocation="client" isArray="false" name="sendType" primitiveType="String"/>
+    <process:variable description="通知标题" historyStateLocation="client" isArray="false" name="noticeTitle" primitiveType="String"/>
+    <process:variable description="通知内容" historyStateLocation="client" isArray="false" name="noticeContent" primitiveType="String"/>
+  </process:variables>
+  <process:inputs varArgs="false">
+    <process:input anyType="com.eos.workflow.omservice.WFParticipant" description="接收人" isArray="true" name="participants"/>
+    <process:input anyType="com.eos.workflow.data.WFActivityInst" description="活动实例" isArray="false" name="activityInst"/>
+    <process:input anyType="com.eos.workflow.data.WFProcessInst" description="流程实例" isArray="false" name="processInst"/>
+    <process:input anyType="java.util.HashMap" description="" isArray="false" name="sendData"/>
+  </process:inputs>
+  <process:outputs/>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

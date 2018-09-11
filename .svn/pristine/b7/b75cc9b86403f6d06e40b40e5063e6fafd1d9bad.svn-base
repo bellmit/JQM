@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.commonUtil,com.eos.workflow,org.gocom.com
+ ponents.coframe.org,org.gocom.components.coframe.tools,com.primeton.e
+ os.richweb,com.cjhxfund.ats.fm.comm,com.cjhxfund.ats.bpsExpend,org.go
+ com.components.coframe.auth,com.cjhxfund.ats.sm.comm,org.gocom.compon
+ ents.coframe.framework,com.cjhxfund.foundation.fix,com.eos.foundation
+ ,org.gocom.components.coframe.rights
+Bundle-Vendor: caikaifa
+eos-webCtxPath: riskMgr
+Bundle-Version: 1.0.0
+Bundle-Name: 风控管理
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.riskMgr
+

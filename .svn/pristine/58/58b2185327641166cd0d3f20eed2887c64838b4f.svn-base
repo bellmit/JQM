@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:罗倔怀 -->
+<sqlMap>
+    <!--根据条件模糊查询债券代码 start-->
+    <resultMap class="commonj.sdo.DataObject" id="bondMap">
+        <result column="vc_stock_code" javaType="string" property="stockCode"/>
+        <result column="vc_stock_name" javaType="string" property="stockName"/>
+        <result column="vc_market_no" javaType="string" property="vcMarketNo"/>
+        <result column="vc_inter_code" javaType="string" property="vcStockInnerCode"/>
+        <result column="vc_combi_no" javaType="string" property="vcCombiNo"/>
+        <result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+        <result column="vc_payment_place" javaType="string" property="vcPaymentPlace"/>
+    </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="bondBetweenBankMap">
+        <result column="vc_stock_code" javaType="string" property="stockCode"/>
+        <result column="vc_stock_name" javaType="string" property="stockName"/>
+        <result column="vc_market_no" javaType="string" property="vcMarketNo"/>
+        <result column="vc_inter_code" javaType="string" property="vcStockInnerCode"/>
+        <result column="vc_payment_place" javaType="string" property="vcPaymentPlace"/>
+    </resultMap>
+    <select id="queryBondCodeSql" parameterClass="string" resultMap="bondBetweenBankMap">
+       <![CDATA[
+        select vc_stock_code,vc_stock_name,vc_market_no,vc_inter_code from vw_bondinfo_wind where VC_STOCK_CODE 
+        like '%'||#stockCode#||'%' and rownum <= 50
+        ]]>
+    </select>
+
+    <!--根据条件模糊查询银行间持仓债券代码 -->
+    <select id="querybankVunitBondCode" parameterClass="commonj.sdo.DataObject" resultMap="bondMap">
+       <![CDATA[
+        select distinct bon.vc_stock_code,bon.vc_stock_name,bon.vc_market_no,bon.vc_inter_code,ats.vc_combi_no,
+        ats.vc_combi_name,
+        case bon.vc_payment_place
+                  WHEN '01' THEN
+                   '中央结算公司'
+                  WHEN '02' THEN
+                   '上海清算所'
+                end as vc_payment_place
+                 from vw_bondinfo_wind bon
+        inner join trade.ats_vunitstock_yhj@$dblinkDataRource$ ats
+        on (ats.vc_report_code = bon.vc_stock_code and
+        ats.c_market_no = bon.VC_MARKET_No)
+         where   ats.vc_fund_code=#fundId# and  bon.vc_stock_code like '%'||#stockCode#||'%' 
+            and rownum <= 100 and vc_market_no ='5'
+        ]]>
+    </select>
+        <!--根据条件模糊查询上交所持仓债券代码 start-->
+    <select id="querySSVunitBondCode" parameterClass="commonj.sdo.DataObject" resultMap="bondMap">
+       <![CDATA[
+        select distinct bon.vc_stock_code,bon.vc_stock_name,bon.vc_market_no,bon.vc_inter_code,ats.vc_combi_no,ats.vc_combi_name,
+        case bon.vc_payment_place
+                  WHEN '01' THEN
+                   '中央结算公司'
+                  WHEN '02' THEN
+                   '上海清算所'
+                end as vc_payment_place
+         from vw_bondinfo_wind bon
+        inner join trade.ats_vunitstock_sh@$dblinkDataRource$ ats
+        on (ats.vc_report_code = bon.vc_stock_code and
+        ats.c_market_no = bon.VC_MARKET_No)
+         where   ats.vc_fund_code=#fundId# and  bon.vc_stock_code like '%'||#stockCode#||'%' 
+            and rownum <= 100 and vc_market_no ='1'
+        ]]>
+    </select>
+    <!--根据条件模糊查询上交所持仓债券代码 end-->
+    <select id="querySZVunitBondCode" parameterClass="commonj.sdo.DataObject" resultMap="bondMap">
+       <![CDATA[
+        select distinct bon.vc_stock_code,bon.vc_stock_name,bon.vc_market_no,bon.vc_inter_code,ats.vc_combi_no,ats.vc_combi_name from vw_bondinfo_wind bon
+        inner join trade.ats_vunitstock_sz@$dblinkDataRource$ ats
+        on (ats.vc_report_code = bon.vc_stock_code and
+        ats.c_market_no = bon.VC_MARKET_No)
+         where   ats.vc_fund_code=#fundId# and  bon.vc_stock_code like '%'||#stockCode#||'%' 
+            and rownum <= 100 and vc_market_no ='5'
+        ]]>
+    </select>
+    
+    <!--根据条件模糊查询银行间债券代码 -->
+    <select id="querybankBetweenBondCode" parameterClass="string" resultMap="bondBetweenBankMap">
+       <![CDATA[
+        select vc_stock_code,vc_stock_name,vc_market_no,vc_inter_code，
+        case vc_payment_place
+                  WHEN '01' THEN
+                   '中央结算公司'
+                  WHEN '02' THEN
+                   '上海清算所'
+                end as vc_payment_place
+                 from vw_bondinfo_wind where VC_STOCK_CODE 
+        like '%'||#stockCode#||'%' and rownum <= 50 and vc_market_no ='5'
+        ]]>
+    </select>
+    
+    <!--根据条件模糊查询上交所债券代码 -->
+    <select id="querySHBourseBondCode" parameterClass="string" resultMap="bondBetweenBankMap">
+       <![CDATA[
+        select vc_stock_code,vc_stock_name,vc_market_no,vc_inter_code, 
+        case vc_payment_place
+                  WHEN '01' THEN
+                   '中央结算公司'
+                  WHEN '02' THEN
+                   '上海清算所'
+                end as vc_payment_place from vw_bondinfo_wind where VC_STOCK_CODE 
+        like #stockCode#||'%' and rownum <= 50 and vc_market_no ='1'
+        ]]>
+    </select>
+    
+    <!--根据条件模糊查询深交所债券代码 -->
+    <select id="querySZBourseBondCodeSql" parameterClass="string" resultMap="bondBetweenBankMap">
+       <![CDATA[
+        select vc_stock_code,vc_stock_name,vc_market_no,vc_inter_code,
+        case vc_payment_place
+                  WHEN '01' THEN
+                   '中央结算公司'
+                  WHEN '02' THEN
+                   '上海清算所'
+                end as vc_payment_place from vw_bondinfo_wind where VC_STOCK_CODE 
+        like #stockCode#||'%' and rownum <= 50 and vc_market_no ='2'
+        ]]>
+    </select>
+    
+    <!--根据条件模糊查询债券代码 end-->
+    
+     <!--根据债券代码与市场查询O32债券数据 -->
+    <statement id="queryBondFromO32" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.Integer">
+	  select count(*) as value
+		  from trade.tstockinfo t
+		 where t.vc_report_code = #vcStockCode#
+		   and t.c_market_no = #vcMarketNo#
+	</statement>
+    <!--根据条件模糊查询债券代码 end-->
+
+    <!--分页查询锁定券信息 start-->
+    <resultMap class="commonj.sdo.DataObject" id="bondLockMap">
+        <result column="L_LOCK_ID" javaType="Long" property="lLockId"/>
+        <result column="L_PRODUCT_ID" javaType="Long" property="lProductId"/>
+        <result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="String" property="vcProductName"/>
+        <result column="L_ASSET_ID" javaType="Long" property="lAssetId"/>
+        <result column="VC_ASSET_CODE" javaType="String" property="vcAssetCode"/>
+        <result column="VC_ASSET_NAME" javaType="String" property="vcAssetName"/>
+        <result column="L_COMBI_ID" javaType="Long" property="lCombiId"/>
+        <result column="VC_COMBI_CODE" javaType="String" property="vcCombiCode"/>
+        <result column="VC_COMBI_NAME" javaType="String" property="vcCombiName"/>
+        <result column="VC_STOCK_INNER_CODE" javaType="String" property="vcStockInnerCode"/>
+        <result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+        <result column="VC_STOCK_NAME" javaType="String" property="vcStockName"/>
+        <result column="VC_MARKET" javaType="String" property="vcMarket"/>
+        <result column="L_LOCK_QTY" javaType="Long" property="lLockQty"/>
+        <result column="VC_LOCK_TYPE" javaType="String" property="vcLockType"/>
+        <result column="VC_LOCK_STATUS" javaType="String" property="vcLockStatus"/>
+        <result column="L_OPERATOR_ID" javaType="Long" property="lOperatorId"/>
+        <result column="VC_OPERATOR_ID" javaType="String" property="vcOperatorId"/>
+        <result column="VC_OPERATOR_NAME" javaType="String" property="vcOperatorName"/>
+        <result column="T_LOCK_TIME" javaType="Date" property="tLockTime"/>
+        <result column="VC_LOCK_REASON" javaType="String" property="vcLockReason"/>
+        <result column="VC_LOCK_SOURCE" javaType="String" property="vcLockSource"/>
+        <result column="L_MATURITY_SETTLE_DATE" javaType="string" property="lMaturitySettleDate"/><!-- 到期结算日期 -->
+        <result column="L_INSTRUCT_NO" javaType="long" property="lInstructNo"/><!-- 指令序号-->
+        <result column="L_RESULT_ID" javaType="long" property="lResultId"/><!-- 指令编号-->
+        <result column="L_LOCK_QTY_FIRST" javaType="long" property="lLockQtyFirst"/><!-- 首次锁定金额 -->
+        <result column="C_IS_VALID" javaType="String" property="cIsValid"/><!-- 是否有效 -->
+    </resultMap>
+    <select id="queryBondLockSql" parameterClass="commonj.sdo.DataObject" resultMap="bondLockMap">
+        select 
+	        L_LOCK_ID,
+	        L_PRODUCT_ID,
+	        VC_PRODUCT_CODE,
+	        VC_PRODUCT_NAME,
+	        L_ASSET_ID,
+	        VC_ASSET_CODE,
+	        VC_ASSET_NAME,
+	        L_COMBI_ID,
+	        VC_COMBI_CODE,
+	        VC_COMBI_NAME,
+	        VC_STOCK_INNER_CODE,
+	        VC_STOCK_CODE,
+	        VC_STOCK_NAME,
+	        VC_MARKET,
+	        L_LOCK_QTY,
+	        VC_LOCK_TYPE,
+	        VC_LOCK_STATUS,
+	        L_OPERATOR_ID,
+	        VC_OPERATOR_ID,
+	        VC_OPERATOR_NAME,
+	        T_LOCK_TIME,
+	        VC_LOCK_REASON,
+	        VC_LOCK_SOURCE,
+	        L_MATURITY_SETTLE_DATE,
+	        L_INSTRUCT_NO,
+	        L_LOCK_QTY_FIRST,
+	        C_IS_VALID,
+	        L_RESULT_ID
+        from 
+        	T_ATS_TBOND_LOCK
+        where 1 = 1
+        <isNotNull property="vcProductCode"><!--产品代码-->
+            and VC_PRODUCT_CODE = #vcProductCode#
+        </isNotNull>
+        <isNotNull property="lockStatus"><!--锁定状态-->
+            and VC_LOCK_STATUS in ($lockStatus$)
+        </isNotNull>
+        <isNotNull property="InvalidStatus"><!--是否有效-->
+            and C_IS_VALID in ($InvalidStatus$)
+        </isNotNull>
+        <isNotNull property="vcMarket"><!--交易市场-->
+            and VC_MARKET in (#vcMarket#)
+        </isNotNull>
+        <isNotNull property="vcCombiNo"><!--交易市场-->
+            and VC_COMBI_CODE in ($vcCombiNo$)
+        </isNotNull>
+        <isNotNull property="vcStockCode"><!--债券代码-->
+            and VC_STOCK_CODE like '%' || #vcStockCode# || '%'
+        </isNotNull>
+        order by T_LOCK_TIME desc
+    </select>
+    <!--分页查询锁定券信息 end-->
+    
+    <!--根据锁定券ID更新锁定券信息 start-->
+    <select id="queryBondLockByIdSql" parameterClass="commonj.sdo.DataObject" resultMap="bondLockMap">
+        select 
+	        L_LOCK_ID,
+	        L_PRODUCT_ID,
+	        VC_PRODUCT_CODE,
+	        VC_PRODUCT_NAME,
+	        L_ASSET_ID,
+	        VC_ASSET_CODE,
+	        VC_ASSET_NAME,
+	        L_COMBI_ID,
+	        VC_COMBI_CODE,
+	        VC_COMBI_NAME,
+	        VC_STOCK_INNER_CODE,
+	        VC_STOCK_CODE,
+	        VC_STOCK_NAME,
+	        VC_MARKET,
+	        L_LOCK_QTY,
+	        VC_LOCK_TYPE,
+	        VC_LOCK_STATUS,
+	        L_OPERATOR_ID,
+	        VC_OPERATOR_ID,
+	        VC_OPERATOR_NAME,
+	        T_LOCK_TIME,
+	        VC_LOCK_REASON,
+	        VC_LOCK_SOURCE,
+	        L_MATURITY_SETTLE_DATE,
+	        L_INSTRUCT_NO,
+	        L_LOCK_QTY_FIRST,
+	        C_IS_VALID,
+	        L_RESULT_ID
+        from 
+        	T_ATS_TBOND_LOCK
+        where 1 = 1
+        <isNotNull property="lLockId">
+            and L_LOCK_ID = #lLockId#
+        </isNotNull>
+    </select>
+    <!--根据锁定券ID更新锁定券信息 end-->
+    
+     <!--根据债券代码和市场编号查询锁定券信息 start-->
+    <select id="queryBondLockByCodeSql" parameterClass="commonj.sdo.DataObject" resultMap="bondLockMap">
+        select 
+        	L_LOCK_ID,
+	        L_PRODUCT_ID,
+	        VC_PRODUCT_CODE,
+	        VC_PRODUCT_NAME,
+	        L_ASSET_ID,
+	        VC_ASSET_CODE,
+	        VC_ASSET_NAME,
+	        L_COMBI_ID,
+	        VC_COMBI_CODE,
+	        VC_COMBI_NAME,
+	        VC_STOCK_INNER_CODE,
+	        VC_STOCK_CODE,
+	        VC_STOCK_NAME,
+	        VC_MARKET,
+	        L_LOCK_QTY,
+	        VC_LOCK_TYPE,
+	        VC_LOCK_STATUS,
+	        L_OPERATOR_ID,
+	        VC_OPERATOR_ID,
+	        VC_OPERATOR_NAME,
+	        T_LOCK_TIME,
+	        VC_LOCK_REASON,
+	        VC_LOCK_SOURCE,
+	        L_MATURITY_SETTLE_DATE,
+	        L_INSTRUCT_NO,
+	        L_LOCK_QTY_FIRST,
+	        C_IS_VALID,
+	        L_RESULT_ID
+        from 
+        	T_ATS_TBOND_LOCK
+        where 1 = 1
+        <isNotNull property="vcStockCode">
+            and VC_STOCK_CODE = #vcStockCode#
+        </isNotNull>
+        <isNotNull property="vcMarket">
+            and VC_MARKET = #vcMarket#
+        </isNotNull>
+    </select>
+    <!--根据债券代码和市场编号查询锁定券信息 end-->
+    
+            
+     <!--更新锁定数量 start-->
+     <update id="updQtyLockBond" parameterClass="commonj.sdo.DataObject">
+        update T_ATS_TBOND_LOCK set L_LOCK_QTY = #lLockQty# where VC_STOCK_CODE = #vcStockCode# and VC_MARKET = #vcMarket#
+     </update>
+    <!--更新锁定数量 end-->
+    
+    <!--根据锁定券Id（此ID仅针对锁定债券表）查询解锁记录 start-->
+    <resultMap class="commonj.sdo.DataObject" id="bondUnLockRcdMap">
+    	<result column="L_UNLOCK_ID" javaType="Long" property="lUnlockId"/><!-- 解锁记录表id -->
+    	<result column="L_LOCK_ID" javaType="Long" property="lLockId"/><!-- 锁定表id -->
+    	<result column="L_UNLOCK_QTY" javaType="Long" property="lUnlockQty"/><!-- 解锁金额 -->
+    	<result column="VC_UNLOCK_TYPE" javaType="String" property="vcUnlockType"/><!-- 解锁类型 -->
+    	<result column="L_OPERATOR_ID" javaType="Long" property="lOperatorId"/><!-- 解锁人用户id -->
+        <result column="VC_OPERATOR_ID" javaType="String" property="vcOperatorId"/><!-- 解锁人用户名 -->
+        <result column="VC_OPERATOR_NAME" javaType="String" property="vcOperatorName"/><!-- 解锁人名称-->
+        <result column="T_UNLOCK_TIME" javaType="Date" property="tUnLockTime"/><!-- 解锁时间-->
+        <result column="VC_UNLOCK_REASON" javaType="String" property="vcUnlockReason"/><!-- 解锁原因-->
+        <result column="L_PROCESSINST_ID" javaType="Long" property="lProcessinstId"/><!-- 解锁流程id-->
+        <result column="VC_APPROVAL_STATUS" javaType="string" property="vcApprovalStatus"/><!-- 审批状态-->
+        <result column="T_APPLY_UNLOCK_TIME" javaType="Date" property="tApplyUnlockTime"/><!-- 审批时间-->
+        
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/><!-- 产品名称-->
+        <result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/><!-- 组合名称-->
+        <result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/><!-- 证券名称-->
+        <result column="VC_MARKET" javaType="string" property="vcMarket"/><!-- 交易市场-->
+        <result column="L_LOCK_QTY" javaType="long" property="lLockQty"/><!-- 锁定数量-->
+        <result column="L_LOCK_QTY_FIRST" javaType="long" property="lLockQtyFirst"/><!-- 首次锁定数量-->
+        <result column="VC_LOCK_STATUS" javaType="String" property="vcLockStatus"/>
+        <result column="VC_LOCK_TYPE" javaType="String" property="vclockType"/><!-- 锁定类型 -->
+        <result column="VC_APPROVAL_USERNAME" javaType="String" property="vcApprovalUsername"/><!-- 审批人姓名-->
+        <result column="VC_APPROVAL_OPINION" javaType="String" property="vcApprovalOpinion"/><!-- 审批意见-->
+    </resultMap>
+    <select id="querybondUnLockRcdSql" parameterClass="commonj.sdo.DataObject" resultMap="bondUnLockRcdMap">
+        select 
+        	a.L_UNLOCK_ID,
+        	a.L_LOCK_ID,
+        	a.L_UNLOCK_QTY,
+        	a.VC_UNLOCK_TYPE,
+        	a.L_OPERATOR_ID,
+        	a.VC_OPERATOR_ID,
+        	a.VC_OPERATOR_NAME,
+        	a.T_UNLOCK_TIME,
+        	a.VC_UNLOCK_REASON,
+        	a.L_PROCESSINST_ID,
+        	a.VC_APPROVAL_STATUS,
+        	a.T_APPLY_UNLOCK_TIME,
+        	b.VC_PRODUCT_NAME,
+        	b.VC_COMBI_NAME,
+        	b.VC_STOCK_NAME,
+        	b.VC_MARKET,
+        	(b.L_LOCK_QTY-a.L_UNLOCK_QTY) as L_LOCK_QTY,
+        	b.L_LOCK_QTY_FIRST,
+        	b.VC_LOCK_STATUS,
+        	b.VC_LOCK_TYPE,
+        	a.VC_APPROVAL_OPINION,
+        	a.VC_APPROVAL_USERNAME
+        from 
+        	T_ATS_TBOND_UNLOCK_RCD a, T_ATS_TBOND_LOCK b
+        where 
+        	1 = 1 and a.L_LOCK_ID = b.L_LOCK_ID
+        and
+        	<isNotNull property="lLockId"><!--解锁表编号-->
+        		a.L_LOCK_ID = #lLockId#
+        	</isNotNull>
+        	<isNotNull property="processInstID"><!--流程id-->
+        		a.L_PROCESSINST_ID = #processInstID#
+        	</isNotNull>
+        order by 
+        	a.L_UNLOCK_ID desc
+    </select>
+    <!--根据锁定券Id（此ID仅针对锁定债券表）查询相关日志 end-->
+
+    <!--查询单条锁定券锁定数量 start-->
+    <resultMap class="commonj.sdo.DataObject" id="singleBondLockMap">
+        <result column="cnMortgage" javaType="Long" property="cnMortgage"/>
+        <result column="cnSell" javaType="Long" property="cnSell"/>
+        <result column="cnMortgageSell" javaType="Long" property="cnMortgageSell"/>
+    </resultMap>
+    <select id="querySingleBondLockSql" parameterClass="commonj.sdo.DataObject" resultMap="singleBondLockMap">
+    	select cn_mortgage      cnMortgage,
+               cn_sell          cnSell,
+               cn_mortgage_sell cnMortgageSell
+          from vw_tbond_lock_count
+         where 1=1
+         <isNotNull property="vcStockCode"><!--债券代码-->
+            and VC_STOCK_CODE = #vcStockCode#
+        </isNotNull>
+        <isNotNull property="vcMarket"><!--市场编号-->
+            and VC_MARKET = #vcMarket#
+        </isNotNull>
+        <isNotNull property="vcCombiCode"><!--组合编号-->
+            and VC_COMBI_CODE = #vcCombiCode#
+        </isNotNull>
+    </select>
+    <!--查询单条锁定券锁定数量  end-->
+
+    <!-- 取消关注证券 -->
+	<delete id="deleteAttentionBond" parameterClass="commonj.sdo.DataObject">
+		delete t_ats_tstock_follow t
+         where t.vc_stock_code = #vcStockCode#
+           	 and t.vc_exchange = #vcExchange#
+           	 and t.vc_user_id = #vcUserId#
+	</delete>
+	
+    <!--查询用户关注债券-->
+    <resultMap class="commonj.sdo.DataObject" id="bondAttentionMap">
+    	<result column="vc_stock_inner_code" javaType="string" property="vcStockInnerCode"/><!--证券内码-->
+        <result column="vc_stock_code" javaType="string" property="vcStockCode"/><!--证券代码-->
+        <result column="vc_stock_name" javaType="string" property="vcStockName"/><!--证券名称-->
+        <result column="vc_exchange" javaType="string" property="vcExchange"/><!--所属交易市场-->
+        <result column="vc_stock_type" javaType="string" property="vcStockType"/><!--债券类别-->
+        <result column="vc_bond_appraise" javaType="string" property="vcBondAppraise"/><!--债项评级-->
+        <result column="vc_issue_appraise" javaType="string" property="vcIssueAppraise"/><!--主体评级-->
+        <result column="vc_issue_appraise_organ" javaType="string" property="vcIssueAppraiseOrgan"/><!--评级机构-->
+    </resultMap>
+    <select id="queryWhetherAttentionBond" parameterClass="commonj.sdo.DataObject" resultMap="bondAttentionMap">
+         select t.vc_stock_inner_code,
+         			 t.vc_stock_code,
+	                 t.vc_stock_name,
+	                 t.vc_exchange,
+	                 vw.vc_stock_type,
+	                 vw.vc_bond_appraise,
+	                 vw.vc_issue_appraise,
+	                 vw.vc_issue_appraise_organ
+          from t_ats_tstock_follow t
+          			left join vw_bondinfo_wind vw on(t.vc_stock_inner_code = vw.vc_inter_code)
+         where t.vc_user_id = #vcUserId#
+         <isNotNull property="vcStockCode"><!--证券代码-->
+            and t.vc_stock_code = #vcStockCode#
+        </isNotNull>
+    </select>
+    
+    <!-- 锁定券解锁任务审批处理sql（释放申请中数量） -->
+    <update id="updateBondLockQTY" parameterClass="commonj.sdo.DataObject">
+		UPDATE 
+			T_ATS_TBOND_LOCK a 
+		SET
+			a.L_LOCK_QTY = CASE WHEN $vcApprovalStatus$ = 2 THEN (a.L_LOCK_QTY - #unlockQTY#)  ELSE a.L_LOCK_QTY END
+		WHERE
+			a.L_LOCK_ID = #lockId#	
+    </update>
+    
+    <!-- 锁定券解锁任务审批处理sql（修改锁定状态） -->
+    <update id="updateBondLockStatus" parameterClass="commonj.sdo.DataObject">
+		UPDATE 
+			T_ATS_TBOND_LOCK a 
+		SET
+			a.VC_LOCK_STATUS = CASE WHEN a.L_LOCK_QTY = 0 THEN 3 WHEN a.L_LOCK_QTY = a.L_LOCK_QTY_FIRST THEN 1 ELSE 2 END
+		WHERE
+			a.L_LOCK_ID = #lockId#	
+    </update>
+    
+     <!--查询债券属性 start  cNetPrice:0=全价  1=净价-->
+    <resultMap class="commonj.sdo.DataObject" id="bondPriceByStockCode">
+        <result column="c_net_price" javaType="String" property="cNetPrice"/>
+    </resultMap>
+    <select id="getBondAttribute" parameterClass="commonj.sdo.DataObject" resultMap="bondPriceByStockCode">
+         select tb.c_net_price
+  		   from trade.TBONDPROPERTY tb, trade.TSTOCKINFO ts
+  		 where tb.vc_inter_code = ts.vc_inter_code
+    		 and ts.vc_report_code = #vcStockCode#
+    		 and ts.c_market_no = #vcMarketNo#
+    </select>
+    <!--查询债券属性 start  end-->
+    
+    <!--查询产品证券内码-->
+    <select id="queryVcInterCode"  parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject" >
+    	select vc_inter_code from vw_bondinfo_wind where vc_stock_code  = #vc_stock_code# and vc_market_no = #vc_market#
+    </select>
+     <!--扫描到期结算日为当天的买断式回购锁定券信息-->
+    <resultMap class="commonj.sdo.DataObject" id="unlockBondsList">
+        <result column="L_LOCK_QTY" javaType="Long" property="lLockQty"/>
+        <result column="L_LOCK_ID" javaType="Long" property="lLockId"/>
+    </resultMap>
+    <select id="getUnlockBondsList" resultMap="unlockBondsList">
+         select l_lock_id, l_lock_qty
+		   from t_ats_tbond_lock
+		                      where trim(to_char(l_maturity_settle_date)) =
+		                            to_char(sysdate, 'yyyyMMdd') and
+		                            vc_lock_status in ('1','2') and vc_lock_source = '1'
+    </select>
+    
+    <!-- 根据锁定表id查询对应的解锁中记录解锁数量总和 -->
+    <resultMap class="commonj.sdo.DataObject" id="BondUnlockQtySum">
+        <result column="lUnlockQtySum" javaType="Long" property="lUnlockQtySum"/>
+    </resultMap>
+    <select id="getBondUnlockQtySum" parameterClass="commonj.sdo.DataObject" resultMap="BondUnlockQtySum">
+    	select sum(t.l_unlock_qty) lUnlockQtySum from t_ats_tbond_unlock_rcd t where t.vc_approval_status = '1' and t.l_lock_id = #lLockId#
+    </select>
+    
+    <!-- 根据锁定表id查询解锁表解锁信息 -->
+    <resultMap class="commonj.sdo.DataObject" id="getBondUnlockInfo">
+        <result column="L_UNLOCK_ID" javaType="Long" property="lUnlockId"/><!-- 解锁记录表id -->
+    	<result column="L_LOCK_ID" javaType="Long" property="lLockId"/><!-- 锁定表id -->
+    	<result column="L_UNLOCK_QTY" javaType="Long" property="lUnlockQty"/><!-- 解锁金额 -->
+    	<result column="VC_UNLOCK_TYPE" javaType="string" property="vcUnlockType"/><!-- 解锁类型 -->
+    	<result column="L_OPERATOR_ID" javaType="Long" property="lOperatorId"/><!-- 解锁人用户id -->
+        <result column="VC_OPERATOR_ID" javaType="string" property="vcOperatorId"/><!-- 解锁人用户名 -->
+        <result column="VC_OPERATOR_NAME" javaType="string" property="vcOperatorName"/><!-- 解锁人名称-->
+        <result column="T_UNLOCK_TIME" javaType="Date" property="tUnLockTime"/><!-- 解锁时间-->
+        <result column="VC_UNLOCK_REASON" javaType="string" property="vcUnlockReason"/><!-- 解锁原因-->
+        <result column="L_PROCESSINST_ID" javaType="Long" property="lProcessinstId"/><!-- 解锁流程id-->
+        <result column="VC_APPROVAL_STATUS" javaType="string" property="vcApprovalStatus"/><!-- 审批状态-->
+        <result column="T_APPLY_UNLOCK_TIME" javaType="Date" property="tApplyUnlockTime"/><!-- 审批时间-->
+    </resultMap>
+    <select id="getBondUnlockInfoByLockId" parameterClass="commonj.sdo.DataObject" resultClass="com.cjhxfund.ats.sm.comm.atsSmData.TAtsTbondUnlockRcd">
+    	select 
+			L_UNLOCK_ID lUnlockId,
+        	L_LOCK_ID lLockId,
+        	L_UNLOCK_QTY lUnlockQty,
+        	VC_UNLOCK_TYPE vcUnlockType,
+        	L_OPERATOR_ID lOperatorId,
+        	VC_OPERATOR_ID vcOperatorId,
+        	VC_OPERATOR_NAME vcOperatorName,
+        	T_UNLOCK_TIME tUnLockTime,
+        	VC_UNLOCK_REASON vcUnlockReason,
+        	L_PROCESSINST_ID lProcessinstId,
+        	VC_APPROVAL_STATUS vcApprovalStatus,
+        	T_APPLY_UNLOCK_TIME tApplyUnlockTime
+		from t_ats_tbond_unlock_rcd t where t.vc_approval_status = '1' and t.l_lock_id = #lLockId#
+    </select>
+    
+    <!--用来查询固收平台债券的清算速度-->
+   <resultMap class="commonj.sdo.DataObject" id="stockLiquidationVelocity">
+        <result column="vc_speed" javaType="string" property="vcSpeed"/><!--清算速度-->
+    </resultMap>
+   <select id="queryGSstockLiquidationVelocity" parameterClass="commonj.sdo.DataObject" resultMap="stockLiquidationVelocity">
+   <![CDATA[
+    	select case
+           when instr(t.vc_mixed_type, 'i') > 0 then
+            '0'
+           when instr(t.vc_mixed_type, 'p') > 0 or
+                instr(t.vc_mixed_type, '=') > 0 then
+            '-1'
+           else
+            '1'
+         end vc_speed
+    from trade.tstockinfo t
+   where t.c_market_no = '1'
+     and t.vc_report_code = #vcStockCode#
+     ]]>
+   </select>
+   
+   <!--用来查询深圳综合平台债券的清算速度-->
+   <select id="querySZstockLiquidationVelocity" parameterClass="commonj.sdo.DataObject" resultMap="stockLiquidationVelocity">
+   <![CDATA[
+    	select case
+         when instr(t.vc_busin_classes, 'E')>0 and ((t.c_stock_type = 'S' and instr(t.vc_busin_classes, '1')=0) or instr(t.vc_mixed_type, 'i') > 0 or
+              instr(t.vc_mixed_type, '=') > 0 or (t.c_stock_type = '4' and instr(t.vc_mixed_type, '<')>0)) then
+          '0'
+         else
+          '1'
+       end vc_speed
+   from trade.tstockinfo t
+  where t.c_market_no = '2'
+    and t.vc_report_code = #vcStockCode#
+     ]]>
+   </select>
+   
+   <!--锁定券根据条件模糊查询银行间持仓债券代码 -->
+    <select id="queryBondLists" parameterClass="commonj.sdo.DataObject" resultMap="bondMap">
+       
+        select distinct bon.vc_stock_code,bon.vc_stock_name,bon.vc_market_no,bon.vc_inter_code,ats.vc_combi_no,ats.vc_combi_name from vw_bondinfo_wind bon
+        inner join trade.ats_vunitstock@$dblinkDataRource$ ats
+        on (ats.vc_report_code = bon.vc_stock_code and
+        ats.c_market_no = bon.VC_MARKET_No)
+         where 1=1 
+         <isNotNull property="fundId">
+         	and ats.vc_fund_code=#fundId# 
+         </isNotNull>
+         <isNotNull property="stockCode">
+         	and bon.vc_stock_code like '%' || #stockCode# || '%'
+         </isNotNull>
+         <isNotNull property="marketNo">
+         	and bon.vc_market_no = #marketNo#
+         </isNotNull>
+         <isNotNull property="combiNo">
+         	and ats.vc_combi_no = #combiNo#
+         </isNotNull>
+         and rownum &lt; = 100 
+        
+    </select>
+    
+    <!-- 查询锁定时间和锁定状态为待锁定的记录 -->
+    <select id="queryLockListByLockTimeAndLocktye" parameterClass="commonj.sdo.DataObject" resultMap="bondLockMap">
+    	select 
+	        L_LOCK_ID,
+	        L_PRODUCT_ID,
+	        VC_PRODUCT_CODE,
+	        VC_PRODUCT_NAME,
+	        L_ASSET_ID,
+	        VC_ASSET_CODE,
+	        VC_ASSET_NAME,
+	        L_COMBI_ID,
+	        VC_COMBI_CODE,
+	        VC_COMBI_NAME,
+	        VC_STOCK_INNER_CODE,
+	        VC_STOCK_CODE,
+	        VC_STOCK_NAME,
+	        VC_MARKET,
+	        L_LOCK_QTY,
+	        VC_LOCK_TYPE,
+	        VC_LOCK_STATUS,
+	        L_OPERATOR_ID,
+	        VC_OPERATOR_ID,
+	        VC_OPERATOR_NAME,
+	        T_LOCK_TIME,
+	        VC_LOCK_REASON,
+	        VC_LOCK_SOURCE,
+	        L_MATURITY_SETTLE_DATE,
+	        L_INSTRUCT_NO,
+	        L_LOCK_QTY_FIRST,
+	        C_IS_VALID,
+	        L_RESULT_ID
+        from 
+        	T_ATS_TBOND_LOCK
+        where 
+        	1 = 1
+        and
+        	to_char(T_LOCK_TIME,'yyyy-MM-dd') = to_char(sysdate,'yyyy-MM-dd')
+        and 	 
+    		VC_LOCK_STATUS = '4'
+    	and 
+    		C_IS_VALID = '1'	
+    </select>
+    
+    <!--锁定券根据债券代码，交易市场，产品代码查询持仓债券信息 -->
+    <select id="queryBondInfoByStockCodeAndMarket" parameterClass="commonj.sdo.DataObject" resultMap="bondMap">
+       <![CDATA[
+        select distinct bon.vc_stock_code,bon.vc_stock_name,bon.vc_market_no,bon.vc_inter_code,ats.vc_combi_no,ats.vc_combi_name from vw_bondinfo_wind bon
+        inner join trade.ats_vunitstock@$dblinkDataRource$ ats
+        on (ats.vc_report_code = bon.vc_stock_code and
+        ats.c_market_no = bon.VC_MARKET_No)
+         where ats.vc_fund_code=#fundId# and bon.vc_stock_code = #stockCode#
+            and vc_market_no = #marketNo#
+        ]]>
+    </select>
+    
+    <!--更新锁定状态 start-->
+     <update id="updateBondLockStatusOrAuto" parameterClass="string">
+        update T_ATS_TBOND_LOCK set VC_LOCK_STATUS = '1' where L_LOCK_ID = #lockId#
+     </update>
+    <!--更新锁定状态 end-->
+    
+    <!--更新锁定券记录是否有效的状态 start-->
+     <update id="autoUpdateBondIsvalidStatus" parameterClass="string">
+        update T_ATS_TBOND_LOCK set C_IS_VALID = '0' where to_char(sysdate,'yyyyMMdd') > L_MATURITY_SETTLE_DATE and C_IS_VALID = '1' and L_LOCK_QTY>0 and VC_LOCK_SOURCE !='2'
+     </update>
+    <!--更新锁定券记录是否有效的状态-->
+    
+    <!-- 根据锁定id和解锁审批状态查询解锁中数量 -->
+    <select id="getUnlockQtyPendingApproveSum" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+    	select NVL(sum(t.l_unlock_qty),0) as unLockQtySum from t_ats_tbond_unlock_rcd t where t.l_lock_id = #lockId# and t.vc_approval_status=#approvalStatus#
+    </select>
+    <!-- end根据锁定id查询解锁中数量 -->
+    
+    <!-- 【公共调用方法】获取用户组合权限Code串 begin... -->
+    <select id="getCombiRightCodeCommonSQL" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		select distinct a.vc_combi_no
+          from t_ats_product_handle a
+         where 1 = 1
+           <isNotNull property="vcRelateType"><!-- 权限关系类型 -->
+				and a.vc_relate_type in ($vcRelateType$)
+           </isNotNull>
+           <isNotNull property="vcUserId"><!-- 用户ID，如：huangmizhi -->
+				and a.vc_user_id = #vcUserId#
+           </isNotNull>
+           <isNotNull property="vcUserName"><!-- 用户名称，如：黄秘志 -->
+				and a.vc_user_name like '%' || #vcUserName# || '%'
+           </isNotNull>
+           <isNotNull property="lProductId"><!-- 产品序号，如：1001 -->
+				and a.l_product_id = #lProductId#
+           </isNotNull>
+           <isNotNull property="vcProductCode"><!-- 产品代码，如：001199 -->
+				and a.vc_product_code = #vcProductCode#
+           </isNotNull>
+           <isNotNull property="vcProductName"><!-- 产品名称，如：创金合信聚利债券（工行） -->
+				and a.vc_product_name like '%' || #vcProductName# || '%'
+           </isNotNull>
+           <isNotNull property="lAssetId"><!-- 资产单元序号，如：6 -->
+				and a.l_asset_id = #lAssetId#
+           </isNotNull>
+           <isNotNull property="vcAssetNo"><!-- 资产单元代码（编号），如：20010001 -->
+				and a.vc_asset_no = #vcAssetNo#
+           </isNotNull>
+           <isNotNull property="vcAssetName"><!-- 资产单元名称，如：瑞祥1号单元 -->
+				and a.vc_asset_name like '%' || #vcAssetName# || '%'
+           </isNotNull>
+           <isNotNull property="lCombiId"><!-- 组合序号，如：4 -->
+				and a.l_combi_id = #lCombiId#
+           </isNotNull>
+           <isNotNull property="vcCombiNo"><!-- 组合代码（编号），如：2001_000 -->
+				and a.vc_combi_no = #vcCombiNo#
+           </isNotNull>
+           <isNotNull property="vcCombiName"><!-- 组合名称，如：缺省组合 -->
+				and a.vc_combi_name like '%' || #vcCombiName# || '%'
+           </isNotNull>
+	</select>
+	
+	
+	<!--根据结果指令ID，若指令为预置指令则获取该指令产生的锁定信息  start-->
+   	<select id="queryPresetInstructBondLock" parameterClass="java.lang.Long" resultClass="commonj.sdo.DataObject">
+       <![CDATA[
+        select a.*
+		  from t_ats_tbond_lock a, t_ats_inquiry_result_instruct c
+		 where a.l_result_id = c.l_result_id
+		   and c.l_trade_date > c.l_result_date
+		   and a.vc_lock_source='3'
+		   and c.l_processinst_id=#value#
+        ]]>
+    </select>
+    <!--根据结果指令ID，若指令为预置指令则获取该指令产生的锁定信息   end-->
+    
+    <!--获取指令下达到O32时由预置指令导致解锁流程挂起的解锁记录(当前指令与修改审批中的指令)  start-->
+   	<select id="queryPresetInstructBondUnLockHangUp" parameterClass="java.lang.Long" resultClass="commonj.sdo.DataObject">
+       <![CDATA[
+        select a.l_unlock_id, a.l_lock_id, a.l_processinst_id
+		  from t_ats_tbond_unlock_rcd        a,
+		       t_ats_tbond_lock              b,
+		       t_ats_inquiry_result_instruct c
+		 where a.l_lock_id = b.l_lock_id
+		   and b.l_result_id = c.l_result_id
+		   and c.l_trade_date > c.l_result_date
+		   and b.vc_lock_source = '3'
+		   and a.vc_approval_status in ('1','6')
+		   and (c.l_processinst_id in
+		       (select t.l_processinst_id
+		          from t_ats_inquiry_result_instruct t
+		         where t.l_result_no = c.l_result_no
+		           and t.c_is_valid = '5' ) or c.l_processinst_id = #value#)
+        ]]>
+    </select>
+    <!--获取由预置指令被修改导致解锁流程挂起的解锁记录   end-->
+    
+    
+    <!--获取指定指令流程（预置指令）产生的指令解锁审批且在审批中或挂起的流程  )  start-->
+   	<select id="queryCurrentPresetInstructBondUnLockHangUp" parameterClass="java.lang.Long" resultClass="commonj.sdo.DataObject">
+       <![CDATA[
+       	select a.*
+		  from t_ats_tbond_unlock_rcd        a,
+		       t_ats_tbond_lock              b,
+		       t_ats_inquiry_result_instruct c
+		 where a.l_lock_id = b.l_lock_id
+		 and b.l_result_id = c.l_result_id
+		 and c.l_trade_date>c.l_result_date
+		 and a.vc_approval_status in ('1','6')
+		 and b.vc_lock_source = '3'
+		 and c.l_processinst_id = #value#
+        ]]>
+    </select>
+    <!--获取由预置指令被修改导致解锁流程挂起的解锁记录   end-->
+    
+    <!--更新预置指令产生的锁定券为无效状态 start-->
+     <update id="updatePresetBondLockStatusOrAuto" parameterClass="java.lang.Long">
+     	update t_ats_tbond_lock a
+	      set a.c_is_valid = '0'
+	    where a.vc_lock_source = '3'
+	      and a.l_result_id = (select t.l_result_id from t_ats_inquiry_result_instruct t where t.l_processinst_id=#value#)
+     </update>
+    <!--更新预置指令产生的锁定券为无效状态 end-->
+    
+    <!--获取指定指令流程（预置指令）产生的指令解锁审批且在审批中或挂起的流程  )  start-->
+   	<select id="queryPresetInstructHangUpUnLockApply" parameterClass="java.lang.Long" resultClass="commonj.sdo.DataObject">
+       <![CDATA[
+       	select a.*
+		  from t_ats_tbond_unlock_rcd        a,
+		       t_ats_tbond_lock              b,
+		       t_ats_inquiry_result_instruct c
+		 where a.l_lock_id = b.l_lock_id
+		 and b.l_result_id = c.l_result_id
+		 and c.l_trade_date>c.l_result_date
+		 and a.vc_approval_status = '6'
+		 and b.vc_lock_source = '3'
+		 and c.l_processinst_id = #value#
+        ]]>
+    </select>
+    <!--获取由预置指令被修改导致解锁流程挂起的解锁记录   end-->
+    
+    <!--更新预置指令产生的锁定券为有效状态 start-->
+     <update id="regainPresetBondLockStatusOrAuto" parameterClass="java.lang.Long">
+     	update t_ats_tbond_lock a
+	      set a.c_is_valid = '1'
+	    where a.vc_lock_source = '3'
+	      and a.l_result_id = (select t.l_result_id from t_ats_inquiry_result_instruct t where t.l_processinst_id=#value#)
+     </update>
+    <!--更新预置指令产生的锁定券为有效状态 end-->
+    
+    <!--获取某个指令指定债券的锁定数量   start-->
+    <select id="getInstructOneBondLock" parameterClass="commonj.sdo.DataObject" resultClass="java.lang.Integer">
+       	select t.l_lock_qty
+		  from t_ats_tbond_lock t
+		 where t.l_result_id = #lResultId#
+		   and t.vc_combi_code = #vcCombiCode#
+		   and t.vc_stock_code = #vcStockCode#
+		   and t.vc_market = #vcMarket#
+		   and t.vc_lock_source = #lockSource#
+		   and t.c_is_valid='1'
+    </select>
+    <!--获取某个指令指定债券的锁定数量   start-->
+    
+    <!-- 根据前台成交返回数据匹配指令表序号 -->
+    <select id="getInstructNoByFsdata" parameterClass="commonj.sdo.DataObject" resultClass="string">
+    	select t.L_RESULT_NO from t_ats_inquiry_result_instruct t where
+    			t.vc_entrust_direction = #vcEntrustDirection#
+		   and t.vc_product_code = #productCode#
+		   and to_char(t.en_settle_amount) = #enFaceAmount#
+		   and t.l_trade_date = #lTradeDate#
+		   and t.vc_biz_type='6'
+		   and t.c_is_valid='1'
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="lockIdMap">
+        <result column="L_LOCK_ID" javaType="Long" property="lLockId"/>
+    </resultMap>
+    <!-- 查询已过期的锁定记录id-->
+    <select id="queryInstructNoByInvalid" parameterClass="commonj.sdo.DataObject"  resultMap="lockIdMap">
+    	select L_LOCK_ID from T_ATS_TBOND_LOCK where to_char(sysdate,'yyyyMMdd') > L_MATURITY_SETTLE_DATE and C_IS_VALID = '1' and L_LOCK_QTY>0 and VC_LOCK_SOURCE !='2'
+    </select>
+    
+    <!-- 根据锁定编号修改解锁申请中记录流程状态 -->
+     <update id="updateUnlockPorcessStatusByLockId" parameterClass="string">
+        update t_ats_tbond_unlock_rcd  set VC_APPROVAL_STATUS = '4', VC_UNLOCK_REASON = '自动作废过期指令' where VC_APPROVAL_STATUS = '1' and VC_UNLOCK_TYPE='2' and l_lock_id=#lockId# 
+     </update>
+</sqlMap>

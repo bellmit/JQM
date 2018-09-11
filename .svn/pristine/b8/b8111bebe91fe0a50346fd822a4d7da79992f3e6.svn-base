@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:谭凯 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <select id="getOneLevelAccount" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		SELECT M.ACCOUNTID , M.ACCOUNTNAME , M.ACCOUNTLEVEL , M.PACCOUNTID FROM T_ATS_ACCOUNTS M , T_ATS_USER_ACCOUNTS T
+		WHERE M.ACCOUNTID = T.ACCOUNT AND M.ACCOUNTLEVEL = '1' AND T.USERID = #userid# 
+	 </select>
+	 
+	 <select id="getSeriesAccount" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		SELECT T.PROD_ID , T.PROD_NAME FROM A001_PROD_GROUP_INFO T , DIM_A001_USER_ACCESS_CONTROL U
+      WHERE T.PROD_LAYER = '2' AND T.PROD_ID = U.PROD_ID AND U.USER_ID = #userid# ORDER BY T.PROD_ID
+
+	 </select>
+	 
+	 
+	 <select id="getSeriesAccountAll" resultClass="commonj.sdo.DataObject"> 
+		SELECT T.PROD_ID , T.PROD_NAME || ' - ' || replace(T.PROD_PARENT_NAME,'总账户','') as PROD_NAME FROM A001_PROD_GROUP_INFO T , DIM_A001_USER_ACCESS_CONTROL U
+      WHERE T.PROD_LAYER = '2' AND T.PROD_ID = U.PROD_ID ORDER BY PROD_PARENT,T.PROD_ID
+
+	 </select>
+	 
+	 
+	 <select id="getSingeAccount" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		SELECT T.PROD_ID , T.PROD_NAME FROM A001_PROD_GROUP_INFO T 
+			WHERE T.PROD_LAYER = '1' AND T.PROD_PARENT = #prodparent#  ORDER BY T.PROD_ID
+	 </select>
+</sqlMap>

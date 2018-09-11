@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:章璐 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <!--更新手工归集参数值-->
+    <update id="updateParamconf" parameterClass="java.util.HashMap" >
+    	 <![CDATA[ 
+    	  update zhfwpt_param_conf set param_value = #val# where param_key = #key#
+    	]]>
+    </update>
+</sqlMap>

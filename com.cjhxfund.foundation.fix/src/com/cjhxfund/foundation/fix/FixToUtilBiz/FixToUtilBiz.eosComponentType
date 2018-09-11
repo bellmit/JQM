@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.primeton.studio.component.core.EosComponentTypeInfo>
+  <description>
+    <version>6.0</version>
+    <displayName>Fix向第三方系统发送消息公共逻辑构件</displayName>
+    <author>huangmizhi</author>
+    <createdTime>2016-08-18 12:35:36</createdTime>
+    <description>Fix向第三方系统发送消息公共逻辑构件</description>
+    <detailDescription></detailDescription>
+    <demo></demo>
+    <links></links>
+  </description>
+  <serviceReferences/>
+</com.primeton.studio.component.core.EosComponentTypeInfo>

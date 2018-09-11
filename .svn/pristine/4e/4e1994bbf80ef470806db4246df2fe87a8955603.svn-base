@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+author:chenxing
+交易所成交反馈
+ -->
+<sqlMap>
+     <!-- 从O32查找交易所成交信息 -陈星  1=SS：上交所 ， 2=SZ：深交所  ,,,3=01-债券买入,4=02-债券卖出-->
+	<select id="queryO32ExchangeBuyFeedBackInfo" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+	   <![CDATA[
+	       select a.*,t2.c_deal_execute_status cStatus,t2.l_amount, t2.EN_PRICE1 as en_balance,t3.l_business_time as vc_deal_time,t3.vc_deal_no,t3.en_deal_price from (select 
+               to_char(t.l_date) l_date,
+               t.l_fund_id,
+               t.vc_inter_code,
+               t.l_daily_instruction_no,
+               decode(t.c_market_no,1,'SS',2,'SZ',t.c_market_no) c_market_no, 
+               t.l_index_daily_modify,
+               min(t.vc_fund_name) vc_fund_name,
+               t.vc_report_code,
+               Nvl(sum(t.en_deal_balance), 0) en_deal_balance,
+               Nvl(sum(t.l_deal_amount), 0) l_deal_amount,
+               sum((t.l_deal_amount * (select tf.en_face_values from trade.tstockinfo tf where tf.vc_report_code=t.vc_report_code and t.c_market_no=tf.c_market_no))) face_count,
+               decode(t.c_entrust_direction,3,'01',4,'02',t.c_entrust_direction) c_entrust_direction, 
+               SUM(t.en_net_balance) en_net_balance, 
+               t.l_settle_date   
+          from (select a.*,
+                       c.vc_fund_name,
+                       g.l_asset_id,
+                       g.vc_asset_no,
+                       g.vc_asset_name vc_asset_name2,
+                       b.vc_report_direction,
+                       b.vc_entrustdir_name,
+                       b.c_fund_direction,
+                       h.vc_combi_no,
+                       h.vc_combi_name,
+                       tm.vc_market_name vc_market_name,
+                       d2.vc_item_name vc_asset_name,
+                       b.c_stock_direction,
+                       c.vc_currency_no vc_currency_no_bb
+                  from trade.tfundinfo c,
+                       trade.tentrustdirection b,
+                       trade.tcombi h,
+                       trade.tasset g,
+                       trade.tmarketinfo tm,
+                       trade.tdictionary d2,
+                       (select a.*,
+                               d.vc_stock_name,
+                               d.c_asset_class,
+                               d.c_stock_type,
+                               d.l_market_deal_amount,
+                               (d.en_last_price) en_last_price,
+                               d.vc_currency_no,
+                               (d.en_avg_price) en_avg_price,
+                               (d.en_market_deal_balance) en_market_deal_balance,
+                               (d.en_max_price) en_marketmax_price,
+                               (d.en_min_price) en_marketmin_price,
+                               (d.en_yesterday_close_price) en_yesterday_close_price,
+                               d.vc_international_code,
+                               d.vc_ric_code,
+                               d.en_open_price,
+                               d.vc_sedol_code,
+                               d.vc_cusip_code,
+                               d.vc_bloomberg_code
+                          from (SELECT a.l_date,
+                                       a.l_fund_id,
+                                       a.l_basecombi_id,
+                                       a.l_daily_instruction_no,
+                                       a.l_index_daily_modify,
+                                       a.vc_report_code,
+                                       a.vc_inter_code,
+                                       a.c_market_no,
+                                       a.c_entrust_direction,
+                                       SUM(a.l_deal_amount) l_deal_amount,
+                                       SUM(CASE
+                                             WHEN a.c_entrust_direction IN
+                                                  ('5', '6', '7', '8') THEN
+                                              a.l_deal_amount * 100
+                                             WHEN (d.c_stock_type = '-') or
+                                                  (a.c_entrust_direction in
+                                                  ('26', '27')) then
+                                              a.EN_BALANCE
+                                             ELSE
+                                              a.l_deal_amount * a.en_deal_price
+                                           END) *
+                                       decode(max(d.c_asset_class),
+                                              'a',
+                                              max(o.l_multiplier_unit),
+                                              trade.sf_future_multiple(a.vc_inter_code)) en_deal_balance,
+                                       SUM(ts.en_net_balance) en_net_balance,
+                                       ts.l_settle_date    
+                                  FROM trade.trealdeal a,
+                                       trade.tentrusts et,
+                                       trade.tfundinfo c,
+                                       trade.tstockmarketinfo d,
+                                       trade.tbroker tb,
+                                       trade.tbondproperty h,
+                                       trade.toptionproperty o,
+                                       trade.TPENDSETTLE ts         
+                                 WHERE a.l_date = et.l_date(+)
+                                   and a.l_entrust_serial_no =
+                                       et.l_entrust_serial_no(+)
+                                   and a.l_fund_id = c.l_fund_id
+                                   and a.c_valid <> '2'
+                                   and a.vc_broker_no = tb.vc_broker_no(+)
+                                   and a.l_date = d.l_date
+                                   and a.vc_inter_code = d.vc_inter_code
+                                   and a.l_date = o.l_date(+)
+                                   and a.vc_inter_code = o.vc_inter_code(+)
+                                   and a.l_date = h.l_date(+)
+                                   and a.vc_inter_code = h.vc_inter_code(+)
+                                   and a.l_fund_id in (3043,3058,3081,3083,3084,3085,3086,3087,3117)
+                                   and a.c_entrust_direction in ('3', '4')
+                                   and a.l_date >= to_char(sysdate,'yyyyMMdd')
+                                   and a.l_date <= to_char(sysdate,'yyyyMMdd')
+                                   and nvl(et.c_cancel_flag, '0') = '0'
+                                   and a.l_date=ts.l_date(+)
+                                   and a.l_realdeal_serial_no=ts.vc_original_no(+)
+                                 GROUP BY a.l_date,
+                                          a.l_fund_id,
+                                          a.c_market_no,
+                                          a.vc_report_code,
+                                          a.vc_inter_code,
+                                          a.c_entrust_direction,
+                                          a.l_basecombi_id,
+                                          a.l_daily_instruction_no,
+                                          a.l_index_daily_modify,
+                                          ts.l_settle_date    
+                                          ) a,trade.tstockmarketinfo d
+                         where a.l_date = d.l_date
+                           and a.vc_inter_code = d.vc_inter_code) a
+                 where a.l_fund_id = c.l_fund_id
+                   and tm.c_market_no = a.c_market_no
+                   and h.l_asset_id = g.l_asset_id
+                   AND d2.l_dictionary_no = 10036
+                   AND d2.c_lemma_item = a.c_asset_class
+                   AND a.c_entrust_direction = b.c_entrust_direction
+                   AND a.c_market_no = b.c_market_no
+                   AND a.l_fund_id = h.l_fund_id
+                   AND a.l_basecombi_id = h.l_combi_id
+                   and h.c_combi_status not in ('2', '3')) t
+         group by t.l_date,t.l_fund_id,t.vc_inter_code,t.l_asset_id,t.l_basecombi_id,t.c_market_no,t.vc_report_code,t.c_entrust_direction,
+         t.l_daily_instruction_no,t.l_index_daily_modify,t.l_settle_date) a ,
+                  trade.tbondproperty h,
+                  trade.TINSTRUCTIONSTOCK t2,
+                  trade.TREALDEAL t3 
+                  where a.l_date=t2.l_date(+) 
+                   and a.l_daily_instruction_no=t2.l_daily_instruction_no(+) 
+                   and a.l_index_daily_modify=t2.l_index_daily_modify(+)
+                   and a.l_date = h.l_date(+)
+                   and a.vc_inter_code = h.vc_inter_code(+) 
+                   and a.l_date=t3.l_date(+)
+                   and a.l_daily_instruction_no=t3.l_daily_instruction_no(+) 
+                   and a.l_index_daily_modify=t3.l_index_daily_modify(+)
+	   ]]> 
+	</select>
+	<!--将债券买卖数据插入到临时表-->	     
+    <insert id="insertExchangeBuyRepoFeedback" parameterClass="java.util.HashMap">
+    	insert into T_ATS_EXCHANGEFEEDBACKTEMP
+    		(
+    			 l_seq_no,l_date,l_prod_code,l_report_code,l_entrust_direct,l_order_amount,l_order_balance,
+    			 l_face_count,l_settle_date,l_net_balance,l_suc_status,l_business_type,l_business_market,l_en_deal_balance,l_en_deal_amount,l_en_deal_price,l_deal_no,l_deal_time
+			)
+    	values
+    		(
+    			#seqNo#,#lDealDate#,#prodCode#,#vcStockCode#,#enDirection#,
+    			#lAmount#,#enBalance#,#enQtyBalance#,#lSettDate#,#vcTradeRival#,#vcProceStatus#,#businessType#,#businessMarket#,#enDealBance#,#enDealAmount#,#enDealPrice#,#vcDealNo#,#vcDealTime#
+    		)
+    </insert>
+    <!-- 查询出临时表和指令表的数据-->
+    <select id="querySendCMBBuyData" resultClass="commonj.sdo.DataObject">
+    <![CDATA[
+      select a.vc_clord_id,a.l_exchange_second_market_id,b.* from 
+      (select p.l_product_id,a.l_exchange_second_market_id,a.vc_clord_id,a.vc_bond_code,a.vc_busin_type,a.vc_ex_destination,a.en_order_amount,a.en_net_price,
+      dense_rank()OVER(PARTITION BY a.vc_product_code,a.vc_bond_code,a.vc_busin_type,a.vc_ex_destination,a.en_order_amount,a.en_net_price order by a.vc_clord_id desc) sno_a
+      from t_ats_cjapi_e_s_market a ,t_ats_product_info p where p.vc_product_code=a.vc_product_code  and a.l_create_date=to_number(to_char(sysdate,'yyyyMMdd')) and a.vc_back_status<>3) a,
+      (select b.l_date,b.l_report_code,b.l_settle_date,b.l_face_count,b.l_suc_status,b.l_net_balance,b.l_en_deal_balance,b.l_en_deal_amount,b.l_en_deal_price,b.l_deal_no,b.l_deal_time,
+      b.l_prod_code,b.l_entrust_direct,b.l_business_market,b.l_order_amount,b.l_order_balance,
+      dense_rank()OVER(PARTITION BY b.l_prod_code,b.l_report_code,b.l_entrust_direct,b.l_business_market,b.l_order_amount,b.l_order_balance order by b.l_deal_no desc) sno_b
+      from t_ats_exchangefeedbacktemp b where b.l_date=to_number(to_char(sysdate,'yyyyMMdd')) and b.l_is_pass_gms='0') b
+      where b.l_prod_code=a.l_product_id and b.l_report_code=a.vc_bond_code and b.l_entrust_direct=a.vc_busin_type
+	  and b.l_business_market=a.vc_ex_destination and b.l_order_amount=a.en_order_amount and b.l_order_balance=a.en_net_price and a.sno_a=b.sno_b
+     ]]> 
+    </select>
+    <select id="countExchangeBuyRepoFeedback" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+         select * from t_ats_exchangefeedbacktemp where l_date=to_number(to_char(sysdate,'yyyyMMdd')) and l_deal_no=#vcDealNo#
+    </select>
+     <!-- 更新交易所二级市场指令状态-->
+	<update id="updateESOrderStatus" parameterClass="java.util.HashMap">
+		update 
+			T_ATS_CJAPI_E_S_MARKET t
+		set
+		    t.VC_BACK_STATUS = #vcProceStatus#
+		where 
+			t.vc_clord_id = #vcClordId#
+	</update>
+	<!-- 更新交易所二级市场临时表状态-->
+	<update id="updateExchangeFeedBackTempStatus" parameterClass="java.util.HashMap">
+		update 
+			t_ats_exchangefeedbacktemp t
+		set
+		    t.l_is_pass_gms = '1'
+		where 
+			t.l_deal_no= #vcDealNo#
+	</update>
+	<!--插入交易所二级市场反馈表-->	     
+    <insert id="insertESFeedback" parameterClass="java.util.HashMap" >
+    	insert into 
+    		T_ATS_CJAPI_E_S_MARKET_BACK t
+    		(
+    			t.L_BACK_ID,
+	    		t.L_EXCHANGE_SECOND_MARKET_ID, t.VC_CLORD_ID , t.VC_DEAL_NO,
+				t.EN_DEAL_BALANCE, t.EN_DEAL_AMOUNT, t.L_DEAL_DATE,L_DEAL_TIME,
+				t.VC_STOCK_CODE,EN_DEAL_PRICE ,	t.VC_PROCE_STATUS,
+				t.L_CREATE_DATE, t.L_CREATE_TIME
+			)
+    	values
+    		(
+    			#lBackId#,
+	    		#exchangeOrderESId#, #vcClordId#, #vcDealNo#,
+	    		#enDealBalance#, #enDealAmount#, #lDealDate#,#lDealTime#,
+	    		#vcStockCode#, #enDealPrice#,#vcProceStatus#,
+	    		#lCreateDate#, #lCreateTime#
+    		)
+    </insert>
+	 <!-- 从O32查找交易所回购时质押券信息-陈星 -->
+	<select id="queryO32BuyBackStockInfo" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+	    <![CDATA[
+		   select t5.VC_REPORT_CODE,t5.VC_STOCK_NAME,t4.EN_RATIO,t4.L_MORTAGAGE_AMOUNT 
+	       from trade.trealdeal a,        
+	       trade.TPENDSETTLE ts,         
+	       trade.THGMORTAGAGE t4,    
+		   trade.TSTOCKINFO t5           
+	       where 
+	       a.l_date=to_char(sysdate,'yyyyMMdd')
+	       and a.l_date=ts.l_date and a.l_realdeal_serial_no=ts.vc_original_no
+	       and ts.L_SERIAL_NO = t4.L_SERIAL_NO AND t4.VC_INTER_CODE = t5.VC_INTER_CODE
+	    ]]> 
+	</select>
+</sqlMap>

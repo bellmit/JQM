@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.commonUtil,com.cjhxfund.foundation.fix,co
+ m.primeton.eos.richweb,com.eos.foundation,com.eos.workflow,org.gocom.
+ components.coframe.rights,org.gocom.components.coframe.tools,org.goco
+ m.components.coframe.org,org.gocom.components.coframe.framework,org.g
+ ocom.components.coframe.auth
+eos-webCtxPath: sm/comm
+Bundle-Vendor: 创金合信
+Bundle-Version: 1.0.0
+Bundle-Name: 通用业务
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.sm.comm
+

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WSBankSecondMarketServiceService" targetNamespace="http://www.primeton.com/WSBankSecondMarketService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nns="http://www.primeton.com/WSBankSecondMarketService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WSBankSecondMarketService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="bankSecondOrderIssued">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="bankSecondOrderIssuedResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="bankSecondOrderModify">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="BondOrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="bankSecondOrderModifyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="bankSecondOrderIssued">
+    <wsdl:part name="bankSecondOrderIssued" element="nns:bankSecondOrderIssued">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bankSecondOrderModifyResponse">
+    <wsdl:part name="bankSecondOrderModifyResponse" element="nns:bankSecondOrderModifyResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bankSecondOrderModify">
+    <wsdl:part name="bankSecondOrderModify" element="nns:bankSecondOrderModify">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bankSecondOrderIssuedResponse">
+    <wsdl:part name="bankSecondOrderIssuedResponse" element="nns:bankSecondOrderIssuedResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WSBankSecondMarketService">
+    <wsdl:operation name="bankSecondOrderIssued">
+      <wsdl:input name="bankSecondOrderIssued" message="nns:bankSecondOrderIssued">
+    </wsdl:input>
+      <wsdl:output name="bankSecondOrderIssuedResponse" message="nns:bankSecondOrderIssuedResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="bankSecondOrderModify">
+      <wsdl:input name="bankSecondOrderModify" message="nns:bankSecondOrderModify">
+    </wsdl:input>
+      <wsdl:output name="bankSecondOrderModifyResponse" message="nns:bankSecondOrderModifyResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

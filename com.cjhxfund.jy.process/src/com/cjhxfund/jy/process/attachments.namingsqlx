@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 附件数据库操作 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="sysid" javaType="string" property="sysid"/>
+        <result column="attach_add" javaType="string" property="attachAdd"/>
+        <result column="attach_name" javaType="string" property="attachName"/>
+        <result column="attach_size" javaType="string" property="attachSize"/>
+    </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="fileResultMap">
+        <result column="sysid" javaType="string" property="sysid"/>
+        <result column="attach_name" javaType="string" property="name"/>
+        <result column="attach_add" javaType="string" property="attactUrl"/>
+        <result column="attach_size" javaType="string" property="attachSize"/>
+        <result column="whetherindia" javaType="string" property="whetherindia"/>
+        <result column="annexseal" javaType="string" property="annexseal"/>
+        <result column="workitemname" javaType="string" property="workitemname"/>
+     </resultMap>
+    
+     <resultMap class="commonj.sdo.DataObject" id="processFileResultMap">
+        <result column="sysid" javaType="string" property="id"/>
+        <result column="attach_name" javaType="string" property="name"/>
+        <result column="attach_add" javaType="string" property="attactUrl"/>
+        <result column="attach_size" javaType="string" property="attachSize"/>
+        <result column="user_name" javaType="string" property="userName"/>
+        <result column="work_item_name" javaType="string" property="workItemName"/>
+     </resultMap>
+    
+    <select id="queryAttachments"  parameterClass="java.util.Map" resultMap="resultMap">
+    	select info.* from cf_jy_attach_info info
+    	where info.biz_id=#bizId# 
+    </select>
+    
+    <!-- 查询附件列表 -->
+    <select id="queryAttachmentList"  parameterClass="java.util.Map" resultMap="fileResultMap">
+    	select info.*,wf.workitemname from cf_jy_attach_info info,wfworkitem wf
+    	 where info.workitemid = wf.workitemid and info.biz_id=#bizId# 
+    	 and info.version_number ='1'
+    	<isNotNull property="processinstid"> 
+    	 and info.process_inst_id='$processinstid$'
+    	</isNotNull> 
+    	<isNotNull property="workItemID">
+    		and info.workitemid =#workItemID# 
+    	</isNotNull>
+    	<isNotNull property="annexseal">
+    		and info.annexseal != #annexseal# 
+    	</isNotNull>
+    	
+    	
+    	and info.attach_bus_type=#attachBusType#
+    	
+    	<isNotNull property="activitydefid">
+    	union all
+      	select info.*,wf.workitemname from cf_jy_attach_info info,wfworkitem wf
+    	where info.workitemid = wf.workitemid and wf.activitydefid=#activitydefid# and info.process_inst_id=#processinstid#
+    	</isNotNull>
+    </select>	 
+    
+    <select id="queryAttachmentListByProssId"  parameterClass="java.util.Map" resultMap="processFileResultMap">
+    	select info.*,ppai.* from cf_jy_attach_info info,cf_jy_prc_aprv_info ppai
+    	where info.process_inst_id=#processInstID# and info.attach_type='2' and info.aprv_info_id=ppai.sysid
+    </select>
+     <update id="updateAttachment" parameterClass="java.util.Map">
+		update cf_jy_attach_info info
+		set info.biz_id=#bizId#e
+		where info.sysid in ($sysid$)
+	</update>
+	   <update id="updateAttachmentByUserId" parameterClass="java.util.Map">
+		update cf_jy_attach_info info
+		set info.biz_id=#bizId#
+		where info.sysid in ($sysid$) 
+		and info.biz_id is null and info.attach_type='0' 
+		and info.attach_bus_type=#attachBusType#
+	</update>      
+	   <update id="updateAttachmentResDetail" parameterClass="java.util.Map">
+		update cf_jy_attach_info info
+		set info.biz_id=#bizId#
+		where info.sysid in ($sysid$) and info.biz_id is null and info.attach_type='1'
+	</update>
+	
+	 <update id="updateAttachmentAttach" parameterClass="java.util.Map">
+		update cf_jy_attach_info info
+		set info.process_inst_id=#processInstId#, info.aprv_info_id=#aprvInfoId#
+		where info.sysid in ($sysid$) and info.process_inst_id is null and info.attach_type='2' 
+	</update>	
+	<delete id="deleteAttachment" parameterClass="java.util.Map">
+		delete from cf_jy_attach_info info where info.sysid in ($sysid$)
+	</delete>
+	
+	<!-- 当第二次交易员1上传附件时修改第一次上传附件状态  -->
+	<update id="updateAttachmentAttachType" parameterClass="java.util.Map">
+		update cf_jy_attach_info info set info.annexseal ='0' 
+		where info.workitemid in(
+			select wf.workitemid  from wfworkitem wf 
+			where wf.processinstid=#processinstid# and wf.activitydefid='manualActivity'
+		)
+	</update>	
+</sqlMap>

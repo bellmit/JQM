@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.commonUtil,com.cjhxfund.jy.ProductProcess
+ ,com.primeton.eos.richweb,com.eos.foundation,com.eos.workflow,org.goc
+ om.components.coframe.auth,org.gocom.components.coframe.rights,org.go
+ com.components.coframe.org,org.gocom.components.coframe.tools,org.goc
+ om.components.coframe.framework
+eos-webCtxPath: cjapi
+Bundle-Vendor: 谭凯
+Bundle-Version: 1.0.0
+Bundle-Name: 创金综合服务接口
+Bundle-Description: 创金综合服务接口
+Bundle-SymbolicName: com.cjhxfund.cjapi
+

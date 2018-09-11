@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tPageFlow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="debtIssueExport.flowx" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0" state="stateless">
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="新债信息导出" title="石浩&#x9;16-8-19 下午3:27">
+    <location x="30" y="150"/>
+    <size height="61" width="136"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tActionLink" description="" id="link0" name="link0" lineType="reference" isDefault="true" type="action" actionName="action0" dataConvertClass="">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign0</targetNode>
+      <process:validateRules errorPage="" onError="default"/>
+      <process:inputParameters>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="excelData" primitiveType="String"/>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="fileName" primitiveType="String"/>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="type" primitiveType="String"/>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="userName" primitiveType="String"/>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="customChineseName" primitiveType="String"/>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="customEnglishName" primitiveType="String"/>
+      </process:inputParameters>
+    </sourceConnections>
+    <location x="60" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link2</targetConnections>
+    <location x="497" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="62" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="499" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess0" name="查询需要导出的数据" displayName="exportDebtIssue" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>view0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link3</targetConnections>
+    <location x="255" y="60"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess0label</nodeLabel>
+    <process:flow index="0" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.fm.baseinfo.DebtIssueManager.exportDebtIssue</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="data" type="query" value="String" valueType="Primitive" pattern="reference">excelData</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="downloadFile" type="query" value="String" valueType="Primitive">downloadFile</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess0label" name="label" nodeType="label">
+    <location x="214" y="95"/>
+    <figSize height="17" width="109"/>
+    <node>subprocess0</node>
+  </nodes>
+  <nodes xsi:type="process:tView" description="" id="view0" name="导出" displayName="debtIssueExport.jsp" type="view" contextPath="" method="forward" uri="/fm/baseinfo/firstGradeDebt/debtIssueExport.jsp">
+    <sourceConnections xsi:type="process:tActionLink" id="link2" name="link2" lineType="reference" isDefault="true" type="action" actionName="action1">
+      <sourceNode>view0</sourceNode>
+      <targetNode>end0</targetNode>
+      <process:validateRules/>
+      <process:inputParameters/>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <targetConnections>link5</targetConnections>
+    <targetConnections>link7</targetConnections>
+    <targetConnections>link9</targetConnections>
+    <location x="355" y="60"/>
+    <size height="28" width="22"/>
+    <nodeLabel>view0label</nodeLabel>
+    <process:inputParameters/>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="view0label" name="label" nodeType="label">
+    <location x="354" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>view0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess1" name="导出承销商信息" displayName="exportUnderwriter" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess1</sourceNode>
+      <targetNode>view0</targetNode>
+    </sourceConnections>
+    <targetConnections>link4</targetConnections>
+    <location x="255" y="150"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess1label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.fm.baseinfo.DebtIssueManager.exportUnderwriter</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="data" type="query" value="String" valueType="Primitive" pattern="reference">excelData</process:inputVariable>
+        <process:inputVariable id="1" name="userName" type="query" value="String" valueType="Primitive" pattern="reference">userName</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="downloadFile" type="query" value="String" valueType="Primitive">downloadFile</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess1label" name="label" nodeType="label">
+    <location x="226" y="185"/>
+    <figSize height="17" width="85"/>
+    <node>subprocess1</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" id="assign0" name="赋值" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link3" name="link3" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>subprocess0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link4" name="link4" displayName="连接线" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>subprocess1</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">type</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link6" name="link6" displayName="连接线" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>subprocess2</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">type</process:leftOperand>
+          <process:rightOperand type="literal">2</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link8" name="link8" displayName="连接线" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>subprocess3</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">type</process:leftOperand>
+          <process:rightOperand type="literal">3</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="165" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="167" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess2" name="自定义excel字段导出承销商信息" displayName="exportUnderwriterCustom" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link7" name="link7" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess2</sourceNode>
+      <targetNode>view0</targetNode>
+    </sourceConnections>
+    <targetConnections>link6</targetConnections>
+    <location x="255" y="240"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess2label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.fm.baseinfo.DebtIssueManager.exportUnderwriterCustom</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="data" type="query" value="String" valueType="Primitive" pattern="reference">excelData</process:inputVariable>
+        <process:inputVariable id="1" name="userName" type="query" value="String" valueType="Primitive" pattern="reference">userName</process:inputVariable>
+        <process:inputVariable id="2" name="customEnglishName" type="query" value="String" valueType="Primitive" pattern="reference">customEnglishName</process:inputVariable>
+        <process:inputVariable id="3" name="customChineseName" type="query" value="String" valueType="Primitive" pattern="reference">customChineseName</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="downloadFile" type="query" value="String" valueType="Primitive">downloadFile</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess2label" name="label" nodeType="label">
+    <location x="181" y="275"/>
+    <figSize height="17" width="174"/>
+    <node>subprocess2</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess3" name="自定义excel字段导出预发行承销商信息1" displayName="exportUnderwriterRelCustom" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link9" name="link9" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess3</sourceNode>
+      <targetNode>view0</targetNode>
+    </sourceConnections>
+    <targetConnections>link8</targetConnections>
+    <location x="254" y="300"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess3label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.fm.baseinfo.DebtIssueManager.exportUnderwriterRelCustom</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="data" type="query" value="String" valueType="Primitive" pattern="reference">excelData</process:inputVariable>
+        <process:inputVariable id="1" name="userName" type="query" value="String" valueType="Primitive" pattern="reference">userName</process:inputVariable>
+        <process:inputVariable id="2" name="customEnglishName" type="query" value="String" valueType="Primitive" pattern="reference">customEnglishName</process:inputVariable>
+        <process:inputVariable id="3" name="customChineseName" type="query" value="String" valueType="Primitive" pattern="reference">customChineseName</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="downloadFile" type="query" value="String" valueType="Primitive">downloadFile</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess3label" name="label" nodeType="label">
+    <location x="159" y="335"/>
+    <figSize height="17" width="217"/>
+    <node>subprocess3</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="石浩" createTime="2016-08-19 15:26:22" date="2016-08-19Z" description="" name="新债信息导出" version="7.0.0.0"/>
+  <process:variables/>
+  <process:inputParameters/>
+</process:tPageFlow>

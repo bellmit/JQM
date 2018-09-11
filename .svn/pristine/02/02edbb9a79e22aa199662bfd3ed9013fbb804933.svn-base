@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:zengxiaoqing -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <select id="getNewMenu" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+    
+       select MENUID,ISNEW from  app_menu  where ISNEW='1'
+    </select>
+</sqlMap>

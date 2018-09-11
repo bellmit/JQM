@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:章璐 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="com.cjhxfund.ats.fm.comm.comm.ZhfwptParamConf" id="resultMap">
+        <result column="param_conf_id" javaType="int" property="paramConfId"/>
+        <result column="param_type" javaType="string" property="paramType"/>
+        <result column="param_key" javaType="string" property="paramKey"/>
+        <result column="param_memo" javaType="string" property="paramMemo"/>
+        <result column="param_name" javaType="string" property="paramName"/>
+        <result column="param_status" javaType="string" property="paramStatus"/>
+        <result column="param_value" javaType="string" property="paramValue"/>
+                                        
+    </resultMap>
+    <select id="query_mergesetBykey" parameterClass="String" resultMap="resultMap">
+    <![CDATA[ select * from zhfwpt_param_conf 
+    	where param_key = #param_key#
+    ]]>
+    </select>
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsUserParamConf" id="resultupc">
+        <result column="user_conf_id" javaType="long" property="userConfId"/>
+        <result column="vc_conf_value" javaType="string" property="vcConfValue"/>
+        <result column="vc_conf_range" javaType="string" property="vcConfRange"/>
+        <result column="vc_conf_key" javaType="string" property="vcConfKey"/>
+        <result column="vc_user_id" javaType="string" property="vcUserId"/>                                        
+    </resultMap>
+    <select id="query_param_conf" parameterClass="java.util.HashMap" resultMap="resultupc">
+    <![CDATA[ select * from t_ats_user_param_conf 
+    	where vc_conf_key = #vc_conf_key# and vc_user_id=#vc_user_id#
+    ]]>
+    </select>
+</sqlMap>

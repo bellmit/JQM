@@ -1,0 +1,117 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false"%>
+<%@ taglib uri="http://eos.primeton.com/tags/logic" prefix="l"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/common/js/commscripts.jsp" %>
+<!-- 
+  - Author(s): wjh
+  - Date: 2018-03-07 17:00:50
+  - Description:
+-->
+<head>
+<title>风控发起页面</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	
+</head>
+
+<body style="width: 100%; height:100%; margin: 0px; overflow:auto;">
+<div id="tabs" class="nui-tabs" height="100%"> 
+	 <div title="基本信息"> 
+		<!-- 主体内容 -->
+		<div region="center" style="width:100%; height:570px">
+			<!-- 交易信息 -->
+   			<%@include file="/riskMgr/instruct/instructInfoView.jsp" %>
+			
+   			<!-- 风控信息 -->
+   			<%@include file="/riskMgr/instruct/riskInfoTableForApprove.jsp" %>
+			
+			<!-- 审批意见 -->
+			<%@include file="/bpsExpend/processComm/processControlInBiz.jsp" %>
+			
+		</div>
+	</div> 
+</div>	
+	<script type="text/javascript">
+		nui.parse();
+		var lRiskmgrId = "${param.lRiskmgrId}";
+		var lResultId = "${param.lResultId}";
+		var vcRiskType = "${param.vcRiskType}";
+		
+		$(function(){
+			//加载交易信息
+			setInstructInfo(lResultId);
+			//加载风控表格
+			setRiskInfoTable(lRiskmgrId,vcRiskType,'y');
+			//加载流程信息
+			initProcessBiz();
+		})
+		
+		
+		//保存
+		function saveData(){
+			var fromData = {riskDetails:getRiskDetailData()};
+			var json = nui.encode(fromData);
+			$.ajax({   //查询用户选中设计的workItemID
+	            url:"com.cjhxfund.ats.riskMgr.riskMgr.saveRiskDetailTable.biz.ext",
+	            data:json,
+	            type:'POST',
+	            contentType:'text/json',
+	            cache:false,
+	            success:function(data){
+	            	if(data.rtnObject.rtnCode=="-1"){
+	            		nui.showTips({
+				            content: "<b>错误</b> <br/>数据保存失败",
+				            state: 'danger',
+				            x: 'center',
+				            y: 'center',
+				            timeout: 2000
+				        }); 
+	            	} else {
+	            		nui.showTips({
+				            content: "<b>成功</b> <br/>数据保存成功",
+				            state: 'success',
+				            x: 'center',
+				            y: 'center',
+				            timeout: 2000
+				        });
+	            	}
+	            }
+            });
+		}
+		
+		function processSubmit(){
+			var fromData = {riskDetails:getRiskDetailData(),lRiskmgrId:lRiskmgrId};
+			var processData = getProcessFormData();
+			fromData.approveInfo = processData.pmprcaprvinfo;
+			var json = nui.encode(fromData);
+			$.ajax({   //查询用户选中设计的workItemID
+	            url:"com.cjhxfund.ats.riskMgr.riskMgr.startRiskProcess.biz.ext",
+	            data:json,
+	            type:'POST',
+	            contentType:'text/json',
+	            cache:false,
+	            success:function(data){
+	            	if(data.rtnObject.rtnCode=="-1"){
+	            		nui.showTips({
+				            content: "<b>错误</b> <br/>数据保存失败",
+				            state: 'danger',
+				            x: 'center',
+				            y: 'center',
+				            timeout: 2000
+				        }); 
+	            	} else {
+	            		nui.showTips({
+				            content: "<b>成功</b> <br/>数据保存成功",
+				            state: 'success',
+				            x: 'center',
+				            y: 'center',
+				            timeout: 2000
+				        });
+	            	}
+	            }
+            });
+		}
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:lanxy -->
+<sqlMap>
+
+     <resultMap class="commonj.sdo.DataObject" id="processList">
+        <result column="processinstid" javaType="string" property="processinstid"/>
+        <result column="processinstname" javaType="string" property="processinstname"/>
+        <result column="processinstdesc" javaType="string" property="processinstdesc"/>
+        <result column="activityinstname" javaType="string" property="activityinstname"/>
+        <result column="participantname" javaType="string" property="participantname"/>
+    </resultMap>
+     <resultMap class="commonj.sdo.DataObject" id="resultMap3">
+        <result column="operate_type" javaType="string" property="operateType"/>
+        <result column="user_name" javaType="string" property="userName"/>
+        <result column="is_help" javaType="string" property="isHelp"/>
+     </resultMap>
+     <resultMap class="commonj.sdo.DataObject" id="processActivities">
+        <result column="activitydefid" javaType="string" property="activitydefid"/>
+        <result column="activityinstname" javaType="string" property="activityinstname"/>
+     </resultMap>
+     
+     <resultMap class="commonj.sdo.DataObject" id="userInfoMap">
+        <result column="user_id" javaType="string" property="userId"/>
+        <result column="user_name" javaType="string" property="userName"/>
+     </resultMap>
+     
+     <resultMap class="java.lang.String" id="userInfoByuserIdMap">
+        <result column="user_id" javaType="string" property="userId"/>
+     </resultMap>
+     
+     <resultMap class="java.lang.String" id="empInfoByuserIdMap">
+        <result column="userid" javaType="string" property="userid"/>
+     </resultMap>
+     
+     <resultMap class="commonj.sdo.DataObject" id="deptMap">
+        <result column="orgid" javaType="string" property="deptId"/>
+        <result column="orgcode" javaType="string" property="deptCode"/>
+        <result column="orgname" javaType="string" property="deptName"/>
+	</resultMap>
+	
+	<resultMap class="java.lang.String" id="deptByorgnameMap">
+        <result column="orgname" javaType="string" property="deptName"/>
+     </resultMap>
+	
+	<resultMap class="commonj.sdo.DataObject" id="receiverMap">
+        <result column="recipient" javaType="string" property="userid"/>
+        <result column="procinstid" javaType="string" property="procinstid"/>
+	</resultMap>
+     
+    <select id="queryFlowLastActor" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select t2.vc_user_name from ( select * from T_ATS_APPROVE_INFO t where t.l_process_inst_id=#processInstID# order by l_approve_id desc) t2 where rownum=1
+    </select>
+     <select id="queryCurrentAcitivyInstName" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       	select (case when t1.currentstate = 7 then '已完成'
+             when t1.currentstate = 8 then '已终止'
+             else (select to_char(wm_concat(t3.activityinstname)) from wfactivityinst t3 where t3.processinstid = t1.processinstid and t3.currentstate = 2)
+             end)  activityinstname 
+             from wfprocessinst t1
+             where t1.processinstid = #processInstID#
+    </select>
+    <select id="queryFlowNextActor" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+    	select connstr1(nextuser) from
+		(select t.activityinstname||' --> '||to_char(wm_concat(distinct t.participantname)) nextuser from V_CURRENTWORKITEM t
+		where t.processinstid =  #processInstID#
+		group by t.activityinstid,t.activityinstname)
+    </select>
+    <select id="queryActivityinstName" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+   		select t.activityinstname activityinstname from V_CURRENTWORKITEM t
+		where t.processinstid =  #processInstID#
+		group by t.activityinstid,t.activityinstname
+     </select>
+    <select id="queryFlowNextActorID" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+	    select to_char(wm_concat(nextuser)) from
+	    (select to_char(wm_concat(distinct t.participantids)) nextuser from V_CURRENTWORKITEM t
+	    where t.processinstid =  #processInstID#
+	    group by t.activityinstid,t.activityinstname)
+    </select>
+    <select id="queryOperateType" parameterClass="java.lang.Long" resultClass="java.lang.String">
+    select t.vc_operate_type from T_ATS_APPROVE_INFO t where t.l_work_item_id=#workItemID# and rownum=1 Order by t.l_approve_id desc 
+    </select>
+    
+    <select id="queryTaskList4Activity"  parameterClass="java.util.Map" resultMap="processList">
+      /**
+       *查询当前正在运行的流程
+       */
+       select t.processinstid,t.processinstname,t.processinstdesc,
+		(select to_char(wm_concat(distinct t1.activityinstname)) from v_currentworkitem t1 where t1.processinstid = t.processinstid) activityinstname,
+		(select to_char(wm_concat(distinct t1.participantname)) from v_currentworkitem t1 where t1.processinstid = t.processinstid) participantname
+		from wfprocessinst t where t.currentstate = 2
+		and exists (select 1 from t_ats_approve_info t1 where t1.l_process_inst_id = t.processinstid and t1.l_user_id = #personID#)
+		order by t.createtime desc
+     </select>
+     <select id="queryReqUseName" parameterClass="java.lang.String" resultMap="resultMap3">
+     select t1.operate_type, t1.user_name,t1.is_help
+         from (select t.operate_type, t.user_name,t.is_help
+         from  t_ats_prc_work_info t
+         where t.operate_type in (3,4)
+         and t.workitem_id = #workitemID#
+         order by sysid desc) t1
+         where rownum = 1
+      </select> 
+      <select id="queryProcessActivitiesbyProcessDefName"  parameterClass="java.util.Map" resultMap="processActivities">
+       /*
+		*查询流程的所有环节
+		*/ 
+      select '' activitydefid ,'草稿' activityinstname from dual             
+			union all
+			select * from            
+			(select distinct t.activitydefid,t.activityinstname from wfactivityinst t
+			where t.activitytype = 'manual'
+			and exists (select 1 from wfprocessinst t1 
+			                     where t1.processinstid = t.processinstid 
+			                     and t1.processdefname = #processDefName#)          
+			order by t.activitydefid)
+			union all
+			select '','已完成' from dual
+			union all
+			select '','已终止' from dual
+      </select> 
+       <select id="queryBackActivities"  parameterClass="java.util.Map" resultMap="processActivities">
+       /*
+		*查询流程可以回退所有环节
+		*要小于所有的在运行环节定义名称
+		*/ 
+	  	   select distinct t.activitydefid,t.activityinstname from wfactivityinst t 
+		where t.processinstid = #processInstID#
+		and t.activitytype = 'manual'
+		and t.currentstate = 7
+		and not exists (select 1 from wfworkitem w where w.activityinstid = t.activityinstid and w.actionurl is null)
+		<isNotNull property="mainActivity">
+			 and   #mainActivity#  > t.activitydefid
+		</isNotNull>
+		<isNotNull property="subActivity">
+			  and  t.activitydefid like #subActivity#||'%' 
+		</isNotNull>
+		order by t.activitydefid desc
+      </select>
+      <select id="queryBackActivitiesNew"  parameterClass="java.util.Map" resultMap="processActivities">
+       /*
+		*新版本的查询流程可以回退所有环节
+		*/ 
+
+	  	   select distinct t.activitydefid,t.activityinstname from wfactivityinst t 
+		where t.processinstid = #processInstID#
+		and t.activitytype = 'manual'
+		and t.currentstate = 7
+		and not exists (select 1 from wfworkitem w where w.activityinstid = t.activityinstid and w.actionurl is null) 
+		<isNotNull property="mainActivity">
+			 and to_number(regexp_replace(substr(#mainActivity#,15),'P[0-9/:.]','')) > to_number(substr(regexp_replace(substr(t.activitydefid,0,INSTR(t.activitydefid,''||chr(36)||'')-1),'P[0-9/:.]',''),15))
+		</isNotNull>
+		<isNotNull property="subActivity">
+			  and  t.activitydefid like #subActivity#||'%' 
+		</isNotNull>
+		order by t.activitydefid desc
+		
+      </select>
+       <select id="getMinActivityDefId"  parameterClass="java.util.Map" resultClass="java.lang.String">
+       /*
+		*获取最小的活动定义名称
+		*/ 
+	  	   select min(t.activitydefid) from wfactivityinst t where t.activitytype = 'manual' and t.processinstid = #processInstID#
+			and not exists (select 1 from wfworkitem w where w.activityinstid = t.activityinstid and w.actionurl is null)
+      </select>
+       <select id="queryUserInfo"  parameterClass="java.util.Map" resultMap="userInfoMap">
+      /**
+       *查询用户信息
+       */
+       select t.user_id,t.user_name from CAP_USER t where 1=1 and t.user_id= #userId#
+     </select>
+     
+     <select id="queryUserInfoByuserId"  resultMap="userInfoByuserIdMap">
+      /**
+       *查询用户信息
+       */
+       select t.user_id from CAP_USER t
+     </select>
+     
+     <select id="queryEmpInfoByuserId"  resultMap="empInfoByuserIdMap">
+      /**
+       *查询用户信息
+       */
+       select t.userid from ORG_EMPLOYEE t
+     </select>
+     
+       <select id="queryDeptInfo"  parameterClass="java.util.Map" resultMap="deptMap">
+      /**
+       *查询部门信息
+       */
+       select orgid,orgcode,orgname from ORG_ORGANIZATION t where 1=1  and rownum=1 and t.orgname=#deptName#
+     </select>
+     
+     <select id="queryDeptInfoByorgname"  resultMap="deptByorgnameMap">
+      /**
+       *查询部门信息
+       */
+      select orgname from ORG_ORGANIZATION t
+     </select>
+     
+      <select id="queryFinishTaskList"  parameterClass="java.util.Map" resultMap="processList">
+      /**
+       *查询已完成的流程
+       */
+       select t.processinstid,t.processinstname,t.processinstdesc,
+		(select to_char(wm_concat(distinct t1.activityinstname)) from v_currentworkitem t1 where t1.processinstid = t.processinstid) activityinstname,
+		(select to_char(wm_concat(distinct t1.participantname)) from v_currentworkitem t1 where t1.processinstid = t.processinstid) participantname
+		from wfprocessinst t where t.currentstate = 7
+		and exists (select 1 from t_ats_approve_info t1 where t1.l_process_inst_id = t.processinstid and t1.l_user_id = #personID#)
+		order by t.createtime desc
+     </select>
+        <select id="queryReceiver"  parameterClass="java.util.Map" resultMap="receiverMap">
+      /**
+       *查询已有的收信人
+       */
+       select t.recipient,t.procinstid from WFNOTIFICATIONINST t where t.recipient like  '%{'||#userid#||'}%'and t.procinstid = #procinstid#
+     </select>
+     <select id="getLastWorkItemFinishTime" parameterClass="java.util.Map" resultClass="java.lang.String">
+     /**
+       *查询转办任务的结束时间
+       */
+         select t1.d_end_time
+               from (select t.* from t_ats_approve_info t
+                      where t.l_work_item_id = #workitemID#
+                      order by l_approve_id desc) t1
+              where rownum = 1
+      </select> 
+      <select id="getLastHelpFinishTime" parameterClass="java.util.Map" resultClass="java.lang.String">
+     /**
+       *查询征求意见任务的结束时间
+       */
+         select t1.d_end_time
+               from (select t.* from t_ats_approve_info t
+                      where t.l_work_item_id = #workitemID#
+                      and t.vc_operate_type = 4
+                      order by l_approve_id desc) t1
+              where rownum = 1
+      </select> 
+      
+</sqlMap>

@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="updateInstructionStatus.bizx" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="更改原指令状态信息：&#xD;&#xA;    当原指令为有效状态且原指令在O32为有效时--》原指令流程挂起直到新指令发送到O32修改掉原指令或新指令审核未通过（若发送到O32则原挂起指令被终止掉，若新指令为通过审核则恢复挂起的原指令新指令作废）&#xD;&#xA;    当原指令为有效状态且无对应有效指令在O32时--》原指令流程终止，以新指令为最新可用指令&#xD;&#xA;    当原指令为无效状态--》原指令流程已终止，指令状态无需改动，以新指令为最新可用指令&#xD;&#xA;" title="刘玉龙&#x9;16-12-9 下午12:50">
+    <location x="56" y="540"/>
+    <size height="111" width="761"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link4" name="link4" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>transactionbegin0</targetNode>
+    </sourceConnections>
+    <location x="29" y="134"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="31" y="170"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="process:tTransactionBegin" id="transactionbegin0" name="事务开始" displayName="事务开始" type="transactionbegin">
+    <sourceConnections xsi:type="process:tLink" description="" id="link11" name="link11" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>transactionbegin0</sourceNode>
+      <targetNode>invokePojo2</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link4</targetConnections>
+    <location x="101" y="133"/>
+    <size height="28" width="28"/>
+    <nodeLabel>transactionbegin0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="transactionbegin0label" name="label" nodeType="label">
+    <location x="91" y="169"/>
+    <figSize height="17" width="49"/>
+    <node>transactionbegin0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign1" name="设置更改信息" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link8" name="link8" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign1</sourceNode>
+      <targetNode>invokeService5</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link10</targetConnections>
+    <location x="197" y="133"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign1label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">srcInstruct/lResultId</process:from>
+      <process:to type="query">instruct/lResultId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">srcInstruct/lFixValidStatus</process:from>
+      <process:to type="query">instruct/lFixValidStatus</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">srcInstruct/vcOrigordId</process:from>
+      <process:to type="query">instruct/vcOrigordId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">srcInstruct/lModifyOrder</process:from>
+      <process:to type="query">modifyOrder</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="expression" pattern="reference">Integer.parseInt(modifyOrder)+1</process:from>
+      <process:to type="query">instruct/lModifyOrder</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">m:userObject/userId</process:from>
+      <process:to type="query">instruct/lModifierId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">m:userObject/attributes/EXTEND_USER_ID</process:from>
+      <process:to type="query">instruct/vcModifierId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">m:userObject/userName</process:from>
+      <process:to type="query">instruct/vcModifierName</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">srcInstruct/tModifyTime</process:from>
+      <process:to type="query">instruct/tModifyTime</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign1label" name="label" nodeType="label">
+    <location x="175" y="169"/>
+    <figSize height="17" width="73"/>
+    <node>assign1</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo2" name="实例询价结果对象" displayName="createDataObject" type="invoke" index="1" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link10" name="link10" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo2</sourceNode>
+      <targetNode>assign1</targetNode>
+    </sourceConnections>
+    <targetConnections>link11</targetConnections>
+    <location x="151" y="45"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo2label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.data.DataObjectUtil.createDataObject</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="entityName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">com.cjhxfund.ats.sm.comm.atsSmData.TAtsInquiryResultInstruct</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="commonj.sdo.DataObject" valueType="Java">instruct</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo2label" name="label" nodeType="label">
+    <location x="114" y="81"/>
+    <figSize height="17" width="97"/>
+    <node>invokePojo2</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService5" name="新指令是否已发送O32" displayName="RelativeDataManagerService.getRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link2" name="link2" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService5</sourceNode>
+      <targetNode>invokeService0</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">isInvestManagerConfirm</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link19" name="link19" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService5</sourceNode>
+      <targetNode>invokeService7</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link8</targetConnections>
+    <location x="300" y="48"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService5label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.getRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">lProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="path" type="literal" value="java.lang.String" valueType="Java" pattern="reference">isInvestManagerConfirm</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.Object" valueType="Java">isInvestManagerConfirm</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService5label" name="label" nodeType="label">
+    <location x="254" y="78"/>
+    <figSize height="17" width="121"/>
+    <node>invokeService5</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="修改审核中" id="assign7" name="原指令状态为已修改状态" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link51" name="link51" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign7</sourceNode>
+      <targetNode>invokeService2</targetNode>
+    </sourceConnections>
+    <targetConnections>link50</targetConnections>
+    <location x="961" y="45"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign7label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">2</process:from>
+      <process:to type="query">instruct/cIsValid</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign7label" name="label" nodeType="label">
+    <location x="909" y="81"/>
+    <figSize height="17" width="133"/>
+    <node>assign7</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService6" name="原指令是否存在修改审核指令" displayName="RelativeDataManagerService.getRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link29" name="存在" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService6</sourceNode>
+      <targetNode>invokeService8</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link34" name="不存在" displayName="连接线" type="transition">
+      <sourceNode>invokeService6</sourceNode>
+      <targetNode>invokeService9</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="NULLOREMPTY">
+          <process:leftOperand type="query">approvalProcessinstId</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link22</targetConnections>
+    <location x="300" y="215"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService6label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.getRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="path" type="literal" value="java.lang.String" valueType="Java" pattern="reference">approvalProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.Object" valueType="Java">approvalProcessinstId</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService6label" name="label" nodeType="label">
+    <location x="236" y="245"/>
+    <figSize height="17" width="157"/>
+    <node>invokeService6</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService7" name="获取新指令流程序列" displayName="RelativeDataManagerService.getRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link22" name="link22" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService7</sourceNode>
+      <targetNode>invokeService6</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link19</targetConnections>
+    <location x="300" y="136"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService7label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.getRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">lProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="path" type="literal" value="java.lang.String" valueType="Java" pattern="reference">processSequence</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.Object" valueType="Java">processSequenceNew</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService7label" name="label" nodeType="label">
+    <location x="260" y="166"/>
+    <figSize height="17" width="109"/>
+    <node>invokeService7</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService8" name="获取审核中指令流程序列" displayName="RelativeDataManagerService.getRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link39" name="" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService8</sourceNode>
+      <targetNode>invokeService10</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="GE">
+          <process:leftOperand type="query">processSequenceNew</process:leftOperand>
+          <process:rightOperand type="query">processSequenceOld</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link40" name="link40" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService8</sourceNode>
+      <targetNode>invokeService11</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link29</targetConnections>
+    <location x="457" y="215"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService8label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.getRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">approvalProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="path" type="literal" value="java.lang.String" valueType="Java" pattern="reference">processSequence</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.Object" valueType="Java">processSequenceOld</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService8label" name="label" nodeType="label">
+    <location x="405" y="245"/>
+    <figSize height="17" width="133"/>
+    <node>invokeService8</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService9" name="获取原指令流程序列" displayName="RelativeDataManagerService.getRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link44" name="link44" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService9</sourceNode>
+      <targetNode>invokeService12</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link46" name="link46" displayName="连接线" type="transition">
+      <sourceNode>invokeService9</sourceNode>
+      <targetNode>assign8</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="GE">
+          <process:leftOperand type="query">processSequenceNew</process:leftOperand>
+          <process:rightOperand type="query">processSequenceOld</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link34</targetConnections>
+    <location x="302" y="312"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService9label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.getRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="path" type="literal" value="java.lang.String" valueType="Java" pattern="reference">processSequence</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.Object" valueType="Java">processSequenceOld</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService9label" name="label" nodeType="label">
+    <location x="262" y="342"/>
+    <figSize height="17" width="109"/>
+    <node>invokeService9</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService10" name="终止审核中流程" displayName="ProcessInstManagerService.terminateProcessInstance" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link21" name="link21" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService10</sourceNode>
+      <targetNode>subprocess2</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;1&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;5&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;6&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;2&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;3&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;4&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link9" name="link9" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService10</sourceNode>
+      <targetNode>assign0</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;1&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;5&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;6&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link39</targetConnections>
+    <targetConnections>link59</targetConnections>
+    <location x="457" y="122"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService10label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.instance.ProcessInstManagerComponent/ProcessInstManagerService.terminateProcessInstance</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">approvalProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService10label" name="label" nodeType="label">
+    <location x="429" y="152"/>
+    <figSize height="17" width="85"/>
+    <node>invokeService10</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService11" name="审核中流程存入新流程" displayName="RelativeDataManagerService.setRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link43" name="link43" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService11</sourceNode>
+      <targetNode>subprocess5</targetNode>
+    </sourceConnections>
+    <targetConnections>link40</targetConnections>
+    <location x="825" y="214"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService11label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.setRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">lProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="xpath" type="literal" value="java.lang.String" valueType="Java" pattern="reference">approvalProcessinstId</process:inputVariable>
+      <process:inputVariable id="2" name="relaData" type="query" value="java.lang.Object" valueType="Java" pattern="reference">approvalProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService11label" name="label" nodeType="label">
+    <location x="779" y="244"/>
+    <figSize height="17" width="121"/>
+    <node>invokeService11</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService12" name="挂起原指令流程" displayName="ProcessInstManagerService.suspendProcessInstance" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link45" name="link45" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService12</sourceNode>
+      <targetNode>subprocess10</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;1&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;5&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;6&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;2&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;3&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;4&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link13" name="link13" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService12</sourceNode>
+      <targetNode>invokeService13</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;1&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;5&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;6&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link44</targetConnections>
+    <location x="429" y="312"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService12label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.instance.ProcessInstManagerComponent/ProcessInstManagerService.suspendProcessInstance</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService12label" name="label" nodeType="label">
+    <location x="401" y="342"/>
+    <figSize height="17" width="85"/>
+    <node>invokeService12</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService13" name="原指令流程存入新流程" displayName="RelativeDataManagerService.setRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link47" name="link47" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService13</sourceNode>
+      <targetNode>subprocess3</targetNode>
+    </sourceConnections>
+    <targetConnections>link7</targetConnections>
+    <targetConnections>link13</targetConnections>
+    <location x="557" y="312"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService13label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.setRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">lProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="xpath" type="literal" value="java.lang.String" valueType="Java" pattern="reference">approvalProcessinstId</process:inputVariable>
+      <process:inputVariable id="2" name="relaData" type="query" value="java.lang.Object" valueType="Java" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService13label" name="label" nodeType="label">
+    <location x="511" y="342"/>
+    <figSize height="17" width="121"/>
+    <node>invokeService13</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="修改审核中" id="assign8" name="原指令状态为已修改状态" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link53" name="link53" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign8</sourceNode>
+      <targetNode>invokeService1</targetNode>
+    </sourceConnections>
+    <targetConnections>link46</targetConnections>
+    <location x="303" y="398"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign8label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">2</process:from>
+      <process:to type="query">instruct/cIsValid</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign8label" name="label" nodeType="label">
+    <location x="251" y="434"/>
+    <figSize height="17" width="133"/>
+    <node>assign8</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="修改审核中" id="assign9" name="原指令状态为审核中状态" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link52" name="link52" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign9</sourceNode>
+      <targetNode>subprocess6</targetNode>
+    </sourceConnections>
+    <targetConnections>link48</targetConnections>
+    <location x="842" y="309"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign9label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">5</process:from>
+      <process:to type="query">instruct/cIsValid</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign9label" name="label" nodeType="label">
+    <location x="790" y="345"/>
+    <figSize height="17" width="133"/>
+    <node>assign9</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess3" name="挂起正在执行的解锁审批" displayName="hangUpPresetUnlock" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link48" name="link48" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess3</sourceNode>
+      <targetNode>assign9</targetNode>
+    </sourceConnections>
+    <targetConnections>link47</targetConnections>
+    <location x="699" y="309"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess3label</nodeLabel>
+    <process:flow index="1" synchronization="false" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.sm.comm.TBondLockInfoManager.hangUpPresetUnlock</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processInstID" type="query" value="Long" valueType="Primitive" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess3label" name="label" nodeType="label">
+    <location x="646" y="344"/>
+    <figSize height="17" width="133"/>
+    <node>subprocess3</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess4" name="结束审核中指令导致的锁定" displayName="persetInstructEndUnLock" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link49" name="link49" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess4</sourceNode>
+      <targetNode>subprocess5</targetNode>
+    </sourceConnections>
+    <targetConnections>link58</targetConnections>
+    <location x="686" y="45"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess4label</nodeLabel>
+    <process:flow index="0" synchronization="false" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.sm.comm.TBondLockInfoManager.persetInstructEndUnLock</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processInstID" type="query" value="Long" valueType="Primitive" pattern="reference">approvalProcessinstId</process:inputVariable>
+        <process:inputVariable id="1" name="hangUpProcessInstID" type="literal" value="Long" valueType="Primitive" pattern="reference"/>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess4label" name="label" nodeType="label">
+    <location x="627" y="80"/>
+    <figSize height="17" width="145"/>
+    <node>subprocess4</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess5" name="结束原指令导致的锁定" displayName="persetInstructEndUnLock" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link50" name="link50" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess5</sourceNode>
+      <targetNode>assign7</targetNode>
+    </sourceConnections>
+    <targetConnections>link43</targetConnections>
+    <targetConnections>link49</targetConnections>
+    <targetConnections>link60</targetConnections>
+    <location x="825" y="45"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess5label</nodeLabel>
+    <process:flow index="0" synchronization="false" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.sm.comm.TBondLockInfoManager.persetInstructEndUnLock</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processInstID" type="query" value="Long" valueType="Primitive" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+        <process:inputVariable id="1" name="hangUpProcessInstID" type="literal" value="Long" valueType="Primitive" pattern="reference"/>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess5label" name="label" nodeType="label">
+    <location x="778" y="80"/>
+    <figSize height="17" width="121"/>
+    <node>subprocess5</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess6" name="异步提示交易员" displayName="instructReviseRemind" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link54" name="link54" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess6</sourceNode>
+      <targetNode>invokePojo0</targetNode>
+    </sourceConnections>
+    <targetConnections>link52</targetConnections>
+    <targetConnections>link57</targetConnections>
+    <targetConnections>link5</targetConnections>
+    <targetConnections>link12</targetConnections>
+    <location x="963" y="310"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess6label</nodeLabel>
+    <process:flow index="1" synchronization="false" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.sm.comm.RemindManager.instructReviseRemind</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="instruct" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">srcInstruct</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess6label" name="label" nodeType="label">
+    <location x="934" y="345"/>
+    <figSize height="17" width="85"/>
+    <node>subprocess6</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo0" name="更新原指令状态" displayName="更新完整指令状态" collapsed="false" type="invoke" index="2" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link55" name="link55" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo0</sourceNode>
+      <targetNode>transactioncommit1</targetNode>
+    </sourceConnections>
+    <targetConnections>link54</targetConnections>
+    <location x="1067" y="309"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo0label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.updateEntity</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="dataObject" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">instruct</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo0label" name="label" nodeType="label">
+    <location x="1036" y="345"/>
+    <figSize height="17" width="85"/>
+    <node>invokePojo0</node>
+  </nodes>
+  <nodes xsi:type="process:tTransactionCommit" id="transactioncommit1" name="事务提交" displayName="事务提交" collapsed="false" type="transactioncommit">
+    <sourceConnections xsi:type="process:tLink" id="link56" name="link56" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>transactioncommit1</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link55</targetConnections>
+    <location x="1145" y="309"/>
+    <size height="28" width="28"/>
+    <nodeLabel>transactioncommit1label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="transactioncommit1label" name="label" nodeType="label">
+    <location x="1135" y="345"/>
+    <figSize height="17" width="49"/>
+    <node>transactioncommit1</node>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link56</targetConnections>
+    <location x="1220" y="310"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" nodeType="label">
+    <location x="1222" y="346"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess7" name="结束原指令导致的锁定" displayName="persetInstructEndUnLock" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link57" name="link57" displayName="连接线" isDefault="true" type="transition">
+      <bendPoint heightToEnd="88" heightToStart="0" widthToEnd="2" widthToStart="334"/>
+      <sourceNode>subprocess7</sourceNode>
+      <targetNode>subprocess6</targetNode>
+    </sourceConnections>
+    <targetConnections>link6</targetConnections>
+    <targetConnections>link14</targetConnections>
+    <location x="627" y="398"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess7label</nodeLabel>
+    <process:flow index="0" synchronization="false" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.sm.comm.TBondLockInfoManager.persetInstructEndUnLock</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processInstID" type="query" value="Long" valueType="Primitive" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+        <process:inputVariable id="1" name="hangUpProcessInstID" type="literal" value="Long" valueType="Primitive" pattern="reference"/>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess7label" name="label" nodeType="label">
+    <location x="580" y="433"/>
+    <figSize height="17" width="121"/>
+    <node>subprocess7</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="审核中指令改为已修改" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link41" name="link41" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>invokePojo1</targetNode>
+    </sourceConnections>
+    <targetConnections>link3</targetConnections>
+    <targetConnections>link9</targetConnections>
+    <location x="571" y="119"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">com.cjhxfund.ats.sm.comm.atsSmData.TAtsInquiryResultInstruct</process:from>
+      <process:to type="query">criteria/_entity</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="query" pattern="reference">approvalProcessinstId</process:from>
+      <process:to type="query">criteria/_expr[1]/lProcessinstId</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">=</process:from>
+      <process:to type="query">criteria/_expr[1]/_op</process:to>
+    </process:copy>
+    <process:copy>
+      <process:from type="literal" pattern="reference">2</process:from>
+      <process:to type="query">approvaInstruct/cIsValid</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="525" y="155"/>
+    <figSize height="17" width="121"/>
+    <node>assign0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo1" name="更新审批中指令" displayName="更新审批中指令" collapsed="false" type="invoke" index="3" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link58" name="link58" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo1</sourceNode>
+      <targetNode>subprocess4</targetNode>
+    </sourceConnections>
+    <targetConnections>link41</targetConnections>
+    <location x="688" y="118"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo1label</nodeLabel>
+    <process:pojo methodType="instance" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.foundation.database.DatabaseUtil.updateEntityByCriteriaEntity</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="dsName" type="literal" value="java.lang.String" valueType="Java" pattern="reference">default</process:inputVariable>
+      <process:inputVariable id="1" name="value" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">approvaInstruct</process:inputVariable>
+      <process:inputVariable id="2" name="criteriaEntity" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">criteria</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="int" valueType="Java"/>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo1label" name="label" nodeType="label">
+    <location x="657" y="154"/>
+    <figSize height="17" width="85"/>
+    <node>invokePojo1</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService0" name="原指令是否存在修改审核指令" displayName="RelativeDataManagerService.getRelativeData" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link59" name="link59" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService0</sourceNode>
+      <targetNode>invokeService10</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="NOTNULLANDEMPTY">
+          <process:leftOperand type="query">approvalProcessinstId</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link60" name="link60" displayName="连接线" isDefault="true" type="transition">
+      <bendPoint heightToEnd="-42" heightToStart="-43" widthToEnd="-193" widthToStart="174"/>
+      <sourceNode>invokeService0</sourceNode>
+      <targetNode>subprocess5</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="457" y="48"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService0label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.client.RelativeDataComponent/RelativeDataManagerService.getRelativeData</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+      <process:inputVariable id="1" name="path" type="literal" value="java.lang.String" valueType="Java" pattern="reference">approvalProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="java.lang.Object" valueType="Java">approvalProcessinstId</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService0label" name="label" nodeType="label">
+    <location x="393" y="78"/>
+    <figSize height="17" width="157"/>
+    <node>invokeService0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService1" name="终止原指令流程" displayName="ProcessInstManagerService.terminateProcessInstance" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link0" name="link0" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService1</sourceNode>
+      <targetNode>subprocess9</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;1&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;5&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;6&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;2&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;3&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;4&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link14" name="link14" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService1</sourceNode>
+      <targetNode>subprocess7</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;1&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;5&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;6&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link53</targetConnections>
+    <location x="465" y="401"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService1label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.instance.ProcessInstManagerComponent/ProcessInstManagerService.terminateProcessInstance</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService1label" name="label" nodeType="label">
+    <location x="437" y="431"/>
+    <figSize height="17" width="85"/>
+    <node>invokeService1</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokeService2" name="终止原指令流程" displayName="ProcessInstManagerService.terminateProcessInstance" collapsed="false" type="invoke" index="0" invokeType="invoke_service" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" description="" id="link1" name="link1" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>invokeService2</sourceNode>
+      <targetNode>subprocess8</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>&quot;1&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;5&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;6&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;2&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;3&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))&#xD;
+||&#xD;
+&quot;4&quot;.equals(srcInstruct.getString(&quot;vcBizType&quot;))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link12" name="link12" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokeService2</sourceNode>
+      <targetNode>subprocess6</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query"/>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link51</targetConnections>
+    <location x="962" y="164"/>
+    <size height="22" width="28"/>
+    <nodeLabel>invokeService2label</nodeLabel>
+    <process:service synchronization="true" transactionType="join">
+      <process:partner type="literal">com.eos.workflow.component.instance.ProcessInstManagerComponent/ProcessInstManagerService.terminateProcessInstance</process:partner>
+    </process:service>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="processInstID" type="query" value="long" valueType="Java" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokeService2label" name="label" nodeType="label">
+    <location x="934" y="194"/>
+    <figSize height="17" width="85"/>
+    <node>invokeService2</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess2" name="终止风控流程" displayName="changeRiskStatus" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link3" name="link3" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess2</sourceNode>
+      <targetNode>assign0</targetNode>
+    </sourceConnections>
+    <targetConnections>link21</targetConnections>
+    <location x="571" y="55"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess2label</nodeLabel>
+    <process:flow index="3" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.riskMgr.riskMgr.changeRiskStatus</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="lProcessinstId" type="query" value="String" valueType="Primitive" pattern="reference">approvalProcessinstId</process:inputVariable>
+        <process:inputVariable id="1" name="lResultId" type="expression" value="String" valueType="Primitive" pattern="reference">null</process:inputVariable>
+        <process:inputVariable id="2" name="action" type="literal" value="String" valueType="Primitive" pattern="reference">8</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess2label" name="label" nodeType="label">
+    <location x="548" y="90"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess2</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess8" name="终止风控流程" displayName="changeRiskStatus" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess8</sourceNode>
+      <targetNode>subprocess6</targetNode>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="1050" y="211"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess8label</nodeLabel>
+    <process:flow index="3" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.riskMgr.riskMgr.changeRiskStatus</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="lProcessinstId" type="query" value="String" valueType="Primitive" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+        <process:inputVariable id="1" name="lResultId" type="query" value="String" valueType="Primitive" pattern="reference">srcInstruct/lResultId</process:inputVariable>
+        <process:inputVariable id="2" name="action" type="literal" value="String" valueType="Primitive" pattern="reference">8</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess8label" name="label" nodeType="label">
+    <location x="1027" y="246"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess8</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess9" name="终止风控流程" displayName="changeRiskStatus" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link6" name="link6" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess9</sourceNode>
+      <targetNode>subprocess7</targetNode>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="465" y="486"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess9label</nodeLabel>
+    <process:flow index="3" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.riskMgr.riskMgr.changeRiskStatus</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="lProcessinstId" type="query" value="String" valueType="Primitive" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+        <process:inputVariable id="1" name="lResultId" type="query" value="String" valueType="Primitive" pattern="reference">srcInstruct/lResultId</process:inputVariable>
+        <process:inputVariable id="2" name="action" type="literal" value="String" valueType="Primitive" pattern="reference">8</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess9label" name="label" nodeType="label">
+    <location x="442" y="521"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess9</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess10" name="挂起风控流程" displayName="changeRiskStatus" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link7" name="link7" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess10</sourceNode>
+      <targetNode>invokeService13</targetNode>
+    </sourceConnections>
+    <targetConnections>link45</targetConnections>
+    <location x="558" y="239"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess10label</nodeLabel>
+    <process:flow index="3" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.ats.riskMgr.riskMgr.changeRiskStatus</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="lProcessinstId" type="query" value="String" valueType="Primitive" pattern="reference">srcInstruct/lProcessinstId</process:inputVariable>
+        <process:inputVariable id="1" name="lResultId" type="query" value="String" valueType="Primitive" pattern="reference">srcInstruct/lResultId</process:inputVariable>
+        <process:inputVariable id="2" name="action" type="literal" value="String" valueType="Primitive" pattern="reference">3</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables/>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess10label" name="label" nodeType="label">
+    <location x="535" y="274"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess10</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="吴艳飞" createTime="2016-11-22 09:24:17" date="2016-11-22Z" description="" name="更新指令状态" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="" historyStateLocation="client" isArray="false" modelType="com.cjhxfund.ats.sm.comm.atsSmData.TAtsInquiryResultInstruct" name="approvaInstruct"/>
+    <process:variable anyType="commonj.sdo.DataObject" description="" historyStateLocation="client" isArray="false" name="instruct"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" name="approvalProcessinstId" primitiveType="Long"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" name="isInvestManagerConfirm" primitiveType="String"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" name="processinsId" primitiveType="Long"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" name="modifyOrder" primitiveType="String"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" name="processSequenceNew" primitiveType="String"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" name="processSequenceOld" primitiveType="String"/>
+    <process:variable description="" historyStateLocation="client" isArray="false" modelType="com.primeton.das.criteria.criteriaType" name="criteria"/>
+  </process:variables>
+  <process:inputs varArgs="false">
+    <process:input anyType="commonj.sdo.DataObject" description="" isArray="false" name="srcInstruct"/>
+    <process:input description="" isArray="false" name="lProcessinstId" primitiveType="Long"/>
+  </process:inputs>
+  <process:outputs/>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

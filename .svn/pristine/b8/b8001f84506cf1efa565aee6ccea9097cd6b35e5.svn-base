@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:jiangkanqian -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <resultMap id="interestSwapInstructInfo" class="commonj.sdo.DataObject">
+		<result column="l_instruct_id" javaType="long" property="lInstructId"/>
+		<result column="l_processinst_id" javaType="long" property="lProcessinstId"/>
+		<result column="vc_process_state" javaType="string" property="vcProcessState"/>
+		<result column="l_product_id" javaType="long" property="lProductId"/>
+		<result column="vc_product_code" javaType="string" property="vcProductCode"/>
+		<result column="vc_product_name" javaType="string" property="vcProductName"/>
+		<result column="l_combi_id" javaType="long" property="lCombiId"/>
+		<result column="vc_combi_code" javaType="string" property="vcCombiCode"/>
+		<result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+		<result column="l_trade_date" javaType="long" property="lTradeDate"/>
+		<result column="vc_busin_type" javaType="string" property="vcBusinType"/>
+		<result column="vc_busin_name" javaType="string" property="vcBusinName"/>
+		<result column="l_nominal_capital" javaType="long" property="lNominalCapital"/>
+		<result column="l_left_days" javaType="string" property="lLeftDays"/>
+		<result column="l_fixed_rate" javaType="double" property="lFixedRate"/>
+		<result column="l_value_date" javaType="long" property="lValueDate"/>
+		<result column="l_due_date" javaType="long" property="lDueDate"/>
+		<result column="l_firstvalue_date" javaType="long" property="lFirstvalueDate"/>
+		<result column="vc_interday_adj" javaType="string" property="vcInterdayAdj"/>
+		<result column="vc_payday_adj" javaType="string" property="vcPaydayAdj"/>
+		<result column="vc_clear_type" javaType="string" property="vcClearType"/>
+		<result column="vc_calcu_organiz" javaType="string" property="vcCalcuOrganiz"/>
+		<result column="vc_counterparty_id" javaType="string" property="vcCounterpartyId"/>
+		<result column="vc_counterparty_name" javaType="string" property="vcCounterpartyName"/>
+		<result column="vc_trader" javaType="string" property="vcTrader"/>
+		<result column="vc_refer_rate" javaType="string" property="vcReferRate"/>
+		<result column="vc_margin" javaType="string" property="vcMargin"/>
+		<result column="vc_pay_cycle" javaType="string" property="vcPayCycle"/>
+		<result column="l_firegul_payday" javaType="long" property="lFiregulPayday"/>
+		<result column="vc_reset_frequency" javaType="string" property="vcResetFrequency"/>
+		<result column="l_firate_day" javaType="long" property="lFirateDay"/>
+		<result column="vc_interest_method" javaType="string" property="vcInterestMethod"/>
+		<result column="vc_floatrate_bench" javaType="string" property="vcFloatrateBench"/>
+		<result column="vc_fixrate_bench" javaType="string" property="vcFixrateBench"/>
+		<result column="c_is_valid" javaType="string" property="cIsValid"/>
+		<result column="t_input_time" javaType="Date" property="tInputTime"/>
+		<result column="t_review_time" javaType="Date" property="tReviewTime"/>
+		<result column="t_confirm_time" javaType="Date" property="tConfirmTime"/>
+		<result column="t_fs_operate_time" javaType="Date" property="tFsOperateTime"/>
+		<result column="t_fs_deal_time" javaType="Date" property="tFsDealTime"/>
+		<result column="t_bs_deal_state" javaType="string" property="tBsDealState"/>
+		<result column="l_instruct_no" javaType="long" property="lInstructNo"/>
+		<result column="vc_instruct_source" javaType="string" property="vcInstructSource"/>
+		<result column="vc_remark" javaType="string" property="vcRemark"/>
+		<result column="l_initiator_id" javaType="long" property="lInitiatorId"/>
+		<result column="vc_initiator_id" javaType="string" property="vcInitiatorId"/>
+		<result column="vc_initiator_name" javaType="string" property="vcInitiatorName"/>
+		<result column="l_review_id" javaType="long" property="lReviewId"/>
+		<result column="vc_review_id" javaType="string" property="vcReviewId"/>
+		<result column="vc_review_name" javaType="string" property="vcReviewName"/>
+		<result column="l_fsdeal_id" javaType="long" property="lFsdealId"/>
+		<result column="vc_fsdeal_id" javaType="string" property="vcFsdealId"/>
+		<result column="vc_fsdeal_name" javaType="string" property="vcFsdealName"/>
+	</resultMap>
+    
+    <select id="queryInterestSwapInstructInfo" parameterClass="commonj.sdo.DataObject" resultMap="interestSwapInstructInfo">
+	select t.*	       		       		                     
+		  from T_ATS_INTERESTSWAP_INSTRUCT t
+           where 1=1
+	        <isNotNull property="lTradeDateMin">
+	        	and t.l_trade_date &gt;= #lTradeDateMin#
+	      	</isNotNull>
+	      	<isNotNull property="lTradeDateMax">
+	        	and t.l_trade_date &lt;= #lTradeDateMax#
+	      	</isNotNull>
+	      	<isNotNull property="vcProductCode">
+	        	and t.vc_Product_Code in ($vcProductCode$)
+	      	</isNotNull>
+	      	<isNotNull property="vcBusinType">
+	        	and t.vc_busin_type in ($vcBusinType$)
+	      	</isNotNull>	      	
+	      	<isNotNull property="instructValid">
+	        	and t.C_IS_VALID in ($instructValid$)
+	      	</isNotNull>
+	      	<isEqual property="queryType" compareValue="1">
+	      		<isNotNull property="vcCombiNos">
+	        		and t.VC_COMBI_CODE in ($vcCombiNos$)
+	      		</isNotNull>
+	      	</isEqual>
+	      	and t.vc_instruct_source in ('1','2','3')
+	      	<isNotNull property="vcReferRate">
+	        	and t.vc_refer_rate in ($vcReferRate$)
+	      	</isNotNull>
+	      	<isNotNull property="lLeftDays">
+	        	and t.l_left_days in ($lLeftDays$)
+	      	</isNotNull>
+	      	<isNotNull property="vcCounterpartyId">
+	        	and t.vc_counterparty_id in ($vcCounterpartyId$)
+	      	</isNotNull>
+	      	<isNotNull property="sortField">
+	        	<isNotNull property="sortOrder">
+	        		order by t.$sortField$ $sortOrder$
+	        	</isNotNull>
+	      	</isNotNull>
+	      	<isNull property="sortField">
+	        	<isNull property="sortOrder">
+	      			order by t.l_instruct_no desc, decode(t.c_is_valid,'1','1','2') asc, t.t_input_time desc
+	        	</isNull>
+	      	</isNull>
+	</select> 
+	
+    <select id="queryConfirmInstruct" parameterClass="java.util.HashMap" resultMap="interestSwapInstructInfo">
+    select t.*
+    from T_ATS_INTERESTSWAP_INSTRUCT t
+    where
+    t.l_instruct_id = $instructId$ 
+    </select>	
+	
+	<select id="querySelectedInstruct" parameterClass="commonj.sdo.DataObject" resultMap="interestSwapInstructInfo">
+    	 select t.*
+    	 from T_ATS_INTERESTSWAP_INSTRUCT t
+    	 where 1=1
+    	 <isNotNull property="instructId">
+			and t.l_instruct_id in ($instructId$)
+		 </isNotNull>
+    </select>
+	
+	<select id="queryRenderInterestSwapInstructInfo" parameterClass="commonj.sdo.DataObject" resultMap="interestSwapInstructInfo">
+		select t.l_instruct_id,
+		t.l_processinst_id,
+		t.vc_process_state,
+		t.l_product_id,
+		t.vc_product_code,
+		t.vc_product_name,
+		t.l_combi_id,
+		t.vc_combi_code,
+		t.vc_combi_name,
+		t.l_trade_date,
+		(select dictname from eos_dict_entry 
+			where dicttypeid='interestSwapBusinType'
+			and dictid=t.vc_busin_type)	vc_busin_type,
+		(select dictname from eos_dict_entry 
+			where dicttypeid='interestSwapBusinName'
+			and dictid=t.vc_busin_name)	vc_busin_name,
+		t.l_nominal_capital,
+		t.l_left_days,
+		t.l_fixed_rate,
+		t.l_value_date,
+		t.l_due_date,
+		t.l_firstvalue_date,
+		t.vc_interday_adj,
+		t.vc_payday_adj,
+		t.vc_clear_type,
+		t.vc_calcu_organiz,
+		t.vc_counterparty_id,
+		t.vc_counterparty_name,
+		t.vc_trader,
+		t.vc_refer_rate,
+		t.vc_margin,
+		t.vc_pay_cycle,
+		t.l_firegul_payday,
+		t.vc_reset_frequency,
+		t.l_firate_day,
+		t.vc_interest_method,
+		t.vc_floatrate_bench,
+		t.vc_fixrate_bench,
+		(select dictname from eos_dict_entry 
+			where dicttypeid='instructStatus'
+			and dictid=t.c_is_valid) c_is_valid,
+		t.t_input_time,
+		t.t_review_time,
+		t.t_confirm_time,
+		t.t_fs_operate_time,
+		t.t_fs_deal_time,
+		(select dictname from eos_dict_entry 
+			where dicttypeid='t_bs_deal_state'
+			and dictid=t.t_bs_deal_state) t_bs_deal_state,
+		t.l_instruct_no,
+		(select dictname from eos_dict_entry 
+			where dicttypeid='instructResource'
+			and dictid=t.vc_instruct_source) vc_instruct_source,
+		t.vc_remark,
+		t.l_initiator_id,
+		t.vc_initiator_id,
+		t.vc_initiator_name,
+		t.l_review_id,
+		t.vc_review_id,
+		t.vc_review_name,
+		t.l_fsdeal_id,
+		t.vc_fsdeal_id,
+		t.vc_fsdeal_name			       		       		                     
+		  from T_ATS_INTERESTSWAP_INSTRUCT t
+           where 1=1
+	        <isNotNull property="lTradeDateMin">
+	        	and t.l_trade_date &gt;= #lTradeDateMin#
+	      	</isNotNull>
+	      	<isNotNull property="lTradeDateMax">
+	        	and t.l_trade_date &lt;= #lTradeDateMax#
+	      	</isNotNull>
+	      	<isNotNull property="vcProductCode">
+	        	and t.vc_Product_Code in ($vcProductCode$)
+	      	</isNotNull>
+	      	<isNotNull property="vcBusinType">
+	        	and t.vc_busin_type in ($vcBusinType$)
+	      	</isNotNull>	      	
+	      	<isNotNull property="instructValid">
+	        	and t.C_IS_VALID in ($instructValid$)
+	      	</isNotNull>
+	      	<isEqual property="queryType" compareValue="1">
+	      		<isNotNull property="vcCombiNos">
+	        		and t.VC_COMBI_CODE in ($vcCombiNos$)
+	      		</isNotNull>
+	      	</isEqual>
+	      	and t.vc_instruct_source in ('1','2','3')
+	      	<isNotNull property="vcReferRate">
+	        	and t.vc_refer_rate in ($vcReferRate$)
+	      	</isNotNull>
+	      	<isNotNull property="lLeftDays">
+	        	and t.l_left_days in ($lLeftDays$)
+	      	</isNotNull>
+	      	<isNotNull property="vcCounterpartyId">
+	        	and t.vc_counterparty_id in ($vcCounterpartyId$)
+	      	</isNotNull>
+	      	<isNotNull property="sortField">
+	        	<isNotNull property="sortOrder">
+	        		order by t.$sortField$ $sortOrder$
+	        	</isNotNull>
+	      	</isNotNull>
+	      	<isNull property="sortField">
+	        	<isNull property="sortOrder">
+	      			order by t.l_instruct_no desc, decode(t.c_is_valid,'1','1','2') asc, t.t_input_time desc
+	        	</isNull>
+	      	</isNull>
+	</select>
+	
+</sqlMap>

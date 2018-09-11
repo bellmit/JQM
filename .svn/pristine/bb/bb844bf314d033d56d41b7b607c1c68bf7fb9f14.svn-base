@@ -1,0 +1,38 @@
+<list>
+  <library>
+    <path>RichWebLibrary#com.primeton.studio.workbench</path>
+    <kind>file</kind>
+    <type>4</type>
+    <isDefault>true</isDefault>
+    <loaded>true</loaded>
+    <displayName>富页面框架</displayName>
+    <name>RichWebLibrary</name>
+  </library>
+  <library>
+    <path>FoundationLibrary#com.primeton.studio.workbench</path>
+    <kind>file</kind>
+    <type>4</type>
+    <isDefault>true</isDefault>
+    <loaded>true</loaded>
+    <displayName>基础构件库</displayName>
+    <name>FoundationLibrary</name>
+  </library>
+  <library>
+    <path>WorkflowLibrary#com.primeton.studio.workflow.ui4eos</path>
+    <kind>file</kind>
+    <type>4</type>
+    <isDefault>true</isDefault>
+    <loaded>true</loaded>
+    <displayName>BPS 基础构件库</displayName>
+    <name>WorkflowLibrary</name>
+  </library>
+  <library>
+    <path>exf/ecds/CJ_FRAME.ecd</path>
+    <kind>file</kind>
+    <type>2</type>
+    <isDefault>false</isDefault>
+    <loaded>false</loaded>
+    <displayName>exf/ecds/CJ_FRAME.ecd</displayName>
+    <name>CJ_FRAME</name>
+  </library>
+</list>

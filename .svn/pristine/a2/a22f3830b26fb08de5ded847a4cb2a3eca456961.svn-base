@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tPageFlow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="processControl" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0" state="stateless">
+  <nodes xsi:type="model:Note" id="node0" name="注释" displayName="注释" nodeType="note" type="note" content="流程信息操作" title="zengjing&#x9;17-7-28 上午9:29">
+    <location x="120" y="198"/>
+    <size height="100" width="197"/>
+  </nodes>
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tActionLink" description="" id="link0" name="link0" lineType="reference" isDefault="true" type="action" actionName="action0" dataConvertClass="">
+      <sourceNode>start0</sourceNode>
+      <targetNode>subprocess0</targetNode>
+      <process:validateRules errorPage="" onError="default"/>
+      <process:inputParameters>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="workitemID" primitiveType="String"/>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="bizId" primitiveType="String"/>
+        <process:parameter description="" historyStateLocation="client" isArray="false" name="parTabId" primitiveType="String"/>
+      </process:inputParameters>
+    </sourceConnections>
+    <location x="60" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" description="" id="end0" name="结束" displayName="结束" type="end" contextPath="" method="forward" uri="/bpsExpend/processComm/processControl.jsp">
+    <targetConnections>link2</targetConnections>
+    <location x="615" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:inputVariables/>
+    <process:returns/>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="62" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="617" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess0" name="getProcessInfos" displayName="getProcessInfos" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>assign0</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="270" y="60"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess0label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.fpm.bpsExpend.process.getProcessInfos</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="workitemID" type="query" value="String" valueType="Primitive" pattern="reference">workitemID</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="workitem" type="query" value="com.eos.workflow.data.WFWorkItem" valueType="DataObject">workitem</process:outputVariable>
+        <process:outputVariable id="1" name="processInst" type="query" value="com.eos.workflow.data.WFProcessInst" valueType="DataObject">processInst</process:outputVariable>
+        <process:outputVariable id="2" name="bpsAuth" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsSysBpsAuth" valueType="DataObject">bpsAuth</process:outputVariable>
+        <process:outputVariable id="3" name="bpsParam" type="query" value="java.util.HashMap" valueType="Java">bpsParam</process:outputVariable>
+        <process:outputVariable id="4" name="lastActor" type="query" value="String" valueType="Primitive">lastActor</process:outputVariable>
+        <process:outputVariable id="5" name="nextActor" type="query" value="String" valueType="Primitive">nextActor</process:outputVariable>
+        <process:outputVariable id="6" name="activityDefID" type="query" value="String" valueType="Primitive">activityDefID</process:outputVariable>
+        <process:outputVariable id="7" name="bizProcess" type="query" value="com.cjhxfund.fpm.bpsExpend.task.TAtsBizProcess" valueType="DataObject">bizProcess</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess0label" name="label" nodeType="label">
+    <location x="236" y="95"/>
+    <figSize height="17" width="94"/>
+    <node>subprocess0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="赋值" displayName="赋值" collapsed="false" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link2" name="link2" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="435" y="60"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="query" pattern="reference">m:userObject/userId</process:from>
+      <process:to type="query">currentUserId</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="437" y="96"/>
+    <figSize height="17" width="25"/>
+    <node>assign0</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="zengjing" createTime="2017-07-28 09:05:03" date="2017-07-28Z" description="流程操作页面流" name="porcessControl" version="7.0.0.0"/>
+</process:tPageFlow>

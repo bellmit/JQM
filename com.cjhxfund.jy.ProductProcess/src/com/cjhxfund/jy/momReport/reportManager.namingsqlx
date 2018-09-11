@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:谭凯 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <select id="getOneLevelAccount" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		SELECT M.ACCOUNTID , M.ACCOUNTNAME , M.ACCOUNTLEVEL , M.PACCOUNTID FROM T_ATS_ACCOUNTS M , T_ATS_USER_ACCOUNTS T
+		WHERE M.ACCOUNTID = T.ACCOUNT AND M.ACCOUNTLEVEL = '1' AND T.USERID = #userid# 
+	 </select>
+	 
+	 <select id="getSeriesAccount" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		SELECT T.PROD_ID , T.PROD_NAME FROM A001_PROD_GROUP_INFO T , DIM_A001_USER_ACCESS_CONTROL U
+      WHERE T.PROD_LAYER = '2' AND T.PROD_ID = U.PROD_ID AND U.USER_ID = #userid# ORDER BY T.PROD_ID
+
+	 </select>
+	 
+	 
+	 <select id="getSingeAccount" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		SELECT T.PROD_ID , T.PROD_NAME FROM A001_PROD_GROUP_INFO T 
+			WHERE T.PROD_LAYER = '1' AND T.PROD_PARENT = #prodparent#  ORDER BY T.PROD_ID
+	 </select>
+	 
+	 <!--查询日期区间全部的估计表 -->
+	 <select id="queryBusDate" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		select distinct to_char(t.d_ywrq, 'yyyy-MM-dd') d_ywrq,t.vc_cpdm
+  			from stage.fa_vjk_wbfk_gzb_all t
+ 			where 1 = 1
+       		and t.vc_cpdm in ($prodcodes$)
+       		and to_char(t.d_ywrq, 'yyyy-MM-dd') &gt;= (#busiDateBegin#)
+       		and to_char(t.d_ywrq, 'yyyy-MM-dd') &lt;= (#busiDateEnd#)
+       		order by t.vc_cpdm,d_ywrq desc
+	 </select>
+	 <!--查询日期区间最新的估计表 -->
+	 <select id="queryNewBusDate" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		select max(to_char(b.d_ywrq, 'yyyy-MM-dd')) as d_ywrq,b.vc_cpdm from 
+			(select distinct t.d_ywrq,t.vc_cpdm
+  			from stage.fa_vjk_wbfk_gzb_all t
+ 			where 1 = 1
+       		and t.vc_cpdm in ($prodcodes$)
+       		and to_char(t.d_ywrq, 'yyyy-MM-dd') &gt;= (#busiDateBegin#)
+       		and to_char(t.d_ywrq, 'yyyy-MM-dd') &lt;= (#busiDateEnd#)
+       		order by t.vc_cpdm) b Group by b.vc_cpdm
+	 </select>
+</sqlMap>

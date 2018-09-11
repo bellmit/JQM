@@ -1,0 +1,92 @@
+select cbd.s_info_windcode, --Wind代码
+       cbd.b_info_issuercode,
+       cbd.s_info_name, --证券名称
+       cbd.B_INFO_DELISTDATE, --债券摘牌日 
+       cba.B_ANAL_NET_CNBD, --净价
+       cbt.B_INFO_CREDITRATING       bIC1, --债项评级（孰新）
+       cbi.B_INFO_CREDITRATING       bIC2, --主体评级（孰新）
+       cbp.B_INFO_PAYMENTDATE, --距离付息日
+       cbpc.bICD, --下一行权日
+       cbis.B_AGENCY_GUARANTORNATURE, --公司属性
+       isr.B_RATE_RATINGOUTLOOK, --是否负面
+       pw.object_id, --是否城投
+       instr(val.B_ANAL_PTMYEAR,'+N') B_ANAL_PTMYEAR, --是否永续
+       ind.S_INFO_INDUSTRYNAME2, --wind一级行业
+       cin.province, --发行人省份
+       cbpc.b_info_provisiontype --是否提前还本
+
+  from (select *
+          from wind2_CBondDescription
+         where s_info_windcode in (To_Replace_Windcode)) cbd
+  left join wind2_CBondAnalysisCNBD cba
+    on cbd.s_info_windcode = cba.s_info_windcode
+
+  left join (select cbt1.s_info_windcode,
+                    cbt1.B_INFO_CREDITRATING,
+                    cbt1.ANN_DT
+               from WIND2_CBONDRATING cbt1
+              inner join (select s_info_windcode, max(ANN_DT) as ad
+                           from WIND2_CBONDRATING
+                          group by s_info_windcode) cbt2
+                 on cbt1.s_info_windcode = cbt2.s_info_windcode
+                and cbt1.ANN_DT = cbt2.ad) cbt
+    on cbd.s_info_windcode = cbt.s_info_windcode
+
+  left join (select cbi1.s_info_compcode,
+                    cbi1.B_INFO_CREDITRATING,
+                    cbi1.ANN_DT
+               from WIND2_CBONDISSUERRATING cbi1
+              inner join (select s_info_compcode, max(ANN_DT) as at
+                           from WIND2_CBONDISSUERRATING
+                          group by s_info_compcode) cbi2
+                 on cbi1.s_info_compcode = cbi2.s_info_compcode
+                and cbi1.ANN_DT = cbi2.at) cbi
+    on cbd.b_info_issuercode = cbi.s_info_compcode
+
+  left join wind2_CBondPayment cbp
+    on cbd.s_info_windcode = cbp.s_info_windcode
+
+  left join (select sp1.s_info_windcode, sp1.b_info_provisiontype, sp2.bICD
+               from wind2_CBondSpecialConditions sp1
+              inner join (select s_info_windcode,
+                                max(B_INFO_CALLBKORPUTBKDATE) as bICD
+                           from wind2_CBondSpecialConditions
+                          group by s_info_windcode) sp2
+                 on sp1.s_info_windcode = sp2.s_info_windcode
+                and sp1.B_INFO_CALLBKORPUTBKDATE = sp2.bICD) cbpc
+    on cbd.s_info_windcode = cbpc.s_info_windcode
+
+  left join WIND2_CBONDISSUER cbis
+    on cbd.s_info_windcode = cbis.s_info_windcode
+
+  left join (select isr1.s_info_compcode,
+                    isr1.B_RATE_RATINGOUTLOOK,
+                    isr1.ANN_DT
+               from wind2_CBondIssuerRating isr1
+              inner join (select s_info_compcode, max(ANN_DT) as at
+                           from wind2_CBondIssuerRating
+                          group by s_info_compcode) isr2
+                 on isr1.s_info_compcode = isr2.s_info_compcode
+                and isr1.ANN_DT = isr2.at) isr
+    on cbd.b_info_issuercode = isr.s_info_compcode
+
+  left join wind2_cbondplatewind pw
+    on cbd.s_info_windcode = pw.s_info_windcode
+
+  left join (select val1.s_info_windcode, val1.B_ANAL_PTMYEAR, val1.TRADE_DT
+               from wind2_CBondValuation val1
+              inner join (select s_info_windcode, max(TRADE_DT) as at
+                           from wind2_CBondValuation
+                          group by s_info_windcode) val2
+                 on val1.s_info_windcode = val2.s_info_windcode
+                and val1.TRADE_DT = val2.at) val
+    on cbd.s_info_windcode = val.s_info_windcode
+
+  left join WIND2_CBONDINDUSTRYWIND ind
+    on cbd.s_info_windcode = ind.s_info_windcode
+
+  left join wind2_compintroduction cin
+    on cbd.b_info_issuercode = cin.comp_id
+
+ where 1 = 1
+--and cbd.s_info_windcode = '143081.SH'

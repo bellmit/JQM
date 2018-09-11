@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.foundation.fix,com.eos.foundation
+Bundle-Vendor: 王沐寰
+eos-webCtxPath: fm/fix
+Bundle-Version: 1.0.0
+Bundle-Name: FIX接口
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.fm.fix
+

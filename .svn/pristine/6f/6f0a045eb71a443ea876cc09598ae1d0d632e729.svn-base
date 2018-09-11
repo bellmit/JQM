@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="queryIpoWork" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" description="" id="link2" name="link2" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>assign0</targetNode>
+      <process:transitionCondition>
+        <process:complexCondition>
+          <process:code>(task.getString(&quot;stockCode&quot;)!=null &amp;&amp; !&quot;&quot;.equals(task.getString(&quot;ststockCode&quot;)))||(task.getString(&quot;stockName&quot;)!=null &amp;&amp; !&quot;&quot;.equals(task.getString(&quot;stockName&quot;)))</process:code>
+        </process:complexCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <location x="75" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link1</targetConnections>
+    <location x="555" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns>
+      <process:return id="0" language="commonj.sdo.DataObject[]" name="workItemList" type="query" valueType="Java">workItemList</process:return>
+      <process:return id="1" language="Int" name="total" type="query" valueType="Primitive">total</process:return>
+    </process:returns>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="77" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="557" y="186"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess0" name="查询待办任务" displayName="queryWorkItem" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link1" name="link1" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link4</targetConnections>
+    <location x="405" y="150"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess0label</nodeLabel>
+    <process:flow index="6" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">com.cjhxfund.commonUtil.taskManager.queryWorkItem</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="page" type="query" value="com.eos.foundation.PageCond" valueType="DataObject" pattern="reference">page</process:inputVariable>
+        <process:inputVariable id="1" name="pageIndex" type="query" value="Int" valueType="Primitive" pattern="reference">pageIndex</process:inputVariable>
+        <process:inputVariable id="2" name="pageSize" type="query" value="Int" valueType="Primitive" pattern="reference">pageSize</process:inputVariable>
+        <process:inputVariable id="3" name="sortField" type="query" value="String" valueType="Primitive" pattern="reference">sortField</process:inputVariable>
+        <process:inputVariable id="4" name="sortOrder" type="query" value="String" valueType="Primitive" pattern="reference">sortOrder</process:inputVariable>
+        <process:inputVariable id="5" name="task" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">task</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="workItemList" type="query" value="commonj.sdo.DataObject[]" valueType="Java">workItemList</process:outputVariable>
+        <process:outputVariable id="1" name="total" type="query" value="Int" valueType="Primitive">total</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess0label" name="label" nodeType="label">
+    <location x="382" y="185"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess0</node>
+  </nodes>
+  <nodes xsi:type="process:tAssign" description="" id="assign0" name="设置任务类型" displayName="赋值" type="assign">
+    <sourceConnections xsi:type="process:tLink" id="link4" name="link4" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>assign0</sourceNode>
+      <targetNode>subprocess0</targetNode>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="255" y="150"/>
+    <size height="28" width="28"/>
+    <nodeLabel>assign0label</nodeLabel>
+    <process:copy>
+      <process:from type="literal" pattern="reference">9</process:from>
+      <process:to type="query">task/vcProcessType</process:to>
+    </process:copy>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="assign0label" name="label" nodeType="label">
+    <location x="233" y="186"/>
+    <figSize height="17" width="73"/>
+    <node>assign0</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="侯志勇" createTime="2016-12-26 13:49:25" date="2016-12-26Z" description="查询待办任务列表" name="查询待办任务列表" version="7.0.0.0"/>
+  <process:variables/>
+  <process:inputs varArgs="false">
+    <process:input description="分页对象" isArray="false" modelType="com.eos.foundation.PageCond" name="page"/>
+    <process:input description="页码" isArray="false" name="pageIndex" primitiveType="Int"/>
+    <process:input description="每页显示数量" isArray="false" name="pageSize" primitiveType="Int"/>
+    <process:input description="排序字段" isArray="false" name="sortField" primitiveType="String"/>
+    <process:input description="排序方式" isArray="false" name="sortOrder" primitiveType="String"/>
+    <process:input anyType="commonj.sdo.DataObject" description="查询条件" isArray="false" name="task"/>
+  </process:inputs>
+  <process:outputs>
+    <process:output anyType="commonj.sdo.DataObject" description="工作任务列表数组" isArray="true" name="workItemList"/>
+    <process:output description="总计录数" isArray="false" name="total" primitiveType="Int"/>
+  </process:outputs>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

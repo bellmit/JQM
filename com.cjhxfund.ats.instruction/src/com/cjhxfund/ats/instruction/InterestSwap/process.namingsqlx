@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:jiangkanqian -->
+<sqlMap>  
+    <resultMap id="ActivityInfo" class="commonj.sdo.DataObject">
+    	<result column="activitydefid" javaType="String" property="activitydefid"/>
+    </resultMap>
+    
+    <resultMap id="ProcessDefName" class="commonj.sdo.DataObject">
+    	<result column="processdefname" javaType="String" property="processdefname"/>
+    </resultMap>
+    
+    <select id="queryProcessActivity" parameterClass="java.util.HashMap" resultMap="ActivityInfo">
+    select activitydefid from wfworkitem 
+		where processinstid = $processinstId$
+		and currentstate in (4,10)
+    </select>
+    
+    <select id="queryProcessDefName" parameterClass="java.util.HashMap" resultMap="ProcessDefName">
+		select processdefname from wfprocessdefine where processDefID=$processDefID$
+    </select>
+    
+</sqlMap>

@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:刘玉龙 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="inquiryResultMap">
+        <result column="l_result_id" javaType="long" property="lResultId"/>
+        <result column="l_result_no" javaType="long" property="lResultNo"/>
+        <result column="vc_instruct_type" javaType="string" property="vcInstructType"/>
+        <result column="vc_clord_id" javaType="string" property="vcClordId"/>
+        <result column="vc_origord_id" javaType="string" property="vcOrigordId"/>
+        <result column="vc_busin_class" javaType="string" property="businClass"/>
+        <result column="vc_busin_class" javaType="string" property="vcBusinClass"/>        
+        <result column="vc_exdestination" javaType="string" property="exdestination"/>
+        <result column="vc_invest_type" javaType="string" property="vcInvestType"/>
+        <result column="l_product_id" javaType="string" property="lProductId"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_asset_code" javaType="string" property="vcAssetCode"/><!-- 资产单元代码 -->
+        <result column="vc_combi_code" javaType="string" property="vcCombiCode"/>
+        <result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+        <result column="vc_settle_speed" javaType="string" property="vcSettleSpeed"/>
+        <result column="vc_biz_type" javaType="string" property="vcBizType"/>
+        <result column="vc_entrust_direction" javaType="string" property="vcEntrustDirection"/>
+        <result column="vc_counterparty_id" javaType="string" property="vcCounterpartyId"/>
+        <result column="vc_counterparty_name" javaType="string" property="vcCounterpartyName"/>
+        <result column="vc_stock_inner_code" javaType="string" property="vcInterCode"/>
+        <result column="vc_stock_inner_code" javaType="string" property="vcStockInnerCode"/>
+        <result column="vc_stock_code" javaType="string" property="vcStockCode"/>
+        <result column="vc_stock_name" javaType="string" property="vcStockName"/>
+        <result column="vc_market" javaType="string" property="vcMarket"/>
+        <result column="l_repo_days" javaType="int" property="lRepoDays"/>
+        <result column="en_face_amount" javaType="double" property="enFaceAmount"/>
+        <result column="en_repo_rate" javaType="double" property="enRepoRate"/>
+        <result column="l_contract_periods" javaType="long" property="lContractPeriods"/>
+        <result column="vc_counterparty_organ" javaType="string" property="vcCounterpartyOrgan"/>
+        <result column="vc_counterparty_trader" javaType="string" property="vcCounterpartyTrader"/>
+        <result column="l_result_date" javaType="long" property="lResultDate"/>
+        <result column="l_trade_date" javaType="long" property="lTradeDate"/>
+        <result column="l_first_settle_date" javaType="long" property="lFirstSettleDate"/>
+        <result column="l_maturity_settle_date" javaType="long" property="lMaturitySettleDate"/>
+        <result column="en_settle_amount" javaType="double" property="enSettleAmount"/>
+        <result column="vc_quote_mode" javaType="string" property="vcQuoteMode"/>
+        <result column="en_weighting_value" javaType="double" property="enWeightingValue"/>
+        <result column="vc_first_settle_mode" javaType="string" property="vcFirstSettleMode"/>
+        <result column="vc_maturity_settle_mode" javaType="string" property="vcMaturitySettleMode"/>
+        <result column="vc_maturity_settle_mode" javaType="string" property="vcMaturitySettleMode"/>
+        <result column="vc_remark" javaType="string" property="vcRemark"/>
+        <result column="vc_result_inputer_name" javaType="string" property="vcResultInputerName"/>
+        <result column="t_result_input_time" javaType="Date" property="tResultInputTime"/>
+        <result column="vc_fs_sender_name" javaType="string" property="vcFsSenderName"/>
+        <result column="t_fs_send_time" javaType="Date" property="tFsSendTime"/>
+        <result column="vc_fs_operator_name" javaType="string" property="vcFsOperatorName"/>
+        <result column="t_fs_operate_time" javaType="Date" property="tFsOperateTime"/>
+        <result column="vc_fs_checker_name" javaType="string" property="vcFsCheckerName"/>
+        <result column="t_fs_check_time" javaType="Date" property="tFsCheckTime"/>
+        <result column="vc_fs_deal_id" javaType="string" property="vcFsDealId"/>
+        <result column="t_fs_deal_time" javaType="Date" property="tFsDealTime"/>
+        <result column="vc_bs_deal_status" javaType="string" property="vcBsDealStatus"/>
+        <result column="c_is_valid" javaType="string" property="cIsValid"/>
+        <result column="vc_process_status" javaType="string" property="vcProcessStatus"/>
+        <result column="en_repo_interest" javaType="double" property="enRepoInterest"/><!-- 回购利息 -->
+        <result column="VC_REJECT_REASON" javaType="string" property="vcRejectReason"/><!-- 退回原因-->
+        <result column="tzjlRelateTypeUser" javaType="string" property="tzjlRelateTypeUser"/><!-- 投资经理权限用户 -->
+        <result column="inquiryInputJyyRelateTypeUser" javaType="string" property="inquiryInputJyyRelateTypeUser"/><!-- 询价录入权限用户-->
+        <result column="EN_NET_PRICE" javaType="string" property="enNetPrice"/><!-- 净价 -->     
+        <result column="EN_PRICE" javaType="string" property="enPrice"/><!-- 净价 -->     
+        <result column="EN_FULL_PRICE" javaType="string" property="enFullPrice"/><!-- 全价 -->
+        <result column="EN_MATURITY_YIELD" javaType="string" property="enMaturityYield"/><!-- 到期收益率（结果） -->
+        <result column="EN_OPTION_YIELD" javaType="string" property="enOptionYield"/><!-- 行权收益率（结果） -->
+        <result column="VC_STOCKTYPE_NAME" javaType="string" property="vcStocktypeName"/><!-- 债券类型名称 -->
+        <result column="VC_ORG_RATING" javaType="string" property="vcOrgRating"/><!-- 主体评级 （结果）-->
+        <result column="VC_BOND_RATING" javaType="string" property="vcBondRating"/><!-- 债券评级（结果） -->
+		<result column="L_LEFT_DAYS" javaType="string" property="lLeftDays"/><!-- 剩余期限 -->
+        <result column="EN_DURATION" javaType="double" property="enDuration"/><!-- 久期 -->
+        <result column="VC_RIVAL_SEAT" javaType="string" property="vcRivalSeat"/><!-- 对手席位-->
+        <result column="VC_AGREEMT_CODE" javaType="string" property="vcAgreemtCode"/><!-- 约定号-->
+        <result column="VC_LIMIT_LEFT" javaType="string" property="vcLimitLeft"/><!-- 剩余期限-->
+        <result column="L_FIX_VALID_STATUS" javaType="int" property="lFixValidStatus"/><!-- 指令发送O32状态 -->
+        <result column="L_PROCESSINST_ID" javaType="long" property="lProcessinstId"/><!-- 流程实例ID -->        
+        <result column="L_MODIFY_ORDER" javaType="long" property="lModifyOrder"/><!-- 指令修改次序 -->
+        <result column="VC_ORIGORD_ID" javaType="string" property="vcOrigordId"/><!-- 修改前第三方指令ID -->
+        <result column="T_MODIFY_TIME" javaType="Date" property="tModifyTime"/><!-- 指令修改时间 -->
+        <result column="EN_NET_PRICE_AMOUNT" javaType="string" property="enNetPriceAmount"/><!-- 净价金额 -->
+        <result column="EN_FULL_PRICE_AMOUNT" javaType="string" property="enFullPriceAmount"/><!-- 全价金额  -->
+
+        <result column="L_INQUIRY_TRADER" javaType="string" property="lInquiryTrader"/><!-- 询价交易员 -->
+        <result column="L_ACTUALLY_COUNTER_PARTY" javaType="string" property="lActuallyCounterParty"/><!-- 实际对手方 -->
+        <result column="L_INTERMEDIARY_AGENT" javaType="string" property="lIntermediaryAgent"/><!-- 中介-->
+        <result column="L_COUNTER_PARTY_TYPE" javaType="string" property="lCounterPartyType"/><!-- 对手方类型（0银行\1非银）  -->
+        
+      	<result column="actionurl" javaType="string" property="actionurl"/>
+      	<result column="workitemid" javaType="string" property="workitemid"/>
+      	<result column="l_biz_id" javaType="string" property="lBizId"/>
+      	<result column="vc_process_type" javaType="string" property="vcProcessType"/>
+      	<result column="l_stock_invest_no" javaType="string" property="lStockInvestNo"/>
+      	<result column="currentstate" javaType="string" property="currentstate"/>
+      	
+      	<result column="c_risk_status" javaType="string" property="cRiskStatus"/><!-- 风控管理状态-->
+      	<result column="l_riskmgr_id" javaType="string" property="lRiskmgrId"/><!-- 风控管理ID-->
+      	<result column="vc_risk_type" javaType="string" property="vcRiskType"/><!-- 风控类型-->
+      	<result column="vc_avail_result" javaType="string" property="vcAvailResult"/><!-- 风控可用状态-->
+      	
+    </resultMap>
+    <select id="queryinquiryResult" parameterClass="commonj.sdo.DataObject" resultMap="inquiryResultMap">
+		select t.l_result_id,
+		   t.l_result_no,
+		   t.vc_instruct_type,
+		   t.vc_clord_id,
+		   t.vc_origord_id,
+		   t.vc_busin_class,
+		   case when t.vc_biz_type=3 then 'SS' else 'OTC' end vc_exdestination,
+		   t.vc_invest_type,
+		   t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.vc_asset_code,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.vc_settle_speed,
+	       t.vc_biz_type,
+	       t.vc_entrust_direction,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_market,
+	       t.l_repo_days,
+	       t.en_face_amount,
+	       t.en_repo_rate,
+	       t.l_contract_periods,
+       	   t.vc_counterparty_organ,
+       	   t.vc_counterparty_trader,
+       	   t.l_result_date,
+	       t.l_trade_date,
+	       t.l_first_settle_date,
+	       t.l_maturity_settle_date,
+	       t.en_settle_amount,
+	       t.vc_quote_mode,
+	       t.en_weighting_value,
+	       t.vc_first_settle_mode,
+       	   t.vc_maturity_settle_mode,
+       	   t.vc_remark,
+       	   t.vc_result_inputer_name,
+       	   t.t_result_input_time,
+       	   t.vc_fs_sender_name,
+       	   t.t_fs_send_time,
+       	   t.vc_fs_operator_name,
+       	   t.t_fs_operate_time,
+           t.vc_fs_checker_name,
+      	   t.t_fs_check_time,
+       	   t.vc_fs_deal_id,
+       	   t.t_fs_deal_time,
+       	   t.vc_bs_deal_status,
+	       t.c_is_valid,
+	       t.vc_process_status,
+	       t.en_repo_interest,
+	       t.vc_Reject_Reason,
+	       to_char(t.en_net_price, 'FM99999999990.0000') en_net_price,
+	       to_char(t.en_price, 'FM99999999990.0000') en_price,
+	       to_char(t.en_full_price, 'FM99999999990.0000') en_full_price,
+	       to_char(t.en_maturity_yield, 'FM99999999990.0000') en_maturity_yield,
+	       to_char(t.en_option_yield, 'FM99999999990.0000') en_option_yield,
+	       std.vc_stocktype_name,
+	       t.vc_org_rating,
+		   t.vc_bond_rating,
+		   t.l_left_days,
+		   t.en_duration,
+		   t.vc_rival_seat,
+		   t.vc_agreemt_code,
+		   f.vc_limit_left,
+		   t.l_fix_valid_status,
+		   t.l_processinst_id,
+		   t.l_modify_order,
+		   t.vc_origord_id,
+		   t.t_modify_time,
+		   t.en_net_price_amount,
+		   t.en_full_price_amount,
+		   t.l_inquiry_trader,
+		   t.l_actually_counter_party,
+		   t.l_intermediary_Agent,
+		   t.l_counter_party_type,
+		   ap.*,
+	    (select h1.VC_USER_ID
+              from T_ATS_PRODUCT_HANDLE h1
+             where h1.vc_combi_no = t.vc_combi_code
+               and h1.VC_RELATE_TYPE = '02'
+               and h1.vc_user_id = #userId#
+               and rownum = 1) tzjlRelateTypeUser, 
+        (select h1.VC_USER_ID
+              from T_ATS_PRODUCT_HANDLE h1
+             where h1.vc_combi_no = t.vc_combi_code
+               and h1.VC_RELATE_TYPE = '03'
+               and h1.vc_user_id = #userId#
+               and rownum = 1) inquiryInputJyyRelateTypeUser,
+		risk.c_status c_risk_status, risk.vc_risk_type,
+		risk.l_riskmgr_id l_riskmgr_id,
+		(select avail.vc_avail_result from t_ats_riskmgr_avail avail where avail.l_result_id = t.l_result_id) vc_avail_result
+	  from t_ats_inquiry_result_instruct t
+	  left join 
+	  	vw_bondinfo_wind f
+        on t.vc_stock_code = f.vc_stock_code and t.vc_market=f.vc_market_no left join t_ats_stock_type_define std
+        on f.vc_stock_type = std.vc_stock_type
+     left join (select wi.actionurl,
+		  					wi.processinstid,
+		                    wi.workitemid,
+		                    vk.l_biz_id,
+		                    vk.vc_process_type,
+		                    vk.l_stock_invest_no,
+		                    wi.currentstate
+		               from wfworkitem wi, wfwiparticipant wp, v_finishwork vk
+		              where wi.workitemid = wp.workitemid
+		                and wi.processinstid = vk.l_process_inst_id
+		                and wi.currentstate in ('4', '10')
+		                and vk.vc_process_type in ('101', '102', '103')
+		                and wp.participantid = #lUserId#) ap
+		    on ap.processinstid = t.l_processinst_id
+      left join (select row_number() over(PARTITION BY t.l_result_id order by t.l_riskmgr_id desc) risk_rownum,
+                 t.l_result_id,
+                 t.l_riskmgr_id,
+                 t.vc_risk_type,
+                 t.c_status
+            from t_ats_riskmgr_info t) risk
+         on t.l_result_id = risk.l_result_id and risk.risk_rownum = 1
+	 where 1 = 1
+	   and t.vc_instruct_type = 2
+	   <isNotNull property="lResultId">
+	    	and t.l_result_id = #lResultId#
+	  	</isNotNull>
+	   <isEqual property="queryType" compareValue="1">
+	    	and t.c_is_valid != 0
+	   </isEqual>
+	  	<isNotNull property="lResultDateMin">
+	    	and t.l_result_date &gt;= #lResultDateMin#
+	  	</isNotNull>
+	  	<isNotNull property="lResultDateMax">
+	    	and t.l_result_date &lt;= #lResultDateMax#
+	  	</isNotNull>
+	   <isNotNull property="lTradeDateMin">
+	    	and t.l_trade_date &gt;= #lTradeDateMin#
+	  	</isNotNull>
+	  	<isNotNull property="lTradeDateMax">
+	    	and t.l_trade_date &lt;= #lTradeDateMax#
+	  	</isNotNull>
+	   <isNotNull property="lInstructNo">
+	   		and t.l_result_no in ($lInstructNo$)   
+	   </isNotNull>
+      	<isNotNull property="vcProductCode">
+        	and t.vc_Product_Code in ($vcProductCode$)
+      	</isNotNull>
+      	<isNotNull property="vcEntrustDirection">
+        	and t.VC_ENTRUST_DIRECTION in ($vcEntrustDirection$)
+      	</isNotNull>
+      	<isNotNull property="instructValid">
+        	and t.C_IS_VALID in ($instructValid$)
+      	</isNotNull>
+  		<isNotNull property="vcCombiNos">
+    		and t.VC_COMBI_CODE in ($vcCombiNos$)
+  		</isNotNull>
+  		<isNotNull property="vcBizType">
+        	and t.vc_Biz_Type in ($vcBizType$)
+      	</isNotNull>
+      	<isNotNull property="sortField">
+        	<isNotNull property="sortOrder">
+        		order by t.$sortField$ $sortOrder$
+        	</isNotNull>
+      	</isNotNull>
+      	<isNull property="sortField">
+        	<isNull property="sortOrder">
+      			order by t.l_result_no desc, t.t_result_input_time desc 
+        	</isNull>
+      	</isNull>
+	</select>
+	
+	<update id="updInquiryResult" parameterClass="commonj.sdo.DataObject">
+     	update T_ATS_INQUIRY_RESULT_INSTRUCT
+			set l_product_id = #lProductId#,
+			vc_product_code = #vcProductCode#,
+			vc_product_name = #vcProductName#,
+			l_asset_id = #lAssetId#,
+			vc_asset_code = #vcAssetCode#,
+			vc_asset_name = #vcAssetName#,
+			l_combi_id = #lCombiId#,
+			vc_combi_code = #vcCombiCode#,
+			vc_combi_name = #vcCombiName#,
+			vc_entrust_direction = #vcEntrustDirection#,
+			vc_settle_speed = #vcSettleSpeed#,
+			en_face_amount = #enFaceAmount#,
+			l_repo_days = #lRepoDays#,
+			vc_stock_code=#vcStockCode#,
+			vc_stock_name=#vcStockName#,
+			l_trade_date = #lTradeDate#,
+			l_first_settle_date = #lFirstSettleDate#,
+			l_maturity_settle_date = #lMaturitySettleDate#,
+			vc_quote_mode = #vcQuoteMode#,
+			en_weighting_value = #enWeightingValue#,
+			l_contract_periods = #lContractPeriods#,
+			en_repo_interest = #enRepoInterest#,
+			vc_counterparty_name = #vcCounterpartyName#,
+			vc_counterparty_id = #vcCounterpartyId#,
+			vc_counterparty_trader = #vcCounterpartyTrader#,
+			en_repo_rate = #enRepoRate#,
+			en_settle_amount = #enSettleAmount#,
+			vc_counterparty_organ = #vcCounterpartyOrgan#,
+			vc_remark = #vcRemark#,
+			vc_process_status = #vcProcessStatus#,
+			c_is_valid = #cIsValid#,
+			en_full_price_amount=#enFullPriceAmount#,
+			en_middle_interest=#enMiddleInterest#,
+			l_inquiry_trader=#lInquiryTrader#,
+		   l_actually_counter_party=#lActuallyCounterParty#,
+		   l_intermediary_Agent=#lIntermediaryAgent#,
+		   l_counter_party_type=#lCounterPartyType#
+			where l_result_id = #lResultId#
+     </update>
+     <delete id="deleteInquiryBond" parameterClass="commonj.sdo.DataObject">
+     	delete from T_ATS_INQUIRY_RESULT_MORTAGAGE
+			where l_result_id = #lResultId#
+     </delete>
+     
+     <!-- 查询询价指令可操作条数  
+     	count1:询价质押式回购待办条数+买断式回购待办条数,
+     	count2:询价质押式回购总共条数+买断式回购待办条数,
+     	count3:询价银行间债券买卖待办条数+上交所固收债券买卖待办条数
+     	count4:询价银行间债券买卖总共条数 +上交所固收债券买卖总共条数-->
+     <select id="getInquiryCount" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		select 
+	      count(*) count1 from T_ATS_INQUIRY_RESULT_INSTRUCT t 
+	    where 
+	      1=1
+	      and t.vc_instruct_type = 2
+	      and t.vc_biz_type in  (5,6)
+	    <isNotNull property="vcProcessStatus">
+	      and t.VC_PROCESS_STATUS in ($vcProcessStatus$)
+	    </isNotNull>
+	    <isNotNull property="cIsValid">
+	       and t.C_IS_VALID in ($cIsValid$) 
+	    </isNotNull>  
+	    <isNotNull property="processDate">
+	      <isEqual property="webType" compareValue="1"><!-- 确认页面 -->
+	        and t.L_TRADE_DATE = #processDate# 
+	      </isEqual>
+	      <isEqual property="webType" compareValue="2"><!-- 录入页面 -->
+	        and t.l_result_date = #processDate#
+	      </isEqual>
+	    </isNotNull>  
+	    <isNotNull property="combiCode">
+	        and t.VC_COMBI_CODE in ($combiCode$)
+	    </isNotNull>
+	    UNION ALL
+	    select 
+	      count(*) count2 from T_ATS_INQUIRY_RESULT_INSTRUCT t 
+	    where 
+	      1=1
+	      and t.vc_instruct_type = 2
+	      and t.vc_biz_type in  (5,6)
+	    <isEqual property="webType" compareValue="1">
+	        and t.c_is_valid != 0
+	     </isEqual>
+	    <isNotNull property="processDate">
+	      <isEqual property="webType" compareValue="1"><!-- 确认页面 -->
+	        and t.L_TRADE_DATE = #processDate# 
+	      </isEqual>
+	      <isEqual property="webType" compareValue="2"><!-- 录入页面 -->
+	        and t.l_result_date = #processDate#
+	      </isEqual>
+	    </isNotNull>  
+	    <isNotNull property="queryCombiNos">
+	        and t.VC_COMBI_CODE in ($queryCombiNos$)
+	    </isNotNull>
+	    UNION ALL
+	    select 
+	      count(*) count3 from T_ATS_INQUIRY_RESULT_INSTRUCT t 
+	    where 
+	      1=1
+	      and t.vc_instruct_type = 2
+	      and t.vc_biz_type in(1,3)
+	    <isNotNull property="vcProcessStatus">
+	      and t.VC_PROCESS_STATUS in ($vcProcessStatus$)
+	    </isNotNull>
+	    <isNotNull property="cIsValid">
+	       and t.C_IS_VALID in ($cIsValid$) 
+	    </isNotNull>  
+	    <isNotNull property="processDate">
+	      <isEqual property="webType" compareValue="1"><!-- 确认页面 -->
+	        and t.L_TRADE_DATE = #processDate# 
+	      </isEqual>
+	      <isEqual property="webType" compareValue="2"><!-- 录入页面 -->
+	        and t.l_result_date = #processDate#
+	      </isEqual>
+	    </isNotNull>  
+	    <isNotNull property="combiCode">
+	        and t.VC_COMBI_CODE in ($combiCode$)
+	    </isNotNull>
+	    UNION ALL
+	    select 
+	      count(*) count4 from T_ATS_INQUIRY_RESULT_INSTRUCT t 
+	    where 
+	      t.vc_instruct_type = 2
+	      and t.vc_biz_type in(1,3)
+	    <isEqual property="webType" compareValue="1">
+	        and t.c_is_valid != 0
+	     </isEqual>
+	    <isNotNull property="processDate">
+	      <isEqual property="webType" compareValue="1"><!-- 确认页面 -->
+	        and t.L_TRADE_DATE = #processDate# 
+	      </isEqual>
+	      <isEqual property="webType" compareValue="2"><!-- 录入页面 -->
+	        and t.l_result_date = #processDate#
+	      </isEqual>
+	    </isNotNull>  
+	    <isNotNull property="queryCombiNos">
+	        and t.VC_COMBI_CODE in ($queryCombiNos$)
+	    </isNotNull>
+     </select>
+     
+	
+	<!-- 根据指令序号查询结果指令表信息 -->
+	<select id="getInquiryInstructInfoByInstructNo" parameterClass="commonj.sdo.DataObject" resultMap="inquiryResultMap">
+		 select t.l_result_id,
+		   t.l_result_no,
+		   t.vc_instruct_type,
+		   t.vc_clord_id,
+		   t.vc_origord_id,
+		   t.vc_busin_class,
+		   'OTC' vc_exdestination,
+		   t.vc_invest_type,
+		   t.l_product_id,
+	       t.vc_product_code,
+	       t.vc_product_name,
+	       t.vc_asset_code,
+	       t.vc_combi_code,
+	       t.vc_combi_name,
+	       t.vc_settle_speed,
+	       t.vc_biz_type,
+	       t.vc_entrust_direction,
+	       t.vc_counterparty_id,
+	       t.vc_counterparty_name,
+	       t.vc_stock_inner_code,
+	       t.vc_stock_code,
+	       t.vc_stock_name,
+	       t.vc_market,
+	       t.l_repo_days,
+	       t.en_face_amount,
+	       t.en_repo_rate,
+	       t.l_contract_periods,
+       	   t.vc_counterparty_organ,
+       	   t.vc_counterparty_trader,
+       	   t.l_result_date,
+	       t.l_trade_date,
+	       t.l_first_settle_date,
+	       t.l_maturity_settle_date,
+	       t.en_settle_amount,
+	       t.vc_quote_mode,
+	       t.en_weighting_value,
+	       t.vc_first_settle_mode,
+       	   t.vc_maturity_settle_mode,
+       	   t.vc_remark,
+       	   t.vc_result_inputer_name,
+       	   t.t_result_input_time,
+       	   t.vc_fs_sender_name,
+       	   t.t_fs_send_time,
+       	   t.vc_fs_operator_name,
+       	   t.t_fs_operate_time,
+           t.vc_fs_checker_name,
+      	   t.t_fs_check_time,
+       	   t.vc_fs_deal_id,
+       	   t.t_fs_deal_time,
+       	   t.vc_bs_deal_status,
+	       t.c_is_valid,
+	       t.vc_process_status,
+	       t.en_repo_interest,
+	       t.vc_Reject_Reason,
+	       to_char(t.en_net_price, 'FM990.0000') en_net_price,
+	       to_char(t.en_price, 'FM990.0000') en_price,
+	       to_char(t.en_full_price, 'FM990.0000') en_full_price,
+	       to_char(t.en_maturity_yield, 'FM990.0000') en_maturity_yield,
+	       to_char(t.en_option_yield, 'FM990.0000') en_option_yield,
+	       std.vc_stocktype_name,
+	       t.vc_org_rating,
+		   t.vc_bond_rating,
+		   t.l_left_days,
+		   t.en_duration,
+		   t.vc_rival_seat,
+		   t.vc_agreemt_code,
+		   f.vc_limit_left,
+		   t.l_fix_valid_status,
+		   t.l_processinst_id,
+		   t.l_modify_order,
+		   t.vc_origord_id,
+		   t.t_modify_time,
+		   ap.*,
+	    (select h1.VC_USER_ID
+              from T_ATS_PRODUCT_HANDLE h1
+             where h1.vc_combi_no = t.vc_combi_code
+               and h1.VC_RELATE_TYPE = '02'
+               and h1.vc_user_id = #userId#
+               and rownum = 1) tzjlRelateTypeUser, 
+        (select h1.VC_USER_ID
+              from T_ATS_PRODUCT_HANDLE h1
+             where h1.vc_combi_no = t.vc_combi_code
+               and h1.VC_RELATE_TYPE = '03'
+               and h1.vc_user_id = #userId#
+               and rownum = 1) inquiryInputJyyRelateTypeUser，
+		risk.c_status c_risk_status, 
+		risk.l_riskmgr_id l_riskmgr_id,risk.vc_risk_type,
+		(select avail.vc_avail_result from t_ats_riskmgr_avail avail where avail.l_result_id = t.l_result_id) vc_avail_result
+	  from t_ats_inquiry_result_instruct t
+	  left join 
+	  	vw_bondinfo_wind f
+        on t.vc_stock_code = f.vc_stock_code left join t_ats_stock_type_define std
+        on f.vc_stock_type = std.vc_stock_type
+     left join (select wi.actionurl,
+		  					wi.processinstid,
+		                    wi.workitemid,
+		                    vk.l_biz_id,
+		                    vk.vc_process_type,
+		                    vk.l_stock_invest_no,
+		                    wi.currentstate
+		               from wfworkitem wi, wfwiparticipant wp, v_finishwork vk
+		              where wi.workitemid = wp.workitemid
+		                and wi.processinstid = vk.l_process_inst_id
+		                and wi.currentstate in ('4', '10')
+		                and vk.vc_process_type in ('101', '102', '103')
+		                and wp.participantid = #lUserId#) ap
+     on ap.processinstid = t.l_processinst_id 
+     left join (select row_number() over(PARTITION BY t.l_result_id order by t.l_riskmgr_id desc) risk_rownum,
+                 t.l_result_id,
+                 t.l_riskmgr_id,
+                 t.vc_risk_type,
+                 t.c_status
+            from t_ats_riskmgr_info t) risk
+         on t.l_result_id = risk.l_result_id and risk.risk_rownum = 1	
+         
+	 where 1 = 1
+	   and t.vc_instruct_type = 2
+		 <isNotNull property="lResultNo">
+		 	and t.l_result_no = #lResultNo#
+	   	 </isNotNull>
+	   	 and c_is_valid = 1
+	</select>
+</sqlMap>

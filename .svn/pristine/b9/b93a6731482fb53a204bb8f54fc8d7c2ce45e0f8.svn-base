@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:chenpeng -->
+<sqlMap>
+   
+    <select id="queryFaxList" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+       select t.*, t.rowid from CF_JY_EAST_FAX t where 1=1  and t.fax_account='$userId$'
+        <isNotNull property="sendTime"> 
+    	  and to_char(t.send_time,'yyyy-MM-dd') ='$sendTime$'
+    	</isNotNull>
+    	<isNotNull property="faxTheme"> 
+    	  and t.fax_theme like '%$faxTheme$%'
+    	</isNotNull>
+    	<isNotNull property="recvName"> 
+    	  and t.recv_name like '%$recvName$%'
+    	</isNotNull> 
+         
+    </select>
+    <select id="checkFaxStatus" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject">
+       select t.*
+	  from T_ATS_EAST_FAX t
+	 where  t.L_FAX_STATUS not in (1, 31)
+	   and t.l_process_inst_id = '$processinstid$'
+	   and t.l_biz_id = '$bizId$'
+	   and t.l_work_item_id = '$workitemId$'
+    </select>
+    
+</sqlMap>

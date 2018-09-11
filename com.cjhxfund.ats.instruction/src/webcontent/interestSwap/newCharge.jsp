@@ -1,0 +1,457 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/JQMHistory/common/commscripts.jsp" %>
+<%@include file="/ProductProcess/CFJYProductProcessForm_common.jsp" %>
+<!-- 
+  - Author(s): jiangkanqian
+  - Date: 2018-05-30 11:24:10
+  - Description:
+-->
+<head>
+<title>新增冲销平仓</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link id="css_icon" rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/coframe/org/css/org.css"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/JQMHistory/common/common.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/instruction/instructionUtil/instruction.js"></script>
+</head>
+<body>
+<div id="newChargeForm" style="padding-top:5px;width: 100%;">
+	<input class="nui-hidden" name="newCharge.lChargeId" id="lChargeId"/>
+	<input class="nui-hidden" name="newCharge.lChargeNo" id="lChargeNo"/>
+	<input class="nui-hidden" name="newCharge.lInstructId" id="lInstructId"/>
+	<input class="nui-hidden" name="newCharge.lInstructNo" id="lInstructNo"/>
+	<input class="nui-hidden" name="newCharge.operatorType" id="operatorType" value="0"/>
+	<input class="nui-hidden" name="newCharge.lAttachId" id="lAttachId"/>
+	<input class="nui-hidden" name="newCharge.vcProductCode" id="vcProductCode"/>
+	<input class="nui-hidden" name="newCharge.vcCombiCode" id="vcCombiCode"/>
+	<table class="instructTable" border="0" style="width: 100%;">
+		<tr>
+			<td align="right" width="60px">
+				产品名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcProductName" class="nui-textbox" name="newCharge.vcProductName"
+				readonly="readonly" enabled="false" 
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				组合名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcCombiName" class="nui-textbox" name="newCharge.vcCombiName" 
+				readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				业务方向:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcBusinType" class="nui-dictcombobox" name="newCharge.vcBusinType"
+				 valueField="dictID" textField="dictName" dictTypeId="interestSwapBusinType"
+				 readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				业务名称:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcBusinName" class="nui-dictcombobox" name="newCharge.vcBusinName"
+				valueField="dictID" textField="dictName" dictTypeId="interestSwapBusinName" 
+				readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>			
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				名义本金(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lNominalCapital" class="nui-textbox" name="newCharge.lNominalCapital" 
+				readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				开仓指令编号:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lInstructNo" class="nui-textbox" name="newCharge.lInstructNo" 
+				readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				累计冲销金额(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lSpendCapital" class="nui-textbox" name="newCharge.lSpendCapital" 
+				readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>
+			<td align="right" class="form_label" width="60px">
+				可冲销金额(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lLeftCapital" class="nui-textbox" name="newCharge.lLeftCapital" 
+				readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px">
+				对手方:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcCounterpartyName" class="nui-textbox" name="newCharge.vcCounterpartyName" 
+				readonly="readonly" enabled="false"
+				style="width: 80%;"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销类型:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="vcChargeType"  class="nui-combobox" 
+                        data = "[{id: 0, text: '双边冲销'}, {id: 1, text: '多边冲销'}]"
+                        name="newCharge.vcChargeType" required="true" style="width: 80%;"/>
+			</td>						
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销日期:
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lTradeDate"  class="nui-datepicker" style="width: 80%;"
+                        name="newCharge.lTradeDate" required="true" ondrawdate="setDateBackground"
+ 						 format="yyyyMMdd" onvaluechanged="checkTradeDate"/>
+			</td>
+		</tr>
+		<tr></tr><tr></tr><tr>
+		<tr>
+			<td align="right" class="form_label" width="60px"><span style="color:red">*</span>
+				冲销金额(万元):
+			</td>
+			<td colspan="1" width="100px">
+				<input id="lChargeCapital" class="nui-textbox" name="newCharge.lChargeCapital" 
+				onvalidation="fixRateCheck" 
+				required="true" style="width: 80%;"/>
+			</td>
+		</tr>
+	</table>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>附件:</strong></div>
+	<div colspan="3" class="td">
+		<iframe id="prodIfm" name="prodIfm" width="98%"  height="120px" frameborder="no" border="0" marginwidth="0" marginheight="0" scolling="no"></iframe>
+	</div>
+	
+	<div class="nui-toolbar" align="left" borderStyle="border:0;"><strong>备注:</strong></div>
+	<div colspan="5">
+        <input class="nui-textarea"  name="newCharge.vcRemark" id="vcRemark" width="100%" height="90px"/>
+    </div>
+	
+	<div class="nui-toolbar" borderStyle="border:0;">
+		<div align="center" class="submitDiv">
+			<!-- <a class="nui-button"  iconCls="icon-tip" plain="true"  id="exactrisk" enabled="false">风控试算</a> --> 
+			<a class="nui-button"  iconCls="icon-ok" plain="true"  id="exactCommit" onclick="commit(this,1)">提交</a>  
+			<a class="nui-button"  iconCls="icon-cancel" plain="true"  onclick="onCancel()">取消</a>
+		</div>
+	</div>
+</div>	
+	
+
+
+	<script type="text/javascript">
+    	nui.parse();
+    	var date = ['20180112','20180126','20180209','20180309','20180323','20180413','20180427',
+    	'20180511','20180525','20180608','20180713','20180727','20180810','20180824','20180907'
+    	,'20181019','20181109','20181123','20181207','20181221'];//添加需要设置背景的日期
+    	
+    	$(function() {
+	    	showFile();
+		});	
+    	
+    	function showFile(){
+           		var uuid = guid();
+           		nui.get("lAttachId").setValue(uuid);
+           		$("#prodIfm").attr("src", nui.context + "/fm/baseinfo/fileuploadComm/any_upload.jsp?attachType=77&attachBusType=1&bizId="+uuid);
+           }
+    	
+    	//生成uuid
+        function guid() {
+    		var time = new Date().getTime();
+    		var random = GetRandomNum(1,999);
+    		var uuid = time.toString() + random.toString();
+    		return uuid;
+		}
+    	
+    	function GetRandomNum(Min,Max) {   
+			var Range = Max - Min;   
+			var Rand = Math.random();   
+			return(Min + Math.round(Rand * Range));   
+		}  
+   		
+   		function initWin(data){
+    		var data = nui.clone(data); 
+	        if(data!=null){
+	        	var operatorType = data.operatorType;
+	        	nui.get("operatorType").setValue(operatorType);
+	        	nui.get("lInstructId").setValue(data.lInstructId);	  
+	        	nui.get("vcProductName").setValue(data.vcProductName);
+	        	nui.get("vcCombiName").setValue(data.vcCombiName);
+	        	nui.get("vcProductCode").setValue(data.vcProductCode);
+	        	nui.get("vcCombiCode").setValue(data.vcCombiCode);        	        	
+	        	var lSpendCapital = data.lSpendCapital;
+	        	var lActuSpendCapital = data.lActuSpendCapital;
+	        	var lNominalCapital;  
+	        	var lLeftCapital;      	
+	        	if(operatorType == "0"){
+	        		lNominalCapital = data.lNominalCapital;
+	        		nui.get("vcBusinName").setValue(data.vcBusinName);
+	        		nui.get("vcBusinType").setValue(data.vcBusinType);
+	        		nui.get("lNominalCapital").setValue(data.lNominalCapital);   
+	        		nui.get("lSpendCapital").setValue(lActuSpendCapital);
+	        		nui.get("vcCounterpartyName").setValue(data.vcCounterpartyName);
+	        		nui.get("lInstructNo").setValue(data.lInstructNo);
+	        		lLeftCapital = parseFloat(lNominalCapital.toString()) - parseFloat(lSpendCapital.toString());
+
+	        	}
+	        	if(operatorType == "1"){
+	        		lNominalCapital = data.openNominalCapital;
+	        		nui.get("vcBusinName").setValue(data.openBusinName);
+	        		nui.get("vcBusinType").setValue(data.openBusinType);
+	        		nui.get("lNominalCapital").setValue(data.openNominalCapital);   
+	        		nui.get("lSpendCapital").setValue(lSpendCapital);
+	        		nui.get("vcCounterpartyName").setValue(data.openvcCounterPartyName);
+	        		nui.get("lInstructNo").setValue(data.openInstructNo);
+	        		nui.get("vcChargeType").setValue(data.vcChargeType);
+	        		nui.get("lTradeDate").setValue(data.lTradeDate.toString());
+	        		nui.get("lChargeCapital").setValue(data.lChargeCapital);
+	        		nui.get("lChargeId").setValue(data.lChargeId);
+	        		nui.get("lChargeNo").setValue(data.lChargeNo);
+	        		nui.get("vcRemark").setValue(data.vcRemark);
+	        		lLeftCapital = data.lLeftCapital;
+	        	}      	
+	        	nui.get("lLeftCapital").setValue(lLeftCapital);
+	        	
+	        	/*
+	        	if(operatorType != "0"){
+	        		var lAttachId = data.lAttachId;
+					nui.get("lAttachId").setValue(lAttachId);
+				}
+				if(operatorType == "1" || operatorType == "2"){
+					$("#prodIfm").attr("src", nui.context + "/fm/baseinfo/fileuploadComm/any_upload.jsp?attachType=77&attachBusType=1&bizId="+lAttachId);
+				}
+				*/
+	        	
+	        }
+    	}
+   		   	
+    	//提交
+ 		function commit(instructJson,doClose){
+ 			 doCloseParam = doClose;
+		 	 //capsulationInstructParameter();
+		 	 var dataForm = new nui.Form("#newChargeForm");
+    		 dataForm.validate();
+			 if(dataForm.isValid()==false){
+				 return;
+			 } 	
+			 var lLeftCapital = parseFloat(nui.get("lLeftCapital").getValue().toString());
+			 var lChargeCapital = parseFloat(nui.get("lChargeCapital").getValue().toString());
+			 if(lChargeCapital > lLeftCapital){
+			 	nui.alert("金额不能大于可冲销金额");
+			 	return;
+			 }
+			
+			//时间格式转换	
+			var tradeDate = nui.formatDate(nui.get("lTradeDate").value, "yyyyMMdd");			
+			var vcChargeType = nui.get("vcChargeType").getValue();		
+   			if(vcChargeType == 1){
+   				var dateFlag = "false";
+   				for(var i=0;i<date.length;i++){
+   					if(tradeDate == date[i]){
+   						dateFlag = "true";
+   					}
+   				}
+   				if(dateFlag == "false"){
+   					nui.alert("请选择正确的多边冲销日期");
+			 		return;
+   				}
+   			}
+			 	 
+			 var data = dataForm.getData(false, true);			 		 	
+			 data.newCharge.lTradeDate = tradeDate;
+			 data.newCharge.lInstructId = nui.get("lInstructId").getValue();					 
+			 var instructJson = nui.encode(data);	
+ 			 var tooltip = nui.loading("正在处理中,请稍等...","提示");
+ 			 nui.ajax({
+ 				url: "com.cjhxfund.ats.instruction.InterestSwap.InterestSwapInstruction.chargeProcess.biz.ext",
+	            type: 'POST',
+	            data: instructJson,
+	            cache: false,
+	            contentType: 'text/json',
+	            success: function (text) {
+	            	nui.hideMessageBox(tooltip);
+	            	var returnJson = nui.decode(text);
+	            	if(returnJson.exception == null){
+	            		if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_SUCCESS%>"){
+	            			var riskMsg = returnJson.riskMsg;
+	            			if(riskMsg!=null && riskMsg.isAgainstRisk){
+	            				riskMsg["alertMsg"]="投资指令/建议下达成功！";
+	            				nui.open({
+			                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+			                        title: "投资指令/建议风控信息",
+			                        width: 800,
+			                        height: 422,
+			                        onload: function () {
+			                            var iframe = this.getIFrameEl();
+			                            iframe.contentWindow.SetData(riskMsg,3);
+			                        },
+			                        ondestroy: function (action) {
+			                        	if(doClose){
+			                        		window.CloseOwnerWindow();
+			                        	}
+			                        }
+			                    });
+	            			}else{
+		            			nui.alert("投资指令/建议下达成功！","提示",function(){
+		            				if(doClose){
+		            					window.CloseOwnerWindow();
+		            				}
+	                            	
+	                            });
+	            			}
+	            		}else if(returnJson.rtnCode == "203" || returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ORDER_USABLE_AMOUNT_INSUFFICIENT%>"){//校验存在问题
+	            			window.parent.parentConfirm(returnJson.rtnMsg+"</br>是否继续下单？","提示", function(action){
+		                		if(action == "ok") {
+                                	formalInstructionEntry(instructJson,doClose);
+                                }
+		                	});
+	            		}else if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ERROR%>"){
+	            			var riskMsg = returnJson.riskMsg;
+	            			if(riskMsg!=null && riskMsg.isAgainstRisk){//触发了风控
+	            				riskMsg["alertMsg"]="投资指令/建议下达失败！";
+	            				nui.open({
+			                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+			                        title: "投资指令/建议风控信息",
+			                        width: 800,
+			                        height: 422,
+			                        onload: function () {
+			                            var iframe = this.getIFrameEl();
+			                            iframe.contentWindow.SetData(riskMsg,3);
+			                        }
+			                    });
+	            			}else{
+	            				nui.alert(returnJson.rtnMsg,"提示",function(){
+		            					window.CloseOwnerWindow();
+	                            	
+	                            });
+	            			}
+	            		}else if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ORDER_NO_RCV_FR_O32%>"){
+	            			nui.alert("投资指令/建议下达成功！"+returnJson.rtnMsg,"提示",function(){
+                            	if(doClose){
+                            		window.CloseOwnerWindow();
+                            	}
+                            });
+	            		}else if(returnJson.rtnCode == "301"){
+	            			var riskInfo = returnJson.riskMsg;
+	            			riskInfo["alertMsg"]=returnJson.rtnMsg;
+	            			nui.open({
+		                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+		                        title: "投资指令/建议风险提示",
+		                        width: 800,
+		                        height: 422,
+		                        onload: function () {
+		                            var iframe = this.getIFrameEl();
+		                            iframe.contentWindow.SetData(riskInfo,1);
+		                        },
+		                        ondestroy: function (action) {
+		                            if (action == "ok") {
+	                                    formalInstructionEntry(instructJson,doClose);
+	                                }
+		                        }
+		                    });
+	            		}else{//触发风控，弹出风险提示框，展示风险信息
+	            			var riskInfo = returnJson.riskMsg;
+	            			nui.open({
+		                        url: "<%=request.getContextPath()%>/fix/riskControlDetailList.jsp",
+		                        title: "投资指令/建议风险提示",
+		                        width: 800,
+		                        height: 380,
+		                        onload: function () {
+		                            var iframe = this.getIFrameEl();
+		                            iframe.contentWindow.SetData(riskInfo,1);
+		                        },
+		                        ondestroy: function (action) {
+		                            if (action == "ok") {
+	                                    formalInstructionEntry(instructJson,doClose);
+	                                }
+		                        }
+		                    });
+	            		}
+	            	}else{
+	            	   nui.alert("系统异常","系统提示");
+	            	}
+	            }
+ 			 });
+ 			 
+   		 }
+    	 
+    	 function lFixedRateTrans(){
+ 			var num = nui.get("lChargeCapital").getValue();
+ 			if(num == "" || num == null || num == undefined){}
+ 			else{
+ 				var numTrans = formatNumber(num, 4, 1);
+ 				nui.get("lChargeCapital").setValue(numTrans);
+ 			}
+ 		}
+    	 
+    	 function fixRateCheck(e){
+			var reg= /^(-?\d+)(\.\d+)?$/;
+        	var value = e.sender.value;
+        	if(!reg.test(value.replace(/,/g,''))){
+        		//e.sender.setValue("");
+        		e.errorText = "请输入数字";
+        	 	e.isValid = false;
+        	 	return true;
+        	}
+        	
+		}
+    	
+    	function checkTradeDate(){
+    		
+    		var lTradeDate = nui.get("lTradeDate").getValue();
+    		var date = DateUtil.toNumStr(lTradeDate);
+    		nui.ajax({
+        		data:{'param':{date:date,dateType:"00"}},
+        		url:"com.cjhxfund.ats.sm.comm.CalCalender.isTradeDate.biz.ext",
+        		async:false,
+        		success:function(resp){
+            		if(!resp.isTradeDate){
+            			nui.alert("冲销日期不是交易日，还需要继续吗？","系统提示");
+            		}
+        		}
+    		});
+    		
+    	}
+   		
+   		function setDateBackground(e){  	
+   			var vcChargeType = nui.get("vcChargeType").getValue();
+   			if(vcChargeType == 1){				
+				if(date.indexOf(e.date.format("yyyyMMdd")) > -1){
+					e.dateStyle = "background: yellow;";
+				}
+			}
+		}
+   		 
+    </script>
+</body>
+</html>

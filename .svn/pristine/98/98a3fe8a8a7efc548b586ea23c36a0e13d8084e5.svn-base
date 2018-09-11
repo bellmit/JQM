@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:Administrator -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <!-- 获取第一个工作项编号  -->
+    <select id="workitemid" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select * from wfworkitem where currentstate in (4,10) and processinstid=#processInstID# and activitydefid=#activityDefid#
+   </select>
+   
+   <!-- 根据业务字典类型获取业务字典信息 --> 
+   <select id="getDictName" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+ 		select * from EOS_DICT_ENTRY where dicttypeid=#dicttypeid#
+ 		<isNotNull property="dictname">
+		  		AND dictname like '%'||#dictname#||'%' 
+		  </isNotNull>
+		  <isNotNull property="sortField">
+		  		order by $sortField$ 
+		  </isNotNull>
+		  <isNotNull property="sortOrder">
+		  		 $sortOrder$ 
+		  </isNotNull>
+	</select>
+	
+	<!--  -->
+	<select id="getMaxPreWorkItemByActive" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+ 		select max(workitemid) as workitemid from wfworkitem where currentstate='12' and processinstid=#processInstID# and activitydefid=#activityDefid#
+	</select>
+	
+	<!-- 获取上一环节参与者 -->
+	<select id="queryLastParticipant" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select t2.vc_user_name from ( select * from t_ats_approve_info t  where t.l_process_inst_id=#processInstID# order by l_approve_id desc) t2 where rownum=1
+    </select>
+    
+    <!-- 获取上一环节参与者ID -->
+	<select id="queryFlowLastActor" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select t2.vc_user_name from ( select * from t_ats_approve_info t where t.l_process_inst_id=#processInstID# order by l_approve_id desc) t2 where rownum=1
+    </select>
+    
+    <!-- 根据角色ID与用户类型获取用户集合 -->
+	<select id="queryUserList" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+       select  * from v_roleemp t where t.role_code='$roleCode$' and t.party_type in ('user','emp','org')
+    </select>
+    
+    <!-- 获取当前参与者 -->
+    <select id="queryFlowNextActor" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select connstr(distinct t.participantname) next from V_CURRENTWORKITEM t where t.processinstid =  #processInstID#
+    </select>
+    <!-- 查询上一环节是否为征求意见 -->
+    <select id="queryReqUseName" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+     select t1.operate_type, t1.user_name
+         from (select t.operate_type, t.user_name from cf_jy_prc_aprv_info t
+         where t.work_item_id = #workitemID#
+         order by sysid desc) t1
+         where rownum = 1
+      </select> 
+    
+    
+    <!-- 根据流程类型分别查询待办条数 -->
+    <select id="querySumCount" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+      select count(A.proess_type) as bondQuantity
+  		from (select distinct vk.processinstid, ct.proess_type
+          from v_currentworkitem vk, cf_jy_business_main_table ct
+         where ct.processinstid = vk.processinstid
+           and ','||vk.participantid||',' like '%,$participantid$,%') A
+   </select>
+   
+   <!-- 查询当前操作人已办工作项 -->
+   <select id="queryFinishMyWork" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">   
+   		select t1.workitemid,
+	       t1.activitydefid,
+	       t1.workitemname,
+	       t1.participant,
+	       t1.actionurl
+	  from wfworkitem t1
+	 where 1 = 1 AND t1.processinstid = #processInstID#
+		<isNotNull property="participantRole">
+			AND t1.participant in (select t.party_id from cap_partyauth t where t.role_id = '1141' and t.party_type = 'emp')
+		</isNotNull>
+		<isNotNull property="participant">
+			 and t1.participant = #participant#
+		</isNotNull>
+	   and t1.activitydefid in
+	       (select t.activitydefid
+	          from wfworkitem t
+	         where t.processinstid = #processInstID#
+	         <isNotNull property="participantRole">
+				AND t.participant in (select t.party_id from cap_partyauth t where t.role_id = '1141' and t.party_type = 'emp')
+			</isNotNull>
+			<isNotNull property="participant">
+				 and t.participant = #participant#
+			</isNotNull>
+	         group by activitydefid
+	        having count(workitemid) > 1)
+	   and rownum = 1
+	union all
+	select t3.workitemid,
+	       t3.activitydefid,
+	       t3.workitemname,
+	       t3.participant,
+	       t3.actionurl
+	  from wfworkitem t3
+	 where t3.processinstid = #processInstID# and t3.currentstate != '4' and t3.currentstate != '10'
+	         <isNotNull property="participantRole">
+				 AND t3.participant in (select t.party_id from cap_partyauth t where t.role_id = '1141' and t.party_type = 'emp')
+			</isNotNull>
+			<isNotNull property="participant">
+				 and t3.participant = #participant#
+			</isNotNull>
+	   and t3.activitydefid in
+	       (select t2.activitydefid
+	          from wfworkitem t2
+	         where t2.processinstid = #processInstID#
+	         <isNotNull property="participantRole">
+				AND t2.participant in (select t.party_id from cap_partyauth t where t.role_id = '1141' and t.party_type = 'emp')
+			</isNotNull>
+			<isNotNull property="participant">
+				 and t2.participant = #participant#
+			</isNotNull>
+	         group by t2.activitydefid
+	        having count(t2.workitemid) = 1)
+
+   </select>
+</sqlMap>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:王沐寰 -->
+<sqlMap>
+    <select id="getNextSequence" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+    	select $value$.nextval as seq from dual
+    </select>
+    <select id="getBondCode" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+    	select sf_get_bond_code() as bcode from dual
+    </select>
+    <!--是否需要导O32 -->
+    <select id="exportO32Flag" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+    	select sf_is_need_export(#marketNO#,#stockType#) as flag from dual
+    </select>
+    
+    <!--根据权限查询菜单信息 -->
+    <!--empId-员工Id,roleId-角色Id,funccode-功能资源编码,orgId-机构Id -->
+    <select id="getMenuList" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+    	select cr.*,cf.funcaction,cf.funcname
+		  from cap_resauth cr, cap_partyauth cp, app_function cf
+		  where cr.party_id = cp.role_id
+		   	and cr.res_id = cf.funccode
+       		and cp.party_type = 'emp'
+       		and cp.party_id = #empId#              
+       		and cr.party_id in ($roleId$) 
+       		and cf.funccode in ($funccode$)
+    	union all
+    	select cr.*,cf.funcaction,cf.funcname
+      	  from cap_resauth cr, cap_partyauth cp, app_function cf
+     	  where cr.party_id = cp.role_id
+       		and cr.res_id = cf.funccode
+       		and cp.party_type = 'org'
+       		and cr.party_id in ($roleId$) 
+       		and cf.funccode in ($funccode$)
+       		and cp.party_id in
+           (SELECT r.orgid
+                FROM org_organization r
+                START WITH orgid = #orgId#
+                CONNECT BY PRIOR r.parentorgid = r.orgid)
+    </select>
+    <select id="getMenuList1" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+    	select cr.*,cf.funcaction,cf.funcname
+      from cap_resauth cr, cap_partyauth cp, app_function cf
+      where cr.party_id = cp.role_id
+         and cr.res_id = cf.funccode 
+         and cf.funccode in ($funccode$)         
+         and (cr.party_id  = '1' or cp.party_id='sysadmin')
+    </select>
+</sqlMap>

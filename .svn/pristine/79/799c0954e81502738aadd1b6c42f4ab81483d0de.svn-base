@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:周靖 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="vc_fund_name" javaType="string" property="vcFundName"/>
+		<result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+		<result column="vc_report_code" javaType="string" property="vcReportCode"/>
+		<result column="vc_stock_name" javaType="string" property="vcStockName"/>
+		<result column="vc_market_name" javaType="string" property="vcMarketName"/>
+		<result column="l_current_amount" javaType="string" property="lCurrentAmount"/>
+    </resultMap>
+    <!--查询指定债券对应的用户有权账户的持仓信息数据   -->
+    <select id="positionInformation" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+    	 select a.vc_fund_name,
+	       a.vc_combi_name,
+	       a.vc_report_code,
+	       a.vc_stock_name,
+	       t.vc_market_name,
+	       a.l_current_amount
+	  from trade.ats_vunitstock a, trade.tmarketinfo t
+	 where t.c_market_no = a.c_market_no
+	 <isNotNull property="vcReportCode"><!--債卷代碼-->
+			and a.vc_report_code = #vcReportCode#
+	</isNotNull>
+    </select>
+</sqlMap>

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Require-Bundle: com.primeton.eos.richweb,com.eos.foundation,com.eos.wo
+ rkflow
+eos-webCtxPath: instruction
+Bundle-Vendor: jiangbin
+Bundle-Version: 1.0.0
+Bundle-Name: com.cjhxfund.ats.instruction
+Bundle-Description: 指令入口管理：客户指令管理，利率�
+ �换指令入口等
+Bundle-SymbolicName: com.cjhxfund.ats.instruction
+

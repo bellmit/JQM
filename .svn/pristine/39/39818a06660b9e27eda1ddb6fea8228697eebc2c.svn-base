@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.fm.baseinfo,com.cjhxfund.ats.fm.comm,
+ com.cjhxfund.ats.fm.fix,com.cjhxfund.ats.fm.instr,com.cjhxfund.common
+ Util,com.cjhxfund.foundation.fix,com.cjhxfund.jy.ProductProcess,org.g
+ ocom.components.coframe.auth,org.gocom.components.coframe.framework,o
+ rg.gocom.components.coframe.org,org.gocom.components.coframe.rights,o
+ rg.gocom.components.coframe.tools,com.primeton.eos.richweb,com.eos.fo
+ undation,com.eos.workflow
+Bundle-Vendor: wjh
+eos-webCtxPath: bpsExpend
+Bundle-Version: 1.0.0
+Bundle-Name: com.cjhxfund.fpm.bpsExpend
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.bpsExpend
+

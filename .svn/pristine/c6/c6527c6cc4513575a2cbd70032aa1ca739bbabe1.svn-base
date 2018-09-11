@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.sm.comm,com.cjhxfund.commonUtil,com.c
+ jhxfund.foundation.fix,com.primeton.eos.richweb,com.eos.foundation,co
+ m.eos.workflow
+Bundle-Vendor: 创金合信
+eos-webCtxPath: transaction
+Bundle-Version: 1.0.0
+Bundle-Name: 买卖业务
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.sm.transaction
+

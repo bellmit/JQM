@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:吴艳飞 -->
+<sqlMap>
+	<!--查询客户的持仓明细-->
+    <resultMap class="commonj.sdo.DataObject" id="positionResultMap">
+        <result column="vc_fund_name" javaType="string" property="vcFundName"/><!--产品名称-->
+        <result column="vc_fund_code" javaType="string" property="vcFundCode"/><!--产品代码-->
+        <result column="l_fund_id" javaType="string" property="lProductId"/><!--产品ID-->
+		<result column="vc_combi_name" javaType="string" property="vcCombiName"/><!--组合名称-->
+		<result column="vc_combi_no" javaType="string" property="vcCombiNo"/><!--组合代码-->
+		<result column="l_current_amount" javaType="string" property="lCurrentAmount"/><!--持仓数量-->
+		<result column="en_bond_asset" javaType="double" property="enBondAsset"/><!--市值-->
+		<result column="vc_inter_code" javaType="string" property="vcInterCode"/><!--O32债券内码-->
+		<result column="vc_report_code" javaType="string" property="vcStockCode"/><!--债券代码-->
+        <result column="vc_stock_name" javaType="string" property="vcStockName"/><!--债券简称-->
+        <result column="en_fund_value" javaType="double" property="enFundValue"/><!--净资产-->
+        <result column="vc_bond_appraise" javaType="string" property="vcBondAppraise"/><!--债券评级-->
+        <result column="vc_issue_appraise" javaType="string" property="vcIssueAppraise"/><!--主体评级-->
+        <result column="vc_limit_left" javaType="string" property="lLimiteLeft"/><!--剩余期限-->
+        <result column="is_sell_operate" javaType="string" property="isSellOperate"/><!-- 是否有卖出权限：1-有，0-无 -->
+        <result column="is_position" javaType="string" property="isPosition"/><!-- 是否有查看权限：1-有，0-无 -->
+        <result column="cn_sell" javaType="string" property="cnSell"/><!-- 债券锁定不可卖数量 -->
+        <result column="L_DELISTING_DATE" javaType="string" property="lDelistingDate"/><!-- 摘牌日期 -->
+    </resultMap>
+   <select id="queryInterBankPositionInfo" parameterClass="commonj.sdo.DataObject" resultMap="positionResultMap">
+    	select t.* from
+    	(select av.vc_fund_name      	,
+    				av.vc_fund_code      	,
+		       		av.vc_combi_name     	,
+		       		av.vc_combi_no     		,
+		       		av.l_fund_id,
+			       av.l_current_amount  	,
+			       av.en_bond_asset     	,
+			       av.vc_inter_code         ,
+			       av.vc_report_code     	,
+			       av.vc_stock_name    		, 
+			       tf.en_fund_value			,
+			       ek.vc_bond_appraise   ,
+			       ek.vc_issue_appraise    ,
+			       ek.vc_limit_left				,
+			       ek.L_DELISTING_DATE,
+			       lo.cn_sell + lo.cn_mortgage_sell    cn_sell,
+			       <isEqual property="combiNos" compareValue=""> 
+						'0' is_position,
+	               </isEqual>
+				  <isNotEqual property="combiNos" compareValue=""> 
+				 	case when av.vc_combi_no in ($combiNos$) then '1' else '0' end is_position,
+				  </isNotEqual> 
+				  <isEqual property="combiCodes" compareValue=""> 
+					'0' is_sell_operate
+	              </isEqual>
+				  <isNotEqual property="combiCodes" compareValue=""> 
+				 	case when av.vc_combi_no in ($combiCodes$) then '1' else '0' end is_sell_operate
+				  </isNotEqual>
+		  from o32_cj.ats_vunitstock@$dblinkDataRource$ av
+ 			 left join trade.tfundasset@$dblinkDataRource$ tf
+    		on (av.l_fund_id = tf.l_fund_id)
+ 			 left join vw_bondinfo_wind ek
+    		on (av.vc_report_code = ek.vc_stock_code and av.c_market_no = ek.vc_market_no)
+    		left join VW_TBOND_LOCK_COUNT lo
+       on (av.vc_report_code = lo.VC_STOCK_CODE
+       	   and av.c_market_no = lo.VC_MARKET
+       	   and av.vc_combi_no = lo.VC_COMBI_CODE)
+		 where  av.c_market_no = #vcMarketNo#
+		 	and av.l_current_amount &gt; 0
+		 	and av.c_position_flag ='1'
+		 <isNotNull property="vcFundCode"><!--产品代码-->
+			and av.vc_fund_code=#vcFundCode#
+		</isNotNull>
+		<isNotNull property="vcCombiNo"><!--組合代码-->
+			and av.vc_combi_no=#vcCombiNo#
+		</isNotNull>
+		
+		<isNotNull property="vcStockCode"><!--债券代码-->
+			and av.vc_report_code=#vcStockCode#
+		</isNotNull>
+		<isNotNull property="vcBondAppraise"><!--债项评级-->
+             and ek.vc_bond_appraise in($vcBondAppraise$)
+        </isNotNull>
+        <isNotNull property="minLimiteLeft"><!--剩余期限最小值-->
+        	 and round(ek.l_endincal_days / 365, 2) &gt;=#minLimiteLeft#
+         </isNotNull>
+         <isNotNull property="maxLimiteLeft"><!--剩余期限最大值-->
+             and round(ek.l_endincal_days / 365, 2) &lt;=#maxLimiteLeft#
+         </isNotNull>) t
+         where t.is_position = '1'
+   </select>
+   
+  	<!--获取市值--> 
+   <resultMap class="commonj.sdo.DataObject" id="resultMarketValue">
+        <result column="en_bond_asset" javaType="double" property="enBondAsset"/><!--市值-->
+    </resultMap>
+   <select id="getBondMarketValue" parameterClass="commonj.sdo.DataObject" resultMap="resultMarketValue">
+   		 select av.en_bond_asset
+          from o32_cj.ats_vunitstock av
+         where av.vc_report_code = #vcStockCode#
+           and   av.c_market_no = #vcMarketNo#
+   </select>
+   
+   <!--获取基金净资产--> 
+   <resultMap class="commonj.sdo.DataObject" id="resultNetAssets">
+        <result column="en_fund_value" javaType="double" property="enFundValue"/><!--净资产-->
+    </resultMap>
+    <select id="getFundNetAssets" parameterClass="commonj.sdo.DataObject" resultMap="resultNetAssets">
+           select tf.en_fund_value
+          from trade.tfundasset tf, trade.tfundinfo ti
+         where tf.l_fund_id = ti.l_fund_id
+           and ti.vc_fund_code = #vcProductCode#
+   </select>
+   
+   <!--用来查询客户未成交的券面金额-->
+   <resultMap class="commonj.sdo.DataObject" id="sueshigeRatioInfo">
+        <result column="sum_face_amount" javaType="double" property="sumFaceAmount"/><!--交易券面金额（万元）-->
+    </resultMap>
+   <select id="getSueshigeRatioParameter" parameterClass="commonj.sdo.DataObject" resultMap="sueshigeRatioInfo">
+    	select sum(t.en_face_amount) as sum_face_amount
+          from t_ats_inquiry_result_instruct t
+        where t.vc_fs_deal_status = '0'
+        	 and t. vc_stock_code = #vcStockCode#
+   </select>
+   
+   <!--查询有查看权限产品 下拉列表使用-->
+    <select id="queryHavaPermissionProductInfo"  parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject" >
+    	  select t1.vc_product_code as id, t1.vc_product_name as text, t1.*
+    from T_ATS_PRODUCT_INFO t1
+   where t1.vc_product_code in
+         (select vc_product_code
+            from T_ATS_PRODUCT_HANDLE ta
+           where ta.vc_combi_no in ($combiNos$))
+ 
+    </select>
+</sqlMap>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈迪 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="tradeOrderMap">
+    	<result column="B_CHECK_FLAG" javaType="string" property="bCheckFlag"/>
+        <result column="L_DATE" javaType="int" property="lDate"/>
+        <result column="L_INITDATE" javaType="int" property="lInitdate"/>
+        <result column="L_TRADEORDERNO" javaType="int" property="lTradeorderno"/>
+        <result column="VC_SRCTRADEID" javaType="string" property="vcSrctradeid"/>
+        <result column="C_SOURCEFROM" javaType="string" property="cSourcefrom"/>
+        <result column="VC_TABLESOURCE" javaType="string" property="vcTablesource"/>
+        <result column="C_AUDITSTATUS" javaType="string" property="cAuditstatus"/>
+        <result column="C_ORDERSTATUS" javaType="string" property="cOrderstatus"/>
+        <result column="VC_TRADEID" javaType="string" property="vcTradeid"/>
+        <result column="L_OPORDERTYPE" javaType="int" property="lOpordertype"/>
+        <result column="C_TRADETYPE" javaType="string" property="cTradetype"/>
+        <result column="C_CLEARTYPE" javaType="string" property="cCleartype"/>
+        <result column="VC_PRODUCTCODE" javaType="string" property="vcProductcode"/>
+        <result column="VC_PRODUCTNAME" javaType="string" property="vcProductname"/>
+        <result column="EN_FACEVALUE" javaType="double" property="enFacevalue"/>
+        <result column="VC_BUYERHOLDERACCOUNT" javaType="string" property="vcBuyerholderaccount"/>
+        <result column="VC_BHOLDERSHORTNAME" javaType="string" property="vcBholdershortname"/>
+        <result column="VC_BOPERHOLDERACCOUNT" javaType="string" property="vcBoperholderaccount"/>
+        <result column="VC_SELLERHOLDERACCOUNT" javaType="string" property="vcSellerholderaccount"/>
+        <result column="VC_SHOLDERSHORTNAME" javaType="string" property="vcSholdershortname"/>
+        <result column="VC_SOPERHOLDERACCOUNT" javaType="string" property="vcSoperholderaccount"/>
+        <result column="EN_SETTLEMENTAMOUNT" javaType="double" property="enSettlementamount"/>
+        <result column="L_TRADEDATE" javaType="int" property="lTradedate"/>
+        <result column="L_SETTLEMENTDATE" javaType="int" property="lSettlementdate"/>
+        <result column="C_BUYERSTATUS" javaType="string" property="cBuyerstatus"/>
+        <result column="C_SELLERSTATUS" javaType="string" property="cSellerstatus"/>
+        <result column="VC_BOPERORDERSTATUS" javaType="string" property="vcBoperorderstatus"/>
+        <result column="VC_SOPERORDERSTATUS" javaType="string" property="vcSoperorderstatus"/>
+        <result column="L_OPERID" javaType="int" property="lOperid"/>
+        <result column="VC_OPERNAME" javaType="string" property="vcOpername"/>
+        <result column="L_AUDITOPERID" javaType="int" property="lAuditoperid"/>
+        <result column="VC_AUDITOPERNAME" javaType="string" property="vcAuditopername"/>
+        <result column="L_SETTLEMENTTYPE" javaType="int" property="lSettlementtype"/>
+        <result column="L_DUESETTLEDATE" javaType="int" property="lDuesettledate"/>
+        <result column="EN_DUESETTLEAMOUNT" javaType="string" property="enDuesettleamount"/>
+        <result column="L_DUESETTLEMETHOD" javaType="int" property="lDuesettlemethod"/>
+        <result column="C_SEND_STATUS" javaType="string" property="cSendStatus"/>
+        <result column="C_MATCH_FLAG" javaType="string" property="cMatchFlag"/>
+        <result column="VC_MATCH_ERRMSG" javaType="string" property="vcMatchErrmsg"/>
+        <result column="L_CONF_OPERATOR" javaType="int" property="lConfOperator"/>
+        <result column="VC_CONF_OPERATOR_NAME" javaType="string" property="vcConfOperatorName"/>
+        <result column="EN_CLEANPRICE" javaType="double" property="enCleanprice"/>
+        <result column="EN_FULLPRICE" javaType="double" property="enFullprice"/>
+        <result column="EN_ACCRUEDINTEREST" javaType="double" property="enAccruedinterest"/>
+        <result column="EN_REPODAYS" javaType="int" property="enRepodays"/>
+        <result column="C_DISTRIBUTIONFLAG" javaType="string" property="cDistributionflag"/>
+        <result column="VC_REASON" javaType="string" property="vcReason"/>
+        <result column="C_PAYSTOCK_DIR" javaType="string" property="cPaystockDir"/>
+        <result column="C_FROM" javaType="string" property="cFrom"/>
+        <result column="VC_SELFCONF_STATUS" javaType="string" property="vcSelfconfStatus"/>
+        <result column="VC_RAVILCONF_STATUS" javaType="string" property="vcRavilconfStatus"/>
+    </resultMap>
+    <!--交易指令管理-->
+    <select id="queryTradeOrderData" resultMap="tradeOrderMap">
+    	select c.b_check_flag,
+		       c.l_date,
+		       c.l_initdate,
+		       c.l_tradeorderno,
+		       c.vc_srctradeid,
+		       c.c_sourcefrom,
+		       c.vc_tablesource,
+		       c.c_auditstatus,
+		       c.c_orderstatus,
+		       c.vc_tradeid,                        
+		       c.l_opordertype,
+		       c.c_tradetype,
+		       c.c_cleartype,
+		       c.vc_productcode,
+		       c.vc_productname,
+		       c.en_facevalue,
+		       c.vc_buyerholderaccount,
+		       c.vc_bholdershortname,
+		       c.vc_boperholderaccount,
+		       c.vc_sellerholderaccount,
+		       c.vc_sholdershortname,
+		       c.vc_soperholderaccount,
+		       c.en_settlementamount,
+		       c.l_tradedate,
+		       c.l_settlementdate,
+		       c.c_buyerstatus,
+		       c.c_sellerstatus,
+		       c.vc_boperorderstatus,
+		       c.vc_soperorderstatus,
+		       c.l_operid,
+		       c.vc_opername,
+		       c.l_auditoperid,
+		       c.vc_auditopername,
+		       c.l_settlementtype,
+		       c.l_duesettledate,
+		       c.en_duesettleamount,
+		       c.l_duesettlemethod,
+		       c.c_send_status,
+		       c.c_match_flag,
+		       c.vc_match_errmsg,
+		       c.l_conf_operator,
+		       c.vc_conf_operator_name,
+		       c.en_cleanprice,
+		       c.en_fullprice,
+		       c.en_accruedinterest,
+		       c.en_repodays,
+		       c.c_distributionflag,
+		       c.vc_reason,
+		       c.c_paystock_dir,
+		       c.c_from,
+		       c.vc_selfconf_status,
+		       c.vc_ravilconf_status
+		  from (select b.*,
+		               case
+		                 when b.c_paystock_dir = '1' then
+		                  c_buyerstatus
+		                 else
+		                  c_sellerstatus
+		               end vc_selfconf_status,
+		               case
+		                 when b.c_paystock_dir = '2' then
+		                  c_buyerstatus
+		                 else
+		                  c_sellerstatus
+		               end vc_ravilconf_status
+		          from (select 0 b_check_flag,
+		                       l_date,
+		                       l_initdate,
+		                       l_tradeorderno,
+		                       vc_srctradeid,
+		                       c_sourcefrom,
+		                       vc_tablesource,
+		                       c_auditstatus,
+		                       c_orderstatus,
+		                       vc_tradeid,
+		                       l_opordertype,
+		                       c_tradetype,
+		                       c_cleartype,
+		                       vc_productcode,
+		                       vc_productname,
+		                       en_facevalue,
+		                       vc_buyerholderaccount,
+		                       vc_bholdershortname,
+		                       vc_boperholderaccount,
+		                       vc_sellerholderaccount,
+		                       vc_sholdershortname,
+		                       vc_soperholderaccount,
+		                       en_settlementamount,
+		                       l_tradedate,
+		                       l_settlementdate,
+		                       c_buyerstatus,
+		                       c_sellerstatus,
+		                       vc_boperorderstatus,
+		                       vc_soperorderstatus,
+		                       l_operid,
+		                       vc_opername,
+		                       l_auditoperid,
+		                       vc_auditopername,
+		                       l_settlementtype,
+		                       l_duesettledate,
+		                       en_duesettleamount,
+		                       l_duesettlemethod,
+		                       c_send_status,
+		                       l_serial_no,
+		                       c_match_flag,
+		                       vc_match_errmsg,
+		                       l_conf_operator,
+		                       vc_conf_operator_name,
+		                       en_cleanprice,
+		                       en_fullprice,
+		                       en_accruedinterest,
+		                       en_repodays,
+		                       c_distributionflag,
+		                       vc_reason,
+		                       nvl((select case
+		                                    when instr(f.vc_shclearing_account,
+		                                               a.vc_buyerholderaccount) > 0 then
+		                                     '1'
+		                                    else
+		                                     '2'
+		                                  end
+		                             from trade.tfundinfo f
+		                            where (instr(f.vc_shclearing_account,
+		                                         a.vc_buyerholderaccount) > 0 or
+		                                  instr(f.vc_shclearing_account,
+		                                         a.vc_sellerholderaccount) > 0)
+		                              and f.l_org_id = 0
+		                              and f.l_dept_id = 0
+		                              and rownum = 1),
+		                           '1') c_paystock_dir,
+		                       1 c_from
+		                  from trade.tsqsjyinst a
+		                  where trim(a.vc_srctradeid) is not null and a.l_date &gt;=(with calendarcalculate as
+						 (select a.*, rank() over(partition by vc_tradeday_type order by l_date) rn
+						          from trade.tmarkettradeday a
+						         where a.vc_tradeday_type = '00'
+						           and a.c_trade_flag = '1')
+						  select l_date
+						          from calendarcalculate b
+						         where b.rn =
+						               nvl((select c.rn + (-1)
+						                     from calendarcalculate c
+						                    where c.l_date =
+						                          to_number(to_char(sysdate, 'yyyyMMdd'))),
+						                   (select min(c.rn + (-1))
+						                      from calendarcalculate c
+						                     where c.l_date = to_number(to_char(sysdate, 'yyyyMMdd')))))) b) c
+	</select>
+	<resultMap class="commonj.sdo.DataObject" id="fullTallyOrderMap">
+        <result column="L_DATE" javaType="int" property="lDate"/>
+        <result column="VC_SETTLEMENTORDERID" javaType="string" property="vcSettlementorderid"/>
+        <result column="VC_TRADEID" javaType="string" property="vcTradeid"/>
+        <result column="VC_BUYERHOLDERACCOUNT" javaType="string" property="vcBuyerholderaccount"/>
+        <result column="VC_BHOLDERSHORTNAME" javaType="string" property="vcBholdershortname"/>
+        <result column="VC_BAGENCYHOLDERACCOUNT" javaType="string" property="vcBagencyholderaccount"/>
+        <result column="VC_BAGENCYHOLDERSHORTNAME" javaType="string" property="vcBagencyholdershortname"/>
+        <result column="VC_BOPERHOLDERACCOUNT" javaType="string" property="vcBoperholderaccount"/>
+        <result column="VC_SELLERHOLDERACCOUNT" javaType="string" property="vcSellerholderaccount"/>
+        <result column="VC_SHOLDERSHORTNAME" javaType="string" property="vcSholdershortname"/>
+        <result column="VC_SAGENCYHOLDERACCOUNT" javaType="string" property="vcSagencyholderaccount"/>
+        <result column="VC_SAGENCYHOLDERSHORTNAME" javaType="string" property="vcSagencyholdershortname"/>
+        <result column="VC_SOPERHOLDERACCOUNT" javaType="string" property="vcSoperholderaccount"/>
+        <result column="VC_PRODUCTCODE" javaType="string" property="vcProductcode"/>
+        <result column="VC_PRODUCTNAME" javaType="string" property="vcProductname"/>
+        <result column="VC_TRADETYPE" javaType="string" property="vcTradetype"/>
+        <result column="VC_CURRENCY" javaType="string" property="vcCurrency"/>
+        <result column="L_SETTLEMENTTYPE" javaType="int" property="lSettlementtype"/>
+        <result column="C_FULLORDERTYPE" javaType="string" property="cFullordertype"/>
+        <result column="C_PARTICIPATETYPE" javaType="string" property="cParticipatetype"/>
+        <result column="EN_SETTLEMENTAMOUNT" javaType="double" property="enSettlementamount"/>
+        <result column="EN_FACEVALUE" javaType="double" property="enFacevalue"/>
+        <result column="C_GROSSORDERSTATUS" javaType="string" property="cGrossorderstatus"/>
+        <result column="C_FUNDSETTSTATUS" javaType="string" property="cFundsettstatus"/>
+        <result column="C_PRODUCTSTATUS" javaType="string" property="cProductstatus"/>
+        <result column="L_CREATEDATE" javaType="int" property="lCreatedate"/>
+        <result column="L_CREATETIME" javaType="int" property="lCreatetime"/>
+        <result column="L_ORDERSTATUSUPDATETIME" javaType="int" property="lOrderstatusupdatetime"/>
+        <result column="L_FINANCEGRACEPERIOD" javaType="int" property="lFinancegraceperiod"/>
+        <result column="L_PRODUCTGRACEPERIOD" javaType="int" property="lProductgraceperiod"/>
+        <result column="L_SETTLEMENTDATE" javaType="int" property="lSettlementdate"/>
+        <result column="VC_BOPERORDERSTATUS" javaType="string" property="vcBoperorderstatus"/>
+        <result column="VC_SOPERORDERSTATUS" javaType="string" property="vcSoperorderstatus"/>
+        <result column="VC_PAYCONFIRMOPERNAME" javaType="string" property="vcPayconfirmopername"/>
+        <result column="VC_AUDITOPERNAME" javaType="string" property="vcAuditopername"/>
+        <result column="VC_CANCELOPERNAME" javaType="string" property="vcCancelopername"/>
+        <result column="L_CANCELTIME" javaType="int" property="lCanceltime"/>
+        <result column="VC_CANCELCONFIRMOPERNAME" javaType="string" property="vcCancelconfirmopername"/>
+        <result column="L_CANCELCONFIRMTIME" javaType="int" property="lCancelconfirmtime"/>
+        <result column="C_CANCELRESULT" javaType="string" property="cCancelresult"/>
+        <result column="VC_SRCTRADEID" javaType="string" property="vcSrctradeid"/>
+        <result column="C_STOCKSETTLE_FLAG" javaType="string" property="cStocksettleFlag"/>
+        <result column="C_CASHSETTLE_FLAG" javaType="string" property="cCashsettleFlag"/>
+        <result column="VC_SETTLE_ERRMSG" javaType="string" property="vcSettleErrmsg"/>
+        <result column="C_FROM" javaType="string" property="cFrom"/>
+    </resultMap>
+    <!--全额结算管理-->
+    <select id="queryFullTallyOrderData" resultMap="fullTallyOrderMap">
+    	select t.l_date,
+		       t.vc_settlementorderid,
+		       t.vc_tradeid,
+		       t.vc_buyerholderaccount,
+		       t.vc_bholdershortname,
+		       t.vc_bagencyholderaccount,
+		       t.vc_bagencyholdershortname,
+		       t.vc_boperholderaccount,
+		       t.vc_sellerholderaccount,
+		       t.vc_sholdershortname,
+		       t.vc_sagencyholderaccount,
+		       t.vc_sagencyholdershortname,
+		       t.vc_soperholderaccount,
+		       t.vc_productcode,
+		       t.vc_productname,
+		       t.vc_tradetype,
+		       t.vc_currency,
+		       t.l_settlementtype,
+		       t.c_fullordertype,
+		       t.c_participatetype,
+		       t.en_settlementamount,
+		       t.en_facevalue,
+		       t.c_grossorderstatus,
+		       t.c_fundsettstatus,
+		       t.c_productstatus,
+		       t.l_createdate,
+		       t.l_createtime,
+		       t.l_orderstatusupdatetime,
+		       t.l_financegraceperiod,
+		       t.l_productgraceperiod,
+		       t.l_settlementdate,
+		       t.vc_boperorderstatus,
+		       t.vc_soperorderstatus,
+		       t.vc_payconfirmopername,
+		       t.vc_auditopername,
+		       t.vc_cancelopername,
+		       t.l_canceltime,
+		       t.vc_cancelconfirmopername,
+		       t.l_cancelconfirmtime,
+		       t.c_cancelresult,
+		       t.vc_srctradeid,
+		       t.c_stocksettle_flag,
+		       t.c_cashsettle_flag,
+		       t.vc_settle_errmsg,
+		       1 c_from
+		  from trade.tsqsfulljsinst t
+		 where t.l_org_id = 0
+		   and t.l_dept_id = 0
+		   and trim(t.vc_srctradeid) is not null
+		   and t.l_date &gt;=(with calendarcalculate as
+						 (select a.*, rank() over(partition by vc_tradeday_type order by l_date) rn
+						          from trade.tmarkettradeday a
+						         where a.vc_tradeday_type = '00'
+						           and a.c_trade_flag = '1')
+						  select l_date
+						          from calendarcalculate b
+						         where b.rn =
+						               nvl((select c.rn + (-1)
+						                     from calendarcalculate c
+						                    where c.l_date =
+						                          to_number(to_char(sysdate, 'yyyyMMdd'))),
+						                   (select min(c.rn + (-1))
+						                      from calendarcalculate c
+						                     where c.l_date = to_number(to_char(sysdate, 'yyyyMMdd')))))
+	</select>
+</sqlMap>

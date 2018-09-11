@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.commonUtil,com.eos.workflow,com.primeton.
+ eos.richweb,com.eos.foundation
+eos-webCtxPath: qrtz
+Bundle-Vendor: 武正新
+Bundle-Version: 1.0.0
+Bundle-Name: 定时任务
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.qrtz
+

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.commonUtil,com.cjhxfund.foundation.fix,co
+ m.primeton.eos.richweb,com.eos.foundation,com.eos.workflow,org.gocom.
+ components.coframe.org
+Bundle-Vendor: huangmizhi
+eos-webCtxPath: ProductProcess
+Bundle-Version: 1.0.0
+Bundle-Name: 交易部投顾指令单交易流程功能
+Bundle-Description: 交易部投顾指令单交易流程功能
+Bundle-SymbolicName: com.cjhxfund.jy.ProductProcess
+

@@ -1,0 +1,10 @@
+<mapping>
+	<method name="exchangePledgeRepoIssued">
+		<parameter index="0" name="ZROrder" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="exchangePledgeRepoModify">
+		<parameter index="0" name="ZROrder" />
+		<parameter index="-1" name="result" />
+	</method>
+</mapping>

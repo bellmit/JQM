@@ -1,0 +1,129 @@
+package com.cjhxfund.ats.instruction.Util;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.eos.foundation.eoscommon.BusinessDictUtil;
+import com.eos.system.annotation.Bizlet;
+
+import commonj.sdo.DataObject;
+
+@Bizlet("")
+public class StrUtil {
+	
+	/**
+	 * 将字符串拼凑成SQL in 条件的格式
+	 * @param str 需转换的字符串，以英文逗号或分号分隔
+	 * @return
+	 */
+	@Bizlet("")
+	public static Map<String,String> changeToStr(Map<String,String> strMap){
+		for(Map.Entry<String, String> entry : strMap.entrySet()){
+			String key = entry.getKey();
+			String str = entry.getValue();
+			String result = null;
+			if(StringUtils.isBlank(str)){
+				strMap.put(key, result);
+			}
+			else{
+				StringBuffer sb = new StringBuffer();				
+				String[] strArr = str.replaceAll(";", ",").split(",");
+				for(int i=0; i<strArr.length; i++){
+					if(StringUtils.isNotEmpty(strArr[i])){
+						sb.append("'").append(strArr[i]).append("',");
+					}
+				}
+				if(sb.length()>0){
+					result = sb.substring(0, sb.length()-1);
+				}
+				strMap.put(key, result);
+			}
+		}
+		return strMap;		
+	}
+	
+	/**
+	 * 把传入的类型dateobejct[] 转为  类型List<DataObject>
+	 * @author 姜坎骞
+	 * @param data（类型dateobejct[]） 入参
+	 * @return	list(类型List<DataObject>)
+	 */
+	@Bizlet("dataobject[]转List<DataObject>")
+	public static List<DataObject> objectReplaceList(DataObject[] data){
+		List<DataObject> list = new ArrayList<DataObject>();
+		if(data.length > 0){
+			for(int i=0; i<data.length; i++){
+				// 业务类别翻译
+				if(data[i].getString("vcBusinType") != null){
+					String str = getDictidName("interestSwapBusinType",data[i].getString("vcBusinType"));
+					data[i].setString("vcBusinType", str);
+				}
+				// 业务名称翻译
+				if(data[i].getString("vcBusinName") != null){
+					String str = getDictidName("interestSwapBusinName",data[i].getString("vcBusinName"));
+					data[i].setString("vcBusinName", str);
+				}
+				// 交易状态翻译
+				if(data[i].getString("cIsValid") != null){
+					String str = getDictidName("instructStatus",data[i].getString("cIsValid"));
+					data[i].setString("cIsValid", str);
+				}
+				// 后台成交状态翻译
+				if(data[i].getString("tBsDealState") != null){
+					String str = getDictidName("bsSetmtStatus",data[i].getString("tBsDealState"));
+					data[i].setString("tBsDealState", str);
+				}
+				// 指令来源翻译
+				if(data[i].getString("vcInstructSource") != null){
+					String str = getDictidName("instructResource",data[i].getString("vcInstructSource"));
+					data[i].setString("vcInstructSource", str);
+				}
+				// 时间显示格式
+				SimpleDateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				// 录入时间
+				if(data[i].getString("tInputTime") != null){
+					String tResultInputTimeText = data[i].getString("vcInitiatorName") +" "+ dateTime.format(data[i].getDate("tInputTime"));
+					data[i].setString("tInputTime", tResultInputTimeText);
+				}
+				// 复核时间
+				if(data[i].getString("tReviewTime") != null){
+					String tResultInputTimeText = data[i].getString("vcReviewName") +" "+ dateTime.format(data[i].getDate("tReviewTime"));
+					data[i].setString("tReviewTime", tResultInputTimeText);
+				}
+				// 前台成交时间
+				if(data[i].getString("tFsDealTime") != null){
+					String tResultInputTimeText = data[i].getString("vcFsdealName") +" "+ dateTime.format(data[i].getDate("tFsDealTime"));
+					data[i].setString("tFsDealTime", tResultInputTimeText);
+				}
+				list.add(data[i]);
+			}
+		}
+		return list;
+	}
+	
+	/**
+	 * 根据字典名称和翻译项id获取翻译项名称
+	 * @param dicttypeid 字典项id
+	 * @param dictid	字典参数表id
+	 * @author jiangkanqian
+	 * @return
+	 */
+	public static String getDictidName(String dicttypeid, String dictid) {
+		String dictidName = null;
+		DataObject[] objs = BusinessDictUtil.getDictInfoByType(dicttypeid);
+		Map<String, String> maps = new HashMap<String, String>();
+		for (int i = 0; i < objs.length; i++) {
+			maps.put(objs[i].getString("dictID"), objs[i].getString("dictName"));
+		}
+		if(!dictid.equals("") && dictid != null){
+			dictidName = maps.get(dictid);
+		}
+		return dictidName;
+	}
+	
+}

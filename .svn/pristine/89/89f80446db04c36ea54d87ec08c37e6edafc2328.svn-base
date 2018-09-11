@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:黄燕 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultUnderwriterExportMap">
+        <result column="L_UNDERWRITER_STOCK_ID" javaType="Long" property="lUnderwriterStockId"/>
+		<result column="VC_MAIN_UNDERWRITER" javaType="string" property="vcMainUnderwriter"/>
+		<result column="VC_UNDERWRITER_CONTACT_INFO" javaType="string" property="vcUnderwriterContactInfo"/>
+		<result column="VC_APPLICATION_TIME" javaType="string" property="vcApplicationTime"/>
+		<result column="VC_ENTRY_TIME" javaType="string" property="vcEntryTime"/>
+		<result column="VC_ISSUER_NAME_FULL" javaType="string" property="vcIssuerNameFull"/>
+		<result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/>
+		<result column="VC_ISSUE_TYPE" javaType="string" property="vcIssueType"/>
+		<result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+		<result column="VC_STOCK_NAME_FULL" javaType="string" property="vcStockNameFull"/>
+		<result column="VC_ISSUE_BALANCE" javaType="string" property="vcIssueBalance"/>
+		<result column="VC_EXIST_LIMITE" javaType="string" property="vcExistLimite"/>
+		<result column="VC_EXIST_LIMITE_DESC" javaType="string" property="vcExistLimiteDesc"/>
+		<result column="VC_INQUIRY_INTERVAL" javaType="string" property="vcInquiryInterval"/>
+		<result column="VC_ISSUE_APPRAISE" javaType="string" property="vcIssueAppraise"/>
+		<result column="VC_BOND_APPRAISE" javaType="string" property="vcBondAppraise"/>
+		<result column="VC_APPRAISE_ORGAN" javaType="string" property="vcAppraiseOrgan"/>
+		<result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/>
+		<result column="VC_DUE_DATE" javaType="string" property="vcDueDate"/>
+		<result column="VC_PAY_INTEVAL" javaType="string" property="vcPayInteval"/>
+		<result column="VC_BEGINCAL_DATE" javaType="string" property="vcBegincalDate"/>
+		<result column="VC_CREDIT_SITUATION" javaType="string" property="vcCreditSituation"/>
+		<result column="VC_ENTERPRISE_PROPERTY" javaType="string" property="vcEnterpriseProperty"/>
+		<result column="VC_IS_BID" javaType="string" property="vcIsBid"/>
+		<result column="VC_MARK_ASSETS" javaType="string" property="vcMarkAssets"/>
+		<result column="VC_OLD_HOLDER" javaType="string" property="vcOldHolder"/>
+		<result column="VC_IS_PLEDGE" javaType="string" property="vcIsPledge"/>
+		<result column="VC_PROPERTY_DESC" javaType="string" property="vcPropertyDesc"/>
+		<result column="VC_HIS_ISSUE" javaType="string" property="vcHisIssue"/>
+		<result column="VC_IS_HAVE_FINANCING" javaType="string" property="vcIsHaveFinancing"/>
+		<result column="C_STATUS" javaType="string" property="cStatus"/>
+		<result column="VC_EXPORT_FILENAME" javaType="string" property="vcExportFilename"/>
+		<result column="L_RELEASE_COUNT" javaType="Long" property="lReleaseCount"/>
+		<result column="L_OPERATOR_NO" javaType="string" property="lOperatorNo"/>
+        <result column="vc_attach_add1" javaType="string" property="vcAttachAdd1"/>
+        <result column="vc_attach_name1" javaType="string" property="vcAttachName1"/>
+        <result column="vc_attach_add2" javaType="string" property="vcAttachAdd2"/>
+        <result column="vc_attach_name2" javaType="string" property="vcAttachName2"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultUnderwriter">
+        <result column="L_UNDERWRITER_STOCK_ID" javaType="Long" property="lUnderwriterStockId"/>
+		<result column="VC_MAIN_UNDERWRITER" javaType="string" property="vcMainUnderwriter"/>
+		<result column="VC_UNDERWRITER_CONTACT_INFO" javaType="string" property="vcUnderwriterContactInfo"/>
+		<result column="VC_APPLICATION_TIME" javaType="string" property="vcApplicationTime"/>
+		<result column="VC_ENTRY_TIME" javaType="string" property="vcEntryTime"/>
+		<result column="VC_ISSUER_NAME_FULL" javaType="string" property="vcIssuerNameFull"/>
+		<result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/>
+		<result column="VC_ISSUE_TYPE" javaType="string" property="vcIssueType"/>
+		<result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+		<result column="VC_STOCK_NAME_FULL" javaType="string" property="vcStockNameFull"/>
+		<result column="VC_ISSUE_BALANCE" javaType="string" property="vcIssueBalance"/>
+		<result column="VC_EXIST_LIMITE" javaType="string" property="vcExistLimite"/>
+		<result column="VC_EXIST_LIMITE_DESC" javaType="string" property="vcExistLimiteDesc"/>
+		<result column="VC_INQUIRY_INTERVAL" javaType="string" property="vcInquiryInterval"/>
+		<result column="VC_ISSUE_APPRAISE" javaType="string" property="vcIssueAppraise"/>
+		<result column="VC_BOND_APPRAISE" javaType="string" property="vcBondAppraise"/>
+		<result column="VC_APPRAISE_ORGAN" javaType="string" property="vcAppraiseOrgan"/>
+		<result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/>
+		<result column="VC_DUE_DATE" javaType="string" property="vcDueDate"/>
+		<result column="VC_PAY_INTEVAL" javaType="string" property="vcPayInteval"/>
+		<result column="VC_BEGINCAL_DATE" javaType="string" property="vcBegincalDate"/>
+		<result column="VC_CREDIT_SITUATION" javaType="string" property="vcCreditSituation"/>
+		<result column="VC_ENTERPRISE_PROPERTY" javaType="string" property="vcEnterpriseProperty"/>
+		<result column="VC_IS_BID" javaType="string" property="vcIsBid"/>
+		<result column="VC_MARK_ASSETS" javaType="string" property="vcMarkAssets"/>
+		<result column="VC_OLD_HOLDER" javaType="string" property="vcOldHolder"/>
+		<result column="VC_IS_PLEDGE" javaType="string" property="vcIsPledge"/>
+		<result column="VC_PROPERTY_DESC" javaType="string" property="vcPropertyDesc"/>
+		<result column="VC_HIS_ISSUE" javaType="string" property="vcHisIssue"/>
+		<result column="VC_IS_HAVE_FINANCING" javaType="string" property="vcIsHaveFinancing"/>
+		<result column="C_STATUS" javaType="string" property="cStatus"/>
+		<result column="VC_EXPORT_FILENAME" javaType="string" property="vcExportFilename"/>
+		<result column="L_RELEASE_COUNT" javaType="Long" property="lReleaseCount"/>
+		<result column="L_OPERATOR_NO" javaType="string" property="lOperatorNo"/>
+        <result column="D_UPDATE_TIME" javaType="string" property="dUpdateTime"/>
+    </resultMap>
+    
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsUnderwriterStockInfo" id="resultUnderwriterMap">
+        <result column="l_underwriter_stock_id" javaType="Long" property="lUnderwriterStockId"/>
+        <result column="vc_main_underwriter" javaType="string" property="vcMainUnderwriter"/>
+        <result column="vc_payment_place" javaType="string" property="vcPaymentPlace"/>
+        <result column="vc_issuer_name_full" javaType="string" property="vcIssuerNameFull"/>
+        <result column="vc_underwriter_name" javaType="string" property="vcUnderwriterName"/>
+    </resultMap>
+    <resultMap class="com.cjhxfund.ats.fm.comm.comm.TAtsAttachInfo" id="resultUnderwriterAttachMap">
+        <result column="l_attach_id" javaType="Long" property="lAttachId"/>
+        <result column="l_biz_id" javaType="Long" property="lBizId"/>
+        <result column="vc_attach_biz_type" javaType="string" property="vcAttachBizType"/>
+        <result column="vc_attach_add" javaType="string" property="vcAttachAdd"/>
+        <result column="vc_attach_name" javaType="string" property="vcAttachName"/>
+        <result column="d_create_time" javaType="string" property="dCreateTime"/>
+        <result column="vc_user_id" javaType="string" property="vcUserId"/>
+    </resultMap>
+     <resultMap class="commonj.sdo.DataObject" id="resultUnderwriterTarget">
+        <result column="L_UNDERWRITER_STOCK_ID" javaType="Long" property="lUnderwriterStockId"/>
+		<result column="VC_MAIN_UNDERWRITER" javaType="string" property="vcMainUnderwriter"/>
+		<result column="VC_MAIN_UNDERWRITER_SIGN" javaType="string" property="vcMainUnderwriterSign"/>
+		<result column="VC_UNDERWRITER_CONTACT_INFO" javaType="string" property="vcUnderwriterContactInfo"/>
+		<result column="VC_APPLICATION_TIME" javaType="string" property="vcApplicationTime"/>
+		<result column="VC_APPLICATION_TIME_SIGN" javaType="string" property="vcApplicationTimeSign"/>
+		<result column="VC_EXIST_LIMITE_SIGN" javaType="string" property="vcExistLimiteSign"/>
+		<result column="VC_ISSUE_APPRAISE_SIGN" javaType="string" property="vcIssueAppraiseSign"/>
+		<result column="VC_BOND_APPRAISE_SIGN" javaType="string" property="vcBondAppraiseSign"/>
+		<result column="VC_ISSUER_NAME_FULL" javaType="string" property="vcIssuerNameFull"/>
+		<result column="VC_ISSUER_NAME_FULL_SIGN" javaType="string" property="vcIssuerNameFullSign"/>
+		<result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/>
+		<result column="VC_STOCK_TYPE_SIGN" javaType="string" property="vcStockTypeSign"/>
+		<result column="VC_ISSUE_TYPE" javaType="string" property="vcIssueType"/>
+		<result column="VC_ISSUE_TYPE_SIGN" javaType="string" property="vcIssueTypeSign"/>
+		<result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+		<result column="VC_STOCK_NAME_SIGN" javaType="string" property="vcStockNameSign"/>
+		<result column="VC_STOCK_NAME_FULL" javaType="string" property="vcStockNameFull"/>
+		<result column="VC_ISSUE_BALANCE" javaType="string" property="vcIssueBalance"/>
+		<result column="VC_ISSUE_BALANCE_SIGN" javaType="string" property="vcIssueBalanceSign"/>
+		<result column="VC_EXIST_LIMITE" javaType="string" property="vcExistLimite"/>
+		<result column="VC_EXIST_LIMITE_DESC" javaType="string" property="vcExistLimiteDesc"/>
+		<result column="VC_INQUIRY_INTERVAL" javaType="string" property="vcInquiryInterval"/>
+		<result column="VC_INQUIRY_INTERVAL_SIGN" javaType="string" property="vcInquiryIntervalSign"/>
+		<result column="VC_ISSUE_APPRAISE" javaType="string" property="vcIssueAppraise"/>
+		<result column="VC_BOND_APPRAISE" javaType="string" property="vcBondAppraise"/>
+		<result column="VC_APPRAISE_ORGAN" javaType="string" property="vcAppraiseOrgan"/>
+		<result column="VC_APPRAISE_ORGAN_SIGN" javaType="string" property="vcAppraiseOrganSign"/>
+		<result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/>
+		<result column="VC_PAYMENT_PLACE_SIGN" javaType="string" property="vcPaymentPlaceSign"/>
+		<result column="VC_DUE_DATE" javaType="string" property="vcDueDate"/>
+		<result column="VC_PAY_INTEVAL" javaType="string" property="vcPayInteval"/>
+		<result column="VC_BEGINCAL_DATE" javaType="string" property="vcBegincalDate"/>
+		<result column="VC_CREDIT_SITUATION" javaType="string" property="vcCreditSituation"/>
+		<result column="VC_CREDIT_SITUATION_SIGN" javaType="string" property="vcCreditSituationSign"/>
+		<result column="VC_ENTERPRISE_PROPERTY" javaType="string" property="vcEnterpriseProperty"/>
+		<result column="VC_ENTERPRISE_PROPERTY_SIGN" javaType="string" property="vcEnterprisePropertySign"/>
+		<result column="VC_IS_BID" javaType="string" property="vcIsBid"/>
+		<result column="VC_MARK_ASSETS" javaType="string" property="vcMarkAssets"/>
+		<result column="VC_OLD_HOLDER" javaType="string" property="vcOldHolder"/>
+		<result column="VC_IS_PLEDGE" javaType="string" property="vcIsPledge"/>
+		<result column="VC_PROPERTY_DESC" javaType="string" property="vcPropertyDesc"/>
+		<result column="VC_HIS_ISSUE" javaType="string" property="vcHisIssue"/>
+		<result column="VC_IS_HAVE_FINANCING" javaType="string" property="vcIsHaveFinancing"/>
+		<result column="VC_MATERIAL_DOWNLOAD_LINK" javaType="string" property="vcMaterialDownloadLink"/>
+		<result column="VC_MATERIAL_UPDATE_TIME" javaType="string" property="vcMaterialUpdateTime"/>
+		<result column="VC_ROADSHOW_TIME" javaType="string" property="vcRoadshowTime"/>
+		<result column="VC_SUMMARY_DOWNLOAD_LINK" javaType="string" property="vcSummaryDownloadLink"/>
+		<result column="VC_INDUSTRY_ATTRIBUTE" javaType="string" property="vcIndustryAttribute"/>
+		<result column="VC_IS_SCOPE_OF_CONTRACT" javaType="string" property="vcIsScopeOfContract"/>
+		<result column="C_STATUS" javaType="string" property="cStatus"/>
+		<result column="VC_INQUIRY_INTERVAL_FLOOR" javaType="string" property="vcInquiryIntervalFloor"/>
+		<result column="VC_INQUIRY_INTERVAL_TOP" javaType="string" property="vcInquiryIntervalTop"/>
+    </resultMap>
+   <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsUnderwriterStockExport" id="resultUnderwriterImportOrExport">
+		<result column="VC_MAIN_UNDERWRITER" javaType="string" property="vcMainUnderwriter"/>
+		<result column="VC_UNDERWRITER_CONTACT_INFO" javaType="string" property="vcUnderwriterContactInfo"/>
+		<result column="VC_APPLICATION_TIME" javaType="string" property="vcApplicationTime"/>
+		<result column="VC_ENTRY_TIME" javaType="string" property="vcEntryTime"/>
+		<result column="VC_ISSUER_NAME_FULL" javaType="string" property="vcIssuerNameFull"/>
+		<result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/>
+		<result column="VC_ISSUE_TYPE" javaType="string" property="vcIssueType"/>
+		<result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+		<result column="VC_STOCK_NAME_FULL" javaType="string" property="vcStockNameFull"/>
+		<result column="VC_ISSUE_BALANCE" javaType="string" property="vcIssueBalance"/>
+		<result column="VC_EXIST_LIMITE" javaType="string" property="vcExistLimite"/>
+		<result column="VC_EXIST_LIMITE_DESC" javaType="string" property="vcExistLimiteDesc"/>
+		<result column="VC_INQUIRY_INTERVAL" javaType="string" property="vcInquiryInterval"/>
+		<result column="VC_ISSUE_APPRAISE" javaType="string" property="vcIssueAppraise"/>
+		<result column="VC_BOND_APPRAISE" javaType="string" property="vcBondAppraise"/>
+		<result column="VC_APPRAISE_ORGAN" javaType="string" property="vcAppraiseOrgan"/>
+		<result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/>
+		<result column="VC_DUE_DATE" javaType="string" property="vcDueDate"/>
+		<result column="VC_PAY_INTEVAL" javaType="string" property="vcPayInteval"/>
+		<result column="VC_BEGINCAL_DATE" javaType="string" property="vcBegincalDate"/>
+		<result column="VC_CREDIT_SITUATION" javaType="string" property="vcCreditSituation"/>
+		<result column="VC_ENTERPRISE_PROPERTY" javaType="string" property="vcEnterpriseProperty"/>
+		<result column="VC_IS_BID" javaType="string" property="vcIsBid"/>
+		<result column="VC_MARK_ASSETS" javaType="string" property="vcMarkAssets"/>
+		<result column="VC_OLD_HOLDER" javaType="string" property="vcOldHolder"/>
+		<result column="VC_IS_PLEDGE" javaType="string" property="vcIsPledge"/>
+		<result column="VC_PROPERTY_DESC" javaType="string" property="vcPropertyDesc"/>
+		<result column="VC_HIS_ISSUE" javaType="string" property="vcHisIssue"/>
+		<result column="VC_IS_HAVE_FINANCING" javaType="string" property="vcIsHaveFinancing"/>
+		<result column="C_STATUS" javaType="string" property="cStatus"/>
+		<result column="VC_SUMMARY_TIME" javaType="string" property="vcSummaryTime"/>
+		<result column="VC_INFO_NET_URL_TIME" javaType="string" property="vcInfoNetUrlTime"/>
+		<result column="L_OPERATOR_NO" javaType="string" property="lOperatorNo"/>
+        <result column="VC_INFO_NET_URL" javaType="string" property="vcInfoNetUrl"/>
+        <result column="VC_SUMMARY_URL" javaType="string" property="vcSummaryUrl"/>
+        <result column="VC_ISSUE_BOND_APPRAISE" javaType="string" property="vcIssueBondAppraise"/>
+        <result column="VC_BOND_ISSUE_APPRAISE" javaType="string" property="vcBondIssueAppraise"/>
+        <result column="L_OPERATOR_NAME" javaType="string" property="lOperatorName"/>
+        <result column="L_UNDERWRITER_TEMP" javaType="string" property="lUnderwriterTemp"/>
+    </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultUnderwriterRelease">
+        <result column="L_UNDERWRITER_REL_ID" javaType="Long" property="lUnderwriterRelId"/>
+        <result column="L_UNDERWRITER_STOCK_ID" javaType="Long" property="lUnderwriterStockId"/>
+		<result column="VC_MAIN_UNDERWRITER" javaType="string" property="vcMainUnderwriter"/>
+		<result column="VC_UNDERWRITER_CONTACT_INFO" javaType="string" property="vcUnderwriterContactInfo"/>
+		<result column="VC_APPLICATION_TIME" javaType="string" property="vcApplicationTime"/>
+		<result column="VC_ENTRY_TIME" javaType="string" property="vcEntryTime"/>
+		<result column="VC_ISSUER_NAME_FULL" javaType="string" property="vcIssuerNameFull"/>
+		<result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/>
+		<result column="VC_ISSUE_TYPE" javaType="string" property="vcIssueType"/>
+		<result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+		<result column="VC_STOCK_NAME_FULL" javaType="string" property="vcStockNameFull"/>
+		<result column="VC_ISSUE_BALANCE" javaType="string" property="vcIssueBalance"/>
+		<result column="VC_EXIST_LIMITE" javaType="string" property="vcExistLimite"/>
+		<result column="VC_EXIST_LIMITE_DESC" javaType="string" property="vcExistLimiteDesc"/>
+		<result column="VC_INQUIRY_INTERVAL" javaType="string" property="vcInquiryInterval"/>
+		<result column="VC_ISSUE_APPRAISE" javaType="string" property="vcIssueAppraise"/>
+		<result column="VC_BOND_APPRAISE" javaType="string" property="vcBondAppraise"/>
+		<result column="VC_APPRAISE_ORGAN" javaType="string" property="vcAppraiseOrgan"/>
+		<result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/>
+		<result column="VC_DUE_DATE" javaType="string" property="vcDueDate"/>
+		<result column="VC_PAY_INTEVAL" javaType="string" property="vcPayInteval"/>
+		<result column="VC_BEGINCAL_DATE" javaType="string" property="vcBegincalDate"/>
+		<result column="VC_CREDIT_SITUATION" javaType="string" property="vcCreditSituation"/>
+		<result column="VC_ENTERPRISE_PROPERTY" javaType="string" property="vcEnterpriseProperty"/>
+		<result column="VC_IS_BID" javaType="string" property="vcIsBid"/>
+		<result column="VC_MARK_ASSETS" javaType="string" property="vcMarkAssets"/>
+		<result column="VC_OLD_HOLDER" javaType="string" property="vcOldHolder"/>
+		<result column="VC_IS_PLEDGE" javaType="string" property="vcIsPledge"/>
+		<result column="VC_PROPERTY_DESC" javaType="string" property="vcPropertyDesc"/>
+		<result column="VC_HIS_ISSUE" javaType="string" property="vcHisIssue"/>
+		<result column="VC_IS_HAVE_FINANCING" javaType="string" property="vcIsHaveFinancing"/>
+		<result column="C_STATUS" javaType="string" property="cStatus"/>
+		<result column="C_SOURCE" javaType="string" property="cSource"/>
+        <result column="D_UPDATE_TIME" javaType="string" property="dUpdateTime"/>
+    </resultMap>
+    
+    <select id="checkUnderwriterInfo"  parameterClass="java.util.HashMap" resultMap="resultUnderwriterMap">
+    	 select t.l_underwriter_stock_id,
+    	 		t.vc_main_underwriter,
+    	 		t.vc_payment_place,
+    	 		t.vc_issuer_name_full,
+    	 		t.vc_underwriter_name 
+    	 		from t_ats_underwriter_stock_info t where t.c_status not in ('5')
+    	 <isNotNull property="vcMainUnderwriter">
+         		AND t.vc_main_underwriter = #vcMainUnderwriter# 
+ 		</isNotNull>
+ 		<isNotNull property="vcPaymentPlace">
+         		AND t.vc_payment_place = #vcPaymentPlace# 
+ 		</isNotNull>  	 
+ 		<isNotNull property="vcIssuerNameFull">
+         		AND t.vc_issuer_name_full = #vcIssuerNameFull#
+ 		</isNotNull>
+ 		<isNotNull property="vcStockType">
+         		AND t.vc_stock_type = #vcStockType#
+ 		</isNotNull>
+ 		<isNotNull property="vcExistLimite">
+         		AND t.vc_exist_limite = #vcExistLimite#
+ 		</isNotNull>
+ 		<isNotNull property="lUnderwriterStockId">
+         		AND t.l_underwriter_stock_id not in ($lUnderwriterStockId$)
+ 		</isNotNull>
+
+    </select>
+    
+    <select id="checkUnderwriterAttach"  parameterClass="java.util.HashMap" resultMap="resultUnderwriterAttachMap">
+    	 select a.vc_attach_name,
+	    	 a.vc_attach_add,
+	    	 a.vc_attach_biz_type,
+	    	 a.d_create_time,
+             a.vc_user_id,
+	    	 a.l_attach_id,a.l_biz_id 
+	    	 from t_ats_attach_info a where 1=1 
+    	 <isNotNull property="vcAttachBizType">
+         		and a.vc_attach_biz_type in ($vcAttachBizType$) 
+ 		</isNotNull>
+ 		<isNotNull property="lBizId">
+         		AND a.l_biz_id = #lBizId# 
+ 		</isNotNull>  
+
+    </select>
+    <!--承销商信息导出到本地-->
+   <select id="selectUnderwriterByID" parameterClass="java.util.HashMap" resultMap="resultUnderwriterExportMap">
+   		select s.l_underwriter_stock_id,
+       s.vc_main_underwriter,
+       s.vc_underwriter_contact_info,
+       s.vc_application_time,
+       s.vc_entry_time,
+       s.vc_issuer_name_full,
+       s.vc_stock_type,
+       s.vc_issue_type,
+       s.vc_stock_name,
+       s.vc_stock_name_full,
+       s.vc_issue_balance,
+       s.vc_exist_limite,
+       s.vc_exist_limite_desc,
+       s.vc_inquiry_interval,
+       s.vc_issue_appraise,
+       s.vc_bond_appraise,
+       s.vc_appraise_organ,
+       s.vc_payment_place,
+       s.vc_due_date,
+       s.vc_pay_inteval,
+       s.vc_begincal_date,
+       s.vc_credit_situation,
+       s.vc_enterprise_property,
+       s.vc_is_bid,
+       s.vc_mark_assets,
+       s.vc_old_holder,
+       s.vc_is_pledge,
+       s.vc_property_desc,
+       s.vc_his_issue,
+       s.vc_is_have_financing,
+       decode(s.c_status,0,'新导入',1,'持续更新中',2,'已发布','废弃') c_status,
+       s.vc_export_filename,
+       s.l_release_count,
+       (select c.user_name from cap_user c where c.operator_id = s.l_operator_no) as l_operator_no,
+       (select a.vc_attach_name from t_ats_attach_info a where a.l_biz_id=s.l_underwriter_stock_id and a.vc_attach_biz_type=9) vc_attach_name1,
+       (select a.vc_attach_add from t_ats_attach_info a where a.l_biz_id=s.l_underwriter_stock_id and a.vc_attach_biz_type=9) vc_attach_add1,
+       (select a.vc_attach_name from t_ats_attach_info a where a.l_biz_id=s.l_underwriter_stock_id and a.vc_attach_biz_type=10) vc_attach_name2,
+       (select a.vc_attach_add from t_ats_attach_info a where a.l_biz_id=s.l_underwriter_stock_id and a.vc_attach_biz_type=10) vc_attach_add2
+  from t_ats_underwriter_stock_info s
+ where 1=1 
+   	<isNotNull property="underwriterStockId">
+         		AND s.l_underwriter_stock_id in ($underwriterStockId$)
+ 	</isNotNull>  
+ 	<isNotNull property="userName">
+         			AND s.vc_underwriter_name like '%'||#userName#||'%'
+ 	</isNotNull>
+ 	<isNull property="underwriterStockId">
+         		and s.c_status not in ('5')
+ 	</isNull>  
+   </select>
+   
+       <!--承销商信息查询-->
+   <select id="selectUnderwriter" parameterClass="java.util.HashMap" resultMap="resultUnderwriter">
+   	   select s.l_underwriter_stock_id,
+   	   <isNull property="userName">
+         s.vc_main_underwriter,
+       </isNull>
+       <isNotNull property="userName">
+         (select c.user_name from cap_user c where c.operator_id = #userName#) as vc_main_underwriter,
+ 	   </isNotNull>
+       s.vc_underwriter_contact_info,
+       s.vc_application_time,
+       s.vc_entry_time,
+       s.vc_issuer_name_full,
+       s.vc_stock_type,
+       s.vc_issue_type,
+       s.vc_stock_name,
+       s.vc_stock_name_full,
+       s.vc_issue_balance,
+       s.vc_exist_limite,
+       s.vc_exist_limite_desc,
+       s.vc_inquiry_interval,
+       s.vc_issue_appraise,
+       s.vc_bond_appraise,
+       s.vc_appraise_organ,
+       s.vc_payment_place,
+       s.vc_due_date,
+       s.vc_pay_inteval,
+       s.vc_begincal_date,
+       s.vc_credit_situation,
+       s.vc_enterprise_property,
+       s.vc_is_bid,
+       s.vc_mark_assets,
+       s.vc_old_holder,
+       s.vc_is_pledge,
+       s.vc_property_desc,
+       s.vc_his_issue,
+       s.vc_is_have_financing,
+       s.c_status,
+       s.vc_export_filename,
+       s.l_release_count,
+       (select c.user_name from cap_user c where c.operator_id = s.l_operator_no) as l_operator_no,
+       s.d_update_time
+  		from t_ats_underwriter_stock_info s
+ 		where 1=1
+ 	<isNotNull property="vcStockName">
+         			AND (s.vc_stock_name like '%'||#vcStockName#||'%' or s.vc_stock_name_full like '%'||#vcStockName#||'%')
+ 	</isNotNull>
+ 	<isNotNull property="vcIssuerNameFull">
+         			AND (s.vc_issuer_name_full like '%'||#vcIssuerNameFull#||'%')
+ 	</isNotNull>
+ 	<isNotNull property="cStatus">
+         			AND (s.c_status in ($cStatus$))
+ 	</isNotNull>
+ 	<isNotNull property="userName">
+         			AND s.vc_underwriter_name like '%'||#userName#||'%'
+ 	</isNotNull>
+ 	<isNotNull property="dUpdateTime">
+         			AND (to_char(s.d_update_time,'yyyy-MM-DD')=to_char(to_date(#dUpdateTime#,'yyyy-MM-DD hh24:mi:ss'),'yyyy-MM-DD'))
+ 	</isNotNull>
+ 	<isNotNull property="sortField">
+		  			order by s.$sortField$ 
+  	</isNotNull>
+  	<isNotNull property="sortOrder">
+  		 			$sortOrder$ 
+  	</isNotNull> 
+   </select>
+          <!--承销商信息清洗目标表查询-->
+   <select id="selectUnderwriterTarget" parameterClass="java.util.HashMap" resultMap="resultUnderwriterTarget">
+   		select taust.l_underwriter_stock_id,
+	       taust.vc_main_underwriter,
+	       taust.vc_main_underwriter_sign,
+	       taust.vc_underwriter_contact_info,
+	       taust.vc_application_time,
+	       taust.vc_application_time_sign,
+	       taust.vc_issuer_name_full,
+	       taust.vc_issuer_name_full_sign,
+	       taust.vc_stock_type,
+	       taust.vc_stock_type_sign,
+	       taust.vc_issue_type,
+	       taust.vc_issue_type_sign,
+	       taust.vc_stock_name,
+	       taust.vc_stock_name_sign,
+	       taust.vc_stock_name_full,
+	       taust.vc_issue_balance,
+	       taust.vc_issue_balance_sign,
+	       taust.vc_exist_limite,
+	       taust.vc_exist_limite_sign,
+	       taust.vc_exist_limite_desc,
+	       taust.vc_inquiry_interval,
+	       taust.vc_inquiry_interval_sign,
+	       taust.vc_issue_appraise,
+	       taust.vc_issue_appraise_sign,
+	       taust.vc_bond_appraise,
+	       taust.vc_bond_appraise_sign,
+	       taust.vc_appraise_organ,
+	       taust.vc_appraise_organ_sign,
+	       taust.vc_payment_place,
+	       taust.vc_payment_place_sign,
+	       taust.vc_due_date,
+	       taust.vc_pay_inteval,
+	       taust.vc_begincal_date,
+	       taust.vc_credit_situation,
+	       taust.vc_credit_situation_sign,
+	       taust.vc_enterprise_property,
+	       taust.vc_enterprise_property_sign,
+	       taust.vc_is_bid,
+	       taust.vc_mark_assets,
+	       taust.vc_old_holder,
+	       taust.vc_is_pledge,
+	       taust.vc_property_desc,
+	       taust.vc_material_download_link,
+	       taust.vc_material_update_time,
+	       taust.vc_roadshow_time,
+	       taust.vc_summary_download_link,
+	       taust.vc_his_issue,
+	       taust.vc_is_have_financing,
+	       taust.vc_industry_attribute,
+	       taust.vc_is_scope_of_contract,
+	       taust.c_status,
+	       taust.vc_inquiry_interval_top,
+	       taust.vc_inquiry_interval_floor
+	       from t_ats_underwriter_stock_target taust
+ 		 where 1=1
+ 	<isNotNull property="vcStockName">
+         			AND (taust.vc_stock_name like '%'||#vcStockName#||'%' or taust.vc_stock_name_full like '%'||#vcStockName#||'%')
+ 	</isNotNull>
+ 	<isNotNull property="vcIssuerNameFull">
+         			AND (taust.vc_issuer_name_full like '%'||#vcIssuerNameFull#||'%')
+ 	</isNotNull>
+ 	<isNotNull property="cStatus">
+         			AND (taust.c_status in ($cStatus$))
+ 	</isNotNull>
+ 	<isNotNull property="sortField">
+		  			order by taust.$sortField$ 
+  	</isNotNull>
+  	<isNotNull property="sortOrder">
+  		 			$sortOrder$ 
+  	</isNotNull> 
+   </select>
+    <!--承销商信息查询-->
+   <select id="selectUnderwriterHis" parameterClass="java.util.HashMap" resultMap="resultUnderwriter">
+   		select s.l_underwriter_stock_id,
+       s.vc_main_underwriter,
+       s.vc_underwriter_contact_info,
+       s.vc_application_time,
+       s.vc_entry_time,
+       s.vc_issuer_name_full,
+       s.vc_stock_type,
+       s.vc_issue_type,
+       s.vc_stock_name,
+       s.vc_stock_name_full,
+       s.vc_issue_balance,
+       s.vc_exist_limite,
+       s.vc_exist_limite_desc,
+       s.vc_inquiry_interval,
+       s.vc_issue_appraise,
+       s.vc_bond_appraise,
+       s.vc_appraise_organ,
+       s.vc_payment_place,
+       s.vc_due_date,
+       s.vc_pay_inteval,
+       s.vc_begincal_date,
+       s.vc_credit_situation,
+       s.vc_enterprise_property,
+       s.vc_is_bid,
+       s.vc_mark_assets,
+       s.vc_old_holder,
+       s.vc_is_pledge,
+       s.vc_property_desc,
+       s.vc_his_issue,
+       s.vc_is_have_financing,
+       s.c_status,
+       s.vc_export_filename,
+       s.l_release_count,
+       (select c.user_name from cap_user c where c.operator_id = s.l_operator_no) as l_operator_no,
+       s.d_update_time
+  		from t_ats_underwriter_stock_his s
+ 		where 1=1
+ 	<isNotNull property="lUnderwriterStockId">
+         			AND s.l_underwriter_stock_id=#lUnderwriterStockId#
+ 	</isNotNull>
+ 	<isNotNull property="sortField">
+		  			order by s.$sortField$ 
+  	</isNotNull>
+  	<isNotNull property="sortOrder">
+  		 			$sortOrder$ 
+  	</isNotNull> 
+   </select>
+    <!--承销商信息查询-->
+   <select id="loandUnderwriter" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+      select c.user_name from cap_user c where c.operator_id = #userName#
+   </select>
+<!--承销商导入导出模板查询-->
+   <select id="selectUnderwriterImportOrExport" parameterClass="java.util.HashMap" resultMap="resultUnderwriterImportOrExport">
+   		select tause.vc_main_underwriter,
+       tause.vc_underwriter_contact_info,
+       tause.vc_application_time,
+       tause.vc_entry_time,
+       tause.vc_issuer_name_full,
+       tause.vc_stock_type,
+       tause.vc_issue_type,
+       tause.vc_stock_name,
+       tause.vc_stock_name_full,
+       tause.vc_issue_balance,
+       tause.vc_exist_limite,
+       tause.vc_exist_limite_desc,
+       tause.vc_inquiry_interval,
+       tause.vc_issue_appraise,
+       tause.vc_bond_appraise,
+       tause.vc_appraise_organ,
+       tause.vc_payment_place,
+       tause.vc_due_date,
+       tause.vc_pay_inteval,
+       tause.vc_begincal_date,
+       tause.vc_credit_situation,
+       tause.vc_enterprise_property,
+       tause.vc_is_bid,
+       tause.vc_mark_assets,
+       tause.vc_old_holder,
+       tause.vc_is_pledge,
+       tause.vc_property_desc,
+       tause.vc_his_issue,
+       tause.vc_summary_time,
+       tause.vc_is_have_financing,
+       tause.vc_info_net_url_time,
+       tause.vc_info_net_url,
+       tause.vc_summary_url,
+       tause.c_status,
+       tause.l_operator_no,
+       tause.vc_issue_bond_appraise,
+       tause.vc_bond_issue_appraise,
+       tause.l_operator_name,
+       tause.l_underwriter_temp
+       from t_ats_underwriter_stock_export tause
+ 		where 1=1
+ 	<isNotNull property="userName">
+         			AND tause.l_operator_no=#userName#
+ 	</isNotNull>
+ 	<isNotNull property="cStatus">
+		  			AND tause.c_status=#cStatus#
+  	</isNotNull>
+  	<isNotNull property="lOperatorName">
+		  			AND tause.l_operator_name like '%'||#lOperatorName#||'%'
+  	</isNotNull>
+  	<isNotNull property="lUnderwriterTemp">
+		  			AND tause.l_underwriter_temp=#lUnderwriterTemp#
+  	</isNotNull>
+   </select>
+   <!--更新主承销商历史表，将历史记录合并到新的主承销商数据下-->
+    <select id="updateUnderwiterId" parameterClass="java.util.HashMap" >
+    	 <![CDATA[ 
+    	  update t_ats_underwriter_stock_his t set t.l_underwriter_stock_id=#lUnderwriterStockId1# where t.l_underwriter_stock_id=#lUnderwriterStockId#
+    	]]>
+    </select>
+
+      <!--预发行信息查询-->
+   <select id="selectUnderwriterRelease" parameterClass="java.util.HashMap" resultMap="resultUnderwriterRelease">
+	   	   select ta.l_underwriter_rel_id,
+	       ta.l_underwriter_stock_id,
+	       ta.vc_main_underwriter,
+	       ta.vc_underwriter_contact_info,
+	       ta.vc_application_time,
+	       ta.vc_entry_time,
+	       ta.vc_issuer_name_full,
+	       ta.vc_stock_type,
+	       ta.vc_issue_type,
+	       ta.vc_stock_name,
+	       ta.vc_stock_name_full,
+	       ta.vc_issue_balance,
+	       ta.vc_exist_limite,
+	       ta.vc_exist_limite_desc,
+	       ta.vc_inquiry_interval,
+	       ta.vc_issue_appraise,
+	       ta.vc_bond_appraise,
+	       ta.vc_appraise_organ,
+	       ta.vc_payment_place,
+	       ta.vc_due_date,
+	       ta.vc_pay_inteval,
+	       ta.vc_begincal_date,
+	       ta.vc_credit_situation,
+	       ta.vc_enterprise_property,
+	       ta.vc_is_bid,
+	       ta.vc_mark_assets,
+	       ta.vc_old_holder,
+	       ta.vc_is_pledge,
+	       ta.vc_property_desc,
+	       ta.vc_his_issue,
+	       ta.vc_is_have_financing,
+	       ta.c_status,
+	       ta.c_source,
+	       ta.d_update_time from T_ATS_UNDERWRITER_STOCK_REL ta
+ 		where 1=1
+ 	<isNotNull property="vcStockName">
+         			AND (ta.vc_stock_name like '%'||#vcStockName#||'%' or ta.vc_stock_name_full like '%'||#vcStockName#||'%')
+ 	</isNotNull>
+ 	<isNotNull property="vcIssuerNameFull">
+         			AND (ta.vc_issuer_name_full like '%'||#vcIssuerNameFull#||'%')
+ 	</isNotNull>
+ 	<isNotNull property="vc_main_underwriter">
+         			AND ta.vc_main_underwriter like '%'||#vc_main_underwriter#||'%'
+ 	</isNotNull>
+ 	<isNotNull property="c_status">
+         			AND ta.c_status=#c_status#
+ 	</isNotNull>
+ 	<isNotNull property="c_source">
+         			AND ta.c_source=#c_source#
+ 	</isNotNull>
+ 	<isNotNull property="dUpdateTime">
+         			AND (to_char(ta.d_update_time,'yyyy-MM-DD')=to_char(to_date(#dUpdateTime#,'yyyy-MM-DD hh24:mi:ss'),'yyyy-MM-DD'))
+ 	</isNotNull>
+ 	<isNotNull property="sortField">
+		  			order by ta.$sortField$ 
+  	</isNotNull>
+  	<isNotNull property="sortOrder">
+  		 			$sortOrder$ 
+  	</isNotNull> 
+   </select>
+   <!--承销商信息导出到本地-->
+   <select id="selectUnderwriterRelByID" parameterClass="java.util.HashMap" resultMap="resultUnderwriterExportMap">
+   		select s.l_underwriter_stock_id,
+       s.vc_main_underwriter,
+       s.vc_underwriter_contact_info,
+       s.vc_application_time,
+       s.vc_entry_time,
+       s.vc_issuer_name_full,
+       s.vc_stock_type,
+       s.vc_issue_type,
+       s.vc_stock_name,
+       s.vc_stock_name_full,
+       s.vc_issue_balance,
+       s.vc_exist_limite,
+       s.vc_exist_limite_desc,
+       s.vc_inquiry_interval,
+       s.vc_issue_appraise,
+       s.vc_bond_appraise,
+       s.vc_appraise_organ,
+       s.vc_payment_place,
+       s.vc_due_date,
+       s.vc_pay_inteval,
+       s.vc_begincal_date,
+       s.vc_credit_situation,
+       s.vc_enterprise_property,
+       s.vc_is_bid,
+       s.vc_mark_assets,
+       s.vc_old_holder,
+       s.vc_is_pledge,
+       s.vc_property_desc,
+       s.vc_his_issue,
+       s.vc_is_have_financing,
+       '' c_status,
+       '' vc_export_filename,
+       '' l_release_count,
+       '' l_operator_no,
+       '' vc_attach_name1,
+       '' vc_attach_add1,
+       '' vc_attach_name2,
+       '' vc_attach_add2
+  from t_ats_underwriter_stock_rel s
+ where 1=1 
+   	<isNotNull property="underwriterRelId">
+         		AND s.l_underwriter_rel_id in ($underwriterRelId$)
+ 	</isNotNull>  
+   </select>
+</sqlMap>

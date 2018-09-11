@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:谭凯 -->
+<!-- 业务字典 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <!--
+    <select id="select_id" parameterMap="parameterMap" resultMap="resultMap"><![CDATA[sql statement]]></select>
+	-->
+	 <!-- 业务字典信息 resultMap -->
+    <resultMap class="com.cjhxfund.cjapi.DictConfigData.EosDictType" id="resultMapForInfo">
+    	<result column="DICTTYPEID" javaType="string" property="dicttypeid"/>
+    </resultMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultMapForAllDict">
+    	<result column="DICT_TYPE" javaType="string" property="dictType"/>
+    	<result column="DICT_ID" javaType="string" property="dictId"/>
+    	<result column="DICT_ID_HS" javaType="string" property="dictIdHs"/>
+  	</resultMap>
+	 
+	<select id="queryDictId" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForInfo">
+      	
+      	 SELECT T.DICTTYPEID FROM EOS_DICT_ENTRY T  where 1=1
+	    <isNotNull prepend="AND" property="dicttypeid">
+	         T.DICTTYPEID =#dicttypeid#
+	    </isNotNull>
+	    
+    </select>
+    
+    <select id="queryDictAllForTrans" parameterClass="java.util.Map" resultMap="resultMapForAllDict">
+    	select 
+    		t.DICT_TYPE,
+    		t.DICT_ID,
+    		t.DICT_ID_HS
+    	from
+    		T_ATS_CJAPI_DICT_CONFIG t
+    </select>
+    		
+	</sqlMap>

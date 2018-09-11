@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:王锡锋 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <!-- 获取银行间委托方向字典列表 --> 
+    <select id="getYhjWtfx" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+     <![CDATA[
+    select t.c_entrust_direction as ke, t.vc_entrustdir_name as val
+  from trade.Tentrustdirection t where t.c_market_no in ('5') and t.c_entrust_direction <> '!'
+ group by t.c_entrust_direction, t.vc_entrustdir_name
+  ]]>   
+ </select>
+ 
+ <!-- 获取交易所业务类型字典列表 --> 
+    <select id="getJysYwlx" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+       <![CDATA[
+   select td.vc_item_name as val
+  from trade.tdictionary td
+ where td.l_dictionary_no = '40396' and td.c_lemma_item <> '!'
+ ]]>   
+ </select>
+ 
+ <!-- 获取交易所委托方向字典列表 --> 
+     <select id="getJysWtfx" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+     <![CDATA[
+    select t.c_entrust_direction as ke, t.vc_entrustdir_name as val
+  from trade.Tentrustdirection t where t.c_market_no not in ('5') and t.c_entrust_direction <> '!'
+ group by t.c_entrust_direction, t.vc_entrustdir_name order by t.c_entrust_direction asc
+  ]]>   
+ </select>
+ 
+ 
+</sqlMap>

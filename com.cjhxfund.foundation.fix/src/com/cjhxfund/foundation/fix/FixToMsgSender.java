@@ -1,0 +1,641 @@
+package com.cjhxfund.foundation.fix;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
+import quickfix.DoubleField;
+import quickfix.Group;
+import quickfix.Message;
+import quickfix.Session;
+import quickfix.StringField;
+import quickfix.field.Account;
+import quickfix.field.CashOrderQty;
+import quickfix.field.ClOrdID;
+import quickfix.field.ExDestination;
+import quickfix.field.FutSettDate;
+import quickfix.field.FutSettDate2;
+import quickfix.field.ListID;
+import quickfix.field.OrdType;
+import quickfix.field.OrderQty;
+import quickfix.field.Price;
+import quickfix.field.SecurityID;
+import quickfix.field.SenderSubID;
+import quickfix.field.SettlType;
+import quickfix.field.Side;
+import quickfix.field.Symbol;
+import quickfix.field.TargetSubID;
+import quickfix.field.Text;
+import quickfix.field.TimeInForce;
+import quickfix.fix44.NewOrderSingle;
+import quickfix.fix44.OrderCancelReplaceRequest;
+import quickfix.fix44.OrderCancelRequest;
+import quickfix.fix44.OrderStatusRequest;
+
+import com.cjhxfund.commonUtil.DateUtil;
+import com.cjhxfund.commonUtil.StrUtil;
+import com.cjhxfund.commonUtil.externalService.HttpClientService;
+import com.cjhxfund.foundation.fix.model.CheckResultReturn;
+import com.cjhxfund.foundation.fix.model.RequestRecordModel;
+import com.eos.foundation.data.DataObjectUtil;
+import com.eos.foundation.eoscommon.LogUtil;
+import com.eos.system.annotation.Bizlet;
+import com.primeton.spring.support.DatabaseExt;
+
+import commonj.sdo.DataObject;
+
+/**
+ * Fix消息发送公共类
+ * @author huangmizhi
+ * @date 2016-08-11 14:32:14
+ */
+@Bizlet("")
+public class FixToMsgSender {
+	
+	/**
+	 * 生成Fix消息对象并发送到O32系统
+	 * @param sendMsg 指令数据对象
+	 * @param groupList 重复组对象列表
+	 * @param bondsList 重复组债券信息对象列表
+	 * @throws Exception
+	 * @author huangmizhi
+	 * @return retJson
+	 */
+	@Bizlet("生成Fix消息对象并发送到O32系统")
+	public static void fixMsgToO32(DataObject sendMsg, List<Group> groupList, List<List<DataObject>> bondsList) throws Exception{
+		//生成Fix消息对象
+		Message message = generateFixMessage(sendMsg, groupList, bondsList);
+		String msgtype = sendMsg.getString("vcMsgtype");
+		if("H".equals(msgtype)){
+			//查询指令 
+			Session.sendToTarget(message, FixToUtil.getFixQuerySessionID());
+			
+		}else{
+			//发送指令
+			//Session.sendToTarget(message, FixToUtil.getInstrImportSessionID());
+			//【新】发送指令
+			Session.sendToTarget(message, FixToUtil.getInstructionSessionID());
+		}
+		//return null;
+    }
+	/**
+	 * 生成Fix消息对象并发送到O32系统或者统一风控
+	 * @param sendMsg 指令数据对象
+	 * @param groupList 重复组对象列表
+	 * @param bondsList 重复组债券信息对象列表
+	 * @throws Exception
+	 * @author huangmizhi
+	 * @return retJson
+	 */
+	@Bizlet("生成Fix消息对象并发送到O32系统或者统一风控")
+	public static Object fixMsgToO32OrRisk(DataObject sendMsg, List<Group> groupList, List<List<DataObject>> bondsList) throws Exception{
+		//生成Fix消息对象
+		Message message = generateFixMessage(sendMsg, groupList, bondsList);
+		String msgtype = sendMsg.getString("vcMsgtype");
+		String vcProcessType = sendMsg.getString("vcProcesstype");
+		if("H".equals(msgtype)){
+			//【1】、获取缓存中风控接口是否开启
+			DataObject dojb = (DataObject)com.eos.foundation.eoscommon.CacheUtil.getValue("ReloadParamConf1", "ATS_IS_START_API");
+			//解析信息
+			String startApi=dojb.getString("paramValue");
+			//“4”为风控试算,且风控接口开启
+			if("4".equals(vcProcessType) && "0".equals(startApi)){
+				/**【2】、解析参数字符串为风控接口格式，【注意】 接口参数必须为RequestRecordModel类型
+				 * 接口参数转换思路：
+				 * 1、将传入的sendMsg等转换为标准的参数对象RequestRecordModel
+				 * 2、将RequestRecordModel对象数据保存到数据库
+				 * 3、从RequestRecordModel对象中获取接口json字符串对象
+				 * 4、从系统参数中获取到接口的url，组装接口路径并调用接口。
+				 * 5、获取接口返回的json字符串，转换为标准的CheckResultReturn对象
+				 * 6、将CheckResultReturn对象保存的数据库
+				 * 
+				 */
+				//将fix参数转换为风控接口RequestRecordModel对象
+				RequestRecordModel model = RiskCtrlCenterService.setRequestRecordModel(sendMsg, groupList, bondsList);
+				if(model==null){
+					LogUtil.logInfo("风控接口参数转换失败，停止接口调用！【sendMsg】:{1}", null, sendMsg);
+					throw new Exception("风控接口参数转换失败，停止接口调用！");
+				}
+				//保存接口参数到数据库
+				RiskCtrlCenterService.saveRiskRequestInfo(model);
+				//获取json字符串
+				String str=model.getToJsonStr();
+				//【3】、接口同步和异步，异步需要获取抓取反馈，当前仅处理同步，那么接口参数的请求方式 IsSync 0 请设置为同步；2、需要解析反馈信息，转换为可用的json
+				LogUtil.logInfo("开始调用风控接口....【接口参数】:{0}", null, str);
+				String retJson=HttpClientService.postByJson(RiskCtrlCenterService.getHttpUrl("TryRisk", "uid"), str);
+				//String retJson="{\"clOrdId\":\""+sendMsg.getString("vcClordid")+"\",\"processType\":\"7\",\"errorCode\":\"0\",\"errorMsg\":\"\",\"riskResult\":\"2\",\"rcGroup\":\"1\",\"ucGroup\":\"0\",\"checkResultDetail\":[{\"symbol\":\"010216\",\"stype\":\"2\",\"exDestination\":\"5\",\"ruleId\":\"0000004180\",\"riskOperation\":\"3\",\"riskType\":\"2\",\"threshhold\":\"0.03000\",\"fundCode\":\"3M2063\",\"combiNo\":\"3259_000\",\"rcType\":\"5\",\"settingValue\":\"0.03\",\"realValue\":\"0.05131\",\"numerator\":\"109156019.54\",\"denominator\":\"2127257657.25\",\"riskSummary\":\"投资限制类指标(比例控制) 18机器猫对接测试（事前） 触发风控(禁止)：基金(3259) 计算 分子(109156019.54) / 分母(2127257657.25) = 0.05131 > 阀值(0.03) 在触警值内\",\"riskSource\":\"0\",\"insApproveFlow\":\"1\",\"remark\":null,\"errorCode\":\"0\",\"errorMsg\":null,\"fullErrMsg\":null},{\"symbol\":\"010216\",\"stype\":\"2\",\"exDestination\":\"5\",\"ruleId\":\"0000004185\",\"riskOperation\":\"1\",\"riskType\":\"5\",\"threshhold\":\"0.03000\",\"fundCode\":\"3M2063\",\"combiNo\":\"3259_000\",\"rcType\":\"5\",\"settingValue\":\"0.03\",\"realValue\":\"0.05131\",\"numerator\":\"109156019.54\",\"denominator\":\"2127257657.25\",\"riskSummary\":\"投资限制类指标(比例控制) 18机器猫对接测试（事前） 触发风控(禁止)：基金(3259) 计算 分子(109156019.54) / 分母(2127257657.25) = 0.05131 > 阀值(0.03) 在触警值内\",\"riskSource\":\"0\",\"insApproveFlow\":\"1\",\"remark\":null,\"errorCode\":\"0\",\"errorMsg\":null,\"fullErrMsg\":null}],\"uncontrolDetail\":null}";
+				//String retJson="{\"clOrdId\":\""+sendMsg.getString("vcClordid")+"\",\"processType\":\"7\",\"errorCode\":\"0\",\"errorMsg\":\"\",\"riskResult\":\"2\",\"rcGroup\":\"1\",\"ucGroup\":\"0\",\"checkResultDetail\":[{\"symbol\":\"R001\",\"stype\":null,\"exDestination\":\"5\",\"ruleId\":\"678\",\"riskOperation\":\"2\",\"riskType\":\"A\",\"threshhold\":\"A\",\"fundCode\":null,\"combiNo\":null,\"rcType\":null,\"settingValue\":\"0.000000\",\"realValue\":\"0.000000\",\"numerator\":null,\"denominator\":null,\"riskSummary\":\"【新】所有基金持有同一原始权益人的资产支持证券不超过其各类资产支持证券的10％\",\"riskSource\":\"1\",\"insApproveFlow\":null,\"remark\":\"JudgeControlTypeRelative_维度 SQL错误:ORA-00904 L_MOTHER_COMPANY_ID:invalid identifier\",\"errorCode\":\"0\",\"errorMsg\":null,\"fullErrMsg\":null}],\"uncontrolDetail\":null}";	
+				LogUtil.logInfo("开始调用风控接口成功，返回值为：{0}", null, retJson);
+				//【4】、json字符串转换为对象
+				CheckResultReturn checkResult=RiskCtrlCenterService.getCheckResultReturn(retJson);
+				if(checkResult==null){
+					Object[] params = {sendMsg.getString("instructionNo"),sendMsg.getString("clOrdId")};
+					LogUtil.logError("转换风控接口返回值失败！[InstructionNo]:{0},[ClOrdID]:{1}", null, params);
+					checkResult = new CheckResultReturn();
+					checkResult.setErrorCode("1");
+					checkResult.setErrorMsg("风控调用失败");
+					return checkResult;
+				}
+				//【5】、保存风控接口返回值到数据库
+				RiskCtrlCenterService.saveRiskReturnInfo(checkResult);
+				//返回值
+				return  checkResult;
+			}else{
+				//查询指令 
+				Session.sendToTarget(message, FixToUtil.getFixQuerySessionID());
+			}
+			
+		}else{
+			//发送指令
+			//Session.sendToTarget(message, FixToUtil.getInstrImportSessionID());
+			//【新】发送指令
+			Session.sendToTarget(message, FixToUtil.getInstructionSessionID());
+		}
+		return null;
+    }
+	
+	/**
+	 * 生成Fix消息对象
+	 * @param sendMsg 指令数据对象
+	 * @param groupList 重复组对象列表
+	 * @param bondsList 重复组债券信息对象列表
+	 * @return
+	 * @author huangmizhi
+	 */
+	@Bizlet("")
+	public static Message generateFixMessage(DataObject sendMsg, List<Group> groupList, List<List<DataObject>> bondsList){
+		Message fixMessage = null;
+		String remark = null;
+		String msgtype = sendMsg.getString("vcMsgtype");//指令类型：D-指令下达；F-指令撤销；G-指令修改；H-指令查询；
+		
+		//指令下达（新增），则新建NewOrderSingle对象
+		if("D".equals(msgtype)){
+			remark = "Add from ATS.";
+			fixMessage = new NewOrderSingle();
+			
+		//指令修改，则新建OrderCancelReplaceRequest对象
+		}else if("G".equals(msgtype)){
+			remark = "Update from ATS.";
+			fixMessage = new OrderCancelReplaceRequest();
+			if(StringUtils.isNotBlank(sendMsg.getString("vcOrigordid"))){
+				fixMessage.setField(new StringField(41, sendMsg.getString("vcOrigordid")));//被修改的第三方编号
+			}
+			
+		//指令撤销（废弃），则新建OrderCancelRequest对象
+		}else if("F".equals(msgtype)){
+			remark = "Delete from ATS.";
+			fixMessage = new OrderCancelRequest();
+			if(StringUtils.isNotBlank(sendMsg.getString("vcOrigordid"))){
+				fixMessage.setField(new StringField(41, sendMsg.getString("vcOrigordid")));//被修改的第三方编号
+			}
+			if(StringUtils.isNotBlank(sendMsg.getString("vcListid"))){
+				fixMessage.setField(new ListID(sendMsg.getString("vcListid")));
+			}
+			
+		//指令查询，则新建OrderStatusRequest对象
+		}else if("H".equals(msgtype)){
+			remark = "Query from ATS.";
+			fixMessage = new OrderStatusRequest();
+			
+		}else{
+			return fixMessage;
+		}
+		
+		
+		String timeinforce = sendMsg.getString("vcTimeinforce");//指令有效模式，默认为0-Day：0–Day，当日有效；1–GTC，一直有效，直到完成或撤销；6–GTD，到指定日前有效；
+		if(StringUtils.isNotBlank(timeinforce)){
+			fixMessage.setField(new TimeInForce(sendMsg.getChar("vcTimeinforce")));
+			
+			//当指令有效模式为1或者6时，指令开始日期不传的话，为当天日期
+			if(timeinforce.equals("1") || timeinforce.equals("6")){
+				if(StringUtils.isNotBlank(sendMsg.getString("vcBegindate"))){
+					fixMessage.setField(new StringField(15203, sendMsg.getString("vcBegindate")));
+				}
+				//当指令有效模式为6时，指定该指令的有效日期，其他模式无需指定
+				if(timeinforce.equals("6")){
+					if(StringUtils.isNotBlank(sendMsg.getString("vcExpiredate"))){
+						fixMessage.setField(new StringField(432, sendMsg.getString("vcExpiredate")));
+					}
+				}
+			}
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcSendersubid"))){
+			fixMessage.getHeader().setField(new SenderSubID(sendMsg.getString("vcSendersubid")));//指令下达人的操作员编号（定义在消息头）
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcTargetsubid"))){
+			fixMessage.getHeader().setField(new TargetSubID(sendMsg.getString("vcTargetsubid")));//交易对手编号，不传时为空后序在交易时指定。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcClordid"))){
+			fixMessage.setField(new ClOrdID(sendMsg.getString("vcClordid")));//第三方系统指令编号
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBusinclass"))){
+			fixMessage.setField(new StringField(13000, sendMsg.getString("vcBusinclass")));//业务类别：2-银行间二级市场业务
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBusintype"))){
+			fixMessage.setField(new StringField(13001, sendMsg.getString("vcBusintype")));//委托方向：银行间二级市场业务，债券：3 – 债券买入，4 – 债券卖出；回购：5 – 融资回购，6 – 融券回购
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcAccount"))){
+			fixMessage.setField(new Account(sendMsg.getString("vcAccount")));//恒生系统组合编号，指定指令下达到恒生的哪个组合下。（投资组合表：TCOMBI[VC_COMBI_NO]）
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcSymbol"))){
+			fixMessage.setField(new Symbol(sendMsg.getString("vcSymbol")));//证券申报代码
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcSecurityid"))){
+			fixMessage.setField(new SecurityID(sendMsg.getString("vcSecurityid")));//等于同Tag55
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcSide"))){
+			fixMessage.setField(new Side(sendMsg.getChar("vcSide")));//买卖方向，目前恒生系统对该Tag不处理，1 - 买入；2 - 卖出
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcExdestination"))){
+			fixMessage.setField(new ExDestination(sendMsg.getString("vcExdestination")));//交易市场：OTC-场外；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcSettltype"))){
+			fixMessage.setField(new SettlType(sendMsg.getString("vcSettltype")));//清算速度：默认为T+1，0 = T+0，1 = T+1
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcPrice"))){
+			fixMessage.setField(new Price(StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcPrice"))));//指令价格
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcStopPrice"))){
+			fixMessage.setField(new DoubleField(99, StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcStopPrice"))) );//指令价格-到期净价价格
+		}
+		
+		if(StringUtils.isNotBlank(sendMsg.getString("vcOrdtype"))){
+			fixMessage.setField(new OrdType(sendMsg.getChar("vcOrdtype")));//价格模式：1 - 市价（表示不限制委托价格，在涨跌停范围内即可）；2 - 限价（表示限制委托价格，买入不高于，卖出不低于）；
+		}
+		
+		if(StringUtils.isNotBlank(sendMsg.getString("vcOrderqty"))){
+			fixMessage.setField(new OrderQty(StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcOrderqty"))));//指令数量，交易所业务可以填0，填0按照金额控制，否则按数量控制（指令金额取Tag152字段）
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcCashorderqty"))){
+			fixMessage.setField(new CashOrderQty(StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcCashorderqty"))));//指令金额，指令数量为0时必须填写，否则无需填写，还是按照数量控制。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcYtm"))){
+			fixMessage.setField(new DoubleField(13203, StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcYtm"))));//结算收益率
+		}
+		
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBondsettletype"))){
+			fixMessage.setField(new StringField(13204, sendMsg.getString("vcBondsettletype")));//结算方式（首次结算方式）
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBondsettletype2"))){
+			fixMessage.setField(new StringField(13208, sendMsg.getString("vcBondsettletype2")));//到期结算方式[只用于银行间正逆回购
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcFutsettdate"))){
+			fixMessage.setField(new FutSettDate(sendMsg.getString("vcFutsettdate")));//交割日（首次交割日）
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcFutsettdate2"))){
+			fixMessage.setField(new FutSettDate2(sendMsg.getString("vcFutsettdate2")));//到期交割日：0表示取当天
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcJudgeavailable"))){
+			fixMessage.setField(new StringField(15007, sendMsg.getString("vcJudgeavailable")));//判断可用 0-不判， 1-判
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcJudgerisk"))){
+			fixMessage.setField(new StringField(15009, sendMsg.getString("vcJudgerisk")));//判断风控 0-不判， 1-判
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcInstructionlevel"))){
+			fixMessage.setField(new StringField(13301, sendMsg.getString("vcInstructionlevel")));//指令操作级别：0无 1快速 2一般 3慢速；	数据字典40345项
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcInvesttype"))){
+			fixMessage.setField(new StringField(14000, sendMsg.getString("vcInvesttype")));//投资类型：交易所，1-可交易；2-持有到期；3-可供出售；回购业务投资类型为1-可交易，不传投资类型会根据系统数决定取组合的投资类型或缺省为1-可交易，具体取值和O3保持一致。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcCleartype"))){
+			fixMessage.setField(new StringField(13227, sendMsg.getString("vcCleartype")));//清算类型：1-全额结算；2-净额结算；缺省为1，取自数据字典60151-银行间指令清算类型
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcPurposetype"))){
+			fixMessage.setField(new StringField(15400, sendMsg.getString("vcPurposetype")));//回购用途类别：1：等期限套利；2：不等期限套利；3：短期资金运用；4：超配；5：放大；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDirectinsteadoperator"))){
+			fixMessage.setField(new StringField(13302, sendMsg.getString("vcDirectinsteadoperator")));//代下达人编号：该字段允许为空、为空时取的是指令下达人（tag50）
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcInstructiontype"))){
+			fixMessage.setField(new StringField(15997, sendMsg.getString("vcInstructiontype")));//指令类型：1-个股；2-组合；3-个股批量；4-组合批量；个股：以多条个股形式下达；个股批量：同一个证券不同的组合；组合：重复组里同一个组合多个证券；组合批量：重复组里多个组合多个证券；缺省1-个股
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcInterest"))){
+			fixMessage.setField(new DoubleField(159, StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcInterest"))));//【只用于银行间债券和回购】应计利息；应计利息和全价价格必须要有一个,银行间债券买卖和回购业务的指令状态、委托和成交数据需返回外，其它业务均不返回该字段。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcAccruedinterestamt"))){
+			fixMessage.setField(new DoubleField(159, StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcAccruedinterestamt"))));//159-首期应计利息，【只用于银行间债券和质押式回购】
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcRealBondInterest"))){
+			fixMessage.setField(new DoubleField(15003, StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcRealBondInterest"))));//15003-到期应计利息，【只用于银行间债券和质押式回购】
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcYieldratiotype"))){
+			fixMessage.setField(new StringField(13224, sendMsg.getString("vcYieldratiotype")));//【只用于银行间业务】1-到期收益率；2-行权收益率；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcTraderival"))){
+			fixMessage.setField(new StringField(13302, sendMsg.getString("vcTraderival")));//交易对手编号：增发的情况需指定一个交易对手编号
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcRivaltraderid"))){
+			fixMessage.setField(new StringField(76, sendMsg.getString("vcRivaltraderid")));//对方交易员编号
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcRivalaccount"))){
+			fixMessage.setField(new StringField(13220, sendMsg.getString("vcRivalaccount")));//对方银行帐户编号
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcReporate"))){
+			fixMessage.setField(new StringField(13107, sendMsg.getString("vcReporate")));//【只用于银行间债券、回购和存款】回购利率，回购业务必须填写，如回购利率3%时需填入0.03；存款和存款支取取的是存款利率,银行间债券买卖、回购和存款业务的指令状态、委托和成交数据需返回外，其它业务均不返回该字段。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcFee"))){
+			fixMessage.setField(new StringField(137, sendMsg.getString("vcFee")));//手序费
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcFeecalctype"))){
+			fixMessage.setField(new StringField(13201, sendMsg.getString("vcFeecalctype")));//手序费方式：1-手序费不另返；2-手序费另返；3-不计手序费；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcQuoteside"))){
+			fixMessage.setField(new StringField(13201, sendMsg.getString("vcQuoteside")));//报价发起方，值域（0-未指定；1-本方；2-对手方）；根据系统参数60836，如果参数的值为3-必须指定，那么外部必须传入报价发起方1-本方或2-对手方；如果参数的值为2-可以指定，那么外部可以不传，缺省为0-未指定，若外部传了的话只能传1-本方或2-对手方；其它情况都为0-未指定。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcRequireorigin"))){
+			fixMessage.setField(new StringField(15401, sendMsg.getString("vcRequireorigin")));//回购需求方：1：固定收益投资部；2：权益投资部；3：银行外汇部；4：委托人指定；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcNotradingsessions"))){
+			fixMessage.setField(new StringField(386, sendMsg.getString("vcNotradingsessions")));//指令券重复组，表示后面的Tag是证券信息。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcTotnoorders"))){
+			fixMessage.setField(new StringField(68, sendMsg.getString("vcTotnoorders")));//表示在同一ListID下所有消息中的订单总数，用以支持消息分割。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcNoorders"))){
+			fixMessage.setField(new StringField(73, sendMsg.getString("vcNoorders")));//订单个数，下面为订单重复组内容。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcOthercombino"))){
+			fixMessage.setField(new StringField(13304, sendMsg.getString("vcOthercombino")));//【只用于开放式基金转换】开基转换 转入组合
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcOtherinvesttype"))){
+			fixMessage.setField(new StringField(13305, sendMsg.getString("vcOtherinvesttype")));//【只用于开放式基金转换】开基转换 转入投资类型
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBonustype"))){
+			fixMessage.setField(new StringField(13106, sendMsg.getString("vcBonustype")));//【只用于开放式基金申购、认购和分红设置】开基分红方式：1-现金分红；2-分红再投资；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBulktype"))){
+			fixMessage.setField(new StringField(13201, sendMsg.getString("vcBulktype")));//【只用于开放式基金赎回和转换】巨额赎回标记：1-取消；2-顺延；默认2-顺延；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDeposittype"))){
+			fixMessage.setField(new StringField(13222, sendMsg.getString("vcDeposittype")));//【只用于存款】存款分类：890890：协议存款；880880：次级债务；870870：定期存款；860860：通知存款；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcIssuedate"))){
+			fixMessage.setField(new StringField(13226, sendMsg.getString("vcIssuedate")));//【只用于存款】起息日；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcInterestpaytype"))){
+			fixMessage.setField(new StringField(13227, sendMsg.getString("vcInterestpaytype")));//【只用于存款】付息方式：具体值域详见数据字典60031
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDepositinfo"))){
+			fixMessage.setField(new StringField(13228, sendMsg.getString("vcDepositinfo")));//【只用于存款】存款类型：1-普通存款 ；2-保证金存款；3-结构性存款；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcTerm"))){
+			fixMessage.setField(new StringField(13216, sendMsg.getString("vcTerm")));//【只用于存款】存款期限：月份为单位，比如6；存款期限和到期日只需传一个，如果两个同时传入的话，以存款期限为准）
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBankhandoffice"))){
+			fixMessage.setField(new StringField(13219, sendMsg.getString("vcBankhandoffice")));//【只用于存款】银行总行：银行编号，调用风控时会将该字段作为交易对手编号字段传入到风控，，不传时协议存款和次级债务取存款合同表上的银行总行，定期和通知存款银行总行必输项，存款支取取的是在途存单上的银行总行。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDepositbank"))){
+			fixMessage.setField(new StringField(13225, sendMsg.getString("vcDepositbank")));//【只用于存款】银款支行，存款业务不传为空，存款支取业务取的是在途存单表上的存款支行。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcNoticedays"))){
+			fixMessage.setField(new StringField(13221, sendMsg.getString("vcNoticedays")));//【只用于通知存款】通知天数,只有通知存款需要传入通知天数。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcWithdrawtype"))){
+			fixMessage.setField(new StringField(13224, sendMsg.getString("vcWithdrawtype")));//【只用于存款支取】支取类型：1-提前兑付；2-通知兑付；3-解约；4-到期兑付；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDepositaccountno"))){
+			fixMessage.setField(new StringField(13220, sendMsg.getString("vcDepositaccountno")));//【只用于存款】存款账号，对于存款业务不传为空，存款支取业务取的是在途存单表上的存款账号。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDepositaccountname"))){
+			fixMessage.setField(new StringField(13223, sendMsg.getString("vcDepositaccountname")));//【只用于存款】存款账户名称，对于存款业务不传为空，存款支取业务取的是在途存单表上的存款账号名称。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDepositplace"))){
+			fixMessage.setField(new StringField(13229, sendMsg.getString("vcDepositplace")));//【只用于存款】存款地，对于存款业务不传为空，存款支取业务取的是在途存单表上的存款地。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcDepositowner"))){
+			fixMessage.setField(new StringField(13230, sendMsg.getString("vcDepositowner")));//【只用于存款】存款人,对于协议存款为合同所有人，存款支取时取在途存单表上的存款人
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcAdvancelimitflag"))){
+			fixMessage.setField(new StringField(13231, sendMsg.getString("vcAdvancelimitflag")));//【只用于存款】支取限制，详见数据字典60087：1-不可提前支取；2-可提前支取无利息损失；3-可提前支取但损失利息；缺省值为1；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcLimitunit"))){
+			fixMessage.setField(new StringField(13400, sendMsg.getString("vcLimitunit")));//合同期限单位，如果外部不传，则为缺省3-月。合同期限单位值域：1-天，2-周，3-月，4-季，5-年；不传或传入空的默认是3
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcProvincecode"))){
+			fixMessage.setField(new StringField(13304, sendMsg.getString("vcProvincecode")));//【只用于存款】存款省份编号，取数据字典60050，不传为空。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcCityno"))){
+			fixMessage.setField(new StringField(13305, sendMsg.getString("vcCityno")));//【只用于存款】存款城市编号，不传为空。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcInterestrates"))){
+			fixMessage.setField(new StringField(137, sendMsg.getString("vcInterestrates")));//【只用于存款支取】利息金额，默认为0
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcEarnestbalance"))){
+			fixMessage.setField(new StringField(137, sendMsg.getString("vcEarnestbalance")));//【可修改的指令要素】定金金额，定金金额为指令金额*定金比例。不传的话按0处理
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcEngagedNO"))){
+			fixMessage.setField(new StringField(14008, sendMsg.getString("vcEngagedNO")));//14008-约定号
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcRivalSeat"))){
+			fixMessage.setField(new StringField(14003, sendMsg.getString("vcRivalSeat")));//14003-对手席位号
+		}
+		
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBondYield"))){
+			fixMessage.setField(new DoubleField(13203, StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcBondYield"))));//首次收益率
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcBondYield2"))){
+			fixMessage.setField(new DoubleField(13205, StrUtil.delThousandthEmptyTo0(sendMsg.getString("vcBondYield2"))));//到期收益率
+		}
+		
+		/** 以下为风控试算、可用试算等功能用到字段 */
+		if(StringUtils.isNotBlank(sendMsg.getString("vcProcesstype"))){
+			fixMessage.setField(new StringField(15999, sendMsg.getString("vcProcesstype")));//15999-处理类型：4-风险试算；5-可用金额查询；6-可用数量查询；7-风控试算结果；8-可用金额查询结果；9-可用数量查询结果；
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcInstructionno"))){
+			fixMessage.setField(new StringField(41, sendMsg.getString("vcInstructionno")));//41-指令序号：指令下达时指令序号必须传入0，指令修改时传入具体的指令序号
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcEnddate"))){
+			fixMessage.setField(new StringField(15204, sendMsg.getString("vcEnddate")));//15204-结束日期：允许为空，若为空则取当天日期。存款支取传的是支取日期。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcMarketdate"))){
+			fixMessage.setField(new StringField(15203, sendMsg.getString("vcMarketdate")));//15203-起始日期：允许为空，若为空则取当天日期。存款和支取传的是到期日。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcMarketenddate"))){
+			fixMessage.setField(new StringField(15204, sendMsg.getString("vcMarketenddate")));//15204-结束日期：允许为空，若为空则取当天日期。存款和支取传的是到期日。
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcGroup"))){
+			fixMessage.setField(new StringField(78, sendMsg.getString("vcGroup")));//78-订单个数，下面为订单重复组内容。
+		}
+		
+//		if(!"O".equals(sendMsg.getString("vcBusinclass"))){
+//			if(StringUtils.isNotBlank(sendMsg.getString("vcStocktargettype"))){
+//				fixMessage.setField(new StringField(40, sendMsg.getString("vcStocktargettype")));//40-证券控制类型：  1-金额控；2-数量控；缺省按2-数量控；
+//			}
+//		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcExecbroker"))){
+			fixMessage.setField(new StringField(76, sendMsg.getString("vcExecbroker")));//76-【只用于银行间债券、质押式回购和存款业务】交易对手编号：存款业务传的是银行总行序号，调用风控时会将该字段作为交易对手字段传入到风控
+		}
+		if(StringUtils.isNotBlank(sendMsg.getString("vcMortagageinfo"))){
+			fixMessage.setField(new StringField(14058, sendMsg.getString("vcMortagageinfo")));//14058-质押券信息包含多条：组合0|投资类型0|质押券0|质押比例0|质押数量0；组合1|投资类型1|质押券1|质押比例1|质押数量1；组合n|投资类型n|质押券n|质押比例n|质押数量n
+		}
+		
+		if(!"H".equals(msgtype)){
+			fixMessage.setField(new StringField(60, DateUtil.currentDateString(DateUtil.YMD_HMS_PATTERN)));//订单发起时间，格式：yyyyMMdd-HH:mm:ss
+		}
+		
+		String lInstructionId = StrUtil.changeNull(sendMsg.getString("lInstructionId"));//指令序号-主键ID
+		String lInstructionNo = StrUtil.changeNull(sendMsg.getString("lInstructionNo"));//指令编号-业务ID
+		if(!"H".equals(msgtype)){
+			String memo = "["+lInstructionNo+"]-["+lInstructionId+"] ";
+			String text = sendMsg.getString("vcText");
+			if(StringUtils.isNotBlank(text)){
+				fixMessage.setField(new Text(memo+text));
+			}else{
+				fixMessage.setField(new Text(memo+remark));
+			}
+		}
+		//组装重复组数据
+		if(groupList!=null && !groupList.isEmpty() && groupList.size()>0 && bondsList!=null && !bondsList.isEmpty() && bondsList.size()>0 && groupList.size()==bondsList.size()){
+			for(int i=0; i<groupList.size(); i++){
+				Group group = groupList.get(i);
+				List<DataObject> bonds = bondsList.get(i);
+				for(int j=0; j<bonds.size(); j++){
+					DataObject bond = bonds.get(j);
+					if(bond != null){
+						//【只用于银行间回购】，78-质押券重复组，表示后面的Tag是质押券信息。该Tag的值表示有几个券。
+						if(StringUtils.isNotBlank(bond.getString("vcAccount"))){
+							group.setField(new Account(bond.getString("vcAccount")));//恒生系统组合编号，指定指令下达到恒生的哪个组合下。
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcInvesttype"))){
+							group.setField(new StringField(14000, bond.getString("vcInvesttype")));//投资类型：1-可交易；2-持有到期；3-可供出售；不传投资类型会根据系统数决定取组合的投资类型或缺省为1-可交易，具体取值和O3保持一致。
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcPledgebond"))){
+							group.setField(new StringField(13211, bond.getString("vcPledgebond")));//债券代码，银行间抵押债券的申报代码
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcPledgeratio"))){
+							group.setField(new StringField(13212, bond.getString("vcPledgeratio")));//质押比例，抵押的比例90％填0.9
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcPledgedqty"))){
+							group.setField(new StringField(13213, bond.getString("vcPledgedqty")));//质押数量，单位是张
+						}
+						
+						//386-指令券重复组，表示后面的Tag是证券信息。该Tag的值表示有几个券。
+						if(StringUtils.isNotBlank(bond.getString("vcSymbol"))){
+							group.setField(new Symbol(bond.getString("vcSymbol")));//证券申报代码
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcSecurityid"))){
+							group.setField(new SecurityID(bond.getString("vcSecurityid")));//等于同Tag55
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcExdestination"))){
+							group.setField(new ExDestination(bond.getString("vcExdestination")));//交易市场：SS 上交所；SZ 深交所；
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcBusintype"))){
+							group.setField(new StringField(13001, bond.getString("vcBusintype")));//委托方向：母基金：m-基金分拆；n-基金合并；子基金：p – 基金申购；q – 基金赎回；
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcPrice"))){
+							group.setField(new Price(StrUtil.delThousandthEmptyTo0(bond.getString("vcPrice"))));//指令价格
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcOrdtype"))){
+							group.setField(new OrdType(bond.getChar("vcOrdtype")));//价格模式：1 - 市价（表示不限制委托价格，在涨跌停范围内即可）；2 - 限价（表示限制委托价格，买入不高于，卖出不低于）；
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcOrderqty"))){
+							group.setField(new OrderQty(StrUtil.delThousandthEmptyTo0(bond.getString("vcOrderqty"))));//指令数量，交易所业务可以填0，填0按照金额控制，否则按数量控制（指令金额取Tag152字段）：m-基金分拆；n-基金合并；不能为0，默认按数量控制；
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcCashorderqty"))){
+							group.setField(new CashOrderQty(StrUtil.delThousandthEmptyTo0(bond.getString("vcCashorderqty"))));//指令金额，指令数量为0时必须填写，否则无需填写，还是按照数量控制。m-基金分拆；n-基金合并；指令金额无需填写，按数量控制；
+						}
+						
+						/** 以下为风控试算、可用试算等功能用到字段 */
+						if(StringUtils.isNotBlank(bond.getString("vcInterest"))){
+							group.setField(new StringField(159, bond.getString("vcInterest")));//159-【只用于银行间债券和质押式回购】应计利息
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcStocktargettype"))){
+							group.setField(new StringField(40, bond.getString("vcStocktargettype")));//40-证券控制类型：  1-金额控；2-数量控；缺省按2-数量控；
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcExecbroker"))){
+							group.setField(new StringField(76, bond.getString("vcExecbroker")));//76-【只用于银行间债券、质押式回购和存款业务】交易对手编号；存款业务传的是银行总行序号，调用风控时会将该字段作为交易对手字段传入到风控
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcBondsettletype"))){
+							group.setField(new StringField(13204, bond.getString("vcBondsettletype")));//13204-【只用于银行间债券和质押式回购】结算方式
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcBondsettletype2"))){
+							group.setField(new StringField(13208, bond.getString("vcBondsettletype2")));//13208-【只用于银行间质押式回购】
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcAdvancelimitflag"))){
+							group.setField(new StringField(13231, bond.getString("vcAdvancelimitflag")));//13231-【只用于存款】支取限制，详见数据字典60087；1-不可提前支取；2-可提前支取无利息损失；1- 可提前支取但损失利息；缺省值1；
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcWithdrawtype"))){
+							group.setField(new StringField(13224, bond.getString("vcWithdrawtype")));//13224-【只用于存款支取】支取类型：1-提前兑付；2-通知兑付；3-解约；4-到期兑付；
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcIssuedate"))){
+							group.setField(new StringField(13226, bond.getString("vcIssuedate")));//13226-【只用于协议存款和定期存款】如果起息日没指定或0，表示当天
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcReporate"))){
+							group.setField(new StringField(13107, bond.getString("vcReporate")));//13107-【只用于存款】存款利率，存款业务必须填写，存款利率3%时需填入0.03。
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcEarnestbalance"))){
+							group.setField(new StringField(137, bond.getString("vcEarnestbalance")));//137-【只用于网下申购】定金金额
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcMortagageinfo"))){
+							group.setField(new StringField(14058, bond.getString("vcMortagageinfo")));//14058-失败原因，质押券信息包含多条：组合0|投资类型0|质押券0|质押比例0|质押数量0；组合1|投资类型1|质押券1|质押比例1|质押数量1；组合n|投资类型n|质押券n|质押比例n|质押数量n
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcAccruedinterestamt"))){
+							group.setField(new StringField(159, bond.getString("vcAccruedinterestamt")));//159-应计利息，【只用于银行间债券和质押式回购】
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcIssuedateex"))){
+							group.setField(new StringField(13226, bond.getString("vcIssuedateex")));//13226-起息日，【只用于协议存款和定期存款】如果起息日没指定或0，表示当天
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcCheckmemo"))){
+							group.setField(new StringField(14058, bond.getString("vcCheckmemo")));//14058-失败原因，质押券信息包含多条：组合0|投资类型0|质押券0|质押比例0|质押数量0；组合1|投资类型1|质押券1|质押比例1|质押数量1；组合n|投资类型n|质押券n|质押比例n|质押数量n
+						}
+						
+						if(StringUtils.isNotBlank(bond.getString("vcBondYield"))){
+							group.setField(new DoubleField(13203, StrUtil.delThousandthEmptyTo0(bond.getString("vcBondYield"))));//首次收益率
+						}
+						if(StringUtils.isNotBlank(bond.getString("vcBondYield2"))){
+							group.setField(new DoubleField(13205, StrUtil.delThousandthEmptyTo0(bond.getString("vcBondYield2"))));//到期收益率
+						}
+						
+						if(StringUtils.isNotBlank(bond.getString("vcStopPrice"))){
+							group.setField(new DoubleField(99, StrUtil.delThousandthEmptyTo0(bond.getString("vcStopPrice"))) );//指令价格-到期净价价格
+						}
+						
+						if(StringUtils.isNotBlank(bond.getString("vcRealBondInterest"))){
+							group.setField(new DoubleField(15003, StrUtil.delThousandthEmptyTo0(bond.getString("vcRealBondInterest"))));//15003-到期应计利息，【只用于银行间债券和质押式回购】
+						}
+						
+						
+						fixMessage.addGroup(group);
+					}
+				}
+			}
+		}
+		return fixMessage;
+	}
+	
+	/**
+	 * 将指令对象转换为Fix报文发送对象（指令撤销[废弃]）
+	 * @param obj 将要发送的报文对象
+	 * @return
+	 * @author huangmizhi
+	 */
+	@Bizlet("")
+	public static Map<Object, Object> getFixOrderCancelRequest(DataObject obj){
+		Map<Object, Object> map = new HashMap<Object, Object>();
+		List<DataObject> insertList = new ArrayList<DataObject>();
+		DataObject sendMsg = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendMsg");//创建数据对象
+		DatabaseExt.getPrimaryKey(sendMsg);//生成主键
+		//获取FIX指令下达到O32的产品对应的操作员编号，先从机器猫配置的产品参数获取产品对应O32的投资经理，若参数获取不到，则再实时到O32去获取该产品实际的投资经理
+		String vcSendersubid = FixToUtil.getO32OperatorNo(obj.getString("vcProductCode"));
+		sendMsg.setString("vcSendersubid", vcSendersubid);//指令下达人的操作员编号
+		sendMsg.setString("vcClordid", obj.getString("vcClordid"));//第三方系统指令编号
+		sendMsg.setString("vcOrigordid", obj.getString("vcOrigordid"));//要撤销的指令的第三方指令编号
+		sendMsg.setString("vcListid", obj.getString("vcListid"));//要撤销的指令的第三方指令编号
+		sendMsg.setString("vcMsgtype", obj.getString("vcMsgtype"));//业务类型：D-指令下达； G-指令修改；F-指令撤销；H-指令查询；
+		
+		sendMsg.setString("lInstructionId", obj.getString("lInstructionId"));//指令序号-主键ID
+		sendMsg.setString("lInstructionNo", obj.getString("lInstructionNo"));//指令编号-业务ID
+		sendMsg.setDate("dCreated", DateUtil.getDate());//记录插入数据时间
+		
+		insertList.add(sendMsg);
+		map.put("sendMsg", sendMsg);
+		map.put("groupList", null);
+		map.put("bondsList", null);
+		map.put("insertList", insertList);
+		
+		return map;
+	}
+}

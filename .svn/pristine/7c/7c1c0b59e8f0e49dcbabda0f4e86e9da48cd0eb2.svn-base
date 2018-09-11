@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:wenhao -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="updatePrcWorkInfo">
+        <result column="sysid" javaType="string" property="sysid"/>
+        <result column="workitem_id" javaType="string" property="workitemId"/>
+        <result column="workitem_name" javaType="string" property="workitemName"/>
+        <result column="activityinst_id" javaType="string" property="activityinstId"/>
+        <result column="processinst_id" javaType="string" property="processinstId"/>
+        <result column="is_agree" javaType="string" property="isAgree"/>
+        <result column="rollback_flag" javaType="string" property="rollbackFlag"/>
+    </resultMap>
+    
+    <update id="updatePmPrcWorkInfoIsAgree" parameterClass="java.util.Map">
+      update T_ATS_PRC_WORK_INFO t set t.is_agree= null
+	  where t.Processinst_Id =#processinstId#
+	  and t.activityinst_id=#activityinstId# 
+    </update>
+</sqlMap>

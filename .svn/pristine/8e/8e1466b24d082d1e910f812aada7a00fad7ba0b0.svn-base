@@ -1,0 +1,117 @@
+/**
+ * 
+ */
+package com.cjhxfund.commonUtil;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.cjhxfund.ats.qrtz.QrtzMoniteHandler;
+import com.eos.engine.component.ILogicComponent;
+import com.eos.foundation.database.DatabaseExt;
+import com.eos.foundation.eoscommon.LogUtil;
+import com.eos.system.annotation.Bizlet;
+import com.primeton.common.schedule.impl.base.BaseTaskDetail;
+import com.primeton.ext.common.schedule.ScheduleManager;
+import com.primeton.ext.engine.component.LogicComponentFactory;
+
+import commonj.sdo.DataObject;
+
+/**
+ * 定时器公用类，用于记录定时器运行信息，记录的触发信息作为定时器监控的根本依据
+ * 
+ * @author 武正新
+ * @date 2018-02-05 17:39:32
+ *
+ */
+@Bizlet("")
+public class QrtzUtil {
+
+	/**
+	 * 记录定时器运行信息,如果定时器要求被监控，必须调用该方法
+	 * @param target：调用目标，类名(全路径)+方法名，匹配定时器的依据
+	 * @param startTime:定时器执行开始时间(13位时间戳)
+	 * @param endTime:定时器执行结束时间(13位时间戳)
+	 */
+	public static void logTriggerInfo(String target,Long startTime,Long endTime){
+		
+		List<Map<String,Object>> taskList=ScheduleManager.getAllTaskDetail();//取所有定时任务
+		List<DataObject> matchTriggers=new ArrayList<DataObject>();
+		try{
+			for(Map<String,Object> map:taskList){
+				BaseTaskDetail taskDetail = (BaseTaskDetail) map.get("taskDetail");
+				String targetStr=taskDetail.getTargetName()+"."+taskDetail.getTargetOperation();
+				//根据类名+方法名匹配定时器
+				if(targetStr.equals(target)){
+					
+					String jobName=taskDetail.getTaskName();//取得对应定时器名称
+					//这里可能会存在多个定时任务配置了同一个方法(synStockIssueInfo仅此一个)
+					//优先执行未触发的，如果都触发则按时间来定，执行距离当前时间最近的。这里的调用包括两个入口，
+					//一个普元正常调度，一个监控执行
+					HashMap<String,String> paramMap=new HashMap<String,String>();
+					paramMap.put("jobName", jobName);
+					Object[] triggers=DatabaseExt.queryByNamedSql("default", "com.cjhxfund.ats.qrtz.qrtz.selectTriggers", paramMap);
+					DataObject trigger=(DataObject)triggers[0];//目前只有一个,直接写死
+					QrtzMoniteHandler handle=new QrtzMoniteHandler();
+					String status=handle.getJobRunningStatus(jobName, trigger.getString("prevFireTime"));
+					trigger.set("status", status);
+					matchTriggers.add(trigger);
+				}
+			}
+			
+			String jobName=null;
+			//key:jobName value:上次触发时间与当前时间的时差.如果没有未触发的，则与当前时差最大的先执行
+			HashMap<String,Long> jobMap=new HashMap<String,Long>();
+			Long currentTime=(new Date()).getTime();
+			for(DataObject trigger:matchTriggers){
+				if("-1".equals(trigger.get("status"))){//未触发
+					executeLog(trigger.getString("jobName"),startTime,endTime);
+					break;
+				}else{
+					Long prevFireTime=Long.parseLong(trigger.getString("prevFireTime"));
+					Long diff=currentTime-prevFireTime;//时差
+					if(jobMap.isEmpty()){
+					    jobMap.put(trigger.getString("jobName"),diff);
+					}else{
+						Entry<String, Long> entry=jobMap.entrySet().iterator().next();
+						Long diffOld=entry.getValue();
+						if(diffOld<diff){//当前任务的时差比之前大
+							jobMap.clear();
+							jobMap.put(jobName, diff);//存时差最大的
+						}
+					}
+				}
+			}
+			//取最终的任务名称,执行任务
+			Iterator<Entry<String, Long>> iterator=jobMap.entrySet().iterator();
+			while(iterator.hasNext()){
+				executeLog(iterator.next().getKey(),startTime,endTime);
+			}
+		}catch(Throwable e){
+			LogUtil.logError("记录定时器运行信息出现异常", e, new Object[]{});
+		}
+	}
+	
+	public static void executeLog(String jobName,Long startTime,Long endTime) throws Throwable{
+		
+		Object[] params=new Object[3];
+		params[0]=jobName;
+		params[1]=startTime;
+		params[2]=endTime;
+		String componentName="com.cjhxfund.ats.qrtz.qrtzMonite";
+		ILogicComponent compoment=LogicComponentFactory.create(componentName);
+		compoment.invoke("logTriggerInfo", params);//记录执行信息
+	}
+	
+	public static void main(String args[]) throws InterruptedException{
+		Long currentTime=(new Date()).getTime();
+		Thread.currentThread().sleep(3*1000);
+		Long currentTime2=(new Date()).getTime();
+		System.out.println(currentTime2-currentTime);
+	}
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:jiangkanqian -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <resultMap id="windBondInfo" class="commonj.sdo.DataObject">
+    	<result column="s_info_windcode" javaType="string" property="windCode"/>
+    </resultMap>
+    
+    <select id="queryWind" parameterClass="java.util.HashMap" resultMap="windBondInfo">
+    	select s_info_windcode from wind2_CBondDescription
+    	where s_info_windcode = '1689157.IB'
+    </select>
+    
+</sqlMap>

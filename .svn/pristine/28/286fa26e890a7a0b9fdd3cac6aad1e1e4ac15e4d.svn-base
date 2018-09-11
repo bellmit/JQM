@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:chendi -->
+<sqlMap>
+    <!-- 查询基金ID列表-->
+    <select id="queryFundIdList"  parameterClass="java.lang.String" resultClass="java.lang.String">
+		select t.l_product_id as lFundId
+		  from t_ats_product_info t
+		 where t.vc_product_code in ($vcFundCodes$)
+    </select>
+    <resultMap class="commonj.sdo.DataObject" id="bondBetweenBankMap">
+        <result column="vc_report_code" javaType="string" property="stockCode"/>
+        <result column="vc_stock_name" javaType="string" property="stockName"/>
+        <result column="c_market_no" javaType="string" property="vcMarketNo"/>
+        <result column="vc_inter_code" javaType="string" property="vcStockInnerCode"/>
+    </resultMap>
+    <!--模糊查询O32证券代码信息-->
+    <select id="queryBondCodeSql" parameterClass="java.lang.String" resultMap="bondBetweenBankMap">
+        select t.vc_report_code,
+        	   t.vc_stock_name,
+               t.c_market_no,
+               t.vc_inter_code 
+          from trade.tstockinfo t
+         where t.vc_report_code like #stockCode#||'%'
+           and rownum &lt;= 50
+    </select>
+    <!-- 查询最新现金流水记录表数据 -->
+    <resultMap class="commonj.sdo.DataObject" id="queryManualAdjInfoMap">
+	    <result column="L_DATE" javaType="string" property="lDate"/>
+	    <result column="L_PRODUCT_ID" javaType="string" property="lProductId"/>
+	    <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/>
+	    <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/>
+	    <result column="L_ASSET_ID" javaType="string" property="lAssetId"/>
+	    <result column="VC_ASSET_CODE" javaType="string" property="vcAssetCode"/>
+	    <result column="VC_ASSET_NAME" javaType="string" property="vcAssetName"/>
+	    <result column="EN_ADJUST_AMOUNT" javaType="string" property="enAdjustAmount"/>
+	    <result column="VC_ADJUST_REMARK" javaType="string" property="vcAdjustRemark"/>
+	    <result column="VC_ADJUSTER_CODE" javaType="string" property="vcAdjusterCode"/>
+	    <result column="VC_ADJUSTER_NAME" javaType="string" property="vcAdjusterName"/>
+	    <result column="D_ADJUST_TIME" javaType="string" property="dAdjustTime"/>
+	</resultMap>
+    <select id="queryManualAdjInfo" parameterClass="commonj.sdo.DataObject" resultMap="queryManualAdjInfoMap">
+		select t.l_date,
+		       t.l_product_id,
+		       t.vc_product_code,
+		       t.vc_product_name,
+		       t.l_asset_id,
+		       t.vc_asset_code,
+		       t.vc_asset_name,
+		       t.en_adjust_amount,
+		       t.vc_adjust_remark,
+		       t.vc_adjuster_code,
+		       t.vc_adjuster_name,
+		       t.d_adjust_time
+	      from isp.t_ats_manual_adj_cashflow t
+		 where 1=1
+		   <isNotNull property="fromDate"><!--开始日期-->
+		   	and t.l_date &gt;= to_number(#fromDate#)
+		   </isNotNull>
+		   <isNotNull property="toDate"><!--结束日期-->
+		   	and t.l_date &lt;= to_number(#toDate#)
+		   </isNotNull>
+		   <isNotNull property="vcProductCode"><!--产品代码-->
+		   	and t.vc_product_code in ($vcProductCode$)
+		   </isNotNull>
+	   order by t.l_date,t.d_adjust_time desc
+    </select>
+    <!-- 查询历史现金流水记录表数据 -->
+    <resultMap class="commonj.sdo.DataObject" id="queryManualAdjHisInfoMap">
+	    <result column="L_DATE" javaType="string" property="lDate_his"/>
+	    <result column="L_PRODUCT_ID" javaType="string" property="lProductId_his"/>
+	    <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode_his"/>
+	    <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName_his"/>
+	    <result column="L_ASSET_ID" javaType="string" property="lAssetId_his"/>
+	    <result column="VC_ASSET_CODE" javaType="string" property="vcAssetCode_his"/>
+	    <result column="VC_ASSET_NAME" javaType="string" property="vcAssetName_his"/>
+	    <result column="EN_ADJUST_AMOUNT" javaType="string" property="enAdjustAmount_his"/>
+	    <result column="VC_ADJUST_REMARK" javaType="string" property="vcAdjustRemark_his"/>
+	    <result column="VC_ADJUSTER_CODE" javaType="string" property="vcAdjusterCode_his"/>
+	    <result column="VC_ADJUSTER_NAME" javaType="string" property="vcAdjusterName_his"/>
+	    <result column="D_ADJUST_TIME" javaType="string" property="dAdjustTime_his"/>
+	</resultMap>
+    <select id="queryManualAdjHisInfo" parameterClass="commonj.sdo.DataObject" resultMap="queryManualAdjHisInfoMap">
+		select t.l_date,
+		       t.l_product_id,
+		       t.vc_product_code,
+		       t.vc_product_name,
+		       t.l_asset_id,
+		       t.vc_asset_code,
+		       t.vc_asset_name,
+		       t.en_adjust_amount,
+		       t.vc_adjust_remark,
+		       t.vc_adjuster_code,
+		       t.vc_adjuster_name,
+		       t.d_adjust_time
+	      from isp.t_ats_his_manual_adj_cashflow t
+		 where 1=1
+		   <isNotNull property="hisProductCode"><!--产品代码-->
+		   	and t.vc_product_code = #hisProductCode#
+		   </isNotNull>
+		   order by t.l_date,t.d_adjust_time desc
+    </select>
+    <!--查询资产单元下拉列表使用-->
+    <select id="queryAssetInfo"  parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select t.l_asset_id,
+		       t.vc_asset_name as TEXT,
+		       t.vc_asset_no   as ID
+		  from t_ats_asset_info t
+		 where l_asset_id in
+		       (select l_asset_id
+		          from t_ats_product_handle
+		         where vc_relate_type = '00'
+		           and vc_product_code = #vcProductCode#
+			       <isNotNull property="user_id">
+			       	and vc_user_id=#user_id#
+			       </isNotNull>
+			   )
+    </select>
+    <!--查询同一天是否存在相同的现金流水记录-->
+    <select id="queryCashflowByDate"  parameterClass="commonj.sdo.DataObject" resultClass="java.lang.Integer" >
+    	select t.l_product_id 
+    	  from isp.t_ats_manual_adj_cashflow t
+    	 where 1=1
+    	   and t.vc_product_code = #vcProductCode#
+    	   and t.vc_asset_code = #vcAssetCode#
+    </select>
+    <!--插入现金流水记录-->
+    <insert id="insertCashflowInfo"  parameterClass="commonj.sdo.DataObject" >
+    	insert into isp.t_ats_manual_adj_cashflow(
+    		l_date,
+    		l_product_id,
+    		vc_product_code,
+    		vc_product_name,
+    		l_asset_id,
+    		vc_asset_code,
+    		vc_asset_name,
+    		en_adjust_amount,
+    		vc_adjust_remark,
+    		vc_adjuster_code,
+    		vc_adjuster_name,
+    		d_adjust_time
+    	)values(
+    		#lDate#,
+    		#lProductId#,
+    		#vcProductCode#,
+    		#vcProductName#,
+    		#lAssetId#,
+    		#vcAssetCode#,
+    		#vcAssetName#,
+    		#enAdjustAmount#,
+    		#vcAdjustRemark#,
+    		#vcAdjusterCode#,
+    		#vcAdjusterName#,
+    		sysdate
+    	)
+    </insert>
+    <!--插入现金流水历史记录-->
+    <insert id="insertHisCashflowInfo"  parameterClass="commonj.sdo.DataObject" >
+    	insert into isp.t_ats_his_manual_adj_cashflow(
+    		l_date,
+    		l_product_id,
+    		vc_product_code,
+    		vc_product_name,
+    		l_asset_id,
+    		vc_asset_code,
+    		vc_asset_name,
+    		en_adjust_amount,
+    		vc_adjust_remark,
+    		vc_adjuster_code,
+    		vc_adjuster_name,
+    		d_adjust_time
+		) select l_date,
+	    	   l_product_id,
+	    	   vc_product_code,
+	    	   vc_product_name,
+	    	   l_asset_id,
+	    	   vc_asset_code,
+	    	   vc_asset_name,
+	    	   en_adjust_amount,
+	    	   vc_adjust_remark,
+	    	   vc_adjuster_code,
+	    	   vc_adjuster_name,
+	    	   d_adjust_time
+	  from isp.t_ats_manual_adj_cashflow
+	     where vc_product_code = #vcProductCode#
+	       and vc_asset_code = #vcAssetCode#
+    	
+    </insert>
+    <!--更新现金流水记录-->
+    <update id="updateCashflowInfo"  parameterClass="commonj.sdo.DataObject" >
+    	update isp.t_ats_manual_adj_cashflow set
+    		l_date = #lDate#,
+    		en_adjust_amount = #enAdjustAmount#,
+    		vc_adjust_remark = #vcAdjustRemark#,
+    		vc_adjuster_code = #vcAdjusterCode#,
+    		vc_adjuster_name = #vcAdjusterName#,
+    		d_adjust_time = sysdate
+      where vc_product_code = #vcProductCode#
+		and vc_asset_code = #vcAssetCode#
+    </update>
+    <!--删除现金流水记录-->
+    <delete id="deleteCashflowInfo"  parameterClass="commonj.sdo.DataObject" >
+    	delete 
+    	 from isp.t_ats_manual_adj_cashflow 
+    	where vc_product_code = #vcProductCode# 
+    	  and vc_asset_code = #vcAssetCode#
+    </delete>
+    <!--处理数据字典开始-->
+    <!--businClass-->
+    <select id="queryO32DictInfo"  parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject" >
+    	select t.c_lemma_item,
+		       t.vc_item_name,
+		       t.l_dictionary_no
+		  from trade.tdictionary t 
+		 where t.l_dictionary_no = #lDictionaryNo#
+		   and t.c_lemma_item = #cLemmaItem#
+    </select>
+    <!-- 交易市场 -->
+    <select id="queryMarketInfo"  parameterClass="java.lang.String" resultClass="java.lang.String" >
+    	select t.vc_market_name
+		  from trade.tmarketinfo t
+		 where 1=1
+		   and t.c_market_no = #marketNo#
+    </select>
+    <!-- 委托方向 -->
+    <select id="queryEntrustDirectionName"  parameterClass="commonj.sdo.DataObject" resultClass="java.lang.String" >
+    	select t.vc_entrustdir_name
+	      from trade.tentrustdirection t
+	     where t.c_entrust_direction = #cEntrustDirection#
+	       and t.c_market_no = #cMarketNo#
+    </select>
+    <!--处理数据字典结束-->
+</sqlMap>

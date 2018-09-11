@@ -1,0 +1,581 @@
+package com.cjhxfund.jy.ProductProcess;
+
+import java.io.Serializable;
+/**
+ * 头寸管理主页面jaavaBean
+ * @author chendi
+ *
+ */
+public class RealPostion implements Serializable {
+  private static final long serialVersionUID = 201706301622260000L;
+
+  public RealPostion() {}
+
+  /** 基金序号 */
+  private Integer fundId;
+  public Integer getFundId() {
+    return fundId;
+  }
+  public void setFundId(Integer fundId) {
+    this.fundId = fundId;
+  }
+
+  /** 基金代码 */
+  private String fundCode;
+  public String getFundCode() {
+    return fundCode;
+  }
+  public void setFundCode(String fundCode) {
+    this.fundCode = fundCode;
+  }
+
+  /** 基金名称 */
+  private String fundName;
+  public String getFundName() {
+    return fundName;
+  }
+  public void setFundName(String fundName) {
+    this.fundName = fundName;
+  }
+
+  /** 资产单元序号 */
+  private Integer assetId;
+  public Integer getAssetId() {
+    return assetId;
+  }
+  public void setAssetId(Integer assetId) {
+    this.assetId = assetId;
+  }
+
+  /** 资产单元名称 */
+  private String assetName;
+  public String getAssetName() {
+    return assetName;
+  }
+  public void setAssetName(String assetName) {
+    this.assetName = assetName;
+  }
+
+  /** 交割日期 */
+  private Integer settleDate;
+  public Integer getSettleDate() {
+    return settleDate;
+  }
+  public void setSettleDate(Integer settleDate) {
+    this.settleDate = settleDate;
+  }
+
+  /** 期初现金 */
+  private Double beginCash;
+  public Double getBeginCash() {
+    return beginCash;
+  }
+  public void setBeginCash(Double beginCash) {
+    this.beginCash = beginCash;
+  }
+
+  /** T+0头寸_投资端 */
+  private Double t0CashEnableBalInvest;
+  public Double getT0CashEnableBalInvest() {
+    return t0CashEnableBalInvest;
+  }
+  public void setT0CashEnableBalInvest(Double t0CashEnableBalInvest) {
+    this.t0CashEnableBalInvest = t0CashEnableBalInvest;
+  }
+
+  /** T+1头寸_交易端 */
+  private Double t1CashEnableBalTrade;
+  public Double getT1CashEnableBalTrade() {
+    return t1CashEnableBalTrade;
+  }
+  public void setT1CashEnableBalTrade(Double t1CashEnableBalTrade) {
+    this.t1CashEnableBalTrade = t1CashEnableBalTrade;
+  }
+  
+  /** T+1头寸-投资端 */
+  private Double t1CashEnableBalInvest;
+  public Double getT1CashEnableBalInvest() {
+    return t1CashEnableBalInvest;
+  }
+  public void setT1CashEnableBalInvest(Double t1CashEnableBalInvest) {
+    this.t1CashEnableBalInvest = t1CashEnableBalInvest;
+  }
+  
+
+  /** 净流入金额 */
+  private Double netInflowBal;
+  public Double getNetInflowBal() {
+    return netInflowBal;
+  }
+  public void setNetInflowBal(Double netInflowBal) {
+    this.netInflowBal = netInflowBal;
+  }
+
+  /** 风险备付金 */
+  private Double riskSettleMargin;
+  public Double getRiskSettleMargin() {
+    return riskSettleMargin;
+  }
+  public void setRiskSettleMargin(Double riskSettleMargin) {
+    this.riskSettleMargin = riskSettleMargin;
+  }
+
+  /** 结算备付金 */
+  private Double settleReserveBal;
+  public Double getSettleReserveBal() {
+    return settleReserveBal;
+  }
+  public void setSettleReserveBal(Double settleReserveBal) {
+    this.settleReserveBal = settleReserveBal;
+  }
+
+  /** 证券买入金额 */
+  private Double stockBuyBal;
+  public Double getStockBuyBal() {
+    return stockBuyBal;
+  }
+  public void setStockBuyBal(Double stockBuyBal) {
+    this.stockBuyBal = stockBuyBal;
+  }
+
+  /** 证券卖出金额 */
+  private Double stockSaleBal;
+  public Double getStockSaleBal() {
+    return stockSaleBal;
+  }
+  public void setStockSaleBal(Double stockSaleBal) {
+    this.stockSaleBal = stockSaleBal;
+  }
+
+  /** 债券买入金额_担保交收 */
+  private Double bondBuyBalGuar;
+  public Double getBondBuyBalGuar() {
+    return bondBuyBalGuar;
+  }
+  public void setBondBuyBalGuar(Double bondBuyBalGuar) {
+    this.bondBuyBalGuar = bondBuyBalGuar;
+  }
+
+  /** 债券卖出金额_担保交收 */
+  private Double bondSaleBalGuar;
+  public Double getBondSaleBalGuar() {
+    return bondSaleBalGuar;
+  }
+  public void setBondSaleBalGuar(Double bondSaleBalGuar) {
+    this.bondSaleBalGuar = bondSaleBalGuar;
+  }
+
+  /** 债券买入金额_非担保交收 */
+  private Double bondBuyBalNonGuar;
+  public Double getBondBuyBalNonGuar() {
+    return bondBuyBalNonGuar;
+  }
+  public void setBondBuyBalNonGuar(Double bondBuyBalNonGuar) {
+    this.bondBuyBalNonGuar = bondBuyBalNonGuar;
+  }
+
+  /** 债券卖出金额_非担保交收 */
+  private Double bondSaleBalNonGuar;
+  public Double getBondSaleBalNonGuar() {
+    return bondSaleBalNonGuar;
+  }
+  public void setBondSaleBalNonGuar(Double bondSaleBalNonGuar) {
+    this.bondSaleBalNonGuar = bondSaleBalNonGuar;
+  }
+
+  /** 质押式融资回购首期金额 */
+  private Double rzhgBal;
+  public Double getRzhgBal() {
+    return rzhgBal;
+  }
+  public void setRzhgBal(Double rzhgBal) {
+    this.rzhgBal = rzhgBal;
+  }
+
+  /** 质押式融资回购到期金额 */
+  private Double rzhgExpireBal;
+  public Double getRzhgExpireBal() {
+    return rzhgExpireBal;
+  }
+  public void setRzhgExpireBal(Double rzhgExpireBal) {
+    this.rzhgExpireBal = rzhgExpireBal;
+  }
+
+  /** 质押式融券回购首期金额 */
+  private Double rqhgBal;
+  public Double getRqhgBal() {
+    return rqhgBal;
+  }
+  public void setRqhgBal(Double rqhgBal) {
+    this.rqhgBal = rqhgBal;
+  }
+
+  /** 质押式融券回购到期金额 */
+  private Double rqhgExpireBal;
+  public Double getRqhgExpireBal() {
+    return rqhgExpireBal;
+  }
+  public void setRqhgExpireBal(Double rqhgExpireBal) {
+    this.rqhgExpireBal = rqhgExpireBal;
+  }
+
+  /** 协议式融资回购首期金额 */
+  private Double rzhgBalPact;
+  public Double getRzhgBalPact() {
+    return rzhgBalPact;
+  }
+  public void setRzhgBalPact(Double rzhgBalPact) {
+    this.rzhgBalPact = rzhgBalPact;
+  }
+
+  /** 协议式融资回购到期金额 */
+  private Double rzhgExpireBalPact;
+  public Double getRzhgExpireBalPact() {
+    return rzhgExpireBalPact;
+  }
+  public void setRzhgExpireBalPact(Double rzhgExpireBalPact) {
+    this.rzhgExpireBalPact = rzhgExpireBalPact;
+  }
+
+  /** 协议式融券回购首期金额 */
+  private Double rqhgBalPact;
+  public Double getRqhgBalPact() {
+    return rqhgBalPact;
+  }
+  public void setRqhgBalPact(Double rqhgBalPact) {
+    this.rqhgBalPact = rqhgBalPact;
+  }
+
+  /** 协议式融券回购到期金额 */
+  private Double rqhgExpireBalPact;
+  public Double getRqhgExpireBalPact() {
+    return rqhgExpireBalPact;
+  }
+  public void setRqhgExpireBalPact(Double rqhgExpireBalPact) {
+    this.rqhgExpireBalPact = rqhgExpireBalPact;
+  }
+
+  /** 交易所净交收金额 */
+  private Double netStlBal;
+  public Double getNetStlBal() {
+    return netStlBal;
+  }
+  public void setNetStlBal(Double netStlBal) {
+    this.netStlBal = netStlBal;
+  }
+  /** 交易所担保净交收金额 */
+  private Double netStlGuarBal;
+  public Double getNetStlGuarBal() {
+    return netStlGuarBal;
+  }
+  public void setNetStlGuarBal(Double netStlGuarBal) {
+    this.netStlGuarBal = netStlGuarBal;
+  }
+  /** 交易所非担保净交收金额*/
+  private Double netStlNonGuarBal;
+  public Double getNetStlNonGuarBal() {
+    return netStlNonGuarBal;
+  }
+  public void setNetStlNonGuarBal(Double netStlNonGuarBal) {
+    this.netStlNonGuarBal = netStlNonGuarBal;
+  }
+
+  /** 银行间债券买入金额 */
+  private Double bondBuyBalCibm;
+  public Double getBondBuyBalCibm() {
+    return bondBuyBalCibm;
+  }
+  public void setBondBuyBalCibm(Double bondBuyBalCibm) {
+    this.bondBuyBalCibm = bondBuyBalCibm;
+  }
+
+  /** 银行间债券卖出金额 */
+  private Double bondSaleBalCibm;
+  public Double getBondSaleBalCibm() {
+    return bondSaleBalCibm;
+  }
+  public void setBondSaleBalCibm(Double bondSaleBalCibm) {
+    this.bondSaleBalCibm = bondSaleBalCibm;
+  }
+
+  /** 银行间融资回购首期金额 */
+  private Double rzhgBalCibm;
+  public Double getRzhgBalCibm() {
+    return rzhgBalCibm;
+  }
+  public void setRzhgBalCibm(Double rzhgBalCibm) {
+    this.rzhgBalCibm = rzhgBalCibm;
+  }
+
+  /** 银行间融资回购到期金额 */
+  private Double rzhgExpireBalCibm;
+  public Double getRzhgExpireBalCibm() {
+    return rzhgExpireBalCibm;
+  }
+  public void setRzhgExpireBalCibm(Double rzhgExpireBalCibm) {
+    this.rzhgExpireBalCibm = rzhgExpireBalCibm;
+  }
+
+  /** 银行间融券回购首期金额 */
+  private Double rqhgBalCibm;
+  public Double getRqhgBalCibm() {
+    return rqhgBalCibm;
+  }
+  public void setRqhgBalCibm(Double rqhgBalCibm) {
+    this.rqhgBalCibm = rqhgBalCibm;
+  }
+
+  /** 银行间融券回购到期金额 */
+  private Double rqhgExpireBalCibm;
+  public Double getRqhgExpireBalCibm() {
+    return rqhgExpireBalCibm;
+  }
+  public void setRqhgExpireBalCibm(Double rqhgExpireBalCibm) {
+    this.rqhgExpireBalCibm = rqhgExpireBalCibm;
+  }
+
+  /** 银行间净交收金额 */
+  private Double netStlBalCibm;
+  public Double getNetStlBalCibm() {
+    return netStlBalCibm;
+  }
+  public void setNetStlBalCibm(Double netStlBalCibm) {
+    this.netStlBalCibm = netStlBalCibm;
+  }
+  
+  /** 银行间中债登净交收金额 */
+  private Double netStlBalCibmZzd;
+  public Double getNetStlBalCibmZzd() {
+    return netStlBalCibmZzd;
+  }
+  public void setNetStlBalCibmZzd(Double netStlBalCibmZzd) {
+    this.netStlBalCibmZzd = netStlBalCibmZzd;
+  }
+  
+  /** 银行间上清所净交收金额*/
+  private Double netStlBalCibmSqs;
+  public Double getNetStlBalCibmSqs() {
+    return netStlBalCibmSqs;
+  }
+  public void setNetStlBalCibmSqs(Double netStlBalCibmSqs) {
+    this.netStlBalCibmSqs = netStlBalCibmSqs;
+  }
+
+  /** 存款存入金额 */
+  private Double depositBal;
+  public Double getDepositBal() {
+    return depositBal;
+  }
+  public void setDepositBal(Double depositBal) {
+    this.depositBal = depositBal;
+  }
+
+  /** 存款到期金额 */
+  private Double depositExpireBal;
+  public Double getDepositExpireBal() {
+    return depositExpireBal;
+  }
+  public void setDepositExpireBal(Double depositExpireBal) {
+    this.depositExpireBal = depositExpireBal;
+  }
+
+  /** 场外开基申购金额 */
+  private Double applyFundBal;
+  public Double getApplyFundBal() {
+    return applyFundBal;
+  }
+  public void setApplyFundBal(Double applyFundBal) {
+    this.applyFundBal = applyFundBal;
+  }
+
+  /** 场外开基赎回金额 */
+  private Double redeemFundBal;
+  public Double getRedeemFundBal() {
+    return redeemFundBal;
+  }
+  public void setRedeemFundBal(Double redeemFundBal) {
+    this.redeemFundBal = redeemFundBal;
+  }
+
+  /** 分销买入金额 */
+  private Double distributeBuyBal;
+  public Double getDistributeBuyBal() {
+    return distributeBuyBal;
+  }
+  public void setDistributeBuyBal(Double distributeBuyBal) {
+    this.distributeBuyBal = distributeBuyBal;
+  }
+
+  /** 交易所债券兑息兑付金额 */
+  private Double bondDxDfBalCsi;
+  public Double getBondDxDfBalCsi() {
+    return bondDxDfBalCsi;
+  }
+  public void setBondDxDfBalCsi(Double bondDxDfBalCsi) {
+    this.bondDxDfBalCsi = bondDxDfBalCsi;
+  }
+
+  /** 银行间债券兑息兑付金额 */
+  private Double bondDxDfBalCibm;
+  public Double getBondDxDfBalCibm() {
+    return bondDxDfBalCibm;
+  }
+  public void setBondDxDfBalCibm(Double bondDxDfBalCibm) {
+    this.bondDxDfBalCibm = bondDxDfBalCibm;
+  }
+
+  /** 债券兑息兑付金额 */
+  private Double bondDxDfBal;
+  public Double getBondDxDfBal() {
+    return bondDxDfBal;
+  }
+  public void setBondDxDfBal(Double bondDxDfBal) {
+    this.bondDxDfBal = bondDxDfBal;
+  }
+
+  /** 委托人追加金额 */
+  private Double appendBal;
+  public Double getAppendBal() {
+    return appendBal;
+  }
+  public void setAppendBal(Double appendBal) {
+    this.appendBal = appendBal;
+  }
+
+  /** 委托人提取金额 */
+  private Double extractBal;
+  public Double getExtractBal() {
+    return extractBal;
+  }
+  public void setExtractBal(Double extractBal) {
+    this.extractBal = extractBal;
+  }
+
+  /** 委托人追加提取金额 */
+  private Double appendExtractBal;
+  public Double getAppendExtractBal() {
+    return appendExtractBal;
+  }
+  public void setAppendExtractBal(Double appendExtractBal) {
+    this.appendExtractBal = appendExtractBal;
+  }
+
+  /** 期货保证金调整金额 */
+  private Double futuresMarginBal;
+  public Double getFuturesMarginBal() {
+    return futuresMarginBal;
+  }
+  public void setFuturesMarginBal(Double futuresMarginBal) {
+    this.futuresMarginBal = futuresMarginBal;
+  }
+
+  /** 其他业务金额 */
+  private Double otherBal;
+  public Double getOtherBal() {
+    return otherBal;
+  }
+  public void setOtherBal(Double otherBal) {
+    this.otherBal = otherBal;
+  }
+
+  /** 手工调整金额 */
+  private Double manualAdjustBal;
+  public Double getManualAdjustBal() {
+    return manualAdjustBal;
+  }
+  public void setManualAdjustBal(Double manualAdjustBal) {
+    this.manualAdjustBal = manualAdjustBal;
+  }
+  
+  /** 沪港通证券买入 */
+  private Double stockBuyBalHgt;
+  public Double getStockBuyBalHgt() {
+	return stockBuyBalHgt;
+  }
+  public void setStockBuyBalHgt(Double stockBuyBalHgt) {
+	this.stockBuyBalHgt = stockBuyBalHgt;
+  }
+  
+  /** 沪港通证券卖出 */
+  private Double stockSaleBalHgt;
+  public Double getStockSaleBalHgt() {
+	return stockSaleBalHgt;
+  }
+  public void setStockSaleBalHgt(Double stockSaleBalHgt) {
+	this.stockSaleBalHgt = stockSaleBalHgt;
+  }
+  
+  /** 沪港通风控资金*/
+  private Double riskBalHgt;
+  public Double getRiskBalHgt() {
+	return riskBalHgt;
+  }
+  public void setRiskBalHgt(Double riskBalHgt) {
+	this.riskBalHgt = riskBalHgt;
+  }
+  
+  /** 深港通证券买入*/
+  private Double stockBuyBalSgt;
+  public Double getStockBuyBalSgt() {
+	return stockBuyBalSgt;
+  }
+  public void setStockBuyBalSgt(Double stockBuyBalSgt) {
+	this.stockBuyBalSgt = stockBuyBalSgt;
+  }
+  
+  /** 深港通证券卖出*/
+  private Double stockSaleBalSgt;
+  public Double getStockSaleBalSgt() {
+	return stockSaleBalSgt;
+  }
+  public void setStockSaleBalSgt(Double stockSaleBalSgt) {
+	this.stockSaleBalSgt = stockSaleBalSgt;
+  }
+  
+  /** 深港通风控资金*/
+  private Double riskBalSgt;
+  public Double getRiskBalSgt() {
+	return riskBalSgt;
+  }
+  public void setRiskBalSgt(Double riskBalSgt) {
+	this.riskBalSgt = riskBalSgt;
+  }
+  
+  /** TA申购*/
+  private Double applyTaBal;
+  public Double getApplyTaBal() {
+	return applyTaBal;
+  }
+  public void setApplyTaBal(Double applyTaBal) {
+	this.applyTaBal = applyTaBal;
+  }
+  
+  /** TA赎回*/
+  private Double redeemTaBal;
+  public Double getRedeemTaBal() {
+	return redeemTaBal;
+  }
+  public void setRedeemTaBal(Double redeemTaBal) {
+	this.redeemTaBal = redeemTaBal;
+  }
+  
+  /** TA分红*/
+  private Double dividendTaBal;
+  public Double getDividendTaBal() {
+	return dividendTaBal;
+  }
+  public void setDividendTaBal(Double dividendTaBal) {
+	this.dividendTaBal = dividendTaBal;
+  }
+  
+  /** 增值税*/
+  private Double vatBal;
+  public Double getVatBal() {
+	return vatBal;
+  }
+  public void setVatBal(Double vatBal) {
+	this.vatBal = vatBal;
+  }
+  
+  
+}

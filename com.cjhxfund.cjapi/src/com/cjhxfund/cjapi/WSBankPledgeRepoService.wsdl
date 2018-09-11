@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WSBankPledgeRepoServiceService" targetNamespace="http://www.primeton.com/WSBankPledgeRepoService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nns="http://www.primeton.com/WSBankPledgeRepoService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WSBankPledgeRepoService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="bankPledgeRepoIssued">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ZROrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="bankPledgeRepoIssuedResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="bankPledgeRepoModify">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ZROrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="bankPledgeRepoModifyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="bankPledgeRepoModify">
+    <wsdl:part name="bankPledgeRepoModify" element="nns:bankPledgeRepoModify">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bankPledgeRepoModifyResponse">
+    <wsdl:part name="bankPledgeRepoModifyResponse" element="nns:bankPledgeRepoModifyResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bankPledgeRepoIssuedResponse">
+    <wsdl:part name="bankPledgeRepoIssuedResponse" element="nns:bankPledgeRepoIssuedResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bankPledgeRepoIssued">
+    <wsdl:part name="bankPledgeRepoIssued" element="nns:bankPledgeRepoIssued">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WSBankPledgeRepoService">
+    <wsdl:operation name="bankPledgeRepoIssued">
+      <wsdl:input name="bankPledgeRepoIssued" message="nns:bankPledgeRepoIssued">
+    </wsdl:input>
+      <wsdl:output name="bankPledgeRepoIssuedResponse" message="nns:bankPledgeRepoIssuedResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="bankPledgeRepoModify">
+      <wsdl:input name="bankPledgeRepoModify" message="nns:bankPledgeRepoModify">
+    </wsdl:input>
+      <wsdl:output name="bankPledgeRepoModifyResponse" message="nns:bankPledgeRepoModifyResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

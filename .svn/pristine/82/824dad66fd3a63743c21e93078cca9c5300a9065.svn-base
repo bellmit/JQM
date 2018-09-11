@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Require-Bundle: com.primeton.eos.richweb,com.eos.foundation,com.eos.wo
+ rkflow
+eos-webCtxPath: report
+Bundle-Vendor: fengjunpei
+Bundle-Version: 1.0.0
+Bundle-Name: com.cjhxfund.ats.algo.report
+Bundle-Description: 报表专用
+Bundle-SymbolicName: com.cjhxfund.ats.algo.report
+

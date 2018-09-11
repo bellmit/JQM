@@ -1,0 +1,26 @@
+<mapping>
+	<method name="queryAppraisementInfo">
+		<parameter index="0" name="ValueInfo" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="queryDomainValue">
+		<parameter index="0" name="DicInfo" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="queryNewStockInfo">
+		<parameter index="0" name="NewBondInfo" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="queryOrgCombPrdInfo">
+		<parameter index="0" name="ProductInfo" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="queryProductInfo">
+		<parameter index="0" name="ProductInfo" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="queryTradeRivalInfo">
+		<parameter index="0" name="TradeRival" />
+		<parameter index="-1" name="result" />
+	</method>
+</mapping>

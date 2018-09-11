@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈鹏 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <resultMap class="com.cjhxfund.ats.fm.comm.comm.OrgEmployee" id="resultUserList">
+        <result column="userid" javaType="string" property="userid"/>
+    </resultMap>
+    <resultMap class="com.eos.workflow.omservice.WFParticipant" id="resultParticipant">
+        <result column="PARTICIPANT" javaType="string" property="id"/>
+        <result column="PARTINAME" javaType="string" property="name"/>
+        <result column="TYPECODE" javaType="string" property="typeCode"/>
+    </resultMap>
+    
+    
+	<!-- 根据角色CODE与用户类型获取用户集合 -->
+	<select id="queryUserList" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+       select  * from v_roleemp t where t.role_code='$roleCode$' and t.party_type in ('user','emp','org')
+    </select>
+    <!-- 根据角色ID与用户类型获取用户集合 -->
+	<select id="queryRoleList" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+       select  * from v_roleemp t where t.role_id in($roleid$) and t.party_type in ('user','emp','org')
+    </select>
+    
+    <!-- 根据是否交易员审核权限，与流程ID，工作项活动实例获取相应工作项处理人 -->
+    <select id="getUserId" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select * from (
+		    select t.vc_user_code, t.vc_user_name
+		    from t_ats_approve_info t
+		    where t.l_process_inst_id = #processInstId#
+		    	and t.vc_activity_def_id = '$activityDefId$'   
+		    order by t.d_create_time desc
+		)
+		where rownum = 1
+    </select>	
+    
+    <!-- author:胥思明  -->
+    <!-- 根据是否交易员审核权限，与流程ID，工作项活动实例获取相应工作项处理人ID -->
+    <select id="getEmpId" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject" >
+    	select * from (
+		    select t.l_user_id
+		    from t_ats_approve_info t
+		    where t.l_process_inst_id = #processInstId#
+		    	and t.vc_activity_def_id = '$activityDefId$'   
+		    order by t.d_create_time desc
+		)
+		where rownum = 1
+    </select>
+    <!-- 通过流程实例和活动定义id查询投顾录入参与者 -->
+    <select id="selectUserByTGLR" parameterClass="java.util.HashMap" resultMap="resultParticipant">
+	    select wf.participant,wf.partiname,'emp' typecode from WFWorkItem wf where wf.processinstid = #processInstId# and wf.activitydefid = 'ATS_FM_TGLR' order by wf.workitemid desc
+    </select>
+    <!-- 通过流程实例和活动定义id查询信息核对1参与者 -->
+    <select id="selectUserByXXHD1" parameterClass="java.util.HashMap" resultMap="resultParticipant">
+	    select wf.participant,wf.partiname,'emp' typecode from WFWorkItem wf where wf.processinstid = #processInstId# and wf.activitydefid = 'ATS_FM_XXHD1' and wf.assistant is not null order by wf.workitemid desc
+    </select>
+    
+    <!-- 查询交易员岗位下的员工id -->
+    <select id="selectUserListByjyy" resultMap="resultUserList">
+	    select e.userid
+  			from org_employee e
+ 			where e.empid in
+		       (select p.party_id
+		          from cap_role r, cap_partyauth p
+		         where r.role_id = p.role_id
+		           and r.role_code = 'CJHX_ZHFWPT_JY_LC_JY_JY')
+    </select>
+    <!-- 查询投资经理岗位下的员工id -->
+    <select id="selectUserListBytzjl" resultMap="resultUserList">
+	    select e.userid
+  			from org_employee e
+ 			where e.empid in (select p.party_id
+                     from cap_role r, cap_partyauth p
+                    where r.role_id = p.role_id
+                      and r.role_code = 'CJHX_JJJLTZJL')
+    </select>
+</sqlMap>

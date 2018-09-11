@@ -1,0 +1,22 @@
+/*
+ 作者：罗倔怀
+描述：回购页面公共样式
+*/
+
+/*搜索区域输入框样式 start*/
+.searchDiv{
+    width:220px;
+    margin-right: 20px;
+    float:left;
+}
+.searchDiv > span{
+    text-align: right;
+}
+/*搜索区域输入框样式 end*/
+
+/*搜索按钮布局样式 start*/
+.searchButton{
+    width:auto;
+    clear:both;
+}
+/*搜索按钮布局样式 end*/

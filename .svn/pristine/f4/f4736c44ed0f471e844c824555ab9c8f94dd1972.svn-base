@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WSExchangePledgeRepoServiceService" targetNamespace="http://www.primeton.com/WSExchangePledgeRepoService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nns="http://www.primeton.com/WSExchangePledgeRepoService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WSExchangePledgeRepoService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="exchangePledgeRepoIssued">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ZROrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="exchangePledgeRepoIssuedResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="exchangePledgeRepoModify">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ZROrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="exchangePledgeRepoModifyResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="exchangePledgeRepoModifyResponse">
+    <wsdl:part name="exchangePledgeRepoModifyResponse" element="nns:exchangePledgeRepoModifyResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="exchangePledgeRepoModify">
+    <wsdl:part name="exchangePledgeRepoModify" element="nns:exchangePledgeRepoModify">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="exchangePledgeRepoIssued">
+    <wsdl:part name="exchangePledgeRepoIssued" element="nns:exchangePledgeRepoIssued">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="exchangePledgeRepoIssuedResponse">
+    <wsdl:part name="exchangePledgeRepoIssuedResponse" element="nns:exchangePledgeRepoIssuedResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WSExchangePledgeRepoService">
+    <wsdl:operation name="exchangePledgeRepoIssued">
+      <wsdl:input name="exchangePledgeRepoIssued" message="nns:exchangePledgeRepoIssued">
+    </wsdl:input>
+      <wsdl:output name="exchangePledgeRepoIssuedResponse" message="nns:exchangePledgeRepoIssuedResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="exchangePledgeRepoModify">
+      <wsdl:input name="exchangePledgeRepoModify" message="nns:exchangePledgeRepoModify">
+    </wsdl:input>
+      <wsdl:output name="exchangePledgeRepoModifyResponse" message="nns:exchangePledgeRepoModifyResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

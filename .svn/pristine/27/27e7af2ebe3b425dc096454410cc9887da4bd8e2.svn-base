@@ -1,0 +1,663 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false" %>
+	
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/JQMHistory/common/commscripts.jsp" %>
+<%@include file="/ProductProcess/CFJYProductProcessForm_common.jsp" %>
+<!-- 
+  - Author(s): jiangkanqian
+  - Date: 2018-05-03 09:22:42
+  - Description:
+-->
+<head>
+<title>指令详细</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link id="css_icon" rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/coframe/org/css/org.css"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/scripts/com.cjhxfund.js.base/utils/DateUtil.js"></script>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/transaction/investNew/js/transactionInstructComJs.js"></script>  
+</head>
+<body>
+
+	<div id="newInterestswapInstructForm" style="padding-top:5px;width: 100%;">
+			<input class="nui-hidden" name="newInterestswapInstruct.lInstructNo" id="lInstructNo"/>
+			<!-- 下单操作类型:0-新建指令/建议 1-修改指令/建议 -->
+			<input class="nui-hidden" name="newInterestswapInstruct.operatorType" id="operatorType" value="0"/>	
+			<input class="nui-hidden" name="newInterestswapInstruct.vcProcessState" id="vcProcessState"/>
+			<!-- 业务标签:1-投顾端、2-交易员端 -->
+		   	<input class="nui-hidden" id="queryType" name="newInterestswapInstruct.queryType"/>	
+		   	<input class="nui-hidden" id="cIsValid" name="newInterestswapInstruct.cIsValid"/>
+		   	<input class="nui-hidden" id="lInstructId" name="newInterestswapInstruct.lInstructId"/>		           
+            <table class="instructTable" border="0" style="width: 100%;">
+                <tr>
+                	<td align="right" width="20%">
+                        产品名称:
+                    </td>
+                    <td colspan="1" width="10%">
+		                 <input id="vcProductCode"  class="nui-combobox" 
+                        name="newInterestswapInstruct.vcProductCode" required="true"
+                        readonly="readonly" enabled="false"/>       
+		                 <div class="nui-hidden" type="hidden" id="lProductId" name="newInterestswapInstruct.lProductId" ></div>
+		                 <div class="nui-hidden" id="vcProductName" name="newInterestswapInstruct.vcProductName" ></div>
+                    </td>
+                    <td align="right" width="20%">
+                        交易日期:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="lTradeDate"  class="nui-datepicker" 
+                        name="newInterestswapInstruct.lTradeDate" required="true" format="yyyyMMdd"
+                        onvaluechanged="tradeDateChange" readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        业务名称:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="vcBusinName"  class="nui-combobox" 
+                        name="newInterestswapInstruct.vcBusinName" required="true" 
+                        onvaluechanged="businNameChange" readonly="readonly" enabled="false"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right" width="20%">
+                        组合名称:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input name="newInterestswapInstruct.vcCombiCode" class="nui-combobox" id="vcCombiCode"
+                           textField="TEXT" valueField="ID"
+                           dataField="data"
+                           showNullItem="false"
+                           allowInput="false"
+                           required="true"
+                           emptyText="请选择..."
+                           nullItemText="请选择..."
+                           showClose="true"
+                           oncloseclick="onCloseClick"
+                           readonly="readonly" enabled="false"/>
+                           <div class="nui-hidden" id="lCombiId" name="newInterestswapInstruct.lCombiId" ></div>
+                           <div class="nui-hidden" id="vcCombiName" name="newInterestswapInstruct.vcCombiName" ></div>
+                    </td>
+                    <td align="right" width="20%">
+                        名义本金（万元）:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="lNominalCapital"  class="nui-textbox" 
+                        name="newInterestswapInstruct.lNominalCapital" required="true"
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        期限:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="lLeftDays"  class="nui-textbox" 
+                        name="newInterestswapInstruct.lLeftDays" 
+                        required="true" readonly="readonly" enabled="false"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right" width="20%">
+                        业务类别:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcBusinType"  class="nui-combobox" 
+                        data = "[{id: 0, text: '支付固定'}, {id: 1, text: '收取固定'}]"
+                        name="newInterestswapInstruct.vcBusinType" required="true"
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        固定利率（%）:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="lFixedRate"  class="nui-textbox" 
+                        name="newInterestswapInstruct.lFixedRate" required="true"
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        起息日:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="lValueDate"  class="nui-datepicker" 
+                        name="newInterestswapInstruct.lValueDate" required="true" 
+                        readonly="readonly" enabled="false" format="yyyyMMdd"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right" width="20%">
+                        到期日:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="lDueDate"  class="nui-datepicker" 
+                        name="newInterestswapInstruct.lDueDate" required="true"
+                        readonly="readonly" enabled="false" format="yyyyMMdd"/>
+                    </td>
+                    <td align="right" width="20%">
+                        首期起息日:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="lFirstvalueDate"  class="nui-datepicker" 
+                        name="newInterestswapInstruct.lFirstvalueDate" required="true"
+                        readonly="readonly" enabled="false" format="yyyyMMdd"/>
+                    </td>
+                    <td align="right" width="20%">
+                        计息天数调整:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="vcInterdayAdj"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcInterdayAdj" required="true" 
+                        readonly="readonly" enabled="false" value="实际天数"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right" width="20%">
+                        支付日调整:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcPaydayAdj"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcPaydayAdj" required="true" 
+                        readonly="readonly" enabled="false"
+                        value="经调整的下一营业日"/>
+                    </td>
+                    <td align="right" width="20%">
+                        清算方式:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcClearType"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcClearType" required="true" 
+                        readonly="readonly" enabled="false"
+                        value="上海清算所清算"/>
+                    </td>
+                    <td align="right" width="20%">
+                        计算机构:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="vcCalcuOrganiz"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcCalcuOrganiz" required="true" 
+                        readonly="readonly" enabled="false"
+                        value="中国外汇交易中心"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right" width="20%">
+                        对手方:
+                    </td>
+                    <td colspan="1" width="10%">                       
+        				<input id="vcCounterpartyId"  class="nui-combobox" 
+                        name="newInterestswapInstruct.vcCounterpartyId" required="true"
+                        readonly="readonly" enabled="false"/>
+        				<div class="nui-hidden" id="vcCounterpartyName" name="newInterestswapInstruct.vcCounterpartyName" ></div>
+                    </td>
+                    <td align="right" width="20%">
+                        交易员:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcTrader"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcTrader" required="true"
+                        readonly="readonly" enabled="false"/>
+                    </td>                   
+                </tr>
+         </table>
+         <div class="nui-toolbar" borderStyle="border:0;">
+                <a>浮动利率明细</a>
+         </div>
+         <table>
+                <tr>
+                	<td align="right" width="20%">
+                        参考利率:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcReferRate"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcReferRate" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        利差(bps):
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcMargin"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcMargin" required="true" 
+                        readonly="readonly" enabled="false"
+                        value="0"/>
+                    </td>
+                    <td align="right" width="20%">
+                        支付周期:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="vcPayCycle"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcPayCycle" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right" width="20%">
+                        首期定期支付日:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="lFiregulPayday"  class="nui-datepicker" 
+                        name="newInterestswapInstruct.lFiregulPayday" required="true"
+                        readonly="readonly" enabled="false" format="yyyyMMdd"/>                                              
+                    </td>
+                    <td align="right" width="20%">
+                        重置频率:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcResetFrequency"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcResetFrequency" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        首期利率确定日:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="lFirateDay"  class="nui-datepicker" 
+                        name="newInterestswapInstruct.lFirateDay" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right" width="20%">
+                        计息方法:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcInterestMethod"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcInterestMethod" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        计息基准:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcFloatrateBench"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcFloatrateBench" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>                    
+                </tr>
+            </table>
+            <div class="nui-toolbar" borderStyle="border:0;">
+                <a>固定利率明细</a>
+         	</div>
+         	<table>
+         		<tr>
+                	<td align="right" width="20%">
+                       支付周期:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="vcFixPayCycle"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcPayCycle" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                    <td align="right" width="20%">
+                        首期定期支付日:
+                    </td>
+                    <td colspan="1" width="10%">
+                        <input id="lFixFiregulPayday"  class="nui-datepicker" 
+                        name="newInterestswapInstruct.lFiregulPayday" required="true"
+                        readonly="readonly" enabled="false" format="yyyyMMdd"/>
+                    </td>
+                    <td align="right" width="20%">
+                        计息基准:
+                    </td>
+                    <td colspan="1" width="20%">
+                        <input id="vcFixrateBench"  class="nui-textbox" 
+                        name="newInterestswapInstruct.vcFixrateBench" required="true" 
+                        readonly="readonly" enabled="false"/>
+                    </td>
+                </tr>
+                <tr>
+                	<td align="right">
+                        备注:
+                    </td>
+                    <td colspan="5">
+                        <input class="nui-textarea"  name="newInterestswapInstruct.vcRemark" 
+                        id="vcRemark" width="100%" height="105px" readonly="readonly" enabled="false"/>
+                    </td>
+                </tr>
+           </table>
+           <div class="nui-toolbar" borderStyle="border:0;">
+				<div align="center" class="submitDiv">
+					<a class="nui-button"  iconCls="icon-ok" plain="true"  id="exactCommit" onclick="goconfirm()">确认</a> 
+					<a class="nui-button"  iconCls="icon-cancel" plain="true"  onclick="onCancel()">关闭</a>
+				</div>
+			</div>
+        </div>
+
+	<script type="text/javascript">
+    	nui.parse();
+    	
+    	//页面一开始要加载的方法
+		$(function() {
+	    	loadData( );
+		});	
+    	
+    	//数据初始化
+    	function loadData( ){
+    		var businData = "[{id: 0, text: 'FR007_1M'}, {id: 1, text: 'FR007_3M'}, {id: 2, text: 'FR007_6M'},"
+    	 	+ "{id: 3, text: 'FR007_9M'}, {id: 4, text: 'FR007_1Y'}, {id: 5, text: 'FR007_2Y'},"
+    	 	+ "{id: 6, text: 'FR007_3Y'}, {id: 7, text: 'FR007_4Y'}, {id: 8, text: 'FR007_5Y'},"
+    	 	+ "{id: 9, text: 'FR007_7Y'}, {id: 10, text: 'FR007_10Y'}, {id: 11, text: 'SHIBOR_3M_6M'},"
+    	 	+ "{id: 12, text: 'SHIBOR_3M_9M'}, {id: 13, text: 'SHIBOR_3M_1Y'}, {id: 14, text: 'SHIBOR_3M_2Y'},"
+    	 	+ "{id: 15, text: 'SHIBOR_3M_3Y'}, {id: 16, text: 'SHIBOR_3M_4Y'}, {id: 17, text: 'SHIBOR_3M_5Y'},"
+    	 	+ "{id: 18, text: 'SHIBOR_3M_6Y'}, {id: 19, text: 'SHIBOR_3M_7Y'}, {id: 20, text: 'SHIBOR_3M_8Y'},"
+    	 	+ "{id: 21, text: 'SHIBOR_3M_9Y'}, {id: 22, text: 'SHIBOR_3M_10Y'}, {id: 23, text: 'SHIBOR_O/N_7D'},"
+    	 	+ "{id: 24, text: 'SHIBOR_O/N_1M'}, {id: 25, text: 'SHIBOR_O/N_3M'}, {id: 26, text: 'SHIBOR_O/N_6M'},"
+    	 	+ "{id: 27, text: 'SHIBOR_O/N_9M'}, {id: 28, text: 'SHIBOR_O/N_1Y'}, {id: 29, text: 'SHIBOR_O/N_2Y'}, "
+    	 	+ "{id: 30, text: 'SHIBOR_O/N_3Y'}]";
+    	 	var businName = nui.get("vcBusinName");
+    		businName.setData(businData);
+    	}
+    	
+    	//产品名称
+    	function selectFunds(e){
+     		var fundCodeCombo = nui.get("vcProductCode");
+    		var vcCombiCombo = nui.get("vcCombiCode");
+       		var id = fundCodeCombo.getValue();
+       		if(!id){
+       			vcCombiCombo.setValue(null);
+       			vcCombiCombo.setText(null);
+       		}
+    		nui.ajax({
+        		data:{vcProductCode:id},
+        		url:"com.cjhxfund.commonUtil.applyInstUtil.queryCombiInfo.biz.ext",
+        		success:function(resp){
+        			var returnJson = nui.decode(resp);
+					if(returnJson.exception == null){
+						var combis = resp.data;
+			            if(combis){
+		                    vcCombiCombo.load(combis);
+		                    if(typeof e === "object"){
+		                    	vcCombiCombo.select(0);
+		                    }else{
+		                    	var combiInList = false;
+		                    	for(var i = 0,len = combis.length; i < len;i++){
+									if(combis[i].VC_COMBI_NO==e){
+										combiInList = true;
+							    		vcCombiCombo.setValue(e);
+							    	}
+								}
+								if(!combiInList){
+									vcCombiCombo.setValue(null);
+       								vcCombiCombo.setText(null);
+								}
+		                    }
+		             	 }
+					}else{
+						nui.alert("系统异常","系统提示");
+					}
+	              },
+	            //有错误码之后，把后面的错误提醒补齐。
+	            fail:function(resp){
+	                alert(resp);
+	            }
+		    });
+		    
+		    //赋值
+		    var funds = fundCodeCombo.getData();	
+			for(var i = 0,len = funds.length; i < len;i++){
+				if(funds[i].ID==nui.get("vcProductCode").getValue()){
+					nui.get("lProductId").setValue(funds[i].L_PRODUCT_ID);
+		    	}
+			}
+			var text = fundCodeCombo.getText();	
+			nui.get("vcProductName").setValue(text);			
+    	};
+    	
+    	//组合名称
+    	function onCombiChange(){
+    		var combis = nui.get("vcCombiCode").getData();
+			for(var i = 0, len = combis.length; i < len;i++){
+				var asset = combis[i];
+				if(asset.ID==nui.get("vcCombiCode").getValue()){
+					alert(asset.L_COMBI_ID);
+		    		nui.get("lCombiId").setValue(asset.L_COMBI_ID);
+		    	}
+			}
+			alert(nui.get("vcCombiCode").getText());
+			nui.get("vcCombiName").setValue(nui.get("vcCombiCode").getText());
+    	}
+    	  	
+    	//页面X的删除功能
+		function onCloseClick(e) {
+		    var obj = e.sender;
+		    obj.setText(null);
+		    obj.setValue(null);
+		    obj.doValueChanged();
+		}
+    	
+    	//业务名称勾稽关系联动
+    	function businNameChange(){
+    		//取业务名称值
+    		var bsHead = "";
+    		var bsTail = "";
+    		var bsNameValue = nui.get("vcBusinName").getText();
+    		var bsArr = bsNameValue.split("_");
+    		var bsA = bsArr[0];
+    		var bsB = bsArr[1];
+    		var bsC = bsArr[2]; 
+    		if(bsA == "FR007"){
+    			bsHead = bsA;
+    			bsTail = bsB;
+    		}
+    		else{
+    			bsHead = bsA + "_" + bsB;
+    			bsTail = bsC;
+    		}
+    		
+    		//取交易日期
+    		var tradeDate = nui.get("lTradeDate").getValue();
+    			
+    		//期限
+    		nui.get("lLeftDays").setValue(bsTail);
+    		
+    		//支付周期
+    		var busId = nui.get("vcBusinName").getValue();
+    		if(busId =="0" || busId=="23" || busId=="24" || busId=="25" || busId=="26"
+    		|| busId=="27"){
+    			nui.get("vcPayCycle").setValue("到期");
+    			nui.get("vcFixPayCycle").setValue("到期");
+    		}
+    		else{
+    			if("FR007" == bsHead || "SHIBOR_3M" == bsHead){
+    				nui.get("vcPayCycle").setValue("季");
+    				nui.get("vcFixPayCycle").setValue("季");
+    			}
+    			if("SHIBOR_O/N" == bsHead){
+    				nui.get("vcPayCycle").setValue("年");
+    				nui.get("vcFixPayCycle").setValue("年");
+    			}
+    		}
+    		var payCycle = nui.get("vcFixrateBench").getValue();
+    		
+    		//起息日、到期日、首期定期支付日
+    		if(tradeDate!=null && tradeDate!=""){
+    			dateProcess(bsHead,bsTail,payCycle,tradeDate);
+    		}
+    		
+    		//浮动参考利率
+    		nui.get("vcReferRate").setValue(bsHead);
+    		
+    		//重置频率、计息方法、浮动计息基准、固定计息基准
+    		if("FR007" == bsHead){
+    			nui.get("vcResetFrequency").setValue("周");
+    			nui.get("vcInterestMethod").setValue("复利");
+    			nui.get("vcFloatrateBench").setValue("A/365");
+    		}
+    		if("SHIBOR_3M" == bsHead){
+    			nui.get("vcResetFrequency").setValue("季");
+    			nui.get("vcInterestMethod").setValue("单利");
+    			nui.get("vcFloatrateBench").setValue("A/360");
+    		}
+    		if("SHIBOR_O/N" == bsHead){
+    			nui.get("vcResetFrequency").setValue("天");
+    			nui.get("vcInterestMethod").setValue("复利");
+    			nui.get("vcFloatrateBench").setValue("A/360");
+    		}
+    		nui.get("vcFixrateBench").setValue("A/365");   		
+    		
+    		
+    	};
+    	
+    	//时间联动
+    	function dateProcess(bsHead,bsTail,payCycle,tradeDate){
+    		var valueDate = "";
+    		var dueDate = "";
+    		nui.ajax({
+						data:{tradeDate:tradeDate,bsHead:bsHead,bsTail:bsTail,payCycle:payCycle},
+						async: false,
+						type:'POST',
+						contentType:'text/json',
+						url:"com.cjhxfund.ats.instruction.date.getDates.biz.ext",
+						success:function(resData){
+							valueDate = resData.dateObject.valueDate;
+							dueDate = resData.dateObject.dueDate;
+							firegulPayday = resData.dateObject.firegulPayday;
+						}
+					}); 
+			nui.get("lValueDate").setValue(valueDate);
+			nui.get("lDueDate").setValue(dueDate);
+			nui.get("lFirstvalueDate").setValue(valueDate);
+    		nui.get("lFiregulPayday").setValue(firegulPayday);
+    		nui.get("lFixFiregulPayday").setValue(firegulPayday);
+    	}
+    	
+    	//交易日变化联动
+    	function tradeDateChange(){
+    		//取交易日期
+    		var tradeDate = nui.get("lTradeDate").getValue();
+    		//首期利率确定日
+    		nui.get("lFirateDay").setValue(tradeDate);
+    		//取业务名称值
+    		var bsNameValue = nui.get("vcBusinName").getText();
+    		//支付周期
+    		var payCycle = nui.get("vcPayCycle").getValue();
+    		//起息日
+    		if(tradeDate!=null && tradeDate!=""){
+    			if(bsNameValue!=null && bsNameValue!=""){
+    				var bsHead = "";
+    				var bsTail = "";
+    				var bsArr = bsNameValue.split("_");
+    				var bsA = bsArr[0];
+    				var bsB = bsArr[1];
+    				var bsC = bsArr[2]; 
+    				if(bsA == "FR007"){
+    					bsHead = bsA;
+    					bsTail = bsB;
+    				}
+    				else{
+    					bsHead = bsA + "_" + bsB;
+    					bsTail = bsC;
+    				}
+    				dateProcess(bsHead,bsTail,payCycle,tradeDate);
+    			}
+    		}   		
+    	} 
+    	
+    	//复制新增初始化页面及数据
+    	function setFormData(data){
+    		//var dataForm = new nui.Form("#newInterestswapInstructForm");
+    		//跨页面传递的数据对象，克隆后才可以安全使用 
+    		var data = nui.clone(data); 
+	        if(data!=null){
+	        	//data不为空，则视为复制增加，需填充页面数据
+	        	nui.get("lProductId").setValue(data.lProductId);//产品Id
+	        	nui.get("vcProductCode").setValue(data["vcProductCode"]); //产品代码
+				nui.get("vcProductCode").setText(data["vcProductName"]); //产品名称		
+	        	nui.get("vcProductName").setValue(data.vcProductName);//产品名称		
+				selectFunds(data["vcCombiCode"]);			
+				nui.get("lTradeDate").setValue(data["lTradeDate"].toString());//交易日期
+				nui.get("vcBusinName").setValue(data.vcBusinName);//业务名称
+				businNameChange();
+				tradeDateChange();
+				nui.get("lNominalCapital").setValue(data.lNominalCapital);//名义本金
+				nui.get("vcBusinType").setValue(data.vcBusinType);//业务类别
+				nui.get("lFixedRate").setValue(data.lFixedRate);//固定利率
+				nui.get("vcCounterpartyId").setValue(data["vcCounterpartyId"]); //交易对手编号
+				nui.get("vcCounterpartyId").setText(data["vcCounterpartyName"]); //交易对手				
+				nui.get("vcTrader").setValue(data.vcTrader);//交易员
+				nui.get("vcRemark").setValue(data.vcRemark);//备注
+				nui.get("operatorType").setValue(data.operatorType);//操作类型
+				nui.get("lInstructNo").setValue(data.lInstructNo);//指令编号
+				var ps = data.vcProcessState;
+				var qt = data.queryType;
+				var valid = data.cIsValid;
+				nui.get("vcProcessState").setValue(ps);//流程状态
+				nui.get("queryType").setValue(qt);//业务标签
+				nui.get("cIsValid").setValue(valid);//交易状态
+				nui.get("lInstructId").setValue(data.lInstructId);//指令ID
+				var confirmButton = document.getElementById("exactCommit");
+				lNominalCapitalTrans();
+				lFixedRateTrans();
+				if(valid != 1){
+					confirmButton.style.display = "none";
+				}
+				else{
+					if(qt == "1"){
+						if(ps != "1"){
+							confirmButton.style.display = "none";
+						}
+					}
+					if(qt == "2"){
+						if(ps == "2" || ps == "3"){}
+						else{
+							confirmButton.style.display = "none";
+						}
+					}
+				}				
+	        }
+    	}
+    	
+    	// 确认按钮分发
+		function goconfirm(){
+    		var instructList = new Array();
+    		var lInstructId = nui.get("lInstructId").getValue();
+    		var lInstructNo = nui.get("lInstructNo").getValue();
+    		var vcProcessState = nui.get("vcProcessState").getValue();
+    		var queryType = nui.get("queryType").getValue();
+    		var cIsValid = nui.get("cIsValid").getValue();
+			jsonParams = {instructId: lInstructId, 
+			instructNo: lInstructNo, processState:vcProcessState, 
+			cIsValid:cIsValid,queryType:queryType};
+			instructList.push(jsonParams);
+    		var a = nui.loading("正在处理中,请稍等...","提示");
+    		nui.ajax({
+					    	url: "com.cjhxfund.ats.instruction.InterestSwap.InterestSwapInstruction.batchConfirmInstruction.biz.ext",
+					      	type: 'POST',
+					      	data: {tasks:instructList},		
+					      	contentType: 'text/json',
+					      	success: function(text){
+					      		nui.hideMessageBox(a);
+					      		var returnJson = nui.decode(text);
+					      		if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_SUCCESS%>"){
+					      			nui.alert("指令确认成功","提示",function(){
+		            					window.CloseOwnerWindow();                  	
+	                            	});				      			
+					      		}
+					      		if(returnJson.rtnCode == "<%=com.cjhxfund.commonUtil.Constants.ATS_ERROR%>"){
+					      			var rtnMsg = returnJson.rtnMsg;
+					      			nui.alert(rtnMsg,"提示",function(){
+		            					window.CloseOwnerWindow();                  	
+	                            	});						      			
+					      		}
+					      	}
+				 		});
+			
+		}
+		
+		function lNominalCapitalTrans(){
+ 			var num = nui.get("lNominalCapital").getValue();
+ 			if(num == "" || num == null || num == undefined){}
+ 			else{
+ 				var numTrans = formatNumber(num, 0, 1);
+ 				nui.get("lNominalCapital").setValue(numTrans);
+ 			}
+ 		}
+ 		
+ 		function lFixedRateTrans(){
+ 			var num = nui.get("lFixedRate").getValue();
+ 			if(num == "" || num == null || num == undefined){}
+ 			else{
+ 				var numTrans = formatNumber(num, 4, 1);
+ 				nui.get("lFixedRate").setValue(numTrans);
+ 			}
+ 		}
+		
+    </script>
+</body>
+</html>

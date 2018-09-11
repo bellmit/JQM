@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<handles>
+	<!--
+	match-pattern as following:
+	1) *[String]
+	2) *[String]*
+	3) [Stirng]*
+	4) [String]
+	5) [String]*[String]
+	handle-class:Handler class name
+	type：target type[pageflow|businesslogic|node]
+	nodeType：[start|end|assign|invokePojo|invokeService|switch|loopStart|loopEnd|throw|
+					 subprocess|transactionBegin|transactionCommit|transactionRollback|subPageFlow|*]
+	nodeID:ID of nodes to be matched
+	-->
+	<!--
+	<handle
+	name="aName"
+	match-pattern="*[CHAR]**"
+	handle-class="com.primeton.engine.handler.logHandler"
+	type="pageflow,businesslogic,node"
+	nodeType="start,end,assign,invokePojo,invokeService,switch,throw,subprocess,transactionBegin,transactionCommit,transactionRollback,subPageFlow,*"
+	nodeID="invokeName*,switch*Name,*forEachStartName,......"/>
+	-->
+	<!-- 业务操作逻辑流拦截配置 -->
+		<!-- 老机器猫 -->
+			<!-- 指令导出统计 -->
+			<handle
+			name="productProcessExportBizHandler"
+			match-pattern="com.cjhxfund.jy.ProductProcess.CFJYProductProcessBiz.productProcessExport*"
+			handle-class="com.cjhxfund.commonUtil.BizOperateCommonHandler"
+			type="businesslogic"
+			nodeType="start"
+			nodeID="start0"/>
+		<!-- 二级债 -->
+			<!-- 导出本币文档 -->
+			<handle
+			name="exprotResultInstructByProcessinstIdBizHandler"
+			match-pattern="com.cjhxfund.ats.sm.comm.InstructionManager.exprotResultInstructByProcessinstId*"
+			handle-class="com.cjhxfund.commonUtil.BizOperateCommonHandler"
+			type="businesslogic"
+			nodeType="start"
+			nodeID="start0"/>
+			<!-- 手工置交收 -->
+			<handle
+			name="updateFundSetmtTraceManuallyBizHandler"
+			match-pattern="com.cjhxfund.ats.sm.comm.FundSetmtTraceManager.updateFundSetmtTraceManually*"
+			handle-class="com.cjhxfund.commonUtil.BizOperateCommonHandler"
+			type="businesslogic"
+			nodeType="start"
+			nodeID="start0"/>
+			<!-- 手工置交收-手工添加业务 -->
+			<handle
+			name="addBizManuallyBizHandler"
+			match-pattern="com.cjhxfund.ats.sm.comm.FundSetmtTraceManager.addBizManually*"
+			handle-class="com.cjhxfund.commonUtil.BizOperateCommonHandler"
+			type="businesslogic"
+			nodeType="start"
+			nodeID="start0"/>
+		<!-- 一级债 -->
+		<!-- 新股IPO -->
+
+	<!-- 子业务操作逻辑流拦截配置 -->
+		<!-- 老机器猫 -->
+			<!-- 综合报表查询 -->
+			<!-- <handle
+			name="queryZHXXBizHandler"
+			match-pattern="com.cjhxfund.jy.ProductProcess.ZhxxcxUtilBiz.queryZHXX*"
+			handle-class="com.cjhxfund.commonUtil.BizOperateCommonHandler"
+			type="businesslogic"
+			nodeType="invokePojo"
+			nodeID="invokePojo0,invokePojo2,invokePojo3,invokePojo4,invokePojo5,invokePojo6,invokePojo7,invokePojo9,invokePojo10,invokePojo11,invokePojo12,invokePojo13,invokePojo14,invokePojo16,invokePojo17,invokePojo18,invokePojo19,invokePojo20,invokePojo21,invokePojo22,invokePojo23,invokePojo24,invokePojo25,invokePojo26"/>
+		 -->
+		<!-- 二级债 -->
+		<!-- 一级债 -->
+		<!-- 新股IPO -->
+	
+</handles>

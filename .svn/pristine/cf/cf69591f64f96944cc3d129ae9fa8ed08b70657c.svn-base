@@ -1,0 +1,587 @@
+/**
+ * 
+ */
+package com.cjhxfund.ats.sm.comm;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
+import quickfix.Group;
+import quickfix.field.Account;
+import quickfix.field.NoAllocs;
+import quickfix.field.NoOrders;
+
+import com.cjhxfund.commonUtil.DateUtil;
+import com.cjhxfund.commonUtil.StrUtil;
+import com.cjhxfund.foundation.fix.FixToUtil;
+import com.eos.foundation.data.DataObjectUtil;
+import com.eos.system.annotation.Bizlet;
+import com.primeton.spring.support.DatabaseExt;
+
+import commonj.sdo.DataObject;
+
+/**
+ * @author 刘玉龙
+ * @date 2016-11-08 09:45:14
+ * 用于指令数据与fix接口信息数据转换
+ */
+@Bizlet("")
+public class InstructionTransform {
+
+	/**
+	 * 指令对象转换为风控试算Fix报文发送对象（风控试算）
+	 * @param obj 将要发送的报文对象
+	 * @return
+	 * @author liuyulong
+	 */
+
+	@Bizlet("")
+	public static Map<Object, Object> getRiskControlMsgTransform(DataObject obj, String clordid, String instructionno){
+		Map<Object, Object> map = new HashMap<Object, Object>();
+		List<Group> groupList = new ArrayList<Group>();//重复组对象列表
+		List<List<DataObject>> bondsList = new ArrayList<List<DataObject>>();//重复组债券信息对象列表
+		List<DataObject> insertList = new ArrayList<DataObject>();//需插入指令表的数据对象列表
+		DataObject sendMsg = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendMsg");//创建数据对象
+		DatabaseExt.getPrimaryKey(sendMsg);//生成主键
+		
+		//获取FIX指令下达到O32的产品对应的操作员编号，先从机器猫配置的产品参数获取产品对应O32的投资经理，若参数获取不到，则再实时到O32去获取该产品实际的投资经理
+		String sendersubid = FixToUtil.getO32OperatorNo(obj.getString("vcProductCode"));
+		
+		sendMsg.setString("vcMsgtype", "H");//35-消息类型
+		sendMsg.setString("vcClordid", "H"+clordid);//11:第三方编号 ,需生成一个
+		sendMsg.setString("vcProcesstype", "4");//15999:4-风险试算
+		sendMsg.setString("vcBusinclass", obj.getString("businClass"));//【前端设置】13000业务类别:2-银行间二级市场业务 I-上交所固定收益平台  E-交易所大宗交易
+		sendMsg.setString("vcInstructionno", instructionno);//41:指令下达时指令序号必须传入0，指令修改时传入具体的指令序号(根据业务动态设置)
+		sendMsg.setString("vcBegindate", obj.getString("lTradeDate"));//15203 指令开始日期，此处为交易日期
+		sendMsg.setString("vcMarketdate", obj.getString("lTradeDate"));//15203 指令开始日期，此处为交易日期
+		sendMsg.setString("vcExpiredate", sendMsg.getString("vcBegindate"));//432 指令有效日期，由于指令为当日指令 此处为开始日期
+		sendMsg.setString("vcMarketenddate", sendMsg.getString("vcBegindate"));//432 指令有效日期，由于指令为当日指令 此处为开始日期
+		sendMsg.setString("vcSendersubid", sendersubid);//50:指令下达人的操作员编号【定义在消息头header】
+		if("2".equals(obj.getString("businClass"))){
+			sendMsg.setString("vcFutsettdate", obj.getString("lFirstSettleDate"));//64交割日（首次交割日）【只用于银行间债券和质押式回购】
+			if(obj.getString("lMaturitySettleDate") != null){
+				//sendMsg.setString("vcPurposetype", obj.getString("purposeType"));//15400-用途类别：1：等期限套利，2：不等期限套利，3：短期资金运用，4：超配，5：放大 【只用于银行间质押式回购】
+				sendMsg.setString("vcFutsettdate2",obj.getString("lMaturitySettleDate"));//193到期交割日 【回购业务】:到期结算日【只用于银行间质押式回购】
+			}
+		}
+		sendMsg.setDate("dCreated", DateUtil.getDate());//记录插入数据时间
+		Group group = null;
+		List<DataObject> beanList = new ArrayList<DataObject>();
+		DataObject bean = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendRepeatGroup");
+		DataObject[] bonds = (DataObject[]) obj.get("bonds");
+		String vcSymbol = null;
+		String vcPrice = null;
+		String checkMemo = "";
+		//String busintype = null;
+		
+		if(bonds!=null && bonds.length > 0){//回购业务处理
+			group = new Group(NoAllocs.FIELD, Account.FIELD, new int[]{1, 55, 100, 13001, 14000, 38, 44, 152, 159, 40, 13204, 14058, 0});//组装重复组数据
+			
+			//busintype = "03".equals(obj.getString("vcEntrustDirection"))?"5":"6";//债券买卖业务本地业务字典（03-正回购，04-逆回购）转换成O32对应字典（5–融资回购；6–融券回购）
+			vcSymbol = obj.getString("symbol");//O32证券申报代码
+			vcPrice = "0";
+			for(int i=0 ; i < bonds.length; i++){//组合质押券信息
+				DataObject bond = bonds[i];				
+				Double bondAmount = StrUtil.delThousandthEmptyTo0((String) bond.get("enFaceAmount"))*10000;//券面总额
+				Double conversionRatio = StrUtil.delThousandthEmptyTo0((String) bond.get("enMortagageRatio"))/100;//质押比率
+				int orderqty = (int) (bondAmount*conversionRatio/100);
+				//组合|投资类型|质押券|质押比例|质押数量
+				checkMemo += obj.getString("vcCombiCode")+"|"+obj.getString("vcInvestType")+"|"+bond.get("vcReportCode")+"|"+conversionRatio+"|"+orderqty;
+				if(i != bonds.length-1){
+					checkMemo += ";";
+				}
+				bean.setString("vcCheckmemo", checkMemo);//14058-质押券信息
+				//回购利率
+				bean.setString("enRepoInterest", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enRepoRate"))/100));//159-应计利息【只用于银行间债券和质押式回购】
+				
+			}
+		}else{//买卖业务处理            ;                                     	 
+			group = new Group(NoAllocs.FIELD, Account.FIELD, new int[]{1, 55, 100, 13001, 14000, 38, 44, 152, 40, 13204, 0});//组装重复组数据
+			//busintype = "01".equals(obj.getString("vcEntrustDirection"))?"3":"4";//债券买卖业务本地业务字典（01-买入，02-卖出）转换成O32对应字典（3–债券买入；4–债券卖出）
+			vcSymbol = obj.getString("vcStockCode");//买卖业务为债券代码
+			vcPrice = obj.getString("enPrice");//指令净价
+		}
+		bean.setString("vcAccount", obj.getString("vcCombiCode"));//1:恒生系统组合编号，指定指令下达到恒生的哪个组合下。若债券的组合编号为空，则取指令的组合编号
+		bean.setString("vcSymbol", vcSymbol);//55-证券申报代码，买卖业务为债券代码，回购业务已O32定义的证券申报代码
+		bean.setString("vcExdestination", obj.getString("exdestination"));//【前端设置】 100-交易市场
+		if(( "0".equals(obj.getString("startApi")) && "1".equals(obj.getString("smStartApi")) && "1".equals(obj.getString("callRiskType")) ) || "3".equals(obj.getString("callRiskType")) ){
+			if(obj.getString("vcCallPoint")!=null && "".equals(obj.getString("vcCallPoint"))){//风控中心：流程节点
+				sendMsg.setString("vcCallPoint", obj.getString("vcCallPoint"));
+			}else{
+				sendMsg.setString("vcCallPoint", "0");
+			}
+			if("0".equals(instructionno)){
+				sendMsg.setString("vcIsO32Order", "1");//风控中心：指令是否已经下达到O32  0-是   1- 否
+			}else{
+				sendMsg.setString("vcIsO32Order", "0");//风控中心：指令是否已经下达到O32  0-是   1- 否
+			}
+			bean.setString("vcProductCode", obj.getString("vcProductCode"));//用于风控中心
+			bean.setString("lProductId", obj.getString("lProductId"));//用于风控中心
+			bean.setString("vcIsInquiry", "0");//是否询价指令（用于风控中心）：0-否，1-是
+			bean.setString("vcStockType", "2");//证券类型 （用于风控中心）：0其他，2债券，3股票，4基金
+			bean.setString("vcInterCode", obj.getString("vcInterCode"));//O32证券内码（用于风控中心）
+			bean.setString("vcExecbroker", obj.getString("vcCounterpartyId"));//交易对手（用于风控中心）
+			if("OTC".equals(obj.getString("exdestination"))){//交易市场（用于风控中心）：转换成数据云对应字典（1-SS-上交所、2-SZ-深交所、6-OTC-场外）
+				bean.setString("vcExdestination", "5");
+			}else if("SS".equals(obj.getString("exdestination"))){
+				bean.setString("vcExdestination", "1");
+			}else if("SZ".equals(obj.getString("exdestination"))){
+				bean.setString("vcExdestination", "2");
+			}
+		}
+		bean.setString("vcBusintype", obj.getString("vcEntrustDirection"));//13001-委托方向
+		bean.setString("vcInvesttype", obj.getString("vcInvestType"));//【前端设置1】 14000-投资类型：交易所，1-可交易；2-持有到期；3-可供出售；回购业务投资类型为1-可交易，不传投资类型会根据系统数决定取组合的投资类型或缺省为1-可交易，具体取值和O3保持一致。
+		bean.setString("vcOrderqty", new BigDecimal((new Double(StrUtil.delThousandthEmptyTo0(obj.getString("enFaceAmount"))).longValue())*10000/100).toString());//38-指令数量
+		bean.setString("vcPrice", vcPrice);//44-指令价格
+		bean.setString("vcCashorderqty", new BigDecimal(StrUtil.delThousandthEmptyTo0(obj.getString("enFaceAmount"))*10000).toString());//152-指令金额
+		bean.setString("vcOrdtype", obj.getString("ordtype")); //【前端设置2】 40-证券控制类型:1-金额控 、2-数量控、缺省按2-数量控
+		if("2".equals(obj.getString("businClass"))){
+			bean.set("vcBondsettletype", obj.getString("vcFirstSettleMode"));//【前端设置3】13204-结算方式（首次结算方式）：1-见款付券\2- 见券付款\3-券款对付\4-纯券过户
+			if(obj.getString("vcMaturitySettleMode") != null){//到期结算方式【只用于银行间质押式回购】
+				bean.set("vcBondsettletype2", obj.getString("vcMaturitySettleMode"));//【前端设置3】13208-结算方式（到期结算方式）：1-见款付券\2- 见券付款\3-券款对付\4-纯券过户
+			}
+		}
+		//bean.setString("vcAdvancelimitflag", "");//13231-支取限制【只用于存款】
+		//bean.setString("vcWithdrawtype", "");//13224-支取类型【只用于存款支取】
+		//bean.setString("vcIssuedate", "");//13226-起息日【只用于协议存款和定期存款】
+		//bean.setString("vcReporate", "");//13107-存款利率【只用于存款】
+		//bean.set("vcEarnestBalance", "");//137-定金金额【只用于网下申购】
+		//bean.setString("vcDestSecurity", "");//13101-【只用于开放式基金转换】 开基转换 转入证券内码
+		//bean.setString("vcOtherCombiNo", "");//13304-【只用于开放式基金转换】 开基转换 转入组合
+		//bean.setString("vcOtherInvestType", "");//13305-【只用于开放式基金转换】 开基转换 转入投资类型(值域和tag14000相同)
+
+		bean.setString("lMsgId", sendMsg.getString("lMsgId"));
+		bean.setDate("dCreated", DateUtil.getDate());
+		
+		DatabaseExt.getPrimaryKey(bean);
+		beanList.add(bean);
+		bondsList.add(beanList);
+		insertList.add(sendMsg);
+		groupList.add(group);
+		insertList.add(bean);
+		map.put("sendMsg", sendMsg);
+		map.put("groupList", groupList);
+		map.put("bondsList", bondsList);
+		map.put("insertList", insertList);
+		return map;
+	}
+	
+	
+	/**
+	 * 将指令对象转换为Fix报文发送对象（银行间二级市场）
+	 * @param obj 将要发送的报文对象
+	 * @return
+	 * @author liuyulong
+	 */
+	@Bizlet("")
+	public static Map<Object, Object> getFixSendMsgTransform(DataObject obj){
+		Map<Object, Object> map = new HashMap<Object, Object>();
+		List<DataObject> insertList = new ArrayList<DataObject>();//需插入指令表的数据对象列表
+		List<Group> groupList = null;//重复组对象列表
+		List<List<DataObject>> bondsList = null;//重复组债券信息对象列表
+		DataObject sendMsg = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendMsg");//创建数据对象
+		DatabaseExt.getPrimaryKey(sendMsg);//生成主键
+		
+		//获取FIX指令下达到O32的产品对应的操作员编号，先从机器猫配置的产品参数获取产品对应O32的投资经理，若参数获取不到，则再实时到O32去获取该产品实际的投资经理
+		//String sendersubid = FixToUtil.getO32OperatorNo(obj.getString("vcProductCode"));
+		String sendersubid = FixToUtil.getO32OperatorNo(obj.getString("vcProductCode"),obj.getString("vcFsSenderName"));
+		
+		String side = null;
+		sendMsg.setString("vcMsgtype", obj.getString("msgtype"));//*******业务类型：D-指令下达； G-指令修改；F-指令撤销；H-指令查询；
+		sendMsg.setString("vcSendersubid", sendersubid);//指令下达人的操作员编号
+		sendMsg.setString("vcClordid", obj.getString("vcClordId"));//第三方系统指令编号
+		if(obj.getString("msgtype").equals("G")){
+			sendMsg.setString("vcOrigordid", obj.getString("vcOrigordId"));//被修改的第三方编号
+			sendMsg.setString("vcListid", obj.getString("vcOrigordId"));//要撤销的指令的第三方指令编号
+		}
+		
+		sendMsg.setString("vcBusinclass", obj.getString("businClass"));//【前端设置】业务类别 2-银行间二级市场业务 E-交易所大宗交易 I-固收平台
+		sendMsg.setString("vcBusintype",  obj.getString("vcEntrustDirection"));// 委托方向：3-债券买入 ，4-债券卖出    5–融资回购    6–融券回购  15-协议式正回购   16-协议式逆回购
+		
+		//买卖方向
+		if(obj.getString("vcEntrustDirection").equals("3") || obj.getString("vcEntrustDirection").equals("6") || obj.getString("vcEntrustDirection").equals("16")){//债券买入
+			side="1";//1 - 买入
+		}else if(obj.getString("vcEntrustDirection").equals("4") || obj.getString("vcEntrustDirection").equals("5") || obj.getString("vcEntrustDirection").equals("15")){
+			side="2";//2 - 卖出
+		}
+		sendMsg.setString("vcAccount", obj.getString("vcCombiCode"));//恒生系统组合编号
+		if(obj.getString("symbol") != null){
+			sendMsg.setString("vcSymbol", obj.getString("symbol"));//证券申报代码  回购业务为O32的证券申报代码
+		}else{
+			sendMsg.setString("vcSymbol", obj.getString("vcStockCode"));//证券申报代码  债券买卖业务中为证券代码
+		}
+		sendMsg.setString("vcSecurityid", sendMsg.getString("vcSymbol"));//等于同vcSymbol
+		sendMsg.setString("vcSide", side);//买卖方向，目前恒生系统对该Tag不处理
+		sendMsg.setString("vcExdestination", obj.getString("exdestination"));//【前端设置】 交易市场：OTC-场外(银行间) SS-上交所  SZ-深交所；
+		sendMsg.setString("vcInvesttype", obj.getString("vcInvestType"));//【前端设置1】 投资类型：交易所，1-可交易；2-持有到期；3-可供出售；回购业务投资类型为1-可交易，不传投资类型会根据系统数决定取组合的投资类型或缺省为1-可交易，具体取值和O3保持一致。
+		if(obj.getString("vcEntrustDirection").equals("3") || obj.getString("vcEntrustDirection").equals("4")){
+			sendMsg.setString("vcPrice", obj.getString("enPrice"));//指令价格，取机器猫净价 
+		}
+		if(obj.getString("vcEntrustDirection").equals("5") || obj.getString("vcEntrustDirection").equals("6") || obj.getString("vcEntrustDirection").equals("15") || obj.getString("vcEntrustDirection").equals("16")){
+			sendMsg.setString("vcPrice", "100");//指令价格 100
+			sendMsg.setString("vcReporate", "0");//由于703审批风控原因先固定为0
+			//sendMsg.setString("vcReporate", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enRepoRate"))/100));//【只用于银行间债券、回购和存款】回购利率，回购业务必须填写，如回购利率3%时需填入0.03；存款和存款支取取的是存款利率,银行间债券买卖、回购和存款业务的指令状态、委托和成交数据需返回外，其它业务均不返回该字段。
+		}
+		sendMsg.setString("vcOrdtype", "2");  //【前端设置2】 价格模式：1 - 市价（表示不限制委托价格，在涨跌停范围内即可）；2 - 限价（表示限制委托价格，买入不高于，卖出不低于）；
+		if(obj.getString("vcEntrustDirection").equals("3") || obj.getString("vcEntrustDirection").equals("4")){
+			sendMsg.setString("vcOrderqty", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enFaceAmount"))*10000/100));//指令数量(张)，机器猫前端页面单位为万元，所以需要乘以10000(元)，又因100元/张，所以再需要除以100.
+		}
+		sendMsg.setString("vcCashorderqty", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enFaceAmount"))*10000));//指令金额
+		sendMsg.setString("vcSettltype", obj.getString("vcSettleSpeed"));//清算速度
+		if("2".equals(obj.getString("businClass"))){//
+			String bondYeildType = FixToUtil.getO32BondYideldType(obj.getString("vcStockCode"), "5", obj.getString("lFirstSettleDate"));
+			if("2".equals(bondYeildType)){
+				if(obj.getString("enOptionYield")!=null){
+					sendMsg.setString("vcYieldratiotype", "2");//13224债券收益率类型【只用于银行间业务】 1-到期收益率，2-行权收益率(非必传)
+					sendMsg.setString("vcYtm", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enOptionYield"))/100));//债券收益率
+				}
+			}else{
+				if(obj.getString("enMaturityYield")!=null){
+					sendMsg.setString("vcYieldratiotype", "1");//13224债券收益率类型【只用于银行间业务】 1-到期收益率，2-行权收益率(非必传)
+					sendMsg.setString("vcYtm", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enMaturityYield"))/100));//债券收益率
+				}
+			}
+			sendMsg.setString("vcBondsettletype", obj.getString("vcFirstSettleMode"));//【前端设置3】13204-结算方式（首次结算方式）：1-见款付券\2- 见券付款\3-券款对付\4-纯券过户
+			if(obj.getString("vcMaturitySettleMode") != null){//到期结算方式【只用于银行间质押式回购】
+				sendMsg.setString("vcBondsettletype2", obj.getString("vcMaturitySettleMode"));//【前端设置3】13208-结算方式（到期结算方式）：1-见款付券\2- 见券付款\3-券款对付\4-纯券过户
+			}
+		}else{
+			if(obj.getString("vcYideldType") != null){
+				sendMsg.setString("vcYieldratiotype", obj.getString("vcYideldType"));//13224债券收益率类型【只用于银行间业务】 1-到期收益率，2-行权收益率(非必传)
+			}
+		}
+		String vcCounterpartyId = obj.getString("vcCounterpartyId");
+		TraderSearchType searchType = new TraderSearchType();
+		if(obj.getString("vcCounterpartyId") != null && searchType.returnSearchType(vcCounterpartyId) != 3){
+			sendMsg.setString("vcTargetsubid", vcCounterpartyId);//57交易对手编号：不传时为空后序在交易时指定(非必须)
+		}
+		if(obj.getString("vcAgreemtCode") != null ){
+			sendMsg.setString("vcEngagedNO", obj.getString("vcAgreemtCode"));//14008约定号
+		}
+		if(obj.getString("vcRivalSeat") != null ){
+			sendMsg.setString("vcRivalSeat", obj.getString("vcRivalSeat"));//14003对手交易席位
+		}
+		
+//		if(obj.getString("vcCounterpartyTrader") != null){
+//			sendMsg.setString("vcRivaltraderid", obj.getString("vcCounterpartyTrader"));//76对手交易员编号(非必须)
+//		}
+		//13220对方银行帐户编号--->此处不传
+		//13227【只用于银行间债券】清算类型：1:全额结算；2-净额结算；缺省为1，取自数据字典60151-银行间指令清算类型---->此处缺省
+		//13201报价发起方：0-未指定；1-本方；2-对手方 -->此处缺省为0
+		
+		if(obj.get("bonds") !=null){
+			if(((Object[])obj.get("bonds")).length>0){
+				DataObject[] bonds = (DataObject[]) obj.get("bonds");
+				if(bonds!=null && bonds.length > 0){//回购业务处理
+					Group group = new Group(NoAllocs.FIELD, Account.FIELD, new int[]{1, 14000, 13211, 13212, 13213, 0});//组装重复组数据
+					groupList = new ArrayList<Group>();
+					bondsList = new ArrayList<List<DataObject>>();
+					groupList.add(group);
+					
+					List<DataObject> beanList = new ArrayList<DataObject>();
+					DataObject bean = null;
+					for(int i=0; i<bonds.length; i++){
+						DataObject bond = bonds[i];
+						bean = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendRepeatGroup");
+						bean.setString("vcAccount", StringUtils.isNotBlank(bond.getString("vcCombiCode"))?bond.getString("vcCombiCode"):sendMsg.getString("vcAccount"));//恒生系统组合编号，指定指令下达到恒生的哪个组合下。若债券的组合编号为空，则取指令的组合编号
+						bean.setString("vcInvesttype", StringUtils.isNotBlank(bond.getString("vcInvestType"))?bond.getString("vcInvestType"):sendMsg.getString("vcInvesttype"));//投资类型：1-可交易；2-持有到期；3-可供出售。若债券的投资类型为空，则取指令的投资类型
+						bean.setString("vcPledgebond", bond.getString("vcReportCode"));//债券代码
+						bean.setString("vcPledgeratio", String.valueOf(StrUtil.delThousandthEmptyTo0(bond.getString("enMortagageRatio"))/100));//质押比例，抵押的比例90％填0.9，机器猫前台单位为%，所以需除以100.
+						bean.setString("vcPledgedqty", String.valueOf(StrUtil.delThousandthEmptyTo0Int(bond.getString("enFaceAmount"))*100));//质押数量(张)，机器猫前端页面单位为万元，所以需要乘以10000(元)，又因100元/张，所以再需要除以100.
+						bean.setString("lMsgId", sendMsg.getString("lMsgId"));
+						bean.setDate("dCreated", DateUtil.getDate());
+						//生成主键
+						DatabaseExt.getPrimaryKey(bean);
+						beanList.add(bean);
+						insertList.add(bean);
+					}
+					bondsList.add(beanList);
+				}
+			}
+		}	
+		
+		sendMsg.setString("vcTimeinforce", obj.getString("timeinforce")); //【前端设置6】指令有效模式，默认为0-Day：0 – Day，当日有效；1 – GTC，一直有效，直到完成或撤销；6 – GTD，到指定日前有效；
+		//60订单发起时间(此处不传，默认会在指令下达组装报文时添加)
+		sendMsg.setString("vcBegindate", obj.getString("lTradeDate"));//15203 指令开始日期，此处为交易日期
+		sendMsg.setString("vcExpiredate", sendMsg.getString("vcBegindate"));//432 指令有效日期，由于指令为当日指令 此处为开始日期
+		if("2".equals(obj.getString("businClass"))){
+			sendMsg.setString("vcFutsettdate", obj.getString("lFirstSettleDate"));//64交割日（首次交割日）
+			if(obj.getString("lMaturitySettleDate") != null){
+				sendMsg.setString("vcFutsettdate2",obj.getString("lMaturitySettleDate"));//193到期交割日 【回购业务】:到期结算日
+			}
+		}
+		
+		//15400回购用途类别：1：等期限套利，2：不等期限套利，3：短期资金运用，4：超配，4：超配---->此处不传
+		//15401回购需求方:1：固定收益投资部,2：权益投资部,3：银行外汇部,4：委托人指定---->此处不传
+		sendMsg.setString("vcJudgeavailable", obj.getString("judgeavailable"));//【前端设置】判断可用（风控）：0-不判；1-判；
+		sendMsg.setString("vcJudgerisk", obj.getString("judgerisk"));//【前端设置】判断风控：0-不判；1-判；
+		sendMsg.setString("vcInstructionlevel", obj.getString("instructionlevel"));//【前端设置】指令操作级别:0无 1快速 2一般 3慢速
+		//13302代下达人编号:该字段允许为空、为空时取的是指令下达人（tag50）--->此处不传
+		//15997指令类型:1-个股,缺省1-个股--->此处不传
+		//sendMsg.setString("vcText", obj.getString("vcRemark"));//指令备注
+		
+		sendMsg.setString("lInstructionId", obj.getString("lResultId"));//主表主键ID
+		sendMsg.setString("lInstructionNo", obj.getString("lResultNo"));//指令序号
+		sendMsg.setDate("dCreated", DateUtil.getDate());//记录插入数据时间
+		insertList.add(sendMsg);
+		
+		map.put("sendMsg", sendMsg);
+		map.put("groupList", groupList);
+		map.put("bondsList", bondsList);
+		map.put("insertList", insertList);
+		return map;
+	}
+	
+	/**
+	 * 将指令对象转换为Fix报文发送对象（买断式回购）
+	 * @param obj 将要发送的报文对象
+	 * @return
+	 * @author luojuehuai
+	 */
+	@Bizlet("")
+	public static Map<Object, Object> getFixSendMsgByOutTransform(DataObject obj){
+		Map<Object, Object> map = new HashMap<Object, Object>();
+		List<DataObject> insertList = new ArrayList<DataObject>();//需插入指令表的数据对象列表
+		List<Group> groupList = null;//重复组对象列表
+		List<List<DataObject>> bondsList = null;//重复组债券信息对象列表
+		DataObject sendMsg = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendMsg");//创建数据对象
+		DatabaseExt.getPrimaryKey(sendMsg);//生成主键
+		
+		//获取FIX指令下达到O32的产品对应的操作员编号，先从机器猫配置的产品参数获取产品对应O32的投资经理，若参数获取不到，则再实时到O32去获取该产品实际的投资经理
+		//String sendersubid = FixToUtil.getO32OperatorNo(obj.getString("vcProductCode"));
+		String sendersubid = FixToUtil.getO32OperatorNo(obj.getString("vcProductCode"),obj.getString("vcFsSenderName"));
+		
+		String side = null;
+		sendMsg.setString("vcMsgtype", obj.getString("msgtype"));//*******业务类型：D-指令下达； G-指令修改；F-指令撤销；H-指令查询；
+		sendMsg.setString("vcSendersubid", sendersubid);//指令下达人的操作员编号
+		sendMsg.setString("vcClordid", obj.getString("vcClordId"));//第三方系统指令编号
+		if(obj.getString("msgtype").equals("G")){
+			sendMsg.setString("vcOrigordid", obj.getString("vcOrigordId"));//被修改的第三方编号
+			sendMsg.setString("vcListid", obj.getString("vcOrigordId"));//要撤销的指令的第三方指令编号
+		}
+		
+		sendMsg.setString("vcBusinclass", obj.getString("businClass"));//【前端设置】业务类别 2-银行间二级市场业务 E-交易所大宗交易 I-固收平台
+		sendMsg.setString("vcBusintype",  obj.getString("vcEntrustDirection"));// 委托方向：3-债券买入 ，4-债券卖出    5–融资回购    6–融券回购  15-协议式正回购   16-协议式逆回购
+		
+		//买卖方向
+		if(obj.getString("vcEntrustDirection").equals("3") || obj.getString("vcEntrustDirection").equals("6") || obj.getString("vcEntrustDirection").equals("16")){//债券买入
+			side="1";//1 - 买入
+		}else if(obj.getString("vcEntrustDirection").equals("4") || obj.getString("vcEntrustDirection").equals("5") || obj.getString("vcEntrustDirection").equals("15")){
+			side="2";//2 - 卖出
+		}
+		sendMsg.setString("vcAccount", obj.getString("vcCombiCode"));//恒生系统组合编号
+		if(obj.getString("symbol") != null){
+			sendMsg.setString("vcSymbol", obj.getString("symbol"));//证券申报代码  回购业务为O32的证券申报代码
+		}else{
+			sendMsg.setString("vcSymbol", obj.getString("vcStockCode"));//证券申报代码  债券买卖业务中为证券代码
+		}
+		sendMsg.setString("vcSecurityid", sendMsg.getString("vcSymbol"));//等于同vcSymbol
+		sendMsg.setString("vcSide", side);//买卖方向，目前恒生系统对该Tag不处理
+		sendMsg.setString("vcExdestination", obj.getString("exdestination"));//【前端设置】 交易市场：OTC-场外(银行间) SS-上交所  SZ-深交所；
+		sendMsg.setString("vcInvesttype", obj.getString("vcInvestType"));//【前端设置1】 投资类型：交易所，1-可交易；2-持有到期；3-可供出售；回购业务投资类型为1-可交易，不传投资类型会根据系统数决定取组合的投资类型或缺省为1-可交易，具体取值和O3保持一致。
+		
+		if(obj.getString("vcEntrustDirection").equals("5") || obj.getString("vcEntrustDirection").equals("6") || obj.getString("vcEntrustDirection").equals("15") || obj.getString("vcEntrustDirection").equals("16")){
+			BigDecimal enRepoRateTemp = new BigDecimal(obj.getString("enRepoRate"));
+			BigDecimal enRepoRateTemp2 = enRepoRateTemp.divide(BigDecimal.valueOf(100));
+			sendMsg.setString("vcReporate", enRepoRateTemp2.toPlainString());//【只用于银行间债券、回购和存款】回购利率，回购业务必须填写，如回购利率3%时需填入0.03；存款和存款支取取的是存款利率,银行间债券买卖、回购和存款业务的指令状态、委托和成交数据需返回外，其它业务均不返回该字段。
+		}
+		sendMsg.setString("vcOrdtype", "2");  //【前端设置2】 价格模式：1 - 市价（表示不限制委托价格，在涨跌停范围内即可）；2 - 限价（表示限制委托价格，买入不高于，卖出不低于）；
+		if(obj.getString("vcEntrustDirection").equals("3") || obj.getString("vcEntrustDirection").equals("4")){
+			sendMsg.setString("vcOrderqty", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enFullPriceAmount"))*10000/100));//指令数量(张)，机器猫前端页面单位为万元，所以需要乘以10000(元)，又因100元/张，所以再需要除以100.
+		}
+		sendMsg.setString("vcCashorderqty", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enFullPriceAmount"))));//指令金额
+		sendMsg.setString("vcSettltype", obj.getString("vcSettleSpeed"));//清算速度
+		if("O".equals(obj.getString("businClass"))){//
+			String bondYeildType = FixToUtil.getO32BondYideldType(obj.getString("vcStockCode"), "5", obj.getString("lFirstSettleDate"));
+			if("2".equals(bondYeildType)){
+				if(obj.getString("enOptionYield")!=null){
+					//sendMsg.setString("vcYieldratiotype", "2");//13224债券收益率类型【只用于银行间业务】 1-到期收益率，2-行权收益率(非必传)
+					sendMsg.setString("vcYtm", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enOptionYield"))/100));//债券收益率
+				}
+			}else{
+				if(obj.getString("enMaturityYield")!=null){
+					//sendMsg.setString("vcYieldratiotype", "1");//13224债券收益率类型【只用于银行间业务】 1-到期收益率，2-行权收益率(非必传)
+					sendMsg.setString("vcYtm", String.valueOf(StrUtil.delThousandthEmptyTo0(obj.getString("enMaturityYield"))/100));//债券收益率
+				}
+			}
+			sendMsg.setString("vcBondsettletype", obj.getString("vcFirstSettleMode"));//【前端设置3】13204-结算方式（首次结算方式）：1-见款付券\2- 见券付款\3-券款对付\4-纯券过户
+			if(obj.getString("vcMaturitySettleMode") != null){//到期结算方式【只用于银行间质押式回购】
+				sendMsg.setString("vcBondsettletype2", obj.getString("vcMaturitySettleMode"));//【前端设置3】13208-结算方式（到期结算方式）：1-见款付券\2- 见券付款\3-券款对付\4-纯券过户
+			}
+		}else{
+			if(obj.getString("vcYideldType") != null){
+				//sendMsg.setString("vcYieldratiotype", obj.getString("vcYideldType"));//13224债券收益率类型【只用于银行间业务】 1-到期收益率，2-行权收益率(非必传)
+			}
+		}
+		String vcCounterpartyId = obj.getString("vcCounterpartyId");
+		TraderSearchType searchType = new TraderSearchType();
+		if(obj.getString("vcCounterpartyId") != null && searchType.returnSearchType(vcCounterpartyId) != 3){
+			sendMsg.setString("vcTargetsubid", vcCounterpartyId);//57交易对手编号：不传时为空后序在交易时指定(非必须)
+		}
+		if(obj.getString("vcAgreemtCode") != null ){
+			sendMsg.setString("vcEngagedNO", obj.getString("vcAgreemtCode"));//14008约定号
+		}
+		if(obj.getString("vcRivalSeat") != null ){
+			sendMsg.setString("vcRivalSeat", obj.getString("vcRivalSeat"));//14003对手交易席位
+		}
+		//买断式对手交易员编号不一样
+		if(obj.getString("vcCounterpartyTrader") != null ){
+			sendMsg.setString("vcExecBroker", obj.getString("vcCounterpartyTrader"));//76对手交易员编号(非必须)
+		}
+		//13220对方银行帐户编号--->此处不传
+		//13227【只用于银行间债券】清算类型：1:全额结算；2-净额结算；缺省为1，取自数据字典60151-银行间指令清算类型---->此处缺省
+		//13201报价发起方：0-未指定；1-本方；2-对手方 -->此处缺省为0
+		
+		if(obj.get("bonds") !=null){
+			if(((Object[])obj.get("bonds")).length>0){
+				DataObject[] bonds = (DataObject[]) obj.get("bonds");
+				if(bonds!=null && bonds.length > 0){//回购业务处理
+					Group group = new Group(NoOrders.FIELD, Account.FIELD, new int[]{1, 14000, 13211, 13212, 13213, 0});//组装重复组数据
+					groupList = new ArrayList<Group>();
+					bondsList = new ArrayList<List<DataObject>>();
+					groupList.add(group);
+					
+					List<DataObject> beanList = new ArrayList<DataObject>();
+					DataObject bean = null;
+					for(int i=0; i<bonds.length; i++){
+						DataObject bond = bonds[i];
+						bean = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendRepeatGroup");
+						bean.setString("vcAccount", StringUtils.isNotBlank(bond.getString("vcCombiCode"))?bond.getString("vcCombiCode"):sendMsg.getString("vcAccount"));//恒生系统组合编号，指定指令下达到恒生的哪个组合下。若债券的组合编号为空，则取指令的组合编号
+						bean.setString("vcInvesttype", StringUtils.isNotBlank(bond.getString("vcInvestType"))?bond.getString("vcInvestType"):sendMsg.getString("vcInvesttype"));//投资类型：1-可交易；2-持有到期；3-可供出售。若债券的投资类型为空，则取指令的投资类型
+						bean.setString("vcPledgebond", bond.getString("vcReportCode"));//债券代码
+						bean.setString("vcPledgedqty", String.valueOf(StrUtil.delThousandthEmptyTo0Int(bond.getString("enFaceAmount"))*100));//质押数量(张)，机器猫前端页面单位为万元，所以需要乘以10000(元)，又因100元/张，所以再需要除以100.
+						bean.setString("lMsgId", sendMsg.getString("lMsgId"));
+						sendMsg.setDate("vcTransactTime", (new Date())); //订单发起时间
+						sendMsg.setString("vcAccruedInterestAmt", String.valueOf(StrUtil.delThousandthEmptyTo0(bond.getString("enFirstSettleInterest")) * 100));//首期应计利息
+						sendMsg.setString("vcInterest", String.valueOf(StrUtil.delThousandthEmptyTo0(bond.getString("enFirstSettleInterest")) * 100));//首期应计利息
+						sendMsg.setString("vcRealBondInterest", String.valueOf(StrUtil.delThousandthEmptyTo0(bond.getString("enMaturitySettleInterest")) * 100));//到期应计利息
+						sendMsg.setString("vcFutsettdate", obj.getString("lFirstSettleDate"));//64交割日（首次交割日）
+						sendMsg.setString("vcFutsettdate2",obj.getString("lMaturitySettleDate"));//193到期交割日 【回购业务】:到期结算日
+						sendMsg.setString("vcBondYield", String.valueOf(StrUtil.delThousandthEmptyTo0(bond.getString("enFirstYield"))/100));//首次到期收益率（传0.03表示3%）
+						sendMsg.setString("vcBondYield2", String.valueOf(StrUtil.delThousandthEmptyTo0(bond.getString("enMaturityYield"))/100));//到期收益率（传0.03表示3%）
+						bean.setDate("dCreated", DateUtil.getDate());
+						sendMsg.setString("vcPrice", bond.getString("enNetPriceInit"));//首期净价价格
+						sendMsg.setString("vcStopPrice", bond.getString("enNetPriceFinal"));//到期净价价格
+						sendMsg.setString("vcText", sendMsg.getString("vcRemark")); //备注
+						//生成主键
+						DatabaseExt.getPrimaryKey(bean);
+						beanList.add(bean);
+						insertList.add(bean);
+					}
+					bondsList.add(beanList);
+				}
+			}
+		}	
+		
+		sendMsg.setString("vcTimeinforce", obj.getString("timeinforce")); //【前端设置6】指令有效模式，默认为0-Day：0 – Day，当日有效；1 – GTC，一直有效，直到完成或撤销；6 – GTD，到指定日前有效；
+		//60订单发起时间(此处不传，默认会在指令下达组装报文时添加)
+		sendMsg.setString("vcBegindate", obj.getString("lTradeDate"));//15203 指令开始日期，此处为交易日期
+		sendMsg.setString("vcExpiredate", sendMsg.getString("vcBegindate"));//432 指令有效日期，由于指令为当日指令 此处为开始日期
+		
+		//15400回购用途类别：1：等期限套利，2：不等期限套利，3：短期资金运用，4：超配，4：超配---->此处不传
+		//15401回购需求方:1：固定收益投资部,2：权益投资部,3：银行外汇部,4：委托人指定---->此处不传
+		sendMsg.setString("vcJudgeavailable", obj.getString("judgeavailable"));//【前端设置】判断可用（风控）：0-不判；1-判；
+		sendMsg.setString("vcJudgerisk", obj.getString("judgerisk"));//【前端设置】判断风控：0-不判；1-判；
+		sendMsg.setString("vcInstructionlevel", obj.getString("instructionlevel"));//【前端设置】指令操作级别:0无 1快速 2一般 3慢速
+		//13302代下达人编号:该字段允许为空、为空时取的是指令下达人（tag50）--->此处不传
+		//15997指令类型:1-个股,缺省1-个股--->此处不传
+		//sendMsg.setString("vcText", obj.getString("vcRemark"));//指令备注
+		
+		sendMsg.setString("lInstructionId", obj.getString("lResultId"));//主表主键ID
+		sendMsg.setString("lInstructionNo", obj.getString("lResultNo"));//指令序号
+		sendMsg.setDate("dCreated", DateUtil.getDate());//记录插入数据时间
+		insertList.add(sendMsg);
+		
+		map.put("sendMsg", sendMsg);
+		map.put("groupList", groupList);
+		map.put("bondsList", bondsList);
+		map.put("insertList", insertList);
+		return map;
+	}
+	
+	/**
+	 * 将指令对象转换为Fix报文发送对象（指令撤销[废弃]）
+	 * @param obj 将要发送的报文对象
+	 * @return
+	 * @author liuyulong
+	 */
+	@Bizlet("")
+	public static Map<Object, Object> getFixOrderCancelRequest(DataObject obj){
+		Map<Object, Object> map = new HashMap<Object, Object>();
+		List<DataObject> insertList = new ArrayList<DataObject>();
+		DataObject sendMsg = DataObjectUtil.createDataObject("com.cjhxfund.foundation.fix.FixToDataset.TAtsFixSendMsg");//创建数据对象
+		DatabaseExt.getPrimaryKey(sendMsg);//生成主键
+		
+		//获取FIX指令下达到O32的产品对应的操作员编号，先从机器猫配置的产品参数获取产品对应O32的投资经理，若参数获取不到，则再实时到O32去获取该产品实际的投资经理
+		String sendersubid = FixToUtil.getO32OperatorNo(obj.getString("vcProductCode"));
+		
+		sendMsg.setString("vcMsgtype", obj.getString("msgtype"));//业务类型：D-指令下达； G-指令修改；F-指令撤销；H-指令查询；
+		sendMsg.setString("vcClordid", obj.getString("vcClordId"));//第三方系统指令编号
+		sendMsg.setString("vcOrigordid", obj.getString("vcOrigordId"));//要撤销的指令的第三方指令编号
+		sendMsg.setString("vcListid", obj.getString("vcOrigordId"));//要撤销的指令的第三方指令编号
+		sendMsg.setString("vcSendersubid", sendersubid);//指令下达人的操作员编号
+		sendMsg.setString("lInstructionId", obj.getString("lResultId"));//指令序号-主键ID
+		sendMsg.setString("lInstructionNo", obj.getString("lResultNo"));//指令编号-业务ID
+		sendMsg.setDate("dCreated", DateUtil.getDate());//记录插入数据时间
+		
+		insertList.add(sendMsg);
+		map.put("sendMsg", sendMsg);
+		map.put("groupList", null);
+		map.put("bondsList", null);
+		map.put("insertList", insertList);
+		return map;
+	}
+	
+	/**
+	 * 将指令对象转换为Fix报文发送对象（指令撤销[废弃]）
+	 * @param obj 将要发送的报文对象
+	 * @return
+	 * @author liuyulong
+	 */
+	@Bizlet("")
+	public static String parseRiskInterfaceMsg(DataObject obj){
+		StringBuffer sb = new StringBuffer();
+		Object[] riskMsgs = (Object[]) obj.get("resultDetail");
+		if(riskMsgs.length>0){
+			for(int i=0; i<riskMsgs.length;i++){
+				StringBuffer sbMsg = new StringBuffer();
+				DataObject riskMsg = (DataObject) riskMsgs[i];
+				String riskType = "";
+				if("1".equals(riskMsg.getString("cRiskOperation"))){
+					riskType = "-预警";
+				}else if("2".equals(riskMsg.getString("cRiskOperation"))){
+					riskType = "-禁止";
+				}else if("3".equals(riskMsg.getString("cRiskOperation"))){
+					riskType = "-申请指令审批";
+				}else if("4".equals(riskMsg.getString("cRiskOperation"))){
+					riskType = "-申请风险阀值";
+				}
+				/** 示例：组合[1001_000]证券[100005]触发风控[375][禁止]：债券成交收益率不超过公允收益率60bp； */
+				sbMsg.append("[")
+					 .append(riskMsg.getString("vcCombiNo"))
+					 .append("][")
+					 .append(riskMsg.getString("vcSymbol"))
+					 .append("]触发[")
+					 .append(riskMsg.getString("vcRuleId"))
+					 .append(riskType)
+					 .append("]：")
+					 .append(riskMsg.getString("vcRiskSummary"))
+					 .append("；");
+				sb.append(i+1).append("、").append(sbMsg.toString());
+				System.out.println(sb.toString());
+				if(i<riskMsgs.length-1){
+					sb.append("</br>");
+				}
+			}
+		}
+		return sb.toString();
+	}
+	
+	
+}

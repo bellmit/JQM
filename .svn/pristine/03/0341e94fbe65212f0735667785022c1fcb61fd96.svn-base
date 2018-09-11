@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:石浩 
+-->
+<sqlMap>
+
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsMarketInfo" id="resultMap">
+        <result column="c_market_no" javaType="string" property="cMarketNo"/>
+        <result column="vc_market_status" javaType="string" property="vcMarketStatus"/>
+        <result column="vc_market_char" javaType="string" property="vcMarketChar"/>
+        <result column="vc_market_name" javaType="string" property="vcMarketName"/>
+        <result column="vc_market_caption" javaType="string" property="vcMarketCaption"/>
+        <result column="c_stop" javaType="string" property="cStop"/>
+        
+        <result column="l_morning_open_time" javaType="int" property="lMorningOpenTime"/>
+        <result column="l_morning_close_time" javaType="int" property="lMorningCloseTime"/>
+        <result column="l_afternoon_open_time" javaType="int" property="lAfternoonOpenTime"/>
+        <result column="l_afternoon_close_time" javaType="int" property="lAfternoonCloseTime"/>
+         
+         <result column="l_length_min" javaType="int" property="lLengthMin"/>
+        <result column="l_length_max" javaType="int" property="lLengthMax"/>
+        <result column="en_time_zone" javaType="int" property="enTimeZone"/>
+        
+        <result column="vc_tradeday_type" javaType="string" property="vcTradedayType"/>
+         <result column="l_dzjy_close_time" javaType="int" property="lDzjyCloseTime"/>
+        <result column="l_gdsy_close_time" javaType="int" property="lGdsyCloseTime"/>
+        <result column="l_last_trade_date" javaType="int" property="lLastTradeDate"/>
+        <result column="l_next_trade_date" javaType="int" property="lNextTradeDate"/>
+
+    </resultMap>
+    <select id="getAllMarketInfo"  resultMap="resultMap">
+    	<![CDATA[ SELECT M.C_MARKET_NO,M.VC_MARKET_STATUS,M.VC_MARKET_CHAR,
+					   M.VC_MARKET_NAME,M.VC_MARKET_CAPTION,M.C_STOP,M.L_MORNING_OPEN_TIME,
+					   M.L_MORNING_CLOSE_TIME,M.L_AFTERNOON_OPEN_TIME,M.L_AFTERNOON_CLOSE_TIME,
+					   M.L_LENGTH_MIN,M.L_LENGTH_MAX,M.EN_TIME_ZONE,M.VC_TRADEDAY_TYPE,M.L_DZJY_CLOSE_TIME,
+					   M.L_GDSY_CLOSE_TIME,M.L_LAST_TRADE_DATE,M.L_NEXT_TRADE_DATE
+				 FROM T_ATS_MARKET_INFO M 
+				 WHERE M.C_STOP='2'
+				  AND C_MARKET_NO IN ('1','2','5')
+    	]]>
+    </select>
+</sqlMap>

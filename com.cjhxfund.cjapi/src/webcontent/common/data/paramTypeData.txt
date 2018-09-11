@@ -1,0 +1,101 @@
+/**[
+	{
+		id : "boolean",
+		text : "boolean"
+	}, {
+		id : "byte",
+		text : "byte"
+	},
+	{
+		id : "char",
+		text : "char"
+	},
+	{
+		id : "double",
+		text : "double"
+	},
+	{
+		id : "float",
+		text : "float"
+	},
+	{
+		id : "int",
+		text : "int"
+	},
+	{
+		id : "long",
+		text : "long"
+	},
+	{
+		id : "short",
+		text : "short"
+	},
+	{
+		id : "Object",
+		text : "Object"
+	},
+	{
+		id : "String",
+		text : "String"
+	},
+	{
+		id : "BigInteger",
+		text : "BigInteger"
+	},
+	{
+		id : "BigDecimal",
+		text : "BigDecimal"
+	},
+	{
+		id : "Long",
+		text : "Long"
+	},
+	{
+		id : "Number",
+		text : "Number"
+	},
+	{
+		id : "Integer",
+		text : "Integer"
+	},
+	{
+		id : "Boolean",
+		text : "Boolean"
+	},
+	{
+		id : "Short",
+		text : "Short"
+	},
+	{
+		id : "Double",
+		text : "Double"
+	},
+	{
+		id : "Float",
+		text : "Float"
+	},
+	{
+		id : "Time",
+		text : "Time"
+	},
+	{
+		id : "Date",
+		text : "Date"
+	},
+	{
+		id : "Timestamp",
+		text : "Timestamp"
+	},
+	{
+		id : "List",
+		text : "List"
+	}
+] */
+[{
+		id : "String",
+		text : "String"
+	},
+	{
+		id : "BigDecimal",
+		text : "BigDecimal"
+	}]

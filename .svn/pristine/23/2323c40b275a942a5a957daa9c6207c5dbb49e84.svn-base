@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WSBasicInfoServiceService" targetNamespace="http://www.primeton.com/WSBasicInfoService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:nns="http://www.primeton.com/WSBasicInfoService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WSBasicInfoService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="queryAppraisementInfo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ValueInfo" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryAppraisementInfoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryDomainValue">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="DicInfo" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryDomainValueResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryNewStockInfo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="NewBondInfo" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryNewStockInfoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryOrgCombPrdInfo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ProductInfo" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryOrgCombPrdInfoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryProductInfo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ProductInfo" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryProductInfoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryTradeRivalInfo">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="TradeRival" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="queryTradeRivalInfoResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="queryNewStockInfoResponse">
+    <wsdl:part name="queryNewStockInfoResponse" element="nns:queryNewStockInfoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryDomainValueResponse">
+    <wsdl:part name="queryDomainValueResponse" element="nns:queryDomainValueResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryAppraisementInfoResponse">
+    <wsdl:part name="queryAppraisementInfoResponse" element="nns:queryAppraisementInfoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryAppraisementInfo">
+    <wsdl:part name="queryAppraisementInfo" element="nns:queryAppraisementInfo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryNewStockInfo">
+    <wsdl:part name="queryNewStockInfo" element="nns:queryNewStockInfo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryTradeRivalInfo">
+    <wsdl:part name="queryTradeRivalInfo" element="nns:queryTradeRivalInfo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryProductInfo">
+    <wsdl:part name="queryProductInfo" element="nns:queryProductInfo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryDomainValue">
+    <wsdl:part name="queryDomainValue" element="nns:queryDomainValue">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryTradeRivalInfoResponse">
+    <wsdl:part name="queryTradeRivalInfoResponse" element="nns:queryTradeRivalInfoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryProductInfoResponse">
+    <wsdl:part name="queryProductInfoResponse" element="nns:queryProductInfoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryOrgCombPrdInfo">
+    <wsdl:part name="queryOrgCombPrdInfo" element="nns:queryOrgCombPrdInfo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="queryOrgCombPrdInfoResponse">
+    <wsdl:part name="queryOrgCombPrdInfoResponse" element="nns:queryOrgCombPrdInfoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WSBasicInfoService">
+    <wsdl:operation name="queryAppraisementInfo">
+      <wsdl:input name="queryAppraisementInfo" message="nns:queryAppraisementInfo">
+    </wsdl:input>
+      <wsdl:output name="queryAppraisementInfoResponse" message="nns:queryAppraisementInfoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryDomainValue">
+      <wsdl:input name="queryDomainValue" message="nns:queryDomainValue">
+    </wsdl:input>
+      <wsdl:output name="queryDomainValueResponse" message="nns:queryDomainValueResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryNewStockInfo">
+      <wsdl:input name="queryNewStockInfo" message="nns:queryNewStockInfo">
+    </wsdl:input>
+      <wsdl:output name="queryNewStockInfoResponse" message="nns:queryNewStockInfoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryOrgCombPrdInfo">
+      <wsdl:input name="queryOrgCombPrdInfo" message="nns:queryOrgCombPrdInfo">
+    </wsdl:input>
+      <wsdl:output name="queryOrgCombPrdInfoResponse" message="nns:queryOrgCombPrdInfoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryProductInfo">
+      <wsdl:input name="queryProductInfo" message="nns:queryProductInfo">
+    </wsdl:input>
+      <wsdl:output name="queryProductInfoResponse" message="nns:queryProductInfoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="queryTradeRivalInfo">
+      <wsdl:input name="queryTradeRivalInfo" message="nns:queryTradeRivalInfo">
+    </wsdl:input>
+      <wsdl:output name="queryTradeRivalInfoResponse" message="nns:queryTradeRivalInfoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

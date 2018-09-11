@@ -1,0 +1,282 @@
+package com.cjhxfund.cjapi.feedback;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.cjhxfund.cjapi.common.CJAPICommonUtil;
+import com.cjhxfund.cjapi.common.JSONUtil;
+import com.cjhxfund.cjapi.exception.CJAPIConstants;
+import com.cjhxfund.commonUtil.CacheUtil;
+import com.eos.foundation.database.DatabaseExt;
+import com.eos.foundation.eoscommon.LogUtil;
+import com.eos.system.annotation.Bizlet;
+import com.google.gson.Gson;
+
+import commonj.sdo.DataObject;
+
+/**
+ * 交易所买卖和回购的成交反馈
+ * @author chenxing
+ *
+ */
+@Bizlet("")
+public class ExchangeBuyFeedBack {
+	//查询次数
+	private static final int countNumber = 10;
+
+	@Bizlet("")
+	public static void doExchangeBuyJob() {
+		try {
+			ExchangeBuyFeedBack efb = new ExchangeBuyFeedBack();
+			//将定时在每天16点钟触发
+			LogUtil.logInfo(
+					"【ExchangeFeedBack (doExchangeJob)】启动交易所买卖的成交反馈。。。", null);
+			//交易所债券买卖成交反馈
+			efb.selAndSaveBuyFeedBackInfo();
+			//交易所回购业务成交反馈
+			//efb.selAndSaveBuyBackFeedBackInfo();
+			LogUtil.logInfo(
+					"【ExchangeFeedBack (doExchangeJob)】结束交易所买卖的成交反馈。。。", null);
+		} catch (Exception e) {
+			LogUtil.logError(
+					"【ExchangeFeedBack (doExchangeJob)】交易所债债券买卖业务成交反馈出错："
+							+ e.getMessage(), null);
+		}
+	}
+
+	/**
+	 * 查询出当天的债券买卖成交反馈信息,并保存到临时表
+	 * 然后，再调用发送招行接口方法
+	 */
+	public void selAndSaveBuyFeedBackInfo() {
+		Map cmbMap = new HashMap();
+		String dealDate = "";
+		String settleDate = "";
+		String reportCode = "";
+		BigDecimal faceCount = null;
+		BigDecimal faceCountUnit = null;
+		String CStatus = "";
+		BigDecimal enNetBalance = null;
+		BigDecimal vcTradeRivalResult = null;
+		String prodCode = "";
+		BigDecimal lAmount = null;
+		BigDecimal enBalance = null;
+		String enDirection = "";
+		String businessMarket = "";
+		BigDecimal unit = new BigDecimal(10000);
+		try {
+			//获取买卖的成交反馈数据
+			Object[] finishDealResponseArr = DatabaseExt
+					.queryByNamedSql(
+							CacheUtil.getO32CacheDataSourceName(),
+							"com.cjhxfund.cjapi.feedback.ExchangeFeedBack.queryO32ExchangeBuyFeedBackInfo",
+							null);
+			if (finishDealResponseArr == null
+					|| finishDealResponseArr.length == 0) {
+				return;
+			}
+			Map<String, Object> buildParamMap = new HashMap<String, Object>();
+			//组装数据
+			for (Object finishDealResponse : finishDealResponseArr) {
+
+				DataObject dealData = (DataObject) finishDealResponse;
+				//成交日期
+				dealDate = dealData.getString("L_DATE");
+				//产品ID
+				prodCode = dealData.getString("L_FUND_ID");
+				//指令数量
+				lAmount = dealData.getBigDecimal("L_AMOUNT");
+				//净价价格
+				enBalance = dealData.getBigDecimal("EN_BALANCE");
+				//交易方向
+				enDirection = dealData.getString("C_ENTRUST_DIRECTION");
+				//交割日期
+				settleDate = dealData.getString("L_SETTLE_DATE");
+				//债券代码
+				reportCode = dealData.getString("VC_REPORT_CODE");
+				//交易市场
+				businessMarket = dealData.getString("C_MARKET_NO");
+				//券面总额
+				faceCount = dealData.getBigDecimal("FACE_COUNT");
+				faceCountUnit = faceCount.divide(unit);
+				//成交状态
+				CStatus = dealData.getString("CSTATUS");
+				//净价金额
+				enNetBalance = dealData.getBigDecimal("EN_NET_BALANCE");
+				//最后输出给招行的净价金额
+				vcTradeRivalResult = enNetBalance.divide(unit);
+				//开始组装数据
+				buildParamMap
+						.put("seqNo",
+								DatabaseExt
+										.getNextSequence(CJAPIConstants.SEQ_CJAPI_E_S_MARKET_BACK));
+				buildParamMap.put("lDealDate", dealDate);
+				buildParamMap.put("lSettDate", settleDate);
+				buildParamMap.put("vcStockCode", reportCode);
+				buildParamMap.put("enQtyBalance", faceCountUnit);
+				buildParamMap.put("vcProceStatus", CStatus);
+				buildParamMap.put("vcTradeRival", vcTradeRivalResult);
+
+				buildParamMap.put("prodCode", prodCode);
+				buildParamMap.put("lAmount", lAmount);
+				buildParamMap.put("enBalance", enBalance);
+				buildParamMap.put("enDirection", enDirection);
+				buildParamMap.put("businessType", "1"); //交易类型(1=债券买卖，2=债券回购)
+				buildParamMap.put("businessMarket", businessMarket);
+				buildParamMap.put("enDealBance",
+						dealData.getBigDecimal("EN_DEAL_BALANCE"));
+				buildParamMap.put("enDealAmount",
+						dealData.getBigDecimal("L_DEAL_AMOUNT"));
+				buildParamMap.put("enDealPrice",
+						dealData.getBigDecimal("EN_MAX_PRICE"));
+				LogUtil.logInfo(
+						"【ExchangeFeedBack (selAndSaveBuyFeedBackInfo)】交易所债债券买卖成交反馈保存临时表数据集：{0}",
+						null, buildParamMap);
+				//保存信息
+				DatabaseExt
+						.executeNamedSql(
+								CJAPIConstants.DS_DEFAULT,
+								"com.cjhxfund.cjapi.feedback.ExchangeFeedBack.insertExchangeBuyRepoFeedback",
+								buildParamMap);
+			}
+			//获取vcClordID并发送招行，保存交易所债券买卖成交反馈
+			exchangeBuyFeedBack();
+		} catch (Exception e) {
+			// TODO 自动生成的 catch 块
+			LogUtil.logError(
+					"【ExchangeFeedBack (selAndSaveBuyFeedBackInfo)】交易所债债券买卖成交反馈出错：{0}"
+							+ e.getMessage(), null);
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * 获取vcClordID并发送招行，保存交易所债券买卖成交反馈
+	 * paramList 需要发送到招行的数据集
+	 * 
+	 */
+	public void exchangeBuyFeedBack() throws Exception {
+		//组装数据发给招行
+		//List<Map<String, Object>> buildCMBList = new ArrayList<Map<String, Object>>();
+		//查询出数据发给招行
+		int counts = 0;
+		while (counts < countNumber) {
+			Object[] dataArray = DatabaseExt
+					.queryByNamedSql(
+							CJAPIConstants.DS_DEFAULT,
+							"com.cjhxfund.cjapi.feedback.ExchangeFeedBack.querySendCMBBuyData",
+							null);
+			//更新指令表状态 ，并插入交易所二级市场成交反馈 
+			LogUtil.logInfo(
+					"【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖保存成交反馈表时分组后的数据:{0}",
+					null, dataArray);
+			if (dataArray == null || dataArray.length == 0) {
+				return;
+			}
+			for (Object data : dataArray) {
+				DataObject sendData = (DataObject) data;
+				Map<String, Object> buildParamMap = new HashMap<String, Object>();
+				buildParamMap.put("vcClordId",
+						sendData.getString("VC_CLORD_ID"));
+				buildParamMap.put("lDealDate", sendData.getString("L_DATE"));
+				buildParamMap.put("lSettDate",
+						sendData.getString("L_SETTLE_DATE"));
+				buildParamMap.put("vcStockCode",
+						sendData.getString("L_REPORT_CODE"));
+				buildParamMap.put("enQtyBalance",
+						sendData.getBigDecimal("L_FACE_COUNT"));
+				buildParamMap.put("vcProceStatus",
+						sendData.getString("L_SUC_STATUS"));
+				buildParamMap.put("vcTradeRival",
+						sendData.getString("L_NET_BALANCE"));
+				//buildCMBList.add(buildParamMap);
+				//LogUtil.logInfo("【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖成交反馈集合:{0}", null, buildParamMap);
+				//Map<String, Object> map = new HashMap<String, Object>();
+				//map.put("Main", buildCMBList);
+				//开始组装参数并调用招行接口
+				String json = new Gson().toJson(buildParamMap);
+				json = JSONUtil.jsonToJSON(json, "request");
+				LogUtil.logInfo(
+						"【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖成交反馈json数据:{0}",
+						null, json);
+				// 回调招行接口
+				String retMsg = CJAPICommonUtil.callCMBWebService(
+						CJAPIConstants.MARKET_BACK_NAMESPACE, "BondDealRecv",
+						"BondDeal", json);
+				LogUtil.logInfo(
+						"【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖成交反馈招行返回信息:{0}",
+						null, retMsg);
+				Map<String, Object> retMap = JSONUtil.jsonToMap(retMsg);
+				Object result = retMap.get("result");
+				if (result == null || !"000000".equals(retMap.get("result"))) {
+					LogUtil.logError(
+							"【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖成交反馈调用招行接口失败:retMsg:{0}",
+							null, retMsg);
+				} else {
+					//Map<String, Object> buildsaveParamMap = new HashMap<String, Object>();
+					//for (Object data : dataArray) {
+					// DataObject saveData = (DataObject) data;
+					//buildsaveParamMap.put("vcClordId", saveData.getString("VC_CLORD_ID"));
+					//buildsaveParamMap.put("vcProceStatus", saveData.getString("L_SUC_STATUS"));
+					LogUtil.logInfo(
+							"【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖成交反馈更新指令表:{0}",
+							null, buildParamMap);
+					//更新银行间二级市场成交状态
+					DatabaseExt
+							.executeNamedSql(
+									CJAPIConstants.DS_DEFAULT,
+									"com.cjhxfund.cjapi.feedback.ExchangeFeedBack.updateESOrderStatus",
+									buildParamMap);
+
+					buildParamMap.put("lSeqNo", sendData.getString("L_SEQ_NO")); //临时表主键
+					//更新临时表状态
+					DatabaseExt
+							.executeNamedSql(
+									CJAPIConstants.DS_DEFAULT,
+									"com.cjhxfund.cjapi.feedback.ExchangeFeedBack.updateExchangeFeedBackTempStatus",
+									buildParamMap);
+
+					buildParamMap
+							.put("lBackId",
+									DatabaseExt
+											.getNextSequence(CJAPIConstants.SEQ_CJAPI_E_S_MARKET_BACK));
+					buildParamMap.put("exchangeOrderESId",
+							sendData.getString("L_EXCHANGE_SECOND_MARKET_ID"));
+					buildParamMap.put("enDealBalance",
+							sendData.getBigDecimal("L_EN_DEAL_BALANCE"));
+					buildParamMap.put("enDealAmount",
+							sendData.getBigDecimal("L_EN_DEAL_AMOUNT"));
+					buildParamMap.put("enDealDate",
+							sendData.getString("L_DATE"));
+					buildParamMap.put("vcStockCode",
+							sendData.getBigDecimal("L_REPORT_CODE"));
+					buildParamMap.put("enDealPrice",
+							sendData.getBigDecimal("L_EN_DEAL_PRICE"));
+					buildParamMap.put("lDealTime", 0);
+					CJAPICommonUtil.getCreateDateAndCreateTime(buildParamMap);
+					LogUtil.logInfo(
+							"【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖成交反馈插入成交反馈表:{0}",
+							null, buildParamMap);
+					// 反馈表留痕
+					DatabaseExt
+							.executeNamedSql(
+									CJAPIConstants.DS_DEFAULT,
+									"com.cjhxfund.cjapi.feedback.ExchangeFeedBack.insertESFeedback",
+									buildParamMap);
+					//}
+				}
+			}
+			if (counts > countNumber) {
+				break;
+			}
+			counts++;
+		}
+		LogUtil.logInfo(
+				"【Class ExchangeFeedBack(exchangeBuyFeedBack)】交易所二级市场买卖成交反馈结束.....",
+				null);
+
+	}
+
+}

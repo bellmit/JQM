@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:王沐寰 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+        <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsStockType" id="resultMap">
+        <result column="c_stock_type" javaType="string" property="cStockType"/>
+        <result column="c_market_no" javaType="string" property="cMarketNo"/>
+        <result column="c_asset_class" javaType="string" property="cAssetClass"/>
+        <result column="vc_stocktype_name" javaType="string" property="vcStocktypeName"/>
+        <result column="l_amount_per_hand" javaType="int" property="lAmountPerHand"/>
+        <result column="l_buy_unit" javaType="Decimal" property="lBuyUnit"/>
+        <result column="l_sale_unit" javaType="Decimal" property="lSaleUnit"/>
+        <result column="en_face_values" javaType="Decimal" property="enFaceValues"/>
+        <result column="vc_entrust_right" javaType="string" property="vcEntrustRight"/>
+        <result column="l_buy_max" javaType="Decimal" property="lBuyMax"/>
+        <result column="l_sale_max" javaType="Decimal" property="lSaleMax"/>
+        <result column="c_unit_control_type" javaType="string" property="cUnitControlType"/>
+    </resultMap>
+    
+      <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="l_biz_id" javaType="Long" property="lBizId"/>
+        <result column="l_process_inst_id" javaType="Long" property="lProcessInstId"/>
+        <result column="vc_user_id" javaType="string" property="vcUserId"/>
+        <result column="d_application_time" javaType="string" property="dApplicationTime"/>
+        <result column="vc_process_type" javaType="string" property="vcProcessType"/>
+        <result column="vc_abstract" javaType="string" property="vcAbstract"/>
+        <result column="vc_product_code" javaType="string" property="vcProductCode"/>
+        <result column="vc_product_name" javaType="string" property="vcProductName"/>
+        <result column="vc_combi_no" javaType="string" property="vcCombiNo"/>
+        <result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+        <result column="l_asset_id" javaType="Long" property="lAssetId"/>
+        <result column="vc_asset_name" javaType="string" property="vcAssetName"/>
+        <result column="vc_asset_no" javaType="string" property="vcAssetNo"/>
+        <result column="vc_stock_code" javaType="string" property="vcStockCode"/>
+        <result column="vc_stock_name" javaType="string" property="vcStockName"/>
+        <result column="vc_stock_name_full" javaType="string" property="vcStockNameFull"/>
+        <result column="vc_stock_type" javaType="string" property="vcStockType"/>
+        <result column="typeName" javaType="string" property="typeName"/>
+        <result column="l_invest_no" javaType="Long" property="lInvestNo"/>
+        <result column="vc_work_item_name" javaType="string" property="vcWorkItemName"/>
+        <result column="vc_comments" javaType="string" property="vcComments"/>
+        <result column="l_fix_valid_status" javaType="Long" property="lFixValidStatus"/>
+        <result column="vc_clord_id" javaType="string" property="vcClordId"/>
+     </resultMap>
+     
+     <resultMap class="com.cjhxfund.ats.fm.baseinfo.basicInfo.TAtsBizProcess" id="resultMapBiz">
+		<result column="L_STOCK_INVEST_NO" javaType="Long" property="lStockInvestNo"/>
+		<result column="VC_STOCK_NAME_FULL" javaType="String" property="vcStockNameFull"/>
+		<result column="L_BIZ_ID" javaType="Long" property="lBizId"/>
+		<result column="L_PROCESS_INST_ID" javaType="Long" property="lProcessInstId"/>
+		<result column="VC_USER_ID" javaType="String" property="vcUserId"/>
+		<result column="D_APPLICATION_TIME" javaType="Date" property="dApplicationTime"/>
+		<result column="VC_PROCESS_TYPE" javaType="String" property="vcProcessType"/>
+		<result column="VC_ABSTRACT" javaType="String" property="vcAbstract"/>
+		<result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+		<result column="VC_PRODUCT_NAME" javaType="String" property="vcProductName"/>
+		<result column="VC_COMBI_NO" javaType="String" property="vcCombiNo"/>
+		<result column="VC_COMBI_NAME" javaType="String" property="vcCombiName"/>
+		<result column="L_ASSET_ID" javaType="Int" property="lAssetId"/>
+		<result column="VC_ASSET_NAME" javaType="String" property="vcAssetName"/>
+		<result column="VC_ASSET_NO" javaType="String" property="vcAssetNo"/>
+		<result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+		<result column="VC_STOCK_NAME" javaType="String" property="vcStockName"/>
+		<result column="VC_STOCK_TYPE" javaType="String" property="vcStockType"/>
+		<result column="L_INVEST_NO" javaType="Long" property="lInvestNo"/>
+		<result column="L_FIX_VALID_STATUS" javaType="Long" property="lFixValidStatus"/>
+		<result column="VC_CLORD_ID" javaType="String" property="vcClordId"/>
+		<result column="VC_WHETHER_INDIA" javaType="String" property="vcWhetherIndia"/>
+		<result column="VC_PAYMENT_PLACE" javaType="String" property="vcPaymentPlace"/>
+		<result column="L_INDIA_TYPE" javaType="Int" property="lIndiaType"/>
+		<result column="D_CREATION_TIME" javaType="Date" property="dCreationTime"/>
+
+     </resultMap>
+
+     <resultMap class="com.cjhxfund.ats.fm.instr.firstGradeDebt.TAtsApplyInst" id="resultMapApp">
+		<result column="VC_STOCK_NAME_FULL" javaType="String" property="vcStockNameFull"/>
+		<result column="C_REPORT_TYPE" javaType="String" property="cReportType"/>
+		<result column="EN_WEAK_NET_RATIO" javaType="Decimal" property="enWeakNetRatio"/>
+		<result column="EN_INVEST_NET_RATIO" javaType="Decimal" property="enInvestNetRatio"/>
+		<result column="EN_ISSUER_NET_RATIO" javaType="Decimal" property="enIssuerNetRatio"/>
+		<result column="EN_INVEST_SCALE_RATIO" javaType="Decimal" property="enInvestScaleRatio"/>
+		<result column="C_REPORT_UPDATE_STATUS" javaType="String" property="cReportUpdateStatus"/>
+		<result column="EN_NET_SCALE" javaType="Decimal" property="enNetScale"/>
+		<result column="VC_ENTRUSTDIRECTION" javaType="String" property="vcEntrustdirection"/>
+		<result column="C_MARKET_NO" javaType="String" property="cMarketNo"/>
+		<result column="VC_CLORD_ID" javaType="String" property="vcClordId"/>
+		<result column="VC_ORIGORD_ID" javaType="String" property="vcOrigordId"/>
+		<result column="L_FIX_VALID_STATUS" javaType="Long" property="lFixValidStatus"/>
+		<result column="D_BID_LIMIT_TIME" javaType="Date" property="dBidLimitTime"/>
+		<result column="D_APPLICATION_TIME" javaType="Date" property="dApplicationTime"/>
+		<result column="EN_INTEREST_RATE" javaType="Decimal" property="enInterestRate"/>
+		<result column="EN_INVEST_BALANCE" javaType="Decimal" property="enInvestBalance"/>
+		<result column="EN_DEPOSIT_RATIO" javaType="Decimal" property="enDepositRatio"/>
+		<result column="EN_DEPOSIT_AMOUNT" javaType="Decimal" property="enDepositAmount"/>
+		<result column="EN_ISSUE_PRICE" javaType="Decimal" property="enIssuePrice"/>
+		<result column="EN_COUPON_RATE" javaType="Decimal" property="enCouponRate"/>
+		<result column="EN_BALLOT_AMOUNT" javaType="Decimal" property="enBallotAmount"/>
+		<result column="EN_BALLOT_BALANCE" javaType="Decimal" property="enBallotBalance"/>
+		<result column="EN_PAY_FACE_VALUE" javaType="Decimal" property="enPayFaceValue"/>
+		<result column="EN_BALLOT_PRICE" javaType="Decimal" property="enBallotPrice"/>
+		<result column="EN_PAYMENT_MONEY" javaType="Decimal" property="enPaymentMoney"/>
+		<result column="L_APPLY_INST_ID" javaType="Long" property="lApplyInstId"/>
+		<result column="L_BIZ_ID" javaType="Long" property="lBizId"/>
+		<result column="C_STATUS" javaType="String" property="cStatus"/>
+		<result column="L_VALID_STATUS" javaType="Long" property="lValidStatus"/>
+		<result column="L_INVEST_NO" javaType="Long" property="lInvestNo"/>
+		<result column="L_STOCK_INVEST_NO" javaType="Long" property="lStockInvestNo"/>
+		<result column="VC_STOCK_NAME" javaType="String" property="vcStockName"/>
+		<result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+		<result column="VC_PRODUCT_NAME" javaType="String" property="vcProductName"/>
+		<result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+		<result column="L_COMBI_ID" javaType="Long" property="lCombiId"/>
+		<result column="VC_COMBI_NO" javaType="String" property="vcCombiNo"/>
+		<result column="VC_COMBI_NAME" javaType="String" property="vcCombiName"/>
+		<result column="L_ASSET_ID" javaType="Int" property="lAssetId"/>
+		<result column="VC_ASSET_NAME" javaType="String" property="vcAssetName"/>
+		<result column="VC_ASSET_NO" javaType="String" property="vcAssetNo"/>
+		<result column="D_BID_DATE" javaType="Date" property="dBidDate"/>
+		<result column="VC_PAYMENT_PLACE" javaType="String" property="vcPaymentPlace"/>
+		<result column="VC_TRANSACTION_TYPE" javaType="String" property="vcTransactionType"/>
+		<result column="VC_BENEFICIARY" javaType="String" property="vcBeneficiary"/>
+		<result column="VC_COLLECTION_ACCOUNT" javaType="String" property="vcCollectionAccount"/>
+		<result column="VC_BANK_LINE" javaType="String" property="vcBankLine"/>
+		<result column="VC_PAY_LINE" javaType="String" property="vcPayLine"/>
+		<result column="VC_REMARKS" javaType="String" property="vcRemarks"/>
+		<result column="D_PAYMENT_DATE" javaType="Date" property="dPaymentDate"/>
+		<result column="C_IS_RELATE_TRADE" javaType="String" property="cIsRelateTrade"/>
+		<result column="VC_RELATE_TRADE_REMARK" javaType="String" property="vcRelateTradeRemark"/>
+		<result column="VC_RECEIVABLE_REMARK" javaType="String" property="vcReceivableRemark"/>
+		<result column="VC_BUSINESS_TYPE" javaType="String" property="vcBusinessType"/>
+		<result column="VC_PURCHASE_AMOUNT" javaType="String" property="vcPurchaseAmount"/>
+		<result column="D_INIT_INTEREST_PAYMENT_DATE" javaType="Date" property="dInitInterestPaymentDate"/>
+		<result column="VC_FREQUENCY" javaType="String" property="vcFrequency"/>
+		<result column="VC_MODE_REPAYMENT" javaType="String" property="vcModeRepayment"/>
+		<result column="L_ATTCH_COUNT" javaType="Int" property="lAttchCount"/>
+		<result column="VC_BUSINESS_OBJECT" javaType="String" property="vcBusinessObject"/>
+		<result column="VC_STOCK_TYPE" javaType="String" property="vcStockType"/>
+
+
+     
+     </resultMap>
+     
+    <select id="getBizProcess" parameterClass="java.util.HashMap"  resultMap="resultMap">
+    	select 
+     	 a.l_biz_id,
+         a.l_process_inst_id,
+         a.vc_user_id,
+         to_char(a.d_application_time,'yyyy-MM-dd HH24:mi:ss') d_application_time,
+         a.vc_process_type,
+         a.vc_abstract,
+         a.vc_product_code,
+         a.vc_product_name,
+         a.vc_combi_no,
+         a.vc_combi_name,
+         a.l_asset_id,
+         a.vc_asset_name,
+         a.vc_asset_no,
+         a.vc_stock_code,
+         a.vc_stock_name,
+         a.vc_stock_name_full,
+         a.VC_STOCK_TYPE,
+         (select distinct b.vc_stocktype_name
+         from t_ats_stock_type_define b
+         where a.vc_stock_type= b.vc_stock_type) as typeName,
+         a.l_invest_no,
+         a.l_fix_valid_status,
+       a.vc_clord_id,
+         c.vc_comments,
+         c.vc_work_item_name
+      from t_ats_approve_info c ,T_ATS_BIZ_PROCESS a
+     where c.L_APPROVE_ID = (select max(L_APPROVE_ID) from t_ats_approve_info where L_PROCESS_INST_ID=a.l_process_inst_id)
+     and a.vc_process_type = '4'
+	 <isNotNull property="lProcessInstId">
+		  AND a.l_Process_Inst_Id = #lProcessInstId# 
+	</isNotNull>
+	<isNotNull property="vcStockCode">
+		  AND a.vc_stock_code = #vcStockCode# 
+	</isNotNull>
+	<isNotNull property="vcStockName">
+		  AND (a.vc_stock_name like '%'||#vcStockName#||'%' or vc_stock_name_full like '%'||#vcStockName#||'%')
+	</isNotNull>
+	<isNotNull property="vcStockType">
+		  AND a.vc_stock_type in ($vcStockType$) 
+	</isNotNull>
+	<isNotNull property="vcProcessType">
+	  AND a.vc_process_type = #vcProcessType# 
+	</isNotNull>
+	<isNotNull property="vcWorkItemName">
+	  AND c.vc_work_item_name = #vcWorkItemName# 
+	</isNotNull>
+	<isNotNull property="dApplicationTime">
+		  and to_char(a.d_application_time,'yyyy-MM-dd') = substr('$dApplicationTime$',0,10)
+	</isNotNull>
+	 <isNotNull property="sortField">
+	  		order by $sortField$ 
+	  </isNotNull>
+	  <isNotNull property="sortOrder">
+	  		 $sortOrder$ 
+	  </isNotNull>
+ 
+    </select>
+    <select id="getBizProcessArr" parameterClass="java.util.HashMap"  resultMap="resultMapBiz">
+    	select 
+       	 a.L_STOCK_INVEST_NO,
+		a.VC_STOCK_NAME_FULL,
+		a.L_BIZ_ID,
+		a.L_PROCESS_INST_ID,
+		a.VC_USER_ID,
+		a.D_APPLICATION_TIME,
+		a.VC_PROCESS_TYPE,
+		a.VC_ABSTRACT,
+		a.VC_PRODUCT_CODE,
+		a.VC_PRODUCT_NAME,
+		a.VC_COMBI_NO,
+		a.VC_COMBI_NAME,
+		a.L_ASSET_ID,
+		a.VC_ASSET_NAME,
+		a.VC_ASSET_NO,
+		a.VC_STOCK_CODE,
+		a.VC_STOCK_NAME,
+		a.VC_STOCK_TYPE,
+		a.L_INVEST_NO,
+		a.L_FIX_VALID_STATUS,
+		a.VC_CLORD_ID,
+		a.VC_WHETHER_INDIA,
+		a.VC_PAYMENT_PLACE,
+		a.L_INDIA_TYPE,
+		a.D_CREATION_TIME
+      from  T_ATS_BIZ_PROCESS a
+     where a.l_stock_invest_no=#lStockInvestNo# and a.vc_process_type in ('1','5','6','7')
+    </select>
+    <select id="getApplyInstArr" parameterClass="java.util.HashMap"  resultMap="resultMapApp">
+    	select a.VC_STOCK_NAME_FULL,
+			a.C_REPORT_TYPE,
+			a.EN_WEAK_NET_RATIO,
+			a.EN_INVEST_NET_RATIO,
+			a.EN_ISSUER_NET_RATIO,
+			a.EN_INVEST_SCALE_RATIO,
+			a.C_REPORT_UPDATE_STATUS,
+			a.EN_NET_SCALE,
+			a.VC_ENTRUSTDIRECTION,
+			a.C_MARKET_NO,
+			a.VC_CLORD_ID,
+			a.VC_ORIGORD_ID,
+			a.L_FIX_VALID_STATUS,
+			a.D_BID_LIMIT_TIME,
+			a.D_APPLICATION_TIME,
+			a.EN_INTEREST_RATE,
+			a.EN_INVEST_BALANCE,
+			a.EN_DEPOSIT_RATIO,
+			a.EN_DEPOSIT_AMOUNT,
+			a.EN_ISSUE_PRICE,
+			a.EN_COUPON_RATE,
+			a.EN_BALLOT_AMOUNT,
+			a.EN_BALLOT_BALANCE,
+			a.EN_PAY_FACE_VALUE,
+			a.EN_BALLOT_PRICE,
+			a.EN_PAYMENT_MONEY,
+			a.L_APPLY_INST_ID,
+			a.L_BIZ_ID,
+			a.C_STATUS,
+			a.L_VALID_STATUS,
+			a.L_INVEST_NO,
+			a.L_STOCK_INVEST_NO,
+			a.VC_STOCK_NAME,
+			a.VC_STOCK_CODE,
+			a.VC_PRODUCT_NAME,
+			a.VC_PRODUCT_CODE,
+			a.L_COMBI_ID,
+			a.VC_COMBI_NO,
+			a.VC_COMBI_NAME,
+			a.L_ASSET_ID,
+			a.VC_ASSET_NAME,
+			a.VC_ASSET_NO,
+			a.D_BID_DATE,
+			a.VC_PAYMENT_PLACE,
+			a.VC_TRANSACTION_TYPE,
+			a.VC_BENEFICIARY,
+			a.VC_COLLECTION_ACCOUNT,
+			a.VC_BANK_LINE,
+			a.VC_PAY_LINE,
+			a.VC_REMARKS,
+			a.D_PAYMENT_DATE,
+			a.C_IS_RELATE_TRADE,
+			a.VC_RELATE_TRADE_REMARK,
+			a.VC_RECEIVABLE_REMARK,
+			a.VC_BUSINESS_TYPE,
+			a.VC_PURCHASE_AMOUNT,
+			a.D_INIT_INTEREST_PAYMENT_DATE,
+			a.VC_FREQUENCY,
+			a.VC_MODE_REPAYMENT,
+			a.L_ATTCH_COUNT,
+			a.VC_BUSINESS_OBJECT,
+			a.VC_STOCK_TYPE
+	  	from t_ats_apply_inst a
+	 	where a.l_stock_invest_no = #lStockInvestNo#
+	    and a.l_biz_id in (select b.l_biz_id from t_ats_biz_process b where b.vc_process_type in ('1','5','6','7'))
+	    and a.l_valid_status = 0
+    </select>
+</sqlMap>

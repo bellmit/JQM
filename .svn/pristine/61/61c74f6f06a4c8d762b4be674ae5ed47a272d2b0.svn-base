@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈鹏 -->
+<sqlMap>
+    <!-- 查询待办信息 -->
+	<select id="queryPersonWorkItems" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+		    select  
+         vk.l_biz_id,
+           vk.l_process_inst_id,
+           vk.vc_user_id,
+           vk.d_application_time,
+           vk.vc_process_type,
+           case when vk.vc_process_type='11' then (select case when t.vc_approve_type is not null then '风控类型：'||t2.dictname else '' end
+                                                    from t_ats_riskmgr_info t 
+                                                    left join eos_dict_entry t2 on t2.dictid=t.vc_approve_type and t2.dicttypeid='riskApproveType'
+                                                    where t.l_processinst_id=vk.l_process_inst_id)
+           when vk.vc_process_type='12' then (select case when t.vc_approve_type is not null then '风控类型：'||t2.dictname else '' end
+                                                    from t_ats_riskmgr_info t 
+                                                    left join eos_dict_entry t2 on t2.dictid=t.vc_approve_type and t2.dicttypeid='riskApproveType'
+                                                    where t.l_mistake_process_id=vk.l_process_inst_id)
+           else replace(vk.vc_abstract,'null','空') end vc_abstract,  
+           vk.vc_product_code,
+           vk.vc_product_name,
+           vk.vc_combi_no,
+           vk.VC_COMBI_NAME,
+           vk.L_ASSET_ID,
+           vk.VC_ASSET_NAME,
+           vk.VC_ASSET_NO,
+           vk.VC_STOCK_CODE,
+           vk.VC_STOCK_NAME,
+           vk.VC_STOCK_TYPE,
+           vk.L_INVEST_NO,
+           vk.VC_CLORD_ID,
+           vk.vc_payment_place,
+           vk.L_STOCK_INVEST_NO,
+           vk.workitemid,
+           vk.workitemname,
+           vk.activityinstid,
+           vk.activityinstname,
+           vk.activitydefid,
+           vk.processinstid,
+           vk.participant,
+           vk.participantid,
+           vk.participantname,
+           vk.actionurl,
+           vk.c_status,
+           vk.l_valid_status,
+           vk.createtime,
+           vk.currentstate,
+           vk.vc_telephone_number
+       from V_PERSONWORKITEM vk where 1=1 
+	   	 <isNotNull property="dApplicationTime"> 
+    	 	and vk.d_application_time <![CDATA[ >= ]]> substr('$dApplicationTime$',0,10)
+    	 </isNotNull> 
+    	 <isNotNull property="endTime"> 
+    	 	and vk.d_application_time <![CDATA[ <= ]]> substr('$endTime$',0,10)
+    	 </isNotNull>
+	   	 <isNotNull property="partiName"> 
+    	 	and vk.workitemname like '%$partiName$%'
+    	 </isNotNull> 
+    	 <isNotNull property="businesstype"> 
+    	 	and vk.VC_PROCESS_TYPE in($businesstype$)
+    	 </isNotNull> 
+    	 <isNotNull property="userId"> 
+    	 	and ','||vk.participantid||',' like '%,$userId$,%'
+    	 </isNotNull> 
+    	 <isNotNull property="vcStockCode"> 
+    	 	AND vk.vc_stock_code like '%$vcStockCode$%'
+    	 </isNotNull> 
+    	 <isNotNull property="combProductCode"> 
+    	 	 AND vk.vc_product_code in ($combProductCode$)
+    	 </isNotNull>
+    	 <isNotNull property="vcAbstract"> 
+    	 	 AND vk.vc_abstract like '%$vcAbstract$%'
+    	 </isNotNull>
+    	 <isNotNull property="vcStockName"> 
+    	 	 AND (vk.vc_stock_name like '%$vcStockName$%' or vk.vc_stock_name_full like '%$vcStockName$%') 
+    	 </isNotNull> 
+    	 order by $sortField$ $sortOrder$
+    </select>
+    
+    <select id="queryDebtWorkItems" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+		select 
+			 tb.l_biz_id,
+           tb.l_process_inst_id,
+           tb.L_STOCK_INVEST_NO,
+           tb.vc_user_id,
+           to_char(tb.d_application_time,'yyyy-MM-dd HH24:mi:ss') d_application_time,
+           tb.vc_process_type,
+           tb.vc_abstract,
+           tb.vc_product_code,
+           tb.vc_product_name,
+           tb.vc_combi_no,
+           tb.VC_COMBI_NAME,
+           tb.L_ASSET_ID,
+           tb.VC_ASSET_NAME,
+           tb.VC_ASSET_NO,
+           tb.VC_STOCK_CODE,
+           tb.VC_STOCK_NAME,
+           tb.vc_stock_name_full,
+           tb.VC_STOCK_TYPE,
+           tb.L_INVEST_NO,
+           tb.VC_CLORD_ID,
+           tb.vc_payment_place,
+		    wf.workitemid,
+		    wf.workitemname,
+		    wf.activityinstid,
+		    wf.activityinstname,
+		    wf.activitydefid,
+		    wf.processinstid,
+		    wf.participant,
+		    wf.participantid,
+        	wf.participantname,
+		    wf.actionurl
+	  	 from t_Ats_Biz_Process tb, v_currentworkitem wf
+	 	where wf.processinstid = tb.l_process_inst_id
+	   	 and wf.currentstate in (4,10)
+	   	 and tb.vc_process_type in ('2','3','4')
+    	 <isNotNull property="userId"> 
+    	 	and ','||wf.participantid||',' like '%,$userId$,%'
+    	 </isNotNull> 
+    	 <isNotNull property="dApplicationTime"> 
+    	 	and to_char(tb.d_application_time,'yyyy-MM-dd') = substr('$dApplicationTime$',0,10)
+    	 </isNotNull> 
+    	 <isNotNull property="vcStockCode"> 
+    	 	AND tb.vc_stock_code like '%$vcStockCode$%'
+    	 </isNotNull> 
+    	 <isNotNull property="vcStockName"> 
+    	 	 AND (tb.vc_stock_name like '%$vcStockName$%' or vc_stock_name_full like '%$vcStockName$%')
+    	 </isNotNull> 
+    	 <isNotNull property="sortField">
+		  		order by $sortField$ 
+		  </isNotNull>
+		  <isNotNull property="sortOrder">
+		  		 $sortOrder$ 
+		  </isNotNull>
+    </select>
+<!-- 新债复核的时候 查询本人已办任务-->
+	<select id="queryDebtWorkFinish" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+		select to_char(t.d_application_time, 'yyyy-MM-dd HH24:mi:ss') d_application_time,t.* from (select 
+       tb.l_biz_id,
+           tb.l_process_inst_id,
+           tb.L_STOCK_INVEST_NO,
+           tb.vc_user_id,
+           tb.d_application_time,
+           tb.vc_process_type,
+           tb.vc_abstract,
+           tb.vc_product_code,
+           tb.vc_product_name,
+           tb.vc_combi_no,
+           tb.VC_COMBI_NAME,
+           tb.L_ASSET_ID,
+           tb.VC_ASSET_NAME,
+           tb.VC_ASSET_NO,
+           tb.VC_STOCK_CODE,
+           tb.VC_STOCK_NAME,
+           tb.vc_stock_name_full,
+           tb.VC_STOCK_TYPE,
+           tb.L_INVEST_NO,
+           tb.VC_CLORD_ID,
+           tb.vc_payment_place,
+        wf.workitemid,
+        wf.workitemname,
+        wf.activityinstid,
+        wf.activityinstname,
+        wf.activitydefid,
+        wf.processinstid,
+        wf.participant,
+        wf.actionurl,
+        ROW_NUMBER() OVER(PARTITION BY wf.processinstid ORDER BY wf.workitemid DESC) as nums
+       from t_Ats_Biz_Process tb, wfworkitem wf
+       where wf.processinstid = tb.l_process_inst_id
+       and wf.currentstate in (12,13)
+        and tb.vc_process_type in ('2','3','4')      
+ 	and tb.l_process_inst_id in(select distinct t.l_process_inst_id from t_ats_approve_info t where 1=1 and t.vc_user_code=#userName#)) t where t.nums=1
+    	 <isNotNull property="dApplicationTime"> 
+    	 	and to_char(t.d_application_time,'yyyy-MM-dd') = substr('$dApplicationTime$',0,10)
+    	 </isNotNull> 
+    	 <isNotNull property="vcStockCode"> 
+    	 	AND t.vc_stock_code like '%$vcStockCode$%'
+    	 </isNotNull> 
+    	 <isNotNull property="vcStockName"> 
+    	 	 AND (t.vc_stock_name like '%$vcStockName$%' or vc_stock_name_full like '%$vcStockName$%')
+    	 </isNotNull> 
+    	 <isNotNull property="sortField">
+		  		order by t.$sortField$ 
+		  </isNotNull>
+		  <isNotNull property="sortOrder">
+		  		 $sortOrder$ 
+		  </isNotNull>
+    </select>
+</sqlMap>

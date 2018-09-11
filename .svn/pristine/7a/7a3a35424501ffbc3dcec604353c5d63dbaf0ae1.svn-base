@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:chen.kai 2016-10-12 -->
+<sqlMap>
+
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="phone" javaType="string" property="phone"/>
+    </resultMap>
+    
+    <!--通过empid获取员工的手机号-->
+    <select id="getMobilePhone" parameterClass="java.lang.String" resultClass="java.lang.String">
+	    select  replace(listagg(mobileno,',')within group (order by 1),'','') phone
+		from org_employee
+		where empid in($empid$) and mobileno is not null
+    </select>
+</sqlMap>

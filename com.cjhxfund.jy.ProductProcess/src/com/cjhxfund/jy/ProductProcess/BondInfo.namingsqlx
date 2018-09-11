@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:fengjunpei -->
+<sqlMap>
+    <!-- 查询摘牌日期-->
+    <select id="queryBondWindInfo"  parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select  b.vc_stock_name as "stockName",
+				b.l_delisting_date as "delistingDate", 
+				b.vc_stock_code as "stockCode"
+		  from (select a.l_delisting_date, a.vc_stock_code,a.vc_stock_name 
+		          from isp.bondinfo_wind a
+		         where a.vc_stock_code||''||a.vc_stock_name in ($bondCode$)
+		         order by a.l_delisting_date asc) b
+		 where rownum = 1
+		 
+    </select>
+    
+    <!-- 查询一次指令的债券是否只存在于【上清】或者【中债】-->
+    <select id="queryTrusteeship"  parameterClass="java.lang.String" resultClass="java.util.HashMap">
+		select a.vc_report_code as "reportCode", 
+		       a.c_market_no as "marketNo",
+		       a.vc_stock_name as "stockName", 
+		       d.vc_item_name as "itemName"
+		  from trade.tstockinfo a, 
+		       trade.tbondproperty c, 
+		       trade.tdictionary d
+		 where a.vc_inter_code = c.vc_inter_code
+		   and c.c_trustee = d.c_lemma_item
+		   and d.l_dictionary_no = 10075
+		   and a.c_market_no = '5'
+		   and a.vc_report_code in ($bondCode$)
+    </select>
+</sqlMap>

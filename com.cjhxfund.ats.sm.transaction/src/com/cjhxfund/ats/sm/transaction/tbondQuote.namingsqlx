@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:刘玉龙 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+    	<result column="VC_INTER_CODE" javaType="string" property="vcInterCode"/><!-- 债券内码  -->
+        <result column="VC_STOCK_CODE" javaType="string" property="vcStockCode"/><!-- 债券代码  -->
+        <result column="VC_MARKET_NO" javaType="string" property="vcMarketNo"/><!-- 交易市场 1-上交所 2-深交所 5-银行间  -->
+        <result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/><!-- 债券简称  -->
+        <result column="VC_ISSUER_NAME_FULL" javaType="string" property="vcIssuerNameFull"/><!-- 发行人名称  -->
+        <result column="VC_ISSUE_PROPERTY" javaType="string" property="vcIssueProperty"/><!-- 企业性质  -->
+        <result column="L_DELISTING_DATE" javaType="date" property="lDelistingDate"/><!-- 摘牌日 -->
+        <result column="VC_INDUSTRY" javaType="string" property="vcIndustry"/><!-- 所属行业 -->
+        <!-- 公司简介   -->
+        <result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/><!-- 债券类型-->
+        <result column="VC_LIMIT_LEFT" javaType="string" property="vcLimitLeft"/><!-- 剩余期限  -->
+        <result column="L_ENDINCAL_DAYS" javaType="long" property="l_endincal_days"/><!-- 距到期日天数  -->
+        
+        <result column="EN_ISSUE_BALANCE" javaType="double" property="enIssueBalance"/><!-- 总股本（亿）  -->
+        <result column="L_ENDINCAL_DATE" javaType="date" property="lEndincalDate"/><!-- 到期日  -->
+        <result column="EN_FACE_RATE" javaType="double" property="enFaceRate"/><!--票面利率  -->
+        <result column="C_INTEREST_TYPE" javaType="string" property="cInterestType"/><!--  利率类型 -->
+        <result column="C_PAY_INTEREST_TYPE" javaType="string" property="cPayInterestType"/><!-- 票息品种  -->
+        <result column="EN_PAY_INTEVAL" javaType="double" property="enPayInteval"/><!-- 付息频率  -->
+        <result column="L_NEXT_PAYINT_DATE" javaType="date" property="lNextPayintDate"/><!-- 下一付息日  -->
+        <result column="L_NEXT_PAYINT_DAYS" javaType="int" property="lNextPayintDays"/><!-- 距下一付息日（天）  -->
+        <result column="VC_INTEREST_RATE_DESC" javaType="string" property="vcInterestRateDesc"/><!-- 利率说明  -->
+        <result column="L_NEXT_EXERCISE_DATE" javaType="date" property="lNextExerciseDate"/><!-- 下一行权日 -->
+        <result column="L_IS_STEP_MARKET" javaType="int" property="lIsStepMarket"/><!-- 是否跨市场  -->
+        <result column="VC_STEP_MARKET_INTER_CODE" javaType="string" property="vcStepMarketInterCode"/><!-- 跨市场债券内码  -->
+        
+        <result column="VC_SPECIAL_TEXT" javaType="string" property="vcSpecialText"/><!-- 特殊条款 -->
+        <result column="EN_EXCHANGE_CONVER_RATIO" javaType="double" property="enExchangeConverRatio"/><!-- 交易所折算比例  -->
+        <result column="EN_CB_VALUE_INCM_RATE" javaType="double" property="enCbValueIncmRate"/><!-- 中债估价收益率（%推荐）  -->
+        <result column="EN_CB_VALUE_NET_VALUE" javaType="double" property="enCbValueNetValue"/><!-- 中债估值净价  -->
+        <result column="EN_CB_VALUE_ALL_VALUE" javaType="double" property="enCbValueAllValue"/><!-- 中债估值全价  -->
+        <result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/><!-- 托管机构   -->
+        <result column="L_ISSUER_ID" javaType="string" property="lIssuerId"/><!-- 债券发行人-->
+        <result column="VC_ISSUE_APPRAISE" javaType="string" property="vcIssueAppraise"/><!-- 主体评级 -->
+        <result column="VC_ISSUE_APPRAISE_ORGAN" javaType="string" property="vcIssueAppraiseOrgan"/><!-- 主体评级机构 -->
+        <result column="VC_BOND_APPRAISE" javaType="string" property="vcBondAppraise"/><!-- 债券评级 -->
+        <result column="VC_BOND_APPRAISE_ORGAN" javaType="string" property="vcBondAppraiseOrgan"/><!-- 债券评级机构 -->
+        <result column="VC_BOND_ISSUE_APPRAISE" javaType="string" property="vcBondIssueAppraise"/><!-- 主/债券评级 -->
+        <result column="L_RATING_FORECAST" javaType="string" property="lRatingForecast"/><!-- 评级展望 -->
+        <result column="L_PUBLISH_DATE" javaType="date" property="lPublishDate"/><!-- 上市日期 -->
+ 
+        <!-- 有持仓的用户 -->
+        <result column="IS_POSITION" javaType="string" property="isPosition"/><!-- 是否有持仓：1-有，0-无 -->
+        <result column="IS_ATTENTION" javaType="string" property="isAttention"/><!-- 是否已关注该债券：1-已关注，0-未关注 -->
+        <result column="IS_SELL_OPERATE" javaType="string" property="isSellOperate"/><!-- 是否有卖出权限：1-有，0-无 -->
+        <result column="IS_BUY_OPERATE" javaType="string" property="isBuyOperate"/><!-- 是否有买入操作权限（用户是否存在投顾录入权限的产品组合）：1-有，0-无 -->
+        
+        <result column="RT_TIME" javaType="date" property="rtTime"/><!-- 成交时间 -->
+        
+        <result column="RT_YIELD" javaType="string" property="rtYield"/><!-- 成交价-->
+        <result column="RT_BSIZE" javaType="string" property="rtBsize"/><!-- 买量-->
+        <result column="RT_BIDYIELD" javaType="string" property="rtBidyield"/><!-- 买入 -->
+        <result column="RT_ASIZE" javaType="string" property="rtAsize"/><!-- 卖量-->
+        <result column="RT_ASKYIELD" javaType="string" property="rtAskyield"/><!-- 卖出 -->
+        <result column="SRC_CODE" javaType="string" property="srcCode"/><!-- 报价机构编码-->
+        <result column="YIELD_CNBD" javaType="string" property="yieldCnbd"/><!-- 中债估值 -->
+        <result column="NET_CNBD" javaType="string" property="netCnbd"/><!-- 估价收益率（中债） -->
+        <result column="LASTDATE_CNBD" javaType="string" property="lastdateCnbd"/><!-- 估价净价（中债） -->
+        <result column="COUPONRATE" javaType="string" property="couponrate"/><!-- 票息，即票面利率 -->
+    </resultMap>
+        
+    <!-- 获取最优报价 -->
+    <select id="queryOprimalPrice" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+    	select f.* from(
+	    	select t.*, case when att.vc_stock_code is not null then '1' else '0' end is_attention from (
+		    	   select thq.*,
+		    	   	   wb.vc_inter_code,
+				       wb.vc_stock_type,
+				       wb.vc_limit_left,
+				       wb.l_endincal_days,
+				       wb.en_issue_balance,
+				       to_date(wb.l_endincal_date,'yyyymmdd') l_endincal_date,
+				       wb.c_interest_type,
+				       wb.c_pay_interest_type,
+				       wb.en_pay_inteval,
+				       to_date(wb.l_next_payint_date,'yyyymmdd') l_next_payint_date,
+				       wb.l_next_payint_days,
+				       wb.vc_interest_rate_desc,
+				       to_date(wb.l_next_exercise_date,'yyyymmdd') l_next_exercise_date,
+				       wb.l_is_step_market,
+				       wb.vc_step_market_inter_code,
+				       wb.vc_special_text,
+				       wb.en_exchange_conver_ratio,
+				       wb.en_cb_value_incm_rate,
+				       wb.en_cb_value_net_value,
+				       wb.en_cb_value_all_value,
+				       wb.en_face_rate,
+				       wb.vc_market_type,
+				       wb.l_issuer_id,
+				       wb.vc_issue_appraise,
+				       wb.vc_issue_appraise_organ,
+				       wb.vc_bond_appraise,
+				       wb.vc_bond_appraise_organ,
+				       case
+				         when wb.vc_issue_appraise is not null and
+				              wb.vc_bond_appraise is not null then
+				          wb.vc_issue_appraise || '/' || wb.vc_bond_appraise
+				         when wb.vc_issue_appraise is null and wb.vc_bond_appraise is not null then
+				          '--/' || wb.vc_bond_appraise
+				         when wb.vc_issue_appraise is not null and wb.vc_bond_appraise is null then
+				          wb.vc_issue_appraise || '/--'
+				         when wb.vc_issue_appraise is null and wb.vc_bond_appraise is null then
+				          wb.vc_issue_appraise || '--' || wb.vc_bond_appraise
+				       end vc_bond_issue_appraise,
+				       wb.l_rating_forecast,
+				       wb.vc_payment_place,
+				       wb.vc_issuer_name_full,
+				       wb.vc_issue_property,
+				       to_date(wb.l_delisting_date,'yyyymmdd') l_delisting_date,
+				       wb.vc_industry,
+				       to_date(wb.l_publish_date,'yyyymmdd') l_publish_date,
+					  <isEqual property="positionReports" compareValue=""> 
+						'0' is_position,
+		              </isEqual>
+					  <isNotEqual property="positionReports" compareValue=""> 
+					 	case when (thq.vc_stock_code, thq.vc_market_no) in ($positionReports$) then '1' else '0' end is_position,
+					  </isNotEqual> 
+					   
+					  <isEqual property="operateReports" compareValue=""> 
+						'0' is_sell_operate,
+		              </isEqual>
+					  <isNotEqual property="operateReports" compareValue=""> 
+					 	case when (thq.vc_stock_code, thq.vc_market_no) in ($operateReports$) then '1' else '0' end is_sell_operate,
+					  </isNotEqual>
+					  <isEqual property="combiNos" compareValue="NoPermission"> 
+						'0' is_buy_operate
+		              </isEqual>
+		              <isNotEqual property="combiNos" compareValue="NoPermission"> 
+					 	'1' is_buy_operate
+					  </isNotEqual>
+				  from (select wt.wind_code vc_stock_code,
+				               wt.c_market_no vc_market_no,
+				               wt.sec_name vc_stock_name,
+				               wt.yield_cnbd,
+				               wt.lastdate_cnbd,
+				               wt.net_cnbd,
+				               wt.couponrate,
+				               hq.rt_yield,
+							   hq.rt_askyield,
+							   hq.rt_bidyield,
+							   hq.rt_asize,
+							   hq.rt_bsize,
+				               hq.rt_time,
+				               hq.src_code,
+				               hq.remark
+				          from (select t1.*
+				                  from (select t2.*,
+				                               row_number() over(partition by t2.wind_code, t2.c_market_no order by t2.lastdate_cnbd desc) rn
+				                          from T_ATS_WIND_BBQ_WSD t2) t1
+				                 where t1.rn = 1) wt,
+				               (select distinct hq1.sec_name,
+							       hq1.wind_code,
+							       hq1.c_market_no,
+							       hq1.rt_yield,
+							       hq1.rt_askyield,
+							       hq1.rt_bidyield,
+							       hq1.rt_asize,
+							       hq1.rt_bsize,
+							       to_date(hq1.rt_time,'yyyy-mm-dd hh24:mi:ss') rt_time,
+							       hq1.src_code,
+							       hq1.remark
+							  from t_ats_wind_bbq_hq hq1) hq
+				         where wt.wind_code = hq.wind_code
+				           and wt.c_market_no = hq.c_market_no) thq
+				  left join vw_bondinfo_wind wb
+				    on thq.vc_stock_code = wb.vc_stock_code
+				   and to_char(thq.vc_market_no) = wb.vc_market_no
+				where 1=1
+			   <isNotNull property="vcStockCode"><!-- 债券代码 -->
+		        	and thq.vc_stock_code=#vcStockCode#
+		      	</isNotNull>
+		      	<isNotNull property="vcStockType"><!-- 债券类型 -->
+		        	and wb.vc_stock_type in ($vcStockType$)
+		      	</isNotNull>	
+		      	<isNotNull property="vcBondAppraise"><!-- 债券评级 -->
+		        	and wb.vc_bond_appraise in ($vcBondAppraise$)
+		      	</isNotNull>    		  
+		    	<isNotNull property="vcIssueAppraise"><!-- 主体评级 -->
+		        	and wb.vc_issue_appraise in ($vcIssueAppraise$)
+		      	</isNotNull> 
+		      	<isNotNull property="minLimiteLeft"><!-- 剩余期限 -->
+		        	and wb.l_endincal_days/365 &gt;= #minLimiteLeft#
+		      	</isNotNull>
+		      	<isNotNull property="maxLimiteLeft"><!-- 剩余期限 -->
+		        	and wb.l_endincal_days/365 &lt;= #maxLimiteLeft#
+		      	</isNotNull> 
+		      	<isNotNull property="srcCode"><!-- 报价来源 -->
+		        	and thq.src_code in ($srcCode$)
+		      	</isNotNull>
+		      	<isNotNull property="vcIssueProperty"><!-- 企业性质 -->
+		        	and wb.vc_issue_property in ($vcIssueProperty$)
+		      	</isNotNull>
+		      	<isNotNull property="vcRightType"><!-- 含权方式 -->
+		        	and wb.vc_right_type=#vcRightType#
+		      	</isNotNull>
+		      	<isNotNull property="rtBidyieldMin"><!-- 买价区间最大值 -->
+		        	and thq.rt_bidyield &gt;= #rtBidyieldMin#
+		      	</isNotNull> 
+		      	<isNotNull property="rtBidyieldMax"><!-- 买价区间最大值 -->
+		        	and thq.rt_bidyield &lt;= #rtBidyieldMax#
+		      	</isNotNull> 
+		      	<isNotNull property="rtAskyieldMin"><!-- 卖价区间最小值 -->
+		        	and thq.rt_askyield &gt;= #rtAskyieldMin#
+		      	</isNotNull>
+		      	<isNotNull property="rtAskyieldMax"><!-- 卖价区间最大值 -->
+		        	and thq.rt_askyield &lt;= #rtAskyieldMax#
+		      	</isNotNull>
+      		) t left join (select f1.* from T_ATS_TSTOCK_FOLLOW f1 where f1.vc_user_id = #vcUserId#) att 
+      			on t.vc_stock_code = att.vc_stock_code and t.vc_market_no = att.vc_exchange
+      		where 1=1 
+      		<isEqual property="isPosition" compareValue="1"><!-- 有持仓条件 -->
+    			and t.is_position = #isPosition#
+    		</isEqual>
+      	 ) f where 1=1 
+      	 <isEqual property="isMyAttention" compareValue="1"><!-- 我的关注条件 -->
+			and f.is_attention = #isMyAttention#
+		</isEqual>
+		order by f.rt_time desc 
+    </select>
+    
+    <!-- 查询当日成交 -->
+    <select id="queryTodayPrice" parameterClass="commonj.sdo.DataObject" resultMap="resultMap">
+    	select f.* from(
+    		select t.*, case when att.vc_stock_code is not null then '1' else '0' end is_attention from (
+    			select thq.*,
+    				   wb.vc_inter_code,
+		               wb.vc_stock_type,
+		               wb.vc_limit_left,
+		               wb.l_endincal_days,
+		               wb.en_issue_balance,
+		               to_date(wb.l_endincal_date,'yyyymmdd') l_endincal_date,
+		               wb.c_interest_type,
+		               wb.c_pay_interest_type,
+		               wb.en_pay_inteval,
+		               to_date(wb.l_next_payint_date,'yyyymmdd') l_next_payint_date,
+		               wb.l_next_payint_days,
+		               wb.vc_interest_rate_desc,
+		               to_date(wb.l_next_exercise_date,'yyyymmdd') l_next_exercise_date,
+		               wb.l_is_step_market,
+		               wb.vc_step_market_inter_code,
+		               wb.vc_special_text,
+		               wb.en_exchange_conver_ratio,
+		               wb.en_cb_value_incm_rate,
+		               wb.en_cb_value_net_value,
+		               wb.en_cb_value_all_value,
+		               wb.en_face_rate,
+		               wb.vc_market_type,
+		               wb.l_issuer_id,
+		               wb.vc_issue_appraise,
+		               wb.vc_issue_appraise_organ,
+		               wb.vc_bond_appraise,
+		               wb.vc_bond_appraise_organ,
+		               case
+		                 when wb.vc_issue_appraise is not null and
+		                      wb.vc_bond_appraise is not null then
+		                  wb.vc_issue_appraise || '/' || wb.vc_bond_appraise
+		                 when wb.vc_issue_appraise is null and wb.vc_bond_appraise is not null then
+		                  '--/' || wb.vc_bond_appraise
+		                 when wb.vc_issue_appraise is not null and wb.vc_bond_appraise is null then
+		                  wb.vc_issue_appraise || '/--'
+		                 when wb.vc_issue_appraise is null and wb.vc_bond_appraise is null then
+		                  wb.vc_issue_appraise || '--' || wb.vc_bond_appraise
+		               end vc_bond_issue_appraise,
+		               wb.l_rating_forecast,
+		               wb.vc_payment_place,
+		               wb.vc_issuer_name_full,
+		               wb.vc_issue_property,
+		               to_date(wb.l_delisting_date,'yyyymmdd') l_delisting_date,
+		               wb.vc_industry,
+		               to_date(wb.l_publish_date,'yyyymmdd') l_publish_date,
+		                
+		               <isEqual property="positionReports" compareValue=""> 
+						'0' is_position,
+		               </isEqual>
+					  <isNotEqual property="positionReports" compareValue=""> 
+					 	case when (thq.vc_stock_code, thq.vc_market_no) in ($positionReports$) then '1' else '0' end is_position,
+					  </isNotEqual>
+					  <isEqual property="operateReports" compareValue=""> 
+						'0' is_sell_operate,
+		              </isEqual>
+					  <isNotEqual property="operateReports" compareValue=""> 
+					 	case when (thq.vc_stock_code, thq.vc_market_no) in ($operateReports$) then '1' else '0' end is_sell_operate,
+					  </isNotEqual>
+					  <isEqual property="combiNos" compareValue="NoPermission"> 
+						'0' is_buy_operate
+		              </isEqual>
+		              <isNotEqual property="combiNos" compareValue="NoPermission"> 
+					 	'1' is_buy_operate
+					  </isNotEqual>
+		          from (select wt.wind_code vc_stock_code,
+		                       wt.c_market_no vc_market_no,
+		                       wt.sec_name vc_stock_name,
+		                       wt.yield_cnbd,
+		                       wt.lastdate_cnbd,
+		                       wt.net_cnbd,
+		                       wt.couponrate,
+		                       hq.rt_yield,
+		                 	   hq.rt_askyield,
+		                 	   hq.rt_bidyield,
+		                 	   hq.rt_asize,
+		                 	   hq.rt_bsize,
+		                       hq.rt_time,
+		                       hq.src_code,
+		                       hq.remark
+		                  from (select t1.*
+		                          from (select t2.*,
+		                                       row_number() over(partition by t2.wind_code, t2.c_market_no order by t2.lastdate_cnbd desc) rn
+		                                  from T_ATS_WIND_BBQ_WSD t2) t1
+		                         where t1.rn = 1) wt,
+		                       (select distinct hq1.sec_name,
+							       hq1.wind_code,
+							       hq1.c_market_no,
+							       hq1.rt_yield,
+							       hq1.rt_askyield,
+							       hq1.rt_bidyield,
+							       hq1.rt_asize,
+							       hq1.rt_bsize,
+							       to_date(hq1.rt_time,'yyyy-mm-dd hh24:mi:ss') rt_time,
+							       hq1.src_code,
+							       hq1.remark
+							  from t_ats_wind_bbq_hq hq1) hq
+		                 where wt.wind_code = hq.wind_code
+		                   and wt.c_market_no = hq.c_market_no
+		                   and nvl( hq.rt_yield,'--') &lt;&gt; '--') thq
+		          left join vw_bondinfo_wind wb
+		            on thq.vc_stock_code = wb.vc_stock_code
+		           and to_char(thq.vc_market_no) = wb.vc_market_no
+    			where 1=1
+		   		<isNotNull property="vcStockCode"><!-- 债券代码 -->
+	        		and thq.vc_stock_code=#vcStockCode#
+	      		</isNotNull>
+	      		<isNotNull property="vcStockType"><!-- 债券类型 -->
+	        		and wb.vc_stock_type in ($vcStockType$)
+		      	</isNotNull>	
+		      	<isNotNull property="vcBondAppraise"><!-- 债券评级 -->
+		        	and wb.vc_bond_appraise in ($vcBondAppraise$)
+		      	</isNotNull>    		  
+		    	<isNotNull property="vcIssueAppraise"><!-- 主体评级 -->
+		        	and wb.vc_issue_appraise in ($vcIssueAppraise$)
+		      	</isNotNull> 
+		      	<isNotNull property="minLimiteLeft"><!-- 剩余期限 -->
+		        	and wb.l_limite_left &gt;= #minLimiteLeft#
+		      	</isNotNull>
+		      	<isNotNull property="maxLimiteLeft"><!-- 剩余期限 -->
+		        	and wb.l_limite_left &lt;= #maxLimiteLeft#
+		      	</isNotNull> 
+		      	<isNotNull property="vcIssueProperty"><!-- 企业性质 -->
+		        	and wb.vc_issue_property in ($vcIssueProperty$)
+		      	</isNotNull>
+		      	<isNotNull property="vcRightType"><!-- 含权方式 -->
+		        	and wb.vc_right_type=#vcRightType#
+		      	</isNotNull>
+		      	<isNotNull property="srcCode"><!-- 报价来源 -->
+		        	and thq.src_code in ($srcCode$)
+		      	</isNotNull>
+		      	<isNotNull property="rtBidyieldMin"><!-- 买价区间最大值 -->
+		        	and thq.rt_bidyield &lt;= #rtBidyieldMin#
+		      	</isNotNull> 
+		      	<isNotNull property="rtBidyieldMax"><!-- 买价区间最大值 -->
+		        	and thq.rt_bidyield &lt;= #rtBidyieldMax#
+		      	</isNotNull> 
+		      	<isNotNull property="rtAskyieldMin"><!-- 卖价区间最小值 -->
+		        	and thq.rt_askyield &gt;= #rtAskyieldMin#
+		      	</isNotNull>
+		      	<isNotNull property="rtAskyieldMax"><!-- 卖价区间最大值 -->
+		        	and thq.rt_askyield &lt;= #rtAskyieldMax#
+		      	</isNotNull>
+      		) t  left join (select f1.* from T_ATS_TSTOCK_FOLLOW f1 where f1.vc_user_id =#vcUserId#) att 
+      			on t.vc_stock_code = att.vc_stock_code and t.vc_market_no = att.vc_exchange
+      		where 1=1
+      		<isEqual property="isPosition" compareValue="1"><!-- 有持仓条件 -->
+    			and t.is_position = #isPosition#
+    		</isEqual>
+      		
+    	) f where 1=1 
+    	<isEqual property="isMyAttention" compareValue="1">
+    		and f.is_attention = #isMyAttention#
+    	</isEqual>
+		order by f.rt_time desc 
+    </select>
+
+
+	<resultMap class="commonj.sdo.DataObject" id="histroyDeal">
+    	<result column="BBQ_ID" javaType="int" property="bbqId"/>
+    	<result column="CREATE_TIME" javaType="date" property="createTime"/>
+    	<result column="WIND_CODE" javaType="string" property="windCode"/><!-- 债券代码件 -->
+    	<result column="C_MARKET_NO" javaType="string" property="cMarketNo"/><!-- 交易市场 -->
+    	<result column="SEC_NAME" javaType="string" property="secName"/><!-- 成交价 -->
+    	<result column="RT_YIELD" javaType="string" property="rtYield"/><!-- 成交价 -->
+    	<result column="SRC_CODE" javaType="string" property="srcCode"/><!-- 报价机构编码-->
+    </resultMap>
+    <!-- 查询债券历史成交信息 -->
+    <select id="getHistoryDeal" parameterClass="commonj.sdo.DataObject" resultMap="histroyDeal">
+   		select h.bbq_id, 
+		   	   h.create_time, 
+		   	   h.wind_code, 
+		   	   h.sec_name,
+		   	   h.c_market_no,  
+		   	   h.rt_yield,
+		   	   h.src_code
+	     from t_ats_wind_bbq_hq_log h
+	    where h.rt_yield is not null
+	    <isNotNull property="vcStockCode">
+        	and h.wind_code = #vcStockCode#
+      	</isNotNull>
+      	<isNotNull property="vcMarketNo">
+        	and h.c_market_no = #vcMarketNo#
+      	</isNotNull>
+		<isNotNull property="beginTime"><!-- 时间区间（开始时间） -->
+        	and h.create_time &gt;= to_date(#beginTime#,'yyyy-mm-dd hh24:mi:ss') 
+      	</isNotNull>
+      	<isNotNull property="endTime"><!-- 时间区间（结束时间） -->
+        	and h.create_time &lt; to_date(#endTime#,'yyyy-mm-dd hh24:mi:ss')
+      	</isNotNull>
+    </select>
+    
+    <select id="getMarketStock" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+	    select t.vc_stock_code vcStockCode, 
+	    	   t.vc_stock_name vcStockName,
+	    	   t.vc_market_no vcMarketNo
+		  from vw_bondinfo_wind t
+		 where t.vc_market_no in ('1','2') and t.vc_step_market_inter_code = #vcStepMarketInterCode#
+    </select>
+    
+    <select id="queryTstockInfo" parameterClass="commonj.sdo.DataObject" resultClass="java.util.HashMap">
+	    select a.C_MARKET_NO as "market",
+       		   a.VC_REPORT_CODE as "vcStockCode",
+	    	   a.EN_BUY_PRICE1 as "buyPrice1",
+		       a.L_BUY_AMOUNT1 as "buyAmount1",
+		       a.EN_BUY_PRICE2 as "buyPrice2",
+		       a.L_BUY_AMOUNT2 as "buyAmount2",
+		       a.eN_BUY_PRICE3 as "buyPrice3",
+		       a.L_BUY_AMOUNT3 as "buyAmount3",
+		       a.EN_BUY_PRICE4 as "buyPrice4",
+		       a.L_BUY_AMOUNT4 as "buyAmount4",
+		       a.EN_BUY_PRICE5 as "buyPrice5",
+		       a.L_BUY_AMOUNT5 as "buyAmount5",
+		       a.EN_SALE_PRICE1 as "salePrice1",
+		       a.L_SALE_AMOUNT1 as "saleAmount1",
+		       a.EN_SALE_PRICE2 as "salePrice2",
+		       a.L_SALE_AMOUNT2 as "saleAmount2",
+		       a.EN_SALE_PRICE3 as "salePrice3",
+		       a.L_SALE_AMOUNT3 as "saleAmount3",
+		       a.EN_SALE_PRICE4 as "salePrice4",
+		       a.L_SALE_AMOUNT4 as "saleAmount4",
+		       a.EN_SALE_PRICE5 as "salePrice5",
+		       a.L_SALE_AMOUNT5 as "saleAmount5",
+		       a.EN_OPEN_PRICE as "openPrice",
+		       a.EN_AVG_PRICE as "avgPrice",
+		       a.EN_MAX_PRICE as "maxPrice",
+		       a.EN_MIN_PRICE as "minPrice"
+		  from trade.TSTOCKINFO a
+		 where a.vc_report_code = #vcStockCode# and a.c_market_no=#vcMarketNo#
+    </select>
+    
+    
+    <resultMap class="commonj.sdo.DataObject" id="cridetInfo">
+    	<result column="VC_APPRAISE_STANDARD" javaType="string" property="vcAppraiseStandard"/><!-- 评级标准：0-债券评级  1-主体评级 -->
+    	<result column="L_APPRAISE_DATE" javaType="int" property="lAppraiseDate"/><!-- 评级日期 -->
+    	<result column="VC_APPRAISE" javaType="string" property="vcAppraise"/><!-- 信用评级 -->
+    	<result column="VC_APPRAISE_FORECAST" javaType="string" property="vcAppraiseForecast"/><!-- 评级展望 -->
+    	<result column="VC_APPRAISE_CHG_DIR" javaType="string" property="vcAppraiseChgDir"/><!-- 变动方向 -->
+    	<result column="VC_APPRAISE_TYPE" javaType="string" property="vcAppraiseType"/><!-- 评级类型 -->
+    	<result column="VC_APPRAISE_ORGAN" javaType="string" property="vcAppraiseOrgan"/><!-- 评级机构 -->
+    </resultMap>
+    <select id="getStockCridet" parameterClass="commonj.sdo.DataObject" resultMap="cridetInfo">
+    	select *
+		  from (select distinct '0' vc_appraise_standard, <!--评级标准-->
+				       bap.l_appraise_date l_appraise_date, <!-- 评级日期 -->
+				       bap.vc_bond_appraise vc_appraise, <!-- 信用评级 -->
+				       '' vc_appraise_forecast, <!-- 评级展望 -->
+				       bap.vc_bond_appraise_chg_dir vc_appraise_chg_dir, <!-- 变动方向 -->
+				       bap.vc_bond_appraise_type vc_appraise_type,  <!-- 评级类型 -->
+				       bap.vc_bond_appraise_organ vc_appraise_organ <!-- 评级机构 -->
+				  from vw_bond_appraise_his_wind bap
+				 where bap.vc_inter_code = #vcInterCode#
+				 order by bap.l_appraise_date desc)
+		union all
+		select *
+		  from (select distinct '1' vc_appraise_standard,<!--评级标准-->
+				       iah.l_appraise_date l_appraise_date,<!-- 评级日期 -->
+				       iah.vc_issuer_appraise vc_appraise,<!-- 信用评级 -->
+				       iah.vc_issuer_appraise_forecast vc_appraise_forecast,<!-- 评级展望 -->
+				       iah.vc_issuer_appraise_chg_dir vc_appraise_chg_dir, <!--变动方向 -->
+				       iah.vc_issuer_appraise_type vc_appraise_type,  <!--评级类型 -->
+				       iah.vc_issuer_appraise_organ vc_appraise_organ <!-- 评级机构 -->
+				  from vw_issuer_appraise_his_wind iah
+				 where iah.vc_issuer_id = #vcIssuerId#
+				 order by iah.l_appraise_date desc)
+    </select>
+    
+</sqlMap>

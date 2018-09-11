@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:luwenxing -->
+<sqlMap>
+ 	<!--O32库银行间二级市场成交回报-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapForO32BankSecondDeal">
+    	<result column="L_DAILY_INSTRUCTION_NO" javaType="long" property="lDailyInstructionNo"/>  <!--指令序号 -->
+    	<result column="EN_DEAL_BALANCE" javaType="long" property="enDealBalance"/>						<!--成交金额 -->
+    	<result column="L_DEAL_AMOUNT" javaType="double" property="enDealAmount"/>									<!--成交数量-->
+    	<result column="L_DATE" javaType="long" property="lDealDate"/>																<!--成交日期 -->
+    	<result column="C_FIRST_SETTLE_TYPE" javaType="string" property="vcSettType"/>						<!--交割方式 -->
+    	<result column="L_FIRST_SETTLE_DATE" javaType="long" property="lSettDate"/>							<!--交割日 -->
+    	<result column="EN_FIRST_FULL_PRICE" javaType="double" property="enFullPrice"/>						<!--全价价格/结算价格 -->
+    	<result column="L_TRADE_RIVAL_NO" javaType="string" property="vcTradeRivalId"/>					<!-- 交易对手编号-->
+    	<result column="VC_RIVALTRADER_NAME" javaType="string" property="vcTradeRivalName"/>		<!-- 交易对手方名称-->
+    	<result column="EN_BALANCE" javaType="double" property="enQtyBalance"/>									<!-- 券面总额-->
+    	<result column="C_STATUS" javaType="string" property="vcProceStatus"/>										    <!-- 成交状态-->
+    	<result column="L_FUND_ID" javaType="long" property="lFundId"/>													<!-- 产品编号-->
+    	<result column="L_BASECOMBI_ID" javaType="long" property="lBaseCombiId"/>								<!-- 组合编号-->
+    	<result column="C_ENTRUST_DIRECTION" javaType="string" property="cEntrustDirection"/>			<!-- 委托方向-->
+    </resultMap>
+    
+    <!-- 银行间二级市场未完成的指令-->
+    <select id="queryBSUnfinishOrders" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		   select 
+		       t1.VC_CLORD_ID,
+		       t1.VC_BOND_CODE_EXTERNAL,
+		       t1.L_BANK_SECOND_MARKET_ID,
+		       t1.EN_PROCESS_ID,
+		       t2.CLORDID
+		  from 
+		  	T_ATS_CJAPI_B_S_MARKET t1, 
+		  	ZHFWPT_JY_ZQMM t2
+		  where 
+		  	t1.EN_PROCESS_ID > 0 AND			<!-- 下单到机器猫如果失败，会有EN_PROCESS_ID为空的情况-->
+		    t1.VC_ORDER_STATUS = '0'AND 
+		    t1.VC_BACK_STATUS != '3' AND 
+		    t1.VC_INVEST_NO = t2.INVEST_PRODUCT_NUM 		<!-- 关联关系改为投资编号，20170304-->
+	</select>
+		
+		<!-- 从O32查找银行间二级市场成交信息-->
+	<select id="queryO32BSDealData" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+	    	select 
+	    		t.EN_DEAL_BALANCE,
+	    		t.L_DEAL_AMOUNT,
+	    		t.L_DATE,
+	    		t.C_FIRST_SETTLE_TYPE,
+	    		t.L_FIRST_SETTLE_DATE,
+	    		t.EN_FIRST_FULL_PRICE,
+	    		t.L_TRADE_RIVAL_NO,
+	    		t2.VC_NAME as VC_RIVALTRADER_NAME,
+	    		t.EN_BALANCE,
+	    		t3.C_DEAL_EXECUTE_STATUS as C_STATUS
+	    	from 
+	    		trade.TBANKREALDEAL t,
+	    		trade.TTRADERIVAL t2,
+	    		trade.TINSTRUCTIONSTOCK t3
+	    	where 
+	    		t.VC_SOURCE_NO = #CLORDID# AND
+	    		t3.VC_SOURCE_NO=t.VC_SOURCE_NO AND
+	    		t.L_TRADE_RIVAL_NO=t2.L_RIVAL_ID
+	</select>
+	
+	<!-- 更新银行间二级市场指令状态-->
+	<update id="updateBSOrderStatus" parameterClass="commonj.sdo.DataObject">
+		update 
+			T_ATS_CJAPI_B_S_MARKET t
+		set
+		    t.VC_BACK_STATUS = #C_STATUS#
+		where 
+			t.L_BANK_SECOND_MARKET_ID = #L_BANK_SECOND_MARKET_ID#
+	</update>
+	
+	<!--插入银行间二级市场反馈表-->	     
+    <insert id="insertBSFeedback" parameterClass="java.util.HashMap" >
+    	insert into 
+    		T_ATS_CJAPI_B_S_MARKET_BACK t
+    		(
+    			t.L_BACK_ID,
+	    		t.L_BANK_SECOND_MARKET_ID, t.VC_CLORD_ID , 
+				t.EN_DEAL_BALANCE, t.EN_DEAL_AMOUNT, t.L_DEAL_DATE,
+				t.VC_STOCK_CODE,	 t.VC_SETT_TYPE, t.L_SETT_DATE,
+				t.EN_FULL_PRICE ,	t.VC_TRADE_RIVAL_ID ,
+				t.VC_TRADE_RIVAL_NAME ,t.EN_QTY_BALANCE ,t.VC_PROCE_STATUS,
+				t.L_CREATE_DATE, t.L_CREATE_TIME
+			)
+    	values
+    		(
+    			#lBackId#,
+	    		#lBankSecondMarketId#, #vcClordId#, 
+	    		#enDealBalance#, #enDealAmount#, #lDealDate#,
+	    		#vcStockCode#,  #vcSettType#,  #lSettDate#,
+	    		#enFullPrice#,  #vcTradeRivalId#,
+	    		#vcTradeRivalName#, #enQtyBalance#, #vcProceStatus#,
+	    		#lCreateDate#, #lCreateTime#
+    		)
+    </insert>
+    
+    <!--*************************** 银行间质押式回购指令反馈*****************************************-->
+    <!--O32库银行间质押式成交回报-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapForO32BankPledgeRepoDeal">
+    	<result column="L_DAILY_INSTRUCTION_NO" javaType="long" property="lDailyInstructionNo"/>  <!--指令序号 -->
+    	<result column="L_SETTLE_SPEED" javaType="string" property="vcClearSpeed"/>  		<!--清算速度 -->
+    	<result column="EN_DEAL_BALANCE" javaType="long" property="enDealBalance"/>						<!--成交金额 -->
+    	<result column="L_DEAL_AMOUNT" javaType="double" property="enDealAmount"/>						<!--成交数量-->
+    	<result column="L_DATE" javaType="long" property="lDealDate"/>														<!--成交日期 -->
+    	<result column="C_FIRST_SETTLE_TYPE" javaType="string" property="vcFutSettType"/>						<!--首次交割方式 -->
+    	<result column="C_SECOND_SETTLE_TYPE" javaType="string" property="vcLutSettType"/>						<!--到期交割方式 -->
+    	<result column="L_FIRST_SETTLE_DATE" javaType="long" property="lFutSettDate"/>							<!--首次交割日 -->
+    	<result column="L_SECOND_SETTLE_DATE" javaType="long" property="lLutSettDate"/>							<!--到期交割日 -->
+    	<result column="EN_FIRST_SETTLE_INTEREST" javaType="double" property="enInterest"/>				<!--应计利息 -->
+    	<result column="L_TRADE_RIVAL_NO" javaType="string" property="vcTradeRivalId"/>					<!-- 交易对手编号-->
+    	<result column="EN_BALANCE" javaType="double" property="enQtyBalance"/>									<!-- 券面总额-->
+    	<result column="C_STATUS" javaType="string" property="vcProceStatus"/>										    <!-- 成交状态-->
+    </resultMap>
+    
+    <select id="queryBPUnfinishOrder" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+    	select  
+    		t1.CLORDID, 
+    		t2.L_BANK_PLEDGE_REPO_ID, 
+    		t2.VC_CLORD_ID 
+    	from 
+    		ZHFWPT_JY_ZNHG t1, T_ATS_CJAPI_B_P_REPO t2 
+		where 
+			t2.VC_ORDER_STATUS = '0' AND  
+			t2.VC_BACK_STATUS != '3' AND 
+			t2.EN_PROCESS_ID > 0 AND  				<!-- 下单到机器猫如果失败，会有EN_PROCESS_ID为空的情况-->
+			t2.VC_INVEST_NO = t1.INVEST_PRODUCT_NUM 	<!-- 关联关系改为投资编号，20170304-->
+    </select>
+    
+    <!-- 更新银行间质押式回购指令状态-->
+	<update id="updateBankPledgeRepoOrderStatus" parameterClass="commonj.sdo.DataObject">
+		update 
+			T_ATS_CJAPI_B_P_REPO t
+		set
+		    VC_BACK_STATUS = #C_STATUS#
+		where 
+			t.L_BANK_PLEDGE_REPO_ID = #L_BANK_PLEDGE_REPO_ID#
+	</update>
+	
+	<!-- 从O32查找银行间质押式回购成交信息-->
+	<select id="queryO32BPRDealData" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		 select 
+		      t1.L_SETTLE_SPEED,  t1.EN_RATE, t1.L_DATE,t1.L_DEAL_AMOUNT,t3.VC_NAME as VC_RIVALTRADER_NAME,
+		      t1.C_FIRST_SETTLE_TYPE,   t1.EN_DEAL_BALANCE, t1.C_SECOND_SETTLE_TYPE, t1.L_FIRST_SETTLE_DATE,
+		      t1.L_SECOND_SETTLE_DATE,  t1.L_TRADE_RIVAL_NO,  t1.EN_BALANCE,   t2.EN_HG_INTEREST, t4.C_DEAL_EXECUTE_STATUS as C_STATUS
+		from 
+			trade.tbankrealdeal t1, 
+			trade.tpendsettle t2,
+			trade.TTRADERIVAL t3,
+			trade.TINSTRUCTIONSTOCK t4
+		where 
+			t1.vc_source_no = #CLORDID#  and 
+			t1.l_entrust_serial_no = t2.l_entrust_serial_no and 
+		    t1.c_entrust_direction = t2.c_entrust_direction and
+		    t1.l_trade_rival_no=t3.l_rival_id and
+		    t1.L_DATE=t4.L_DATE and
+            t1.L_DAILY_INSTRUCTION_NO=t4.L_DAILY_INSTRUCTION_NO and 
+            t1.L_INDEX_DAILY_MODIFY=t4.L_INDEX_DAILY_MODIFY
+	</select>
+	
+	<!-- 从O32查找银行间质押式回购成交信息-->
+	<select id="queryO32BPRDealBondInfo" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		 select 
+		      t4.VC_REPORT_CODE, 
+		      t4.VC_STOCK_NAME,
+		      t3.EN_RATIO, 
+		      t3.L_MORTAGAGE_AMOUNT
+		from 
+			trade.TBANKREALDEAL t1,  
+			trade.TPENDSETTLE t2, 
+			trade.THGMORTAGAGE t3, 
+			trade.TSTOCKINFO t4
+		where 
+			t1.VC_SOURCE_NO = #CLORDID# and 
+			t1.L_ENTRUST_SERIAL_NO = t2.L_ENTRUST_SERIAL_NO and
+		    t1.C_ENTRUST_DIRECTION = t2.C_ENTRUST_DIRECTION and
+		    t2.L_SERIAL_NO = t3.L_SERIAL_NO AND t3.VC_INTER_CODE = t4.VC_INTER_CODE
+	</select>
+	
+    <!--插入银行间质押式回购指令反馈表-->	     
+    <insert id="insertBankPledgeRepoFeedback" parameterClass="java.util.HashMap">
+    	insert into 
+    		T_ATS_CJAPI_B_P_REPO_BACK t
+    		(
+    			t.L_BACK_ID,
+	    		t.L_BANK_PLEDGE_REPO_ID, t.VC_CLORD_ID , t.VC_CLEAR_SPEED,
+	    		t.EN_DEAL_PRICE,t.EN_DEAL_BALANCE, t.EN_DEAL_AMOUNT, 
+	    		t.L_DEAL_DATE,t.VC_FUT_SETT_TYPE,t.VC_LUT_SETT_TYPE,
+	    		t.L_FUT_SETT_DATE,t.L_LUT_SETT_DATE,t.EN_INTEREST,
+	    		t.VC_TRADE_RIVAL_ID,t.EN_QTY_BALANCE ,t.VC_PROCE_STATUS,
+				t.L_CREATE_DATE, t.L_CREATE_TIME
+			)
+    	values
+    		(
+    			#lBackId#,
+	    		#lBankPledgeRepoId#, #vcClordId#, #vcClearSpeed#, 
+	    		#enDealPrice#,#enDealBalance#, #enDealAmount#, 
+	    		#lDealDate#, #vcFutSettType#,#vcLutSettType#,
+	    		#lFutSettDate#,#lLutSettDate#,#enInterest#,
+	    		#vcTradeRivalId#, #enQtyBalance#, #vcProceStatus#,
+	    		#lCreateDate#, #lCreateTime#
+    		)
+    </insert>
+    
+    <select id="queryStcockIfo" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+    	 select sii.L_STOCK_INVEST_NO,sii.* from t_ats_stock_issue_info sii where 
+    	 sii.vcStockCode=#vc_Stock_Code# and sii.c_Market_No=#cMarketNo#
+    </select>
+    
+    <select id="queryIssuerInfo" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+    	select * from t_ats_issuer_info  ii where ii.vc_issue_name_full like #issueName#
+    </select>
+    
+    <!-- 从O32查找交易所二级市场成交信息-->
+	<select id="queryO32ESDealData" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+	    	select 
+	    		t.L_DEAL_AMOUNT,
+	    		t.L_DATE,
+	    		t.L_BUSINESS_TIME,
+	    		t.EN_DEAL_PRICE,
+	    		t.VC_DEAL_NO,
+	    		t3.L_SETTLE_DATE,
+	    		t2.C_DEAL_EXECUTE_STATUS as C_STATUS
+	    	from 
+	    		trade.TREALDEAL t,
+	    		trade.TINSTRUCTIONSTOCK t2,
+	    		trade.tpendsettle t3
+	    	where 
+	    	    t.VC_DEAL_NO=#VC_FS_DEAL_ID# and
+	    	    t.L_REALDEAL_SERIAL_NO = t3.VC_ORIGINAL_NO and 
+	    		t2.L_DATE=t.L_DATE and
+                t.L_DAILY_INSTRUCTION_NO=t2.L_DAILY_INSTRUCTION_NO and 
+                t.L_INDEX_DAILY_MODIFY=t2.L_INDEX_DAILY_MODIFY
+	</select>
+	
+    <!-- 查询招行2.0新指令，银行间二级市场未完成的指令-->
+    <select id="queryBSUnfinishNewOrders" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		   select 
+		       t1.VC_CLORD_ID,
+		       t1.VC_BOND_CODE_EXTERNAL,
+		       t1.L_BANK_SECOND_MARKET_ID,
+		       t1.EN_PROCESS_ID,
+		       t2.VC_CLORD_ID as CLORDID
+		  from 
+		  	T_ATS_CJAPI_B_S_MARKET t1, 
+		  	T_ATS_INQUIRY_RESULT_INSTRUCT t2
+		  where 
+		  	t1.EN_PROCESS_ID > 0 AND			<!-- 下单到机器猫如果失败，会有EN_PROCESS_ID为空的情况-->
+		    t1.VC_ORDER_STATUS = '0'AND 
+		    (t1.VC_BACK_STATUS is null or t1.VC_BACK_STATUS != '3' ) AND 
+		    t1.VC_INVEST_NO = t2.L_RESULT_NO AND		<!-- 关联关系改为投资编号，20170304-->
+            t2.C_IS_VALID='1' and t2.VC_FS_DEAL_STATUS ='1' <!--前台已成交-->
+            <!--and t2.VC_BS_DEAL_STATUS in('09','11')  后台交收-->
+	</select>
+	
+	<!-- 查询招行2.0新指令，交易所二级市场未完成的指令-->
+    <select id="queryESUnfinishNewOrders" parameterClass="commonj.sdo.DataObject" resultClass="commonj.sdo.DataObject">
+		   select 
+		       t2.VC_FS_DEAL_ID,
+		       t1.VC_CLORD_ID,
+		       t1.VC_BOND_CODE_EXTERNAL,
+		       t1.L_EXCHANGE_SECOND_MARKET_ID,
+		       t1.EN_PROCESS_ID,
+		       t2.VC_CLORD_ID as CLORDID
+		  from 
+		  	T_ATS_CJAPI_E_S_MARKET t1, 
+		  	T_ATS_INQUIRY_RESULT_INSTRUCT t2
+		  where 
+		  	t1.EN_PROCESS_ID > 0 AND			<!-- 下单到机器猫如果失败，会有EN_PROCESS_ID为空的情况-->
+		    t1.VC_ORDER_STATUS = '0'AND 
+		    (t1.VC_BACK_STATUS is null or t1.VC_BACK_STATUS != '3' ) AND 
+		    t1.VC_INVEST_NO = t2.L_RESULT_NO AND		<!-- 关联关系改为投资编号，20170304-->
+		    t2.C_IS_VALID='1' and t2.VC_FS_DEAL_STATUS ='1' <!--前台已成交-->
+		    <!--  and t2.VC_BS_DEAL_STATUS in('09','11')  后台交收-->
+	</select>
+	
+	<!-- 更新银行间二级市场指令状态-->
+	<update id="updateESOrderStatus" parameterClass="commonj.sdo.DataObject">
+		update 
+			T_ATS_CJAPI_E_S_MARKET t
+		set
+		    t.VC_BACK_STATUS = #C_STATUS#
+		where 
+			t.L_EXCHANGE_SECOND_MARKET_ID = #L_EXCHANGE_SECOND_MARKET_ID#
+	</update>
+	
+	<!--插入银行间二级市场反馈表-->	     
+    <insert id="insertESFeedback" parameterClass="java.util.HashMap" >
+    	insert into 
+    		T_ATS_CJAPI_E_S_MARKET_BACK t
+    		(
+    			t.L_BACK_ID,
+	    		t.L_EXCHANGE_SECOND_MARKET_ID, t.VC_CLORD_ID , t.VC_DEAL_NO,
+				t.EN_DEAL_BALANCE, t.EN_DEAL_AMOUNT, t.L_DEAL_DATE,L_DEAL_TIME,
+				t.VC_STOCK_CODE,EN_DEAL_PRICE ,	t.VC_PROCE_STATUS,
+				t.L_CREATE_DATE, t.L_CREATE_TIME
+			)
+    	values
+    		(
+    			#lBackId#,
+	    		#lExchangeSecondMarketId#, #vcClordId#, #vcDealNo#,
+	    		#enDealBalance#, #enDealAmount#, #lDealDate#,#lDealTime#,
+	    		#vcStockCode#, #enDealPrice#,#vcProceStatus#,
+	    		#lCreateDate#, #lCreateTime#
+    		)
+    </insert>
+</sqlMap>

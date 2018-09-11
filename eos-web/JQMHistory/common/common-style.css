@@ -1,0 +1,54 @@
+/* 覆盖架构的样式 */
+.search-condition{padding:0px 0px 5px 0px;}
+.search-condition .table td{height:23px; line-height:23px;}
+
+/* 删除单选按钮上面的横线 */
+.radio-border-top-none tr{border-top:none;}
+.radio-border-top-none td{margin:0;padding:0;}
+
+/* 提醒样式：字体红色并加粗 */
+.warn_red{color:red;}
+.warn_bold{font-weight:bold;}
+.warn_red_bold{color:red; font-weight:bold;}
+
+
+/* 指令/建议流程处理状态：-2-指令/建议询价录入完成；-1-交易员填单指令/建议补齐完成；0-投资顾问录入完成；1-指令/建议录入确认完成；2-投资经理下单确认完成；3-交易员填单确认完成；4-交易已发送确认完成；5-前台已成交确认完成；6-后台已成交确认完成； */
+
+.processStatus_-2_tg{background: #FFFFFF ;}/* 白色 */
+.processStatus_-1_tg{background: #FFFFFF ;}/* 白色 ，有权限处理显示蓝色 */
+.processStatus_0_tg{background: #FFFFFF ;}/* 白色 ，有权限处理显示蓝色 */
+.processStatus_1_tg{background: #FFFFFF ;}/* 白色 */
+.processStatus_2_tg{background: #99FFFF ;}
+.processStatus_3_tg{background: #66CC99 ;}
+.processStatus_4_tg{background: #339966 ;}
+.processStatus_5_tg{background: #33FF33 ;}
+.processStatus_6_tg{background: #CCCCCC ;}/* 灰色 */
+
+.processStatus_wait_confirm{background: #0099FF ;}/* 蓝色，待本人处理记录背景色  */
+.processStatus_-2_qr{background: #FFFFFF ;}/* 白色 ，有权限修改的交易员填单显示蓝色 */
+.processStatus_-1_qr{background: #FFFFFF ;}/* 白色  */
+.processStatus_0_qr{background: #FFFFFF ;}/* 白色 */
+.processStatus_1_qr{background: #FFFFFF ;}/* 白色 ，有权限确认的投资经理下单显示蓝色 */
+.processStatus_2_qr{background: #99FFFF ;}
+.processStatus_3_qr{background: #66CC99 ;}
+.processStatus_4_qr{background: #339966 ;}
+.processStatus_5_qr{background: #33FF33 ;}
+.processStatus_6_qr{background: #CCCCCC ;}/* 灰色 */
+
+/* 交易状态：0-有效；1-无效-修改；2-无效-废弃；3-有效-退回；4-无效-退回； */
+.validStatus_modify_3{background: #FFFF99 ;}/* 交易状态：3-有效-退回； 记录背景色；*/
+.validStatus_modify_1_4{background: #FF9999 ;}/* 交易状态：1-无效-修改；4-无效-退回； 记录背景色；*/
+.validStatus_del_2{background: #FF6666 ;}/* 交易状态：2-无效-废弃 记录背景色；*/
+
+/* 当指令/建议导出过使用 */
+.processStatus_wait_confirm1{background: #0099FF ; font-weight: bold;}/* 蓝色，待本人处理记录背景色  */
+.processStatus_-2_qr1{background: #FFFFFF ; font-weight: bold;}/* 白色 ，有权限修改的交易员填单显示蓝色 */
+.processStatus_-1_qr1{background: #FFFFFF ; font-weight: bold;}/* 白色  */
+.processStatus_0_qr1{background: #FFFFFF ; font-weight: bold;}/* 白色 */
+.processStatus_1_qr1{background: #FFFFFF ; font-weight: bold;}/* 白色 ，有权限确认的投资经理下单显示蓝色 */
+.processStatus_2_qr1{background: #99FFFF ; font-weight: bold;}
+.processStatus_3_qr1{background: #66CC99 ; font-weight: bold;}
+.processStatus_4_qr1{background: #339966 ; font-weight: bold;}
+.processStatus_5_qr1{background: #33FF33 ; font-weight: bold;}
+.processStatus_6_qr1{background: #CCCCCC ; font-weight: bold;}/* 灰色 */
+

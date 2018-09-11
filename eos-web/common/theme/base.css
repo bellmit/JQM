@@ -1,0 +1,40 @@
+@CHARSET "UTF-8";
+.L{ 
+	text-align:left;
+}
+.R{ 
+	text-align:right;
+}
+.C{ 
+	text-align:center;
+}
+.M{
+	vertical-align:middle;
+}
+.B{
+	vertical-align:bottom;
+}
+.T{
+	vertical-align:top;
+}
+html body table
+{
+    font-size:12px;
+}
+
+.xiaoxikuang{width:250px;height:170px;position:fixed;z-index:100;bottom:10px;right:10px;background-color:#fff;border:1px solid #999;border-radius:3px}
+.xiaoxikuang .title1{height:31px;overflow:hidden;    border-bottom: 1px solid #ccc;}
+.xiaoxikuang .title_zi{width:178px;line-height:30px;margin:0 0 0 10px;float:left;display:inline;font-size:12px;}
+.xiaoxikuang .logo{width:16px;height:16px;background:url(../../common/nui/themes/icons/tip.png) no-repeat;float:left;margin:8px 0 0 9px;display:inline;}
+.xiaoxikuang .title_xuxian{width:1px;height:19px;border-left: 1px solid #ccc;margin:6px 0 0 0;float:left;}
+.xiaoxikuang .guanbi{background:url(../../common/nui/themes/icons/cancel.gif) no-repeat 50% 50%;width:33px;height:29px;margin:0px;float:left;display:inline;}
+.xiaoxikuang .guanbi:hover{border: 1px solid #999;}
+
+.xiaoxikuang .content{height:117px;}
+.xiaoxikuang .congtent1{width:220px;text-align:center;height:font-size:14px;color:#0c4e7c;margin:0 auto;}
+.xiaoxikuang .congtent2{width:220px;height:80px;font-size:12px;color:#0c4e7c;margin:5px auto;}
+
+.xiaoxikuang .bottom{height:20px;overflow:hidden;text-align: right;}
+.xiaoxikuang .xiangqing{text-align:left;font-size:12px;color:#06C;line-height:12px;margin:8px 10px 0 5px;display:inline;}
+.xiaoxikuang .fasongshijian{width:75px;margin:8px 10px 0 5px;text-align:left;font-size:12px;line-height:12px;display:inline;}
+.xiaoxikuang .neirong{line-height:20px;color: #333;}

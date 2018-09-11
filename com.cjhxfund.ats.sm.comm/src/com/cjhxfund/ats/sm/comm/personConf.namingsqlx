@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:罗倔怀 -->
+<sqlMap>
+    <!-- 根据ID，和配置代码查询唯一的用户配置信息 start-->
+    <resultMap class="commonj.sdo.DataObject" id="personConfMap">
+        <result column="vc_conf_code" javaType="String" property="vcConfCode"/>
+        <result column="vc_conf_value" javaType="String" property="vcConfValue"/>
+    </resultMap>
+    <select id="personConfSql"  parameterClass="commonj.sdo.DataObject" resultMap="personConfMap">
+    select vc_conf_code,vc_conf_value from T_ATS_PERSON_CONF 
+    where 1=1 
+    <isNotNull property="vcUserId">
+			and  vc_user_id = #vcUserId# 
+		</isNotNull>
+  	  <isNotNull property="vcConfCode">
+			and vc_conf_code = #vcConfCode#
+		</isNotNull>   
+     
+    </select>
+    <!-- 根据ID，和配置代码查询唯一的用户配置信息 end-->
+    
+    
+    <resultMap class="commonj.sdo.DataObject" id="trialInfoMap">
+    	<result column="l_trial_id" javaType="String" property="ltrialId"/>
+    	<result column="vc_user_id" javaType="String" property="vcUserId"/>
+    	<result column="vc_user_name" javaType="String" property="vcUserName"/>
+    	<result column="vc_trial_fun_name" javaType="String" property="vcTrialFunName"/>
+    	<result column="vc_trial_fun_code" javaType="String" property="vcTrialFunCode"/>
+    </resultMap>
+    <!-- 查询 -->
+    <select id="queryMenuPermissionUsers" parameterClass="commonj.sdo.DataObject" resultMap="trialInfoMap">
+    	select 
+			l_trial_id,
+			vc_user_id,
+			vc_user_name,
+			vc_trial_fun_name,
+			vc_trial_fun_code
+		from T_ATS_TRIAL_USER t where t.VC_TRIAL_FUN_CODE=#trialFunCode# and vc_user_id=#userId#
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="trialStatusMap">
+    	<result column="PARAM_CONF_ID" javaType="String" property="paramConfId"/>
+    	<result column="PARAM_NAME" javaType="String" property="paramName"/>
+    	<result column="ISTRIAL" javaType="String" property="isTrial"/>
+    	<result column="PARAM_VALUE" javaType="String" property="paramValue"/>
+    </resultMap>
+    <!-- 查询系统参数状态 -->
+    <select id="getSmTrialStatus" parameterClass="commonj.sdo.DataObject" resultMap="trialStatusMap">
+    	select 
+			PARAM_CONF_ID,
+			PARAM_NAME,
+			ISTRIAL,
+			PARAM_VALUE
+			 from zhfwpt_param_conf  t where t.PARAM_KEY = #trialFunCode#
+    </select>
+</sqlMap>

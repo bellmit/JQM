@@ -1,0 +1,123 @@
+.invaliddata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #FF6666;
+	border:2px solid #6CA6CD; 
+}
+.instructStatus_3_4_5_6_zlgl{background: #FF6666;}
+
+.backdata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #FF9999;
+	border:2px solid #6CA6CD;   		 
+}
+.instructStatus_2_zlgl{background: #FF9999;}
+
+.investdata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #99FFFF;
+	border:2px solid #6CA6CD;
+}
+.processStatus_5or6_zlgl{background: #99FFFF;}
+
+.approvedata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #9F79EE;
+	border:2px solid #6CA6CD;
+}
+.processStatus_4_zlgl{background: #9F79EE;}
+
+.instructSendingdata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #EEC900;
+	border:2px solid #6CA6CD;
+}
+.processStatus_3after_zlgl{background: #EEC900;}
+
+.waitdata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #339966;
+	border:2px solid #6CA6CD;
+}
+.processStatus_7_zlgl{background: #339966;}
+
+.tradedate{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #33FF33;
+	border:2px solid #6CA6CD;
+}
+.processStatus_8_zlgl{background: #33FF33;}
+
+.closedata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #CCCCCC;
+	border:2px solid #6CA6CD;
+}
+.processStatus_9_zlgl{background: #CCCCCC;}
+
+.processStatus_old2or3_qr{background: #0099FF;}
+
+.transactionConfirmData{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #66CC99;
+	border:2px solid #6CA6CD;
+}
+.processStatus_5_zlgl{background: #66CC99;}
+
+.inquirydata{
+	display: inline-block;
+	margin: 1px;
+	height: 14px;
+	vertical-align: middle;
+	line-height:25px;
+	width: 15px;
+	background-color: #EEFFBB;
+	border:2px solid #6CA6CD;
+}
+
+.processStatus_inquiry_commited{background: #EEFFBB;}
+

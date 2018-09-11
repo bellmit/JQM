@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process:tBusinessLogic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model="http://com.primeton.emf.core" xmlns:process="http://primeton.com/emf/core/process" name="queryPurchaseValue2" detailDescription="" demonstration="" urls="" gridVisibility="false" rulerVisibility="true" snapToGeometry="true" productVersion="7.0.0.0">
+  <nodes xsi:type="process:tStart" id="start0" name="开始" displayName="开始" type="start">
+    <sourceConnections xsi:type="process:tLink" id="link0" name="link0" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>start0</sourceNode>
+      <targetNode>subprocess1</targetNode>
+    </sourceConnections>
+    <location x="63" y="180"/>
+    <size height="28" width="28"/>
+    <nodeLabel>start0label</nodeLabel>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end0" name="结束" displayName="结束" type="end">
+    <targetConnections>link5</targetConnections>
+    <location x="1222" y="180"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end0label</nodeLabel>
+    <process:returns>
+      <process:return id="0" language="commonj.sdo.DataObject[]" name="purchaseInfo" type="query" valueType="Java">purchaseInfo</process:return>
+    </process:returns>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="start0label" name="label" displayName="label" nodeType="label">
+    <location x="65" y="216"/>
+    <figSize height="17" width="25"/>
+    <node>start0</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end0label" name="label" displayName="label" nodeType="label">
+    <location x="1224" y="216"/>
+    <figSize height="17" width="25"/>
+    <node>end0</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess1" name="查询指令信息" displayName="queryIpoInstructInfo" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" description="" id="link1" name="link1" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>subprocess1</sourceNode>
+      <targetNode>subprocess2</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">ipoInstructInfo/vcProcessBizType</process:leftOperand>
+          <process:rightOperand type="literal">00</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link11" name="link11" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess1</sourceNode>
+      <targetNode>subprocess4</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">ipoInstructInfo/vcProcessBizType</process:leftOperand>
+          <process:rightOperand type="literal">01</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link0</targetConnections>
+    <location x="211" y="181"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess1label</nodeLabel>
+    <process:flow index="1" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.queryIpoInstructInfo</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processInstID" type="query" value="Long" valueType="Primitive" pattern="reference">processInstID</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="ipoInstructInfo" type="query" value="com.cjhxfund.ats.ipo.ipoDataset.TAtsIpoInstructInfo" valueType="DataObject">ipoInstructInfo</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess1label" name="label" nodeType="label">
+    <location x="188" y="216"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess1</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess0" name="查询产品申购信息" displayName="queryPurchaseInfo" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link2" name="link2" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess0</sourceNode>
+      <targetNode>invokePojo1</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link14</targetConnections>
+    <targetConnections>link13</targetConnections>
+    <location x="827" y="181"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess0label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.queryPurchaseInfo</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="lInstructNo" type="query" value="Long" valueType="Primitive" pattern="reference">ipoInstructInfo/lInstructNo</process:inputVariable>
+        <process:inputVariable id="1" name="riskState" type="query" value="String" valueType="Primitive" pattern="reference">riskState</process:inputVariable>
+        <process:inputVariable id="2" name="participantType" type="query" value="String" valueType="Primitive" pattern="reference">participantType</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="purchaseInfo" type="query" value="commonj.sdo.DataObject[]" valueType="Java">purchaseInfo</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess0label" name="label" nodeType="label">
+    <location x="792" y="216"/>
+    <figSize height="17" width="97"/>
+    <node>subprocess0</node>
+  </nodes>
+  <nodes xsi:type="process:tInvoke" description="" id="invokePojo1" name="将估值信息添加到申购产品对象数组中" displayName="组装配售对象数组，将查询出来的对应市值，净值，总资产等添加到申购信息对象中" type="invoke" index="0" invokeType="invoke_pojo" varArgs="false">
+    <sourceConnections xsi:type="process:tLink" id="link5" name="link5" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>invokePojo1</sourceNode>
+      <targetNode>end0</targetNode>
+    </sourceConnections>
+    <targetConnections>link2</targetConnections>
+    <location x="1035" y="181"/>
+    <size height="28" width="22"/>
+    <nodeLabel>invokePojo1label</nodeLabel>
+    <process:pojo methodType="static" synchronization="true" transactionType="join">
+      <process:partner type="literal">com.cjhxfund.ats.ipo.ProcessNameUtil.concatPurchaseInfo0040</process:partner>
+      <process:instance instanceName=""/>
+    </process:pojo>
+    <process:inputVariables>
+      <process:inputVariable id="0" name="purchaseInfo" type="query" value="commonj.sdo.DataObject[]" valueType="Java" pattern="reference">purchaseInfo</process:inputVariable>
+      <process:inputVariable id="1" name="rationValue" type="query" value="commonj.sdo.DataObject[]" valueType="Java" pattern="reference">objectInfo</process:inputVariable>
+      <process:inputVariable id="2" name="instructInfo" type="query" value="commonj.sdo.DataObject" valueType="Java" pattern="reference">ipoInstructInfo</process:inputVariable>
+    </process:inputVariables>
+    <process:outputVariables>
+      <process:outputVariable id="0" name="out0" type="query" value="commonj.sdo.DataObject[]" valueType="Java">purchaseInfo</process:outputVariable>
+    </process:outputVariables>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="invokePojo1label" name="label" nodeType="label">
+    <location x="944" y="217"/>
+    <figSize height="17" width="205"/>
+    <node>invokePojo1</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess3" name="计算指令信息" displayName="caclculateValue" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link13" name="link13" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess3</sourceNode>
+      <targetNode>subprocess0</targetNode>
+    </sourceConnections>
+    <targetConnections>link8</targetConnections>
+    <location x="600" y="314"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess3label</nodeLabel>
+    <process:flow index="0" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.caclculateValue</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="processInstID" type="query" value="Long" valueType="Primitive" pattern="reference">processInstID</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="rtnCode" type="query" value="String" valueType="Primitive">rtnCode</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess3label" name="label" nodeType="label">
+    <location x="577" y="349"/>
+    <figSize height="17" width="73"/>
+    <node>subprocess3</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess4" name="查询申购产品对应估值表信息" displayName="queryMarkValue" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" description="" id="link8" name="link8" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>subprocess4</sourceNode>
+      <targetNode>subprocess3</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">ipoInstructInfo/vcProcessBizType</process:leftOperand>
+          <process:rightOperand type="literal">00</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link10" name="link10" displayName="连接线" isDefault="false" type="transition">
+      <sourceNode>subprocess4</sourceNode>
+      <targetNode>end1</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="NULLOREMPTY">
+          <process:leftOperand type="query">objectInfo</process:leftOperand>
+          <process:rightOperand type="literal">1</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <sourceConnections xsi:type="process:tLink" description="" id="link14" name="link14" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess4</sourceNode>
+      <targetNode>subprocess0</targetNode>
+      <process:transitionCondition>
+        <process:simpleCondition operator="EQ">
+          <process:leftOperand type="query">ipoInstructInfo/vcProcessBizType</process:leftOperand>
+          <process:rightOperand type="literal">01</process:rightOperand>
+        </process:simpleCondition>
+      </process:transitionCondition>
+    </sourceConnections>
+    <targetConnections>link6</targetConnections>
+    <targetConnections>link11</targetConnections>
+    <location x="358" y="181"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess4label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.queryMarkValue</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="rationCode" type="query" value="String" valueType="Primitive" pattern="reference">rationCode</process:inputVariable>
+        <process:inputVariable id="1" name="sortField" type="query" value="String" valueType="Primitive" pattern="reference">sortField</process:inputVariable>
+        <process:inputVariable id="2" name="sortOrder" type="query" value="String" valueType="Primitive" pattern="reference">sortOrder</process:inputVariable>
+        <process:inputVariable id="3" name="queryDate" type="query" value="String" valueType="Primitive" pattern="reference">ipoInstructInfo/lInquiryDate</process:inputVariable>
+        <process:inputVariable id="4" name="prodCode" type="query" value="String" valueType="Primitive" pattern="reference">prodCode</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="rationProductInfo" type="query" value="commonj.sdo.DataObject[]" valueType="Java">objectInfo</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess4label" name="label" nodeType="label">
+    <location x="293" y="216"/>
+    <figSize height="17" width="157"/>
+    <node>subprocess4</node>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="end1label" name="label" displayName="label" nodeType="label">
+    <location x="356" y="81"/>
+    <figSize height="17" width="32"/>
+    <node>end1</node>
+  </nodes>
+  <nodes xsi:type="process:tEnd" id="end1" name="结束1" displayName="结束" type="end">
+    <targetConnections>link10</targetConnections>
+    <location x="358" y="45"/>
+    <size height="28" width="28"/>
+    <nodeLabel>end1label</nodeLabel>
+    <process:returns>
+      <process:return id="0" language="commonj.sdo.DataObject[]" name="purchaseInfo" type="query" valueType="Java">purchaseInfo</process:return>
+    </process:returns>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess2" name="查询满足市值要求的配售对象" displayName="queryNotJoinValue" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link4" name="link4" displayName="link2" isDefault="true" type="transition">
+      <sourceNode>subprocess2</sourceNode>
+      <targetNode>subprocess5</targetNode>
+      <process:transitionCondition/>
+    </sourceConnections>
+    <targetConnections>link1</targetConnections>
+    <location x="211" y="314"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess2label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.queryNotJoinValue</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="ipoInstructInfo" type="query" value="com.cjhxfund.ats.ipo.ipoDataset.TAtsIpoInstructInfo" valueType="DataObject" pattern="reference">ipoInstructInfo</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="rationObjects" type="query" value="commonj.sdo.DataObject[]" valueType="Java">productJoin</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess2label" name="label" nodeType="label">
+    <location x="146" y="349"/>
+    <figSize height="17" width="157"/>
+    <node>subprocess2</node>
+  </nodes>
+  <nodes xsi:type="process:tSubprocess" description="" id="subprocess5" name="添加或更新参与类型" displayName="addJoinInfo" collapsed="false" type="subprocess">
+    <sourceConnections xsi:type="process:tLink" id="link6" name="link6" displayName="连接线" isDefault="true" type="transition">
+      <sourceNode>subprocess5</sourceNode>
+      <targetNode>subprocess4</targetNode>
+    </sourceConnections>
+    <targetConnections>link4</targetConnections>
+    <location x="358" y="314"/>
+    <size height="27" width="27"/>
+    <nodeLabel>subprocess5label</nodeLabel>
+    <process:flow index="0" synchronization="true" transactionType="join" varArgs="false">
+      <process:partner type="literal">this.addJoinInfo</process:partner>
+      <process:inputVariables>
+        <process:inputVariable id="0" name="productJoin" type="query" value="commonj.sdo.DataObject[]" valueType="Java" pattern="reference">productJoin</process:inputVariable>
+        <process:inputVariable id="1" name="lInstructNo" type="query" value="String" valueType="Primitive" pattern="reference">ipoInstructInfo/lInstructNo</process:inputVariable>
+        <process:inputVariable id="2" name="joinType" type="expression" value="String" valueType="Primitive" pattern="reference">null</process:inputVariable>
+        <process:inputVariable id="3" name="updateFlag" type="expression" value="String" valueType="Primitive" pattern="reference">null</process:inputVariable>
+      </process:inputVariables>
+      <process:outputVariables>
+        <process:outputVariable id="0" name="rtnCode" type="query" value="String" valueType="Primitive">rtnCode</process:outputVariable>
+      </process:outputVariables>
+    </process:flow>
+  </nodes>
+  <nodes xsi:type="model:NodeElementLabel" id="subprocess5label" name="label" nodeType="label">
+    <location x="317" y="349"/>
+    <figSize height="17" width="109"/>
+    <node>subprocess5</node>
+  </nodes>
+  <topRuler/>
+  <leftRuler/>
+  <process:info author="侯志勇" createTime="2017-01-09 14:41:37" date="2017-01-09Z" description="查询申购产品对应的市值" name="查询申购产品对应的市值" version="7.0.0.0"/>
+  <process:variables>
+    <process:variable description="指令实体信息" historyStateLocation="client" isArray="false" modelType="com.cjhxfund.ats.ipo.ipoDataset.TAtsIpoInstructInfo" name="ipoInstructInfo"/>
+    <process:variable description="配售对象编码" historyStateLocation="client" isArray="false" name="rationCode" primitiveType="String"/>
+    <process:variable anyType="commonj.sdo.DataObject" description="配售对象对应估值信息" historyStateLocation="client" isArray="true" name="objectInfo"/>
+    <process:variable description="产品代码" historyStateLocation="client" isArray="false" name="prodCode" primitiveType="String"/>
+  </process:variables>
+  <process:inputs varArgs="false">
+    <process:input description="流程实例ID" isArray="false" name="processInstID" primitiveType="String"/>
+    <process:input description="排序字段" isArray="false" name="sortField" primitiveType="String"/>
+    <process:input description="排序方式" isArray="false" name="sortOrder" primitiveType="String"/>
+    <process:input description="风控状态" isArray="false" name="riskState" primitiveType="String"/>
+    <process:input description="参与类型" isArray="false" name="participantType" primitiveType="String"/>
+  </process:inputs>
+  <process:outputs>
+    <process:output anyType="commonj.sdo.DataObject" description="申购产品信息列表" isArray="true" name="purchaseInfo"/>
+  </process:outputs>
+  <process:extAttribute1>public</process:extAttribute1>
+  <process:transactionType>true</process:transactionType>
+</process:tBusinessLogic>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="WSCommOperatorServiceService" targetNamespace="http://www.primeton.com/WSCommOperatorService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://www.w3.org/2001/XMLSchema" xmlns:nns="http://www.primeton.com/WSCommOperatorService" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.primeton.com/WSCommOperatorService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:element name="orderCancel">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="ZROrder" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="orderCancelResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="result" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="orderState">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="in0" nillable="true" type="ns0:anyType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="orderStateResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="1" minOccurs="0" name="jsonStr" nillable="true" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="orderCancel">
+    <wsdl:part name="orderCancel" element="nns:orderCancel">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="orderStateResponse">
+    <wsdl:part name="orderStateResponse" element="nns:orderStateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="orderState">
+    <wsdl:part name="orderState" element="nns:orderState">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="orderCancelResponse">
+    <wsdl:part name="orderCancelResponse" element="nns:orderCancelResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WSCommOperatorService">
+    <wsdl:operation name="orderCancel">
+      <wsdl:input name="orderCancel" message="nns:orderCancel">
+    </wsdl:input>
+      <wsdl:output name="orderCancelResponse" message="nns:orderCancelResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="orderState">
+      <wsdl:input name="orderState" message="nns:orderState">
+    </wsdl:input>
+      <wsdl:output name="orderStateResponse" message="nns:orderStateResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈迪 -->
+<sqlMap>
+	<!--查询查询重复组可用数量 start-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapAvailableQuantity">
+        <result column="L_MSG_ID" javaType="String" property="lMsgId"/>
+        <result column="VC_EXDESTINATION" javaType="String" property="vcExdestination"/>
+        <result column="VC_SYMBOL" javaType="String" property="vcSymbol"/>
+        <result column="VC_SOUTPUTTEXT" javaType="String" property="vcSoutputtext"/>
+    </resultMap>
+    <select id="queryAvailQty" parameterClass="java.lang.String" resultMap="resultMapAvailableQuantity">
+        SELECT L_MSG_ID,
+        	VC_EXDESTINATION,
+        	VC_SYMBOL,
+        	VC_SOUTPUTTEXT
+        FROM T_ATS_FIX_RECEIVE_REPEAT_GROUP
+        WHERE L_MSG_ID = #lMsgId#
+     ORDER BY L_RECEIVE_REPEAT_GROUP_ID DESC
+    </select>
+    <!--查询查询重复组可用数量  end-->
+    <!--查询锁定券数量 start-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapLockBondQuantity">
+        <result column="VC_MARKET" javaType="String" property="vcMarket"/>
+        <result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+        <result column="L_LOCK_QTY" javaType="String" property="lLockQty"/>
+    </resultMap>
+    <select id="queryLockBondQty" parameterClass="commonj.sdo.DataObject" resultMap="resultMapLockBondQuantity">
+        SELECT VC_MARKET,
+        	VC_STOCK_CODE,
+            SUM(L_LOCK_QTY) AS L_LOCK_QTY
+        FROM T_ATS_TBOND_LOCK T
+        WHERE T.VC_MARKET = #VC_EXDESTINATION#
+          AND T.VC_STOCK_CODE = #VC_SYMBOL#
+     GROUP BY VC_MARKET,VC_STOCK_CODE,L_LOCK_QTY
+    </select>
+    <!--查询锁定券数量  end-->
+    <!--查询查询重复组可用金额 start-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapAvail">
+        <result column="L_MSG_ID" javaType="String" property="lMsgId"/>
+        <result column="VC_SOUTPUTTEXT" javaType="String" property="vcSoutputtext"/>
+    </resultMap>
+    <select id="queryAvailMnt" parameterClass="java.lang.String" resultMap="resultMapAvail">
+        SELECT L_MSG_ID,
+        VC_SOUTPUTTEXT
+        FROM T_ATS_FIX_RECEIVE_REPEAT_GROUP
+        WHERE L_MSG_ID = #lMsgId#
+    </select>
+    <!--查询查询重复组可用金额  end-->
+    <!--可用数量需要的重复组数据，用于可用数量不足邮件提醒(买断式回购逆回购)-->
+    <resultMap class="java.util.HashMap" id="resultMapAvailQtyCombis">
+        <result column="VC_ACCOUNT" javaType="String" property="vcAccount"/>
+        <result column="VC_COMBI_NAME" javaType="String" property="vcCombiName"/>
+        <result column="VC_STOCK_CODE" javaType="String" property="vcStockCode"/>
+        <result column="VC_STOCK_NAME" javaType="String" property="vcStockName"/>
+        <result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="String" property="vcProductName"/>
+        <result column="VC_MORTAGAGE_QTY" javaType="String" property="vcMortagageQty"/>
+        <result column="VC_EXCHANGE" javaType="String" property="vcMarket"/>
+        <result column="VC_BUSIN_TYPE" javaType="String" property="vcBusinType"/>
+        <result column="VC_INVEST_TYPE" javaType="String" property="vcInvestType"/>
+    </resultMap>
+    <select id="queryAvailQtyCombis" parameterClass="java.lang.String" resultMap="resultMapAvailQtyCombis">
+        select a.vc_combi_code as vc_account,
+		       a.vc_combi_name,
+		       a.vc_stock_code,
+		       a.vc_stock_name,
+		       a.vc_product_code,
+		       a.vc_product_name,
+		       sum(a.en_face_amount * 100) as vc_mortagage_qty,
+		       'OTC' as vc_exchange,
+		       '6' as vc_busin_type,
+		       '1' as vc_invest_type
+		  from t_ats_inquiry_result_mortagage a, t_ats_inquiry_result_instruct b
+		 where a.l_result_id = b.l_result_id
+		   and b.vc_entrust_direction = '6'
+		   and b.vc_biz_type = '6'
+		   and b.l_maturity_settle_date = (with calendarcalculate as
+		 (select a.*, rank() over(partition by vc_tradeday_type order by l_date) rn
+		          from trade.tmarkettradeday@$dataSource$ a
+		         where a.vc_tradeday_type = '00'
+		           and a.c_trade_flag = '1')
+		  select l_date
+		          from calendarcalculate b
+		         where b.rn =
+		               nvl((select c.rn + (1)
+		                     from calendarcalculate c
+		                    where c.l_date =
+		                          to_number(to_char(sysdate, 'yyyyMMdd'))),
+		                   (select min(c.rn + (1))
+		                      from calendarcalculate c
+		                     where c.l_date = to_number(to_char(sysdate, 'yyyyMMdd')))))
+		         group by (a.vc_combi_code, a.vc_combi_name, a.vc_stock_code,
+		             a.vc_stock_name, a.vc_product_code, a.vc_product_name)
+		         order by a.vc_combi_code asc
+
+    </select>
+    <!--可用数量需要的重复组数据，用于可用数量不足邮件提醒(买断式回购逆回购)-->
+    <resultMap class="java.util.HashMap" id="resultMapAvailQtyCombiCodes">
+        <result column="VC_ACCOUNT" javaType="String" property="vcAccount"/>
+        <result column="VC_PRODUCT_CODE" javaType="String" property="vcProductCode"/>
+    </resultMap>
+    <select id="queryAvailQtyCombiCodes" parameterClass="java.lang.String" resultMap="resultMapAvailQtyCombiCodes">
+        select a.vc_combi_code as vc_account, a.vc_product_code
+		  from t_ats_inquiry_result_mortagage a, t_ats_inquiry_result_instruct b
+		 where a.l_result_id = b.l_result_id
+		   and b.vc_entrust_direction = '6'
+		   and b.vc_biz_type = '6'
+		   and b.l_maturity_settle_date = (with calendarcalculate as
+		 (select a.*, rank() over(partition by vc_tradeday_type order by l_date) rn
+		          from trade.tmarkettradeday@$dataSource$ a
+		         where a.vc_tradeday_type = '00'
+		           and a.c_trade_flag = '1')
+		  select l_date
+		          from calendarcalculate b
+		         where b.rn =
+		               nvl((select c.rn + (1)
+		                     from calendarcalculate c
+		                    where c.l_date =
+		                          to_number(to_char(sysdate, 'yyyyMMdd'))),
+		                   (select min(c.rn + (1))
+		                      from calendarcalculate c
+		                     where c.l_date = to_number(to_char(sysdate, 'yyyyMMdd')))))
+		 group by a.vc_combi_code, a.vc_product_code
+		 order by a.vc_combi_code asc
+    </select>
+    <!--查询交易部所有人员邮箱信息串-->
+    <resultMap class="commonj.sdo.DataObject" id="resultMapTradersEmail">
+        <result column="USERID" javaType="String" property="userId"/>
+        <result column="OEMAIL" javaType="String" property="email"/>
+    </resultMap>
+    <select id="queryTradersEmail"  resultMap="resultMapTradersEmail">
+        select a.userid, a.oemail
+		  from org_employee a
+		 where exists (select b.orgid
+		          from org_organization b
+		         where b.orgid = a.orgid
+		           and b.orgid = 2)
+		   and a.oemail is not null
+    </select>
+   
+</sqlMap>

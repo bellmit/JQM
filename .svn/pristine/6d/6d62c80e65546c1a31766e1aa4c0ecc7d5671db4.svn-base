@@ -1,0 +1,422 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="false" %>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<div title="交易信息" id="instructInfoPanel" class="nui-panel" iconCls="icon-edit" style="width:100%;" showCollapseButton="true" collapseOnTitleClick="true">
+	<div style="padding-top:5px;" id="instructInfoForm" class="nui-form">
+		<!-- 债券买卖开始 -->
+		<input class="nui-hidden" id="vcProductCode" name="resultInstruct.vcProductCode"/>
+		<table id="zqmm" style="width: 100%; table-layout: fixed; display: none;" class="nui-form-table">
+			<tr>
+				<td class="form_label td1" width="17%" align="right">录入人员:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcInitiatorId" id="L_INITIATOR_ID" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">业务类型:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcBizType" id="VC_BIZ_TYPE" class="nui-dictcombobox" width="170" valueField="dictID" textField="dictName" dictTypeId="bizTypeTransaction" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">录入时间:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.tInitiateTime" id=T_INITIATE_TIME width="170" class="nui-textbox" readonly/>
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>产品名称:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcProductName" id="VC_PRODUCT_NAME" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>委托方向:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcEntrustDirection" id="VC_ENTRUST_DIRECTION" width="170" class="nui-dictcombobox" valueField="dictID" textField="dictName" dictTypeId="entrustDirectionTransaction" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>券面金额（万元）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enFaceAmount" id="EN_FACE_AMOUNT" value="EN_FACE_AMOUNT" width="170" class="nui-spinner" minValue="0" maxValue="10000000000" format="n2" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>组合名称:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcCombiName" id="VC_COMBI_NAME" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>清算速度:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcSettleSpeed" id="VC_SETTLE_SPEED" class="nui-dictcombobox" width="170" valueField="dictID" textField="dictName" dictTypeId="settleSpeed" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>净价（元）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enNetPrice" id="EN_NET_PRICE" width="170" value="EN_NET_PRICE" class="nui-spinner" minValue="0" maxValue="100000000000000" format="n4" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>债券名称:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcStockName" id="VC_STOCK_NAME" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>交易日期:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lTradeDate" id="L_TRADE_DATE" width="170" class="nui-textbox" required="true" readonly/>
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>全价（元）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enFullPrice" id="EN_FULL_PRICE" value="EN_FULL_PRICE" width="170" class="nui-spinner" minValue="0" maxValue="100000000000000" format="n4" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>债券代码:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcStockCode" id="VC_STOCK_NAME" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>结算日期:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lFirstSettleDate" id="L_FIRST_SETTLE_DATE" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>到期收益率:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enMaturityYield" id="EN_MATURITY_YIELD" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>债项评级:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcBondRating" id="VC_BOND_RATING" class="nui-dictcombobox" width="170" valueField="dictID" textField="dictName" dictTypeId="creditRating" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>交易对手:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcCounterpartyName" id="VC_COUNTERPARTY_NAME" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>行权收益率:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enOptionYield" id="EN_OPTION_YIELD" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right">主体评级:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcOrgRating" id="VC_ORG_RATING" class="nui-dictcombobox" width="170" valueField="dictID" textField="dictName" dictTypeId="issuerRating" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">对手主体机构:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcCounterpartyOrgan" id="VC_COUNTERPARTY_ORGAN" width="170" class="nui-textbox" readonly/>
+				</td>
+				<td class="form_label td1" width="17%" align="right">净价金额（元）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enNetPriceAmount" id="EN_NET_PRICE_AMOUNT" value="EN_NET_PRICE_AMOUNT" width="170" class="nui-spinner" minValue="0" maxValue="100000000000000" format="n2" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right">剩余期限:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lLeftDays" id="L_LEFT_DAYS" width="170" class="nui-textbox" readonly />
+				</td>
+				<td style="" class="form_label td1" width="17%" align="right" id="vcRivalSeatText">对手席位号:</td>
+				<td style="" id="vcRivalSeatValue" colspan="1" width="16%">
+					<input name="resultInstruct.vcRivalSeat" id="VC_RIVAL_SEAT" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right" id="vcCounterpartyTraderText">交易员名称:</td>
+				<td colspan="1" width="16%" id="vcCounterpartyTraderValue">
+					<input name="resultInstruct.vcCounterpartyTrader" id="VC_COUNTERPARTY_TRADER" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">全价金额（元）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enFullPriceAmount" id="EN_FULL_PRICE_AMOUNT" value="EN_FULL_PRICE_AMOUNT" width="170" class="nui-spinner" minValue="0" maxValue="100000000000000" format="n2" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right">久期:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enDuration" id="EN_DURATION" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" width="17%" id="vcAgreemtCodeText" align="right">约定号:</td>
+				<td colspan="1" id="vcAgreemtCodeValue" width="16%">
+					<input name="resultInstruct.vcAgreemtCode" id="VC_AGREEMT_CODE" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"></td>
+				<td colspan="1" width="16%">
+				</td>
+			</tr>
+			<tr>
+                <td class="form_label td1" width="17%" align="right">备注:</td>
+                <td colspan="3" width="49%">    
+                    <input name="resultInstruct.vcRemark" class="nui-textarea" style="width:100%;" readonly/>
+                </td>
+                <td class="form_label td1" width="17%" align="right"></td>
+				<td colspan="1" width="16%">
+				</td>
+            </tr>  
+		</table>
+		<!-- 债券买卖结束 -->
+		
+		<!-- 正逆回购开始 -->
+		<table id="znhg" style="width: 100%; table-layout: fixed; display: none;" class="nui-form-table" >
+			<tr>
+				<td class="form_label td1" width="17%" align="right">指令/建议下达日期:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lResultDate" id="L_RESULT_DATE" width="170" class="nui-textbox" readonly/>
+				</td>
+				<td class="form_label td1" width="17%" align="right">指令/建议发起人:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcInitiatorId" id="L_INITIATOR_ID" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">业务类型:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcBizType" id="VC_BIZ_TYPE" class="nui-dictcombobox" width="170" valueField="dictID" textField="dictName" dictTypeId="bizTypeRepurchase" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>产品名称:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcProductName" id="VC_PRODUCT_NAME" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">组合名称:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcCombiName" id="VC_COMBI_NAME" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>委托方向:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcEntrustDirection" id="VC_ENTRUST_DIRECTION" width="170" class="nui-dictcombobox" valueField="dictID" textField="dictName" dictTypeId="entrustDirectionRepurchase" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>交易日期:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lTradeDate" id="L_TRADE_DATE" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">首次结算日期:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lFirstSettleDate" id="L_FIRST_SETTLE_DATE" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">到期结算日期:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lMaturitySettleDate" id="L_MATURITY_SETTLE_DATE" width="170" class="nui-textbox" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" id="weightingText" width="17%" align="right" style="display:none">加点(bp):</td>
+				<td colspan="1" width="16%" id="weightingValue" style="display:none">
+					<input name="resultInstruct.enWeightingValue" id="EN_WEIGHTING_VALUE" width="170" class="nui-textbox" readonly />
+				</td>
+				<td class="form_label td1" id="repoRateText" width="17%" align="right"><span style="color: red">*</span>回购利率（%）:</td>
+				<td colspan="1" width="16%" id="repoRateValue">
+					<input name="resultInstruct.enRepoRate" id="EN_REPO_RATE" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">回购利息（元）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enRepoInterest" id="EN_REPO_INTEREST" value="EN_REPO_INTEREST" width="170" class="nui-spinner" minValue="0" maxValue="10000000000" format="n2" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>回购天数（天）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lRepoDays" id="L_REPO_DAYS" width="170" class="nui-textbox" required="true" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right" id="enFullPriceAmountText" style="">首期结算金额（元）:</td>
+				<td colspan="1" width="16%"  style="" id="enFullPriceAmountValue">
+					<input name="resultInstruct.enFullPriceAmount" id="EN_FULL_PRICE_AMOUNT" value="EN_FULL_PRICE_AMOUNT" width="170" class="nui-spinner" minValue="0" maxValue="100000000000000" format="n2" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right" id="enFaceAmountText" style=""><span style="color: red">*</span>回购金额（万元）:</td>
+				<td colspan="1" width="16%"  style="" id="enFaceAmountValue">
+					<input name="resultInstruct.enFaceAmount" id="EN_FACE_AMOUNT" value="EN_FACE_AMOUNT" width="170" class="nui-spinner" minValue="0" maxValue="100000000000000" format="n4" required="true" readonly />
+				</td>
+				
+				<td class="form_label td1" width="17%" align="right" style="">到期结算金额（元）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.enSettleAmount" id="EN_SETTLE_AMOUNT" value="EN_SETTLE_AMOUNT" width="170" class="nui-spinner" minValue="0" maxValue="100000000000000" format="n2" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">实际占款天数（天）:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.lContractPeriods" id="L_CONTRACT_PERIODS" width="170" class="nui-textbox" readonly />
+				</td>
+			</tr>
+			<tr>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>清算速度:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcSettleSpeed" id="VC_SETTLE_SPEED" class="nui-dictcombobox" width="170" valueField="dictID" textField="dictName" dictTypeId="settleSpeed" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right"><span style="color: red">*</span>报价方式:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcQuoteMode" id="VC_QUOTE_MODE" class="nui-dictcombobox" width="170" valueField="dictID" textField="dictName" dictTypeId="quoteMode" required="true" readonly />
+				</td>
+				<td class="form_label td1" width="17%" align="right">对手主体机构:</td>
+				<td colspan="1" width="16%">
+					<input name="resultInstruct.vcCounterpartyOrgan" id="VC_COUNTERPARTY_ORGAN" width="170" class="nui-textbox" readonly/>
+				</td>
+			</tr>
+			<tr>
+                <td class="form_label td1" width="17%" align="right">备注:</td>
+                <td colspan="3" width="49%">    
+                    <input name="resultInstruct.vcRemark" class="nui-textarea" style="width:100%;" readonly/>
+                </td>
+                <td class="form_label td1" width="17%" align="right"></td>
+				<td colspan="1" width="16%">
+				</td>
+            </tr>  
+		</table>
+		<!-- 正逆回购结束 -->
+		
+	</div>
+	
+	<!-- 质押券信息 -->
+    <div title="质押券信息" id="mortgageInfoPanel" class="nui-panel" iconCls="icon-edit" style="width:100%;" 
+   				showCollapseButton="true" collapseOnTitleClick="true">
+		<div style="" id="datagrid_mortgage_info" dataField="mortgageInfos" 
+	        url="com.cjhxfund.ats.sm.comm.InstructionManager.getMortgageInfos.biz.ext"
+	        class="nui-datagrid" style="width:100%;height:auto;"
+	        allowSortColumn="false"
+		    showPager="false"
+		    enableHotTrack="false">
+			<div property="columns">
+				<div field="vcStockCode" width="120px" headerAlign="center" align="center" >债券代码</div>
+				<div field="vcStockName" width="120px" headerAlign="center" align="center" >债券名称</div>
+				<div field="enFaceAmount" width="100px" headerAlign="center" align="center" ><span style="color:red;">*</span>券面金额（万元）</div>
+				<div name="enMortagageRatio" field="enMortagageRatio" width="80px" headerAlign="center" align="center"><span style="color:red;">*</span>质押比例（％）</div>	
+				<div name="enNetPriceInit" field="enNetPriceInit" visible="false"  width="100px" headerAlign="center" align="center" numberFormat="n4">首次净价</div>
+				<div name="enFullPriceInit" field="enFullPriceInit" visible="false"  width="100px" headerAlign="center" align="center" numberFormat="n4">首次全价</div>
+				<div name="enNetPriceFinal" field="enNetPriceFinal" visible="false" width="100px" headerAlign="center" align="center" numberFormat="n4">到期净价</div>
+				<div name="enFullPriceFinal" field="enFullPriceFinal" visible="false"  width="100px" headerAlign="center" align="center" numberFormat="n4">到期全价</div>
+				<div field="enCbValueNetValue" width="85px" headerAlign="center" align="center" numberFormat="n4">净价（T-1）</div>
+				<div field="enCbValueAllValue" width="85px" headerAlign="center" align="center" numberFormat="n4">全价（T-1）</div>
+	            <div field="vcDepository" width="85px" headerAlign="center" align="center" renderer="depository">托管机构</div>
+				<div field="vcBondAppraise" width="85px" headerAlign="center" align="center" renderer="renderBondAppraise">债项评级</div>
+				<div field="vcIssueAppraise" width="85px" headerAlign="center" align="center" renderer="renderIssueAppraise">主体评级</div>
+				<div field="vcBondAppraiseOrgan" width="85px" headerAlign="center" align="center" renderer="renderBondAppraiseOrgan">评级机构</div>
+	            <div field="lRatingForecast" width="85px" headerAlign="center" align="center" renderer="lRatingForecastRD">评级展望</div>
+	            <div field="vcIssueProperty" headerAlign="center" align="center" width="100px" renderer="atsFmIssueProperty">发行人性质</div>
+			</div>
+		</div>
+    </div>
+	<!-- end 质押券信息 -->
+	
+</div>
+
+<script type="text/javascript">
+
+
+function setInstructInfo(lResultId){
+	nui.ajax({
+		url : "com.cjhxfund.ats.riskMgr.comm.getResultInstructInfo.biz.ext",
+		type : 'POST',
+		data : {lResultId:lResultId},
+		cache : false,
+		async: false,
+		contentType : 'text/json',
+		success : function(text) {
+			var returnJson = nui.decode(text);
+			if(returnJson.exception == null){
+				if(returnJson.resultInstruct != null){
+					if(returnJson.resultInstruct.vcBizType=='1'||returnJson.resultInstruct.vcBizType=='2'||returnJson.resultInstruct.vcBizType=='3'||returnJson.resultInstruct.vcBizType=='4'){
+						document.getElementById("zqmm").style.display="";
+						var znhg = document.getElementById("znhg");
+						znhg.parentNode.removeChild(znhg);
+						document.getElementById("mortgageInfoPanel").style.display="none";
+					}else if(returnJson.resultInstruct.vcBizType=='5' || returnJson.resultInstruct.vcBizType=='6'){
+						document.getElementById("znhg").style.display="";
+						var zqmm = document.getElementById("zqmm");
+						zqmm.parentNode.removeChild(zqmm);
+					}
+					// 首次结算日期
+	                if(returnJson.resultInstruct.lFirstSettleDate != null){
+	                	returnJson.resultInstruct.lFirstSettleDate = String(returnJson.resultInstruct.lFirstSettleDate);
+	                 	returnJson.resultInstruct.lFirstSettleDate = returnJson.resultInstruct.lFirstSettleDate.substring(0, 4)+"-"+returnJson.resultInstruct.lFirstSettleDate.substring(4,6)+"-"+returnJson.resultInstruct.lFirstSettleDate.substring(6,8);
+		            }
+		            // 到期结算日期
+	                if(returnJson.resultInstruct.lMaturitySettleDate != null){
+						returnJson.resultInstruct.lMaturitySettleDate = String(returnJson.resultInstruct.lMaturitySettleDate);
+	                 	returnJson.resultInstruct.lMaturitySettleDate = returnJson.resultInstruct.lMaturitySettleDate.substring(0, 4)+"-"+returnJson.resultInstruct.lMaturitySettleDate.substring(4,6)+"-"+returnJson.resultInstruct.lMaturitySettleDate.substring(6,8);
+					}
+					// 交易日期
+	                if(returnJson.resultInstruct.lTradeDate != null){
+	                 	returnJson.resultInstruct.lTradeDate = String(returnJson.resultInstruct.lTradeDate);
+	                 	returnJson.resultInstruct.lTradeDate = returnJson.resultInstruct.lTradeDate.substring(0, 4)+"-"+returnJson.resultInstruct.lTradeDate.substring(4,6)+"-"+returnJson.resultInstruct.lTradeDate.substring(6,8);
+		            }
+		            // 指令/建议下达日期
+	                if(returnJson.resultInstruct.tInitiateTime != null){
+	                 	returnJson.resultInstruct.tInitiateTime = nui.formatDate(returnJson.resultInstruct.tInitiateTime, "yyyy-MM-dd HH:mm:ss");
+		            }
+		            // 指令下达日期
+	                if(returnJson.resultInstruct.lResultDate != null){
+						returnJson.resultInstruct.lResultDate = String(returnJson.resultInstruct.lResultDate);
+	                 	returnJson.resultInstruct.lResultDate = returnJson.resultInstruct.lResultDate.substring(0, 4)+"-"+returnJson.resultInstruct.lResultDate.substring(4,6)+"-"+returnJson.resultInstruct.lResultDate.substring(6,8);
+					}
+					// 报价方式
+					if(returnJson.resultInstruct.vcQuoteMode == null || returnJson.resultInstruct.vcQuoteMode== ""){
+						returnJson.resultInstruct.vcQuoteMode = "1";
+					}
+					//加点(bp)
+					if(returnJson.resultInstruct.enWeightingValue != null && returnJson.resultInstruct.enWeightingValue!= ""
+						&& (returnJson.resultInstruct.vcBizType == "5" || returnJson.resultInstruct.vcBizType == "6") ){
+						document.getElementById("weightingText").style.display = "";
+						document.getElementById("weightingValue").style.display = "";
+						document.getElementById("repoRateText").style.display = "none";
+						document.getElementById("repoRateValue").style.display = "none";
+					}
+					
+					// 质押式取券面金额显示回购金额，买断式取全价金额显示首期结算金额
+					var mortgage_info = nui.get("datagrid_mortgage_info");
+					if(returnJson.resultInstruct.vcBizType == "6"){
+						document.getElementById("enFaceAmountText").style.display = "none";
+						document.getElementById("enFaceAmountValue").style.display = "none";
+						mortgage_info.hideColumn("enMortagageRatio");
+	    				mortgage_info.showColumn("enNetPriceInit");
+	    				mortgage_info.showColumn("enFullPriceInit");
+	    				mortgage_info.showColumn("enNetPriceFinal");
+	    				mortgage_info.showColumn("enFullPriceFinal");
+					}else if(returnJson.resultInstruct.vcBizType == "5"){
+						document.getElementById("enFullPriceAmountText").style.display = "none";
+						document.getElementById("enFullPriceAmountValue").style.display = "none";
+						var mortgage_info = nui.get("datagrid_mortgage_info");
+						mortgage_info.showColumn("enMortagageRatio");
+		    			mortgage_info.hideColumn("enNetPriceInit");
+		    			mortgage_info.hideColumn("enFullPriceInit");
+		    			mortgage_info.hideColumn("enNetPriceFinal");
+		    			mortgage_info.hideColumn("enFullPriceFinal");
+					}
+					if(mortgage_info!=null){
+		    			mortgage_info.load({lResultId : returnJson.resultInstruct.lResultId});
+					}
+				
+					// 根据业务决定是否显示对手席位
+					if(returnJson.resultInstruct.vcBizType == "3"){
+						document.getElementById("vcRivalSeatText").style.display="none";
+						document.getElementById("vcRivalSeatValue").style.display="none";
+						$("#vcCounterpartyTraderText").html("对方交易员:");
+					}else if(returnJson.resultInstruct.vcBizType == "1"||returnJson.resultInstruct.vcBizType == "2"||returnJson.resultInstruct.vcBizType == "4"){
+						document.getElementById("vcCounterpartyTraderText").style.display="none";
+						document.getElementById("vcCounterpartyTraderValue").style.display="none";
+					}
+				
+					var form = new nui.Form("#instructInfoForm");//将普通form转为nui的form
+                    form.setData(returnJson);
+				}
+			}
+		}
+	});
+}
+
+//列表中转译托管机构
+function depository(e){
+	return nui.getDictText("CF_JY_DJTGCS",e.row.vcDepository);
+}
+//列表中转译债券评级
+function renderBondAppraise(e){
+	return nui.getDictText("creditRating",e.row.vcBondAppraise);
+}
+//列表中转译主体评级
+function renderIssueAppraise(e){
+	return nui.getDictText("issuerRating",e.row.vcIssueAppraise);
+}
+//列表中转译债券评级机构
+function renderBondAppraiseOrgan(e){
+	return nui.getDictText("outRatingOrgan",e.row.vcBondAppraiseOrgan);
+}
+//评级展望
+function lRatingForecastRD(e){
+	return nui.getDictText("ratingOutlook",e.row.lRatingForecast);
+}
+// 发行人性质
+function atsFmIssueProperty(e){
+	return nui.getDictText("ATS_FM_ISSUE_PROPERTY",e.row.vcIssueProperty);
+}
+</script>

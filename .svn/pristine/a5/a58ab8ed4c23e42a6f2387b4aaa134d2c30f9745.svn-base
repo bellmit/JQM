@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:石浩 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <select id="selectWorkItemByID" parameterClass="Long" resultClass="commonj.sdo.DataObject">
+    <![CDATA[ select * from wfworkitem 
+    	where workitemid = #workitemid#
+    ]]>
+    </select>
+</sqlMap>

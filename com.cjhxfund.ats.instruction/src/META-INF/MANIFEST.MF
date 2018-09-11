@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.commonUtil,com.cjhxfund.jy.ProductProcess
+ ,com.eos.workflow,com.primeton.eos.richweb,org.gocom.components.cofra
+ me.tools,org.gocom.components.coframe.org,com.cjhxfund.ats.bpsExpend,
+ org.gocom.components.coframe.auth,com.cjhxfund.ats.fm.instr,org.gocom
+ .components.coframe.framework,com.cjhxfund.foundation.fix,com.eos.fou
+ ndation,org.gocom.components.coframe.rights
+eos-webCtxPath: instruction
+Bundle-Vendor: jiangbin
+Bundle-Version: 1.0.0
+Bundle-Name: com.cjhxfund.ats.instruction
+Bundle-Description: 指令入口管理：客户指令管理，利率�
+ �换指令入口等
+Bundle-SymbolicName: com.cjhxfund.ats.instruction
+

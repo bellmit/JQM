@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:程弼超 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="personConf">
+        <result column="VC_USER_ID" javaType="string" property="vcUserId"/>
+        <result column="VC_CONF_CODE" javaType="string" property="vcConfCode"/>
+        <result column="VC_CONF_VALUE" javaType="string" property="vcConfValue"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="productConf">
+        <result column="VC_PRODUCT_ID" javaType="string" property="vcProductId"/>
+        <result column="VC_CONF_CODE" javaType="string" property="vcConfCode"/>
+        <result column="VC_CONF_VALUE" javaType="string" property="vcConfValue"/>
+        <result column="VC_CONF_DESC" javaType="string" property="vcConfDesc"/>
+    </resultMap>
+    <select id="queryPersonConfs" resultMap="personConf"><![CDATA[
+    	select VC_USER_ID,VC_CONF_CODE,VC_CONF_VALUE from t_ats_person_conf
+    ]]></select>
+    
+    <select id="querySpecificPersonConf" parameterClass="commonj.sdo.DataObject" resultMap="personConf"><![CDATA[
+    	select VC_USER_ID,VC_CONF_CODE,VC_CONF_VALUE from t_ats_person_conf
+    	where VC_USER_ID = #vcUserId# and VC_CONF_CODE = #vcConfCode#
+    ]]></select>
+    
+    <select id="queryProductConfs" resultMap="productConf"><![CDATA[
+    	select VC_PRODUCT_ID,VC_CONF_CODE,VC_CONF_VALUE,VC_CONF_DESC from t_ats_product_conf
+    ]]></select>
+    <select id="querySpecificProductConf" parameterClass="commonj.sdo.DataObject" resultMap="productConf"><![CDATA[
+    	select VC_PRODUCT_ID,VC_CONF_CODE,VC_CONF_VALUE,VC_CONF_DESC from t_ats_product_conf
+    	where VC_PRODUCT_ID = #vcProductId# and VC_CONF_CODE = #vcConfCode#
+    ]]></select>
+</sqlMap>

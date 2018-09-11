@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈迪 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="remindListMap">
+    	<result column="L_REMIND_ID" javaType="Long" property="lRemindId"/>
+        <result column="VC_TITLE" javaType="string" property="vcTitle"/>
+        <result column="VC_CONTENT" javaType="string" property="vcContent"/>
+        <result column="T_REMIND_TIME" javaType="Date" property="tRemindTime"/>
+        <result column="T_READ_TIME" javaType="Date" property="tReadTime"/>
+        <result column="VC_READ_STATUS" javaType="string" property="vcReadStatus"/>
+        <result column="VC_REMIND_RESON" javaType="string" property="vcRemindReson"/>
+        <result column="VC_REMIND_RESOURCE" javaType="string" property="vcRemindResource"/>
+        <result column="VC_USER_ID" javaType="string" property="vcUserId"/>
+        <result column="L_PROCESSINST_ID" javaType="Long" property="lProcessinstId"/>
+        <result column="L_INSTRUCT_NO" javaType="Long" property="lInstructNo"/>
+        <result column="URL" javaType="string" property="url"/>
+    </resultMap>
+    <!-- 查询未读提醒记录 -->
+    <select id="queryUnreadRemindList" parameterClass="commonj.sdo.DataObject" resultMap="remindListMap">
+    	select t.l_remind_id,
+    		   t.vc_title,
+		       t.vc_content,
+		       t.t_remind_time,
+		       t.t_read_time,
+		       t.vc_read_status,
+		       t.vc_remind_reson,
+		       t.vc_remind_resource,
+		       t.vc_user_id,
+		       t.l_processinst_id,
+		       t.l_instruct_no,
+		       t.url
+	  	  from t_ats_remind t
+	 	 where t.vc_read_status = '0'
+	 	   and t.vc_user_id = #vcUserId#
+	  order by t.t_remind_time desc
+    </select>
+    <!-- 查询全部提醒记录 -->
+    <select id="queryAllRemindList" parameterClass="commonj.sdo.DataObject" resultMap="remindListMap">
+    	select t.l_remind_id,
+    		   t.vc_title,
+		       t.vc_content,
+		       t.t_remind_time,
+		       t.t_read_time,
+		       t.vc_read_status,
+		       t.vc_remind_reson,
+		       t.vc_remind_resource,
+		       t.vc_user_id,
+		       t.l_processinst_id,
+		       t.l_instruct_no,
+		       t.url
+	  	  from t_ats_remind t
+	  	 where t.vc_user_id = #vcUserId#
+	  order by t.vc_read_status,t.t_remind_time desc
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="remindDetailsMap">
+        <result column="L_REMIND_ID" javaType="long" property="lRemindId"/>
+        <result column="VC_TITLE" javaType="string" property="vcTitle"/>
+        <result column="VC_CONTENT" javaType="string" property="vcContent"/>
+    </resultMap>
+    <!-- 提醒记录详情 -->
+    <select id="queryRemindDetails" parameterClass="commonj.sdo.DataObject" resultMap="remindDetailsMap">
+    	select t.l_remind_id,
+    		   t.vc_title,
+		       t.vc_content
+	  	  from t_ats_remind t
+	 	 where t.l_remind_id = #lRemindId#
+    </select>
+    
+    <!--更新提醒状态为已阅，阅读时间为当前时间-->
+    <update id="updateRemindStatus" parameterClass="commonj.sdo.DataObject">
+    	update t_ats_remind t 
+    	   set t.vc_read_status = '1', 
+    	       t.t_read_time = sysdate
+    	 where t.l_remind_id = #lRemindId#
+    </update>
+    
+    <resultMap class="commonj.sdo.DataObject" id="SqZzMap">
+        <result column="T_UTIME" javaType="date" property="tUtime"/>
+        <result column="VC_TYPE" javaType="string" property="vcType"/>
+    </resultMap>
+    <!--查询上清全额结算列表最新一条数据-->
+    <select id="getSqData" resultMap="SqZzMap">
+        select * 
+        from (
+           select t.d_updatetm as t_utime, 
+    		   '01' as vc_type
+		   from stage.t_ats_bs_full_tally_order t
+		   order by d_updatetm desc) 
+		 where rownum=1
+    </select>
+    <!--查询中债结算指令列表最新一条数据-->
+    <select id="getZzData" resultMap="SqZzMap">
+    select * 
+        from (
+    	select t.d_updatetm as t_utime,
+		       '02' as vc_type
+		  from stage.t_ats_bs_tally_order t
+		 order by t.l_updatedt desc) 
+	where rownum=1
+    </select>
+    
+    <!--检测是否已经保存了相同信息-->
+    <select id="checkRemindExist" parameterClass="commonj.sdo.DataObject">
+    	select t.*
+		  from t_ats_remind t
+		 where 1=1
+		 <isNotNull property="vcTitle">
+		 	and t.vc_title = #vcTitle#
+		 </isNotNull>
+		 <isNotNull property="vcContent">
+		 	and t.vc_content = #vcContent#
+		 </isNotNull>
+		 <isNotNull property="vcRemindReson">
+		 	 and t.vc_remind_reson = #vcRemindReson#
+		 </isNotNull>
+		 <isNotNull property="vcUserId">
+		 	and t.vc_user_id = #vcUserId#
+		 </isNotNull>
+    </select>
+</sqlMap>

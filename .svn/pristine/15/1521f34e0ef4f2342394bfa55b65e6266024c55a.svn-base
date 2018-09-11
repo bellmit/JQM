@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Require-Bundle: com.cjhxfund.ats.algo.report,com.cjhxfund.ats.fm.basei
+ nfo,com.cjhxfund.ats.fm.comm,com.cjhxfund.ats.fm.fix,com.cjhxfund.ats
+ .fm.instr,com.cjhxfund.ats.ipo,com.cjhxfund.ats.mom.report,com.cjhxfu
+ nd.ats.sm.comm,com.cjhxfund.ats.sm.repurchase,com.cjhxfund.ats.sm.tra
+ nsaction,com.cjhxfund.cjapi,com.cjhxfund.commonUtil,com.cjhxfund.foun
+ dation.fix,com.cjhxfund.foundation.task,com.cjhxfund.jy.ProductProces
+ s,com.cjhxfund.jy.process,com.primeton.eos.richweb,com.eos.foundation
+ ,com.eos.workflow,org.gocom.components.coframe.auth,org.gocom.compone
+ nts.coframe.policy,org.gocom.components.coframe.participantselect,org
+ .gocom.components.coframe.skins.win7,org.gocom.components.coframe.rig
+ hts,org.gocom.components.coframe.dict,org.gocom.components.coframe.fr
+ amework,org.gocom.components.coframe.entityauth,org.gocom.components.
+ coframe.tools,org.gocom.components.coframe.org
+Bundle-Vendor: 创金合信
+eos-webCtxPath: unionBiz
+Bundle-Version: 1.0.0
+Bundle-Name: 联合业务构建包
+Bundle-Description: 
+Bundle-SymbolicName: com.cjhxfund.ats.unionBiz
+

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:石浩 
+承销商，担保人，发行人
+-->
+<sqlMap>
+ 
+    <resultMap class="com.cjhxfund.ats.fm.baseinfo.stockissue.TAtsIssuerInfo" id="resultMap">
+    	<result column="l_issuer_id" javaType="Long" property="lIssuerId"/>
+        <result column="vc_issue_name" javaType="string" property="vcIssueName"/>
+        <result column="vc_issue_name_full" javaType="string" property="vcIssueNameFull"/>
+        <result column="vc_issue_property" javaType="string" property="vcIssueProperty"/>
+        <result column="c_issue_appraise" javaType="string" property="cIssueAppraise"/>
+        <result column="vc_issue_appraise_organ" javaType="string" property="vcIssueAppraiseOrgan"/>
+        <result column="vc_industry" javaType="string" property="vcIndustry"/>
+        <result column="vc_province" javaType="string" property="vcProvince"/>
+        <result column="VC_ISSUER_CODE" javaType="string" property="vcIssuerCode"/>
+    </resultMap>
+    
+    <!--新债历史评级-->
+      <resultMap  class="commonj.sdo.DataObject" id="appraiseResultMap">
+        <result column="L_APPRAISE_DATE" javaType="string" property="lAppraiseDate"/>
+ 		<result column="VC_BOND_APPRAISE" javaType="string" property="vcBondAppraise"/>
+ 		<result column="VC_BOND_APPRAISE_ORGAN" javaType="string" property="vcBondAppraiseOrgan"/>
+    </resultMap>
+   
+      <!--发行主体全称别名表-->
+      <resultMap  class="commonj.sdo.DataObject" id="aliasResultMap">
+        <result column="l_alias_id" javaType="Long" property="lAliasId"/>
+ 		<result column="l_date" javaType="Date" property="lDate"/>
+ 		<result column="vc_issuer_name_full" javaType="string" property="vcIssuerNameFull"/>
+ 		<result column="vc_issuer_name_full_Wind" javaType="string" property="vcIssuerNameFullWind"/>
+ 		<result column="c_status" javaType="string" property="cStatus"/>
+ 		<result column="l_operator_no" javaType="string" property="lOperatorNo"/>
+    </resultMap>
+    
+     <!--  发行人信息导出O32的 
+    -->
+    <resultMap class="commonj.sdo.DataObject" id="o32ResultMap">
+    	<result column="VC_ISSUER_CODE" javaType="int" property="FXRH"/>
+        <result column="FXFL" javaType="string" property="FXFL"/>
+        <result column="VC_ISSUE_NAME" javaType="string" property="FXMC"/>
+        <result column="VC_ISSUE_NAME_FULL" javaType="string" property="FXQC"/>
+        <result column="FXLXR" javaType="string" property="FXLXR"/>
+        <result column="FXRLXDH" javaType="string" property="FXRLXDH"/>
+        <result column="FXRCZ" javaType="string" property="FXRCZ"/>
+        <result column="JBRXM" javaType="string" property="JBRXM"/>
+        <result column="JBRZJLX" javaType="string" property="JBRZJLX"/>
+        <result column="JBRZJHM" javaType="string" property="JBRZJHM"/>
+        <result column="JBRLXDH" javaType="string" property="JBRLXDH"/>
+        <result column="JBRCZ" javaType="string" property="JBRCZ"/>
+        <result column="JBRQZWJM" javaType="string" property="JBRQZWJM"/>
+        <result column="YLQZWJM" javaType="string" property="YLQZWJM"/>
+        <result column="FXZC" javaType="string" property="FXZC"/>
+        <result column="JBYX" javaType="string" property="JBYX"/>
+        <result column="WBPJ" javaType="string" property="WBPJ"/>
+        <result column="NBPJ" javaType="string" property="NBPJ"/>
+        <result column="ZHPJ" javaType="string" property="ZHPJ"/>
+        <result column="SXED" javaType="string" property="SXED"/>
+        <result column="FXGJ" javaType="string" property="FXGJ"/>
+        <result column="ZCBZ" javaType="string" property="ZCBZ"/>
+        <result column="DBPJ" javaType="string" property="DBPJ"/>
+        <result column="WBPJRQ" javaType="string" property="WBPJRQ"/>
+    </resultMap>
+    <!--   
+    -->
+    
+    <!--新债主体评级，债项评级-->
+      <resultMap  class="commonj.sdo.DataObject" id="issuerAndBondAppraiseResultMap">
+        <result column="l_date" javaType="string" property="lDate"/>
+ 		<result column="c_bond_appraise" javaType="string" property="cBondAppraise"/>
+ 		<result column="vc_bond_appraise_orga" javaType="string" property="vcBondAppraiseOrga"/>
+ 		<result column="c_issuer_appraise" javaType="string" property="cIssuerAppraise"/>
+ 		<result column="vc_issuer_appraise_orga" javaType="string" property="vcIssuerAppraiseOrga"/>
+    </resultMap>
+    
+    <!--通过名称，查询承销商，担保人，发行人-->
+    <select id="select_underwriter"  parameterClass="string" resultMap="resultMap">
+    	<![CDATA[ SELECT TS.L_ISSUER_ID,TS.VC_ISSUE_NAME,TS.VC_ISSUE_NAME_FULL,TS.VC_ISSUE_PROPERTY,
+               TS.C_ISSUE_APPRAISE,TS.VC_ISSUE_APPRAISE_ORGAN,TS.VC_INDUSTRY,TS.VC_PROVINCE,VC_ISSUER_CODE
+              FROM T_ATS_ISSUER_INFO TS
+              WHERE TS.VC_ISSUE_NAME LIKE '%$name$%' 
+    	]]>
+    </select>
+    
+    <!--通过O32债券内码，数据来源，查询评级日期，债券评级，债券评级机构-->
+    <select id="getBondAppraiseO32"  parameterClass="java.util.HashMap"  resultMap="appraiseResultMap">
+    	 SELECT 
+    	 	 CASE WHEN A.L_APPRAISE_DATE>0 THEN
+                  to_char(to_date(A.L_APPRAISE_DATE,'yyyy-MM-dd'),'yyyy-MM-dd') 
+                  ELSE ''
+                END AS L_APPRAISE_DATE,
+    	 A.VC_BOND_APPRAISE,A.VC_BOND_APPRAISE_ORGAN
+              FROM T_ATS_BOND_APPRAISE A 
+              WHERE 1=1
+	   <isNotNull property="vcInterCode">
+		  		and A.VC_INTER_CODE = #vcInterCode# 
+	   </isNotNull>
+	   <isNotNull property="sortField">
+          order by $sortField$ 
+      </isNotNull>
+      <isNotNull property="sortOrder">
+           $sortOrder$ 
+      </isNotNull>
+    </select>
+    
+    <!--通过WIND债券内码，数据来源，查询评级日期，债券评级，债券评级机构-->
+    <select id="getBondAppraiseWind"  parameterClass="java.util.HashMap"  resultMap="appraiseResultMap">
+    	 SELECT CASE WHEN A.L_APPRAISE_DATE>0 THEN
+                  to_char(to_date(A.L_APPRAISE_DATE,'yyyy-MM-dd'),'yyyy-MM-dd') 
+                  ELSE ''
+                END AS L_APPRAISE_DATE,A.VC_BOND_APPRAISE,A.VC_BOND_APPRAISE_ORGAN
+              FROM T_ATS_BOND_APPRAISE A 
+              WHERE 1=1
+	   <isNotNull property="vcInterCodeWind">
+		  		and A.VC_INTER_CODE = #vcInterCodeWind# 
+	   </isNotNull>
+	   <isNotNull property="sortField">
+          order by $sortField$ 
+      </isNotNull>
+      <isNotNull property="sortOrder">
+           $sortOrder$ 
+      </isNotNull>
+    </select>
+    
+    <!--通过WIND债券内码债券评级，债券评级机构，主体评级，主体评级机构-->
+    <select id="getIssuerAndBondAppraiseWind"  parameterClass="java.util.HashMap"  resultMap="issuerAndBondAppraiseResultMap">
+    	 select bah.l_date,
+	       (select a.dictname from eos_dict_entry a where a.dicttypeid ='creditRating' and a.dictid=bah.c_bond_appraise and rownum=1) c_bond_appraise,
+         (select a.dictname from eos_dict_entry a where a.dicttypeid ='creditRating' and a.dictid=bah.vc_bond_appraise_orga and rownum=1) vc_bond_appraise_orga,
+         (select a.dictname from eos_dict_entry a where a.dicttypeid ='creditRating' and a.dictid=bah.c_issuer_appraise and rownum=1) c_issuer_appraise,
+         (select a.dictname from eos_dict_entry a where a.dicttypeid ='creditRating' and a.dictid=bah.vc_issuer_appraise_orga and rownum=1) vc_issuer_appraise_orga
+	       from ISP.BOND_APPRAISE_HIS bah
+	       where 1=1 
+	   <isNotNull property="vcInterCodeWind">
+		  		and bah.vc_inter_code_wind1=#vcInterCodeWind# or bah.vc_inter_code_wind2=#vcInterCodeWind# 
+	   </isNotNull>
+	   <isNotNull property="sortField">
+          order by $sortField$ 
+      </isNotNull>
+      <isNotNull property="sortOrder">
+           $sortOrder$ 
+      </isNotNull>
+    </select>
+    
+    <!--通过发行主体全称 查询发行主体全称别名表-->
+     <select id="getIssueAliasInfoByName"  parameterClass="java.util.HashMap"  resultMap="aliasResultMap">
+    	  SELECT 
+	    	 l_alias_id,
+	    	 l_date,
+	    	 vc_issuer_name_full,
+	    	 vc_issuer_name_full_Wind,
+	    	 c_status,
+	    	 l_operator_no
+          FROM t_ats_issuer_alias   
+		  where  vc_issuer_name_full = #vcIssueNameFull# 
+	   <isNotNull property="sortField">
+          order by $sortField$ 
+       </isNotNull>
+       <isNotNull property="sortOrder">
+           $sortOrder$ 
+       </isNotNull>
+    </select>
+    
+     <!--通过id查询发行人信息-->
+    <select id="getIssueInfoByID"  parameterClass="string" resultMap="resultMap">
+    	<![CDATA[ SELECT TS.L_ISSUER_ID,TS.VC_ISSUE_NAME,TS.VC_ISSUE_NAME_FULL,TS.VC_ISSUE_PROPERTY,
+               TS.C_ISSUE_APPRAISE,TS.VC_ISSUE_APPRAISE_ORGAN,TS.VC_INDUSTRY,TS.VC_PROVINCE,VC_ISSUER_CODE
+              FROM T_ATS_ISSUER_INFO TS
+              WHERE TS.L_ISSUER_ID =#id#
+    	]]>
+    </select>
+    
+     <!--发行人导出到O32
+                 初步导出，查询条件后续再优化
+     -->
+    <select id="getIssueInfoByStockInfos"  parameterClass="string" resultMap="o32ResultMap">
+    	<![CDATA[ SELECT 	 
+					 VC_ISSUER_CODE, 
+					    vc_Issue_Property as FXFL,  
+					    VC_ISSUE_NAME,
+					    VC_ISSUE_NAME_FULL ,
+					    '' as FXLXR, 
+					    '' as FXRLXDH ,
+					    '' as FXRCZ ,
+					    '' as JBRXM , 
+					    '' as JBRZJLX , 
+					    '' as JBRZJHM ,
+					    '' as JBRLXDH ,
+					    '' as JBRCZ , 
+					    '' as JBRQZWJM,  
+					    '' as YLQZWJM , 
+					    '' as FXZC,  
+					    '' as JBYX , 
+					    (SELECT E.DICTNAME from EOS_DICT_ENTRY E WHERE E.DICTTYPEID='outRatingOrgan' AND E.DICTID=SII.VC_ISSUE_APPRAISE_ORGAN) as WBPJ , 
+					    '' as NBPJ,  
+					    '' as ZHPJ , 
+					    '' as SXED , 
+					    '' as FXGJ,  
+					    '' as ZCBZ , 
+					    '' as DBPJ , 
+					    '' as WBPJRQ 
+					    FROM T_ATS_ISSUER_INFO SII
+					     WHERE EXISTS (
+					           SELECT 1 from T_ATS_STOCK_ISSUE_INFO ASI 
+					            WHERE ASI.L_ISSUER_ID=SII.L_ISSUER_ID
+					     )
+    	]]>
+    </select>
+    <resultMap class="commonj.sdo.DataObject" id="underwriterNameMap">
+        <result column="vc_main_underwriter_id" javaType="string" property="lRightId"/>
+        <result column="vc_main_underwriter" javaType="string" property="vcRightNameFullWind"/>
+        <result column="vc_main_underwriter_abbr" javaType="string" property="vcRightNameAbbrWind"/>
+    </resultMap>
+    <select id="queryUnderwriterName" parameterClass="string" resultMap="underwriterNameMap">
+       <![CDATA[
+        select distinct ul.vc_main_underwriter_id,ul.vc_main_underwriter,ul.vc_main_underwriter_abbr from underwriter_list ul where ul.vc_main_underwriter 
+        like  '%'||#searchKey#||'%'
+        ]]>
+    </select>
+    
+    <resultMap class="commonj.sdo.DataObject" id="underwriterNameAlisMap">
+        <result column="vc_main_underwriter" javaType="string" property="vcLeftNameAbbr"/>
+    </resultMap>
+    <select id="queryUnderwriterNameAlis" parameterClass="string" resultMap="underwriterNameAlisMap">
+       <![CDATA[
+        select distinct taus.vc_main_underwriter from t_ats_underwriter_stock_info taus where taus.vc_main_underwriter
+        like  '%'||#searchKey#||'%'
+        ]]>
+    </select>
+    <!--查询发行主体-->
+    <resultMap class="commonj.sdo.DataObject" id="issueNameAlisMap">
+        <result column="l_issuer_id" javaType="string" property="lRightId"/>
+        <result column="vc_issue_name" javaType="string" property="vcRightNameAbbrWind"/>
+        <result column="vc_issue_name_full" javaType="string" property="vcRightNameFullWind"/>
+    </resultMap>
+    <select id="queryIssueNameAlis" parameterClass="string" resultMap="issueNameAlisMap">
+       <![CDATA[
+        select distinct tai.l_issuer_id,tai.vc_issue_name,tai.vc_issue_name_full from t_ats_issuer_info tai 
+        where tai.vc_issue_name_full like '%'||#searchKey#||'%'
+        ]]>
+    </select>
+    <!--查询评级机构-->
+    <resultMap class="commonj.sdo.DataObject" id="appraiseOrganAlisMap">
+        <result column="dictid" javaType="string" property="lRightId"/>
+        <result column="dictname" javaType="string" property="vcRightNameAbbrWind"/>
+        <result column="dictname" javaType="string" property="vcRightNameFullWind"/>
+    </resultMap>
+    <select id="queryAppraiseOrganAlis" parameterClass="string" resultMap="appraiseOrganAlisMap">
+       <![CDATA[
+        select ede.dictid,ede.dictname,ede.dictname from eos_dict_entry ede 
+        where ede.dicttypeid = 'outRatingOrgan' and ede.dictname like '%'||#searchKey#||'%'
+        ]]>
+    </select>
+</sqlMap>

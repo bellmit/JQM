@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:Administrator -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <!-- 获取第一个工作项编号  -->
+    <select id="workitemid" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+      select * from wfworkitem where currentstate in (4,10) and processinstid=#processInstID# and activitydefid=#activityDefid#
+   </select>
+   
+   <!-- 根据业务字典类型获取业务字典信息 --> 
+   <select id="getDictName" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+ 		select * from EOS_DICT_ENTRY where dicttypeid=#dicttypeid#
+	</select>
+	
+	<!--  -->
+	<select id="getMaxPreWorkItemByActive" parameterClass="java.util.HashMap"  resultClass="commonj.sdo.DataObject">
+ 		select max(workitemid) as workitemid from wfworkitem where currentstate='12' and processinstid=#processInstID# and activitydefid=#activityDefid#
+	</select>
+	
+	<!-- 获取上一环节参与者 -->
+	<select id="queryLastParticipant" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select t2.user_code from ( select * from cf_jy_PRC_APRV_INFO t where t.process_inst_id=#processInstID# order by sysid desc) t2 where rownum=1
+    </select>
+    
+    <!-- 获取上一环节参与者ID -->
+	<select id="queryFlowLastActor" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select t2.user_name from ( select * from cf_jy_PRC_APRV_INFO t where t.process_inst_id=#processInstID# order by sysid desc) t2 where rownum=1
+    </select>
+    
+    <!-- 根据角色ID与用户类型获取用户集合 -->
+	<select id="queryUserList" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+       select  * from v_roleemp t where t.role_code='$roleCode$' and t.party_type in ('user','emp','org')
+    </select>
+    
+    <!-- 获取当前参与者 -->
+    <select id="queryFlowNextActor" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+       select connstr(distinct t.participantname) next from V_CURRENTWORKITEM t where t.processinstid =  #processInstID#
+    </select>
+    <!-- 查询上一环节是否为征求意见 -->
+    <select id="queryReqUseName" parameterClass="java.lang.String" resultClass="commonj.sdo.DataObject">
+     select t1.operate_type, t1.user_name
+         from (select t.operate_type, t.user_name from cf_jy_prc_aprv_info t
+         where t.work_item_id = #workitemID#
+         order by sysid desc) t1
+         where rownum = 1
+      </select> 
+    
+    
+    <!-- 根据流程类型分别查询待办条数 -->
+    <select id="querySumCount" parameterClass="java.util.HashMap" resultClass="commonj.sdo.DataObject">
+      select count(A.proess_type) as bondQuantity
+  		from (select distinct vk.processinstid, ct.proess_type
+          from v_currentworkitem vk, cf_jy_business_main_table ct
+         where ct.processinstid = vk.processinstid
+           and ','||vk.participantid||',' like '%,$participantid$,%') A
+   </select>       
+</sqlMap>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:刘玉龙 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    
+    <!-- 日初获取已过期指令（结算日期已过、指令为有效、交易状态未前台成交） -->
+    <select id="queryOverdueInstruction" resultClass="commonj.sdo.DataObject">
+    	select t.l_result_id,
+		       t.l_result_no,
+		       t.l_processinst_id,
+		       t.c_is_valid,
+		       t.vc_process_status,
+		       t.l_first_settle_date
+		  from t_ats_inquiry_result_instruct t
+		 where t.c_is_valid in ('0','1')
+		   and ((t.l_trade_date &lt; to_char(sysdate, 'YYYYMMDD') and
+		       t.vc_process_status not in ('8', '9')) or
+		       (t.l_first_settle_date &lt; to_char(sysdate, 'YYYYMMDD') and
+		       t.vc_process_status not in ('8','9')))
+	</select>
+	
+	<!-- 日初获取已过期交收跟踪表记录（交收日期已过、未交收(未完结)） -->
+    <select id="queryOverdueSetmtTrace" resultClass="commonj.sdo.DataObject">
+    	 select t.l_trace_id
+		 from t_ats_fund_setmt_trace t
+		 where t.l_setmt_date &lt; to_char(sysdate, 'YYYYMMDD') and
+		       (t.vc_bs_setmt_status='' or t.vc_bs_setmt_status is null 
+		       or t.vc_bs_setmt_status not in ('11', '09','13','14','15','18','20','21'))
+	</select>
+</sqlMap>

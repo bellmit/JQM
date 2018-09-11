@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:jiangkanqian -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+ 
+    <resultMap id="goldInfo" class="commonj.sdo.DataObject">
+		<result column="l_gold_id" javaType="long" property="lGoldId"/>
+		<result column="l_processinst_id" javaType="long" property="lProcessinstId"/>
+		<result column="vc_process_state" javaType="string" property="vcProcessState"/>		
+		<result column="l_product_id" javaType="long" property="lProductId"/>
+		<result column="vc_product_code" javaType="string" property="vcProductCode"/>
+		<result column="vc_product_name" javaType="string" property="vcProductName"/>
+		<result column="l_combi_id" javaType="long" property="lCombiId"/>
+		<result column="vc_combi_code" javaType="string" property="vcCombiCode"/>
+		<result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+		<result column="vc_entrust_direction" javaType="string" property="vcEntrustDirection"/>
+		<result column="vc_agent_bank" javaType="string" property="vcAgentBank"/>
+		<result column="l_agent_no" javaType="long" property="lAgentNo"/>
+		<result column="vc_agent_name" javaType="string" property="vcAgentName"/>
+		<result column="l_trade_date" javaType="long" property="lTradeDate"/>
+		<result column="l_gold_capital" javaType="double" property="lGoldCapital"/>
+		<result column="c_is_valid" javaType="string" property="cIsValid"/>
+		<result column="t_input_time" javaType="Date" property="tInputTime"/>
+		<result column="t_review_time" javaType="Date" property="tReviewTime"/>
+		<result column="t_client_time" javaType="Date" property="tClientTime"/>
+		<result column="t_traderf_time" javaType="Date" property="tTraderfTime"/>
+		<result column="t_trades_time" javaType="Date" property="tTradesTime"/>
+		<result column="t_investmanager_time" javaType="Date" property="tInvestmanagerTime"/>
+		<result column="t_comdep_time" javaType="Date" property="tComdepTime"/>
+		<result column="t_capitalclear_time" javaType="Date" property="tCapitalclearTime"/>
+		<result column="l_initiator_id" javaType="long" property="lInitiatorId"/>
+    	<result column="vc_initiator_id" javaType="string" property="vcInitiatorId"/>
+    	<result column="vc_initiator_name" javaType="string" property="vcInitiatorName"/>
+    	<result column="l_review_id" javaType="long" property="lReviewId"/>
+    	<result column="vc_review_id" javaType="string" property="vcReviewId"/>
+    	<result column="vc_review_name" javaType="string" property="vcReviewName"/>
+    	<result column="l_client_id" javaType="long" property="lClientId"/>
+    	<result column="vc_client_id" javaType="string" property="vcClientId"/>
+    	<result column="vc_client_name" javaType="string" property="vcClientName"/>
+    	<result column="l_traderf_id" javaType="long" property="lTraderfId"/>
+    	<result column="vc_traderf_id" javaType="string" property="vcTraderfId"/>
+    	<result column="vc_traderf_name" javaType="string" property="vcTraderfName"/>
+    	<result column="l_trades_id" javaType="long" property="lTradesId"/>
+    	<result column="vc_trades_id" javaType="string" property="vcTradesId"/>
+    	<result column="vc_trades_name" javaType="string" property="vcTradesName"/>
+    	<result column="l_investmanager_id" javaType="long" property="lInvestmanagerId"/>
+    	<result column="vc_investmanager_id" javaType="string" property="vcInvestmanagerId"/>
+    	<result column="vc_investmanager_name" javaType="string" property="vcInvestmanagerName"/>
+    	<result column="l_comdep_id" javaType="long" property="lComdepId"/>
+    	<result column="vc_comdep_id" javaType="string" property="vcComdepId"/>
+    	<result column="vc_comdep_name" javaType="string" property="vcComdepName"/>
+    	<result column="l_capitalclear_id" javaType="long" property="lCapitalclearId"/>
+    	<result column="vc_capitalclear_id" javaType="string" property="vcCapitalclearId"/>
+    	<result column="vc_capitalclear_name" javaType="string" property="vcCapitalclearName"/>
+    	<result column="l_instruct_no" javaType="long" property="lInstructNo"/>
+		<result column="vc_instruct_source" javaType="string" property="vcInstructSource"/>
+		<result column="vc_remark" javaType="string" property="vcRemark"/>
+		<result column="l_attach_id" javaType="long" property="lAttachId"/>		
+		<result column="workitemId" javaType="string" property="workitemId"/>		
+	</resultMap>
+    
+    <resultMap id="goldProcessInfo" class="commonj.sdo.DataObject">
+		<result column="l_gold_id" javaType="long" property="lGoldId"/>
+		<result column="l_processinst_id" javaType="long" property="lProcessinstId"/>
+		<result column="vc_process_state" javaType="string" property="vcProcessState"/>		
+		<result column="l_product_id" javaType="long" property="lProductId"/>
+		<result column="vc_product_code" javaType="string" property="vcProductCode"/>
+		<result column="vc_product_name" javaType="string" property="vcProductName"/>
+		<result column="l_combi_id" javaType="long" property="lCombiId"/>
+		<result column="vc_combi_code" javaType="string" property="vcCombiCode"/>
+		<result column="vc_combi_name" javaType="string" property="vcCombiName"/>
+		<result column="vc_entrust_direction" javaType="string" property="vcEntrustDirection"/>
+		<result column="vc_agent_bank" javaType="string" property="vcAgentBank"/>
+		<result column="l_agent_no" javaType="long" property="lAgentNo"/>
+		<result column="vc_agent_name" javaType="string" property="vcAgentName"/>
+		<result column="l_trade_date" javaType="long" property="lTradeDate"/>
+		<result column="l_gold_capital" javaType="double" property="lGoldCapital"/>
+		<result column="c_is_valid" javaType="string" property="cIsValid"/>
+		<result column="t_input_time" javaType="Date" property="tInputTime"/>
+		<result column="t_review_time" javaType="Date" property="tReviewTime"/>
+		<result column="t_client_time" javaType="Date" property="tClientTime"/>
+		<result column="t_traderf_time" javaType="Date" property="tTraderfTime"/>
+		<result column="t_trades_time" javaType="Date" property="tTradesTime"/>
+		<result column="t_investmanager_time" javaType="Date" property="tInvestmanagerTime"/>
+		<result column="t_comdep_time" javaType="Date" property="tComdepTime"/>
+		<result column="t_capitalclear_time" javaType="Date" property="tCapitalclearTime"/>
+		<result column="l_initiator_id" javaType="long" property="lInitiatorId"/>
+    	<result column="vc_initiator_id" javaType="string" property="vcInitiatorId"/>
+    	<result column="vc_initiator_name" javaType="string" property="vcInitiatorName"/>
+    	<result column="l_review_id" javaType="long" property="lReviewId"/>
+    	<result column="vc_review_id" javaType="string" property="vcReviewId"/>
+    	<result column="vc_review_name" javaType="string" property="vcReviewName"/>
+    	<result column="l_client_id" javaType="long" property="lClientId"/>
+    	<result column="vc_client_id" javaType="string" property="vcClientId"/>
+    	<result column="vc_client_name" javaType="string" property="vcClientName"/>
+    	<result column="l_traderf_id" javaType="long" property="lTraderfId"/>
+    	<result column="vc_traderf_id" javaType="string" property="vcTraderfId"/>
+    	<result column="vc_traderf_name" javaType="string" property="vcTraderfName"/>
+    	<result column="l_trades_id" javaType="long" property="lTradesId"/>
+    	<result column="vc_trades_id" javaType="string" property="vcTradesId"/>
+    	<result column="vc_trades_name" javaType="string" property="vcTradesName"/>
+    	<result column="l_investmanager_id" javaType="long" property="lInvestmanagerId"/>
+    	<result column="vc_investmanager_id" javaType="string" property="vcInvestmanagerId"/>
+    	<result column="vc_investmanager_name" javaType="string" property="vcInvestmanagerName"/>
+    	<result column="l_comdep_id" javaType="long" property="lComdepId"/>
+    	<result column="vc_comdep_id" javaType="string" property="vcComdepId"/>
+    	<result column="vc_comdep_name" javaType="string" property="vcComdepName"/>
+    	<result column="l_capitalclear_id" javaType="long" property="lCapitalclearId"/>
+    	<result column="vc_capitalclear_id" javaType="string" property="vcCapitalclearId"/>
+    	<result column="vc_capitalclear_name" javaType="string" property="vcCapitalclearName"/>
+    	<result column="l_instruct_no" javaType="long" property="lInstructNo"/>
+		<result column="vc_instruct_source" javaType="string" property="vcInstructSource"/>
+		<result column="vc_remark" javaType="string" property="vcRemark"/>
+		<result column="l_attach_id" javaType="long" property="lAttachId"/>		
+	</resultMap>
+    
+    <resultMap id="agentBank" class="commonj.sdo.DataObject">
+		<result column="l_bank_id" javaType="long" property="lBankId"/>
+		<result column="vc_agent_bank" javaType="string" property="vcAgentBank"/>
+		<result column="l_agent_no" javaType="long" property="lAgentNo"/>
+		<result column="vc_agent_name" javaType="string" property="vcAgentName"/>
+	</resultMap>
+    
+    <select id="queryGoldInfo" parameterClass="commonj.sdo.DataObject" resultMap="goldInfo">
+	select tb.*,
+		   nvl(vp.workitemid,0) workitemId
+	from(
+		   select * from T_ATS_INTERESTSWAP_DISCGOLD t
+           where 1=1
+	        <isNotNull property="lTradeDateMin">
+	        	and t.l_trade_date &gt;= #lTradeDateMin#
+	      	</isNotNull>
+	      	<isNotNull property="lTradeDateMax">
+	        	and t.l_trade_date &lt;= #lTradeDateMax#
+	      	</isNotNull>
+	      	<isNotNull property="vcProductCode">
+	        	and t.vc_Product_Code in ($vcProductCode$)
+	      	</isNotNull>
+	      	<isEqual property="queryType" compareValue="1">
+	      		<isNotNull property="vcCombiNos">
+	        		and t.VC_COMBI_CODE in ($vcCombiNos$)
+	      		</isNotNull>
+	      	</isEqual>
+	      	<isNotNull property="vcEntrustDirection">
+	        	and t.vc_entrust_direction in ($vcEntrustDirection$)
+	      	</isNotNull>
+	      	<isNotNull property="vcAgentBank">
+	        	and t.vc_agent_bank in ($vcAgentBank$)
+	      	</isNotNull>	      	
+	      )tb
+	      left join 
+	   		(select participantid,workitemid,activitydefid,processinstid,vc_process_type from V_PERSONWORKITEM
+     		where 1=1
+     		and vc_process_type=15
+     		<isNotNull property="lUserId"> 
+    	 	and ','||participantid||',' like '%,$lUserId$,%'
+    	 	</isNotNull>
+     		)vp
+     	  	on tb.l_processinst_id=vp.processinstid
+	      	<isNotNull property="sortField">
+	        	<isNotNull property="sortOrder">
+	        		order by tb.$sortField$ $sortOrder$
+	        	</isNotNull>
+	      	</isNotNull>
+	      	<isNull property="sortField">
+	        	<isNull property="sortOrder">
+	      			order by tb.l_instruct_no desc, decode(tb.c_is_valid,'1','1','2') asc, tb.t_input_time desc
+	        	</isNull>
+	      	</isNull>
+	</select>
+    
+    <select id="queryGoldWithId" parameterClass="java.util.HashMap" resultMap="goldProcessInfo">
+	select * from T_ATS_INTERESTSWAP_DISCGOLD t	  
+          where 
+		  t.l_gold_id = $lGoldId$
+	</select>
+    
+    <select id="queryGoldWithProcess" parameterClass="java.util.HashMap" resultMap="goldProcessInfo">
+	select * from T_ATS_INTERESTSWAP_DISCGOLD t	  
+          where 
+		  t.l_processinst_id = $lProcessinstId$
+	</select>
+    
+    <select id="querySelectedGold" parameterClass="commonj.sdo.DataObject" resultMap="goldProcessInfo">
+	select * from T_ATS_INTERESTSWAP_DISCGOLD t	  
+          where 
+		  t.l_gold_id in ($lGoldId$)
+	</select>
+    
+    <select id="queryAgentBank" parameterClass="commonj.sdo.DataObject" resultMap="agentBank">
+	select * from T_ATS_INTERESTSWAP_BANK t
+	</select>
+    
+    <select id="querySelectedAgentBank" parameterClass="commonj.sdo.DataObject" resultMap="agentBank">
+	select * from T_ATS_INTERESTSWAP_BANK t
+		where 
+		t.vc_agent_bank = $vcAgentBank$
+	</select>
+    
+</sqlMap>

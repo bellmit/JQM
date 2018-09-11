@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:liangjilong -->
+<sqlMap>
+    
+    <!-- 映射表字段属性 -->
+    <resultMap class="com.cjhxfund.ats.mom.report.report.ProdUserInfo" id="resultMapForProdUserInfo">
+        <result column="sysid" javaType="long" property="sysid"/>
+		<result column="user_id" javaType="string" property="userId"/>
+		<result column="user_name" javaType="string" property="userName"/>
+		<result column="prod_id" javaType="string" property="prodId"/>
+		<result column="prod_name" javaType="string" property="prodName"/>
+		<result column="prod_layer" javaType="long" property="prodLayer"/>
+		<result column="insert_time" jdbcType="string" property="insertTime"/>
+    </resultMap>
+    
+     <resultMap class="com.cjhxfund.ats.mom.report.report.ProdGroupInfoVo" id="resultMapForProduct">
+         <result column="PROD_ID" javaType="string" property="prodId"/>
+         <result column="PROD_LAYER" javaType="string" property="prodLayer"/>
+         <result column="PROD_NAME" javaType="string" property="prodName"/>
+         <result column="PROD_PARENT" javaType="string" property="prodParent"/>
+         <result column="PROD_PARENT_NAME" javaType="string" property="prodParentName"/>
+         <result column="INSERTTIME" javaType="DATE" property="insertTime"/>
+         <result column="UPDATETIME" javaType="DATE" property="updateTime"/>
+         <result column="PROD_ORDER" javaType="long" property="prodOrder"/>
+    </resultMap>
+    
+     <resultMap class="com.cjhxfund.ats.mom.report.report.EmployeeVo" id="resultMapForEmployee">
+     		<result column="EMPID" javaType="long" property="empId"/>
+       		<result column="EMPCODE" javaType="string" property="empCode"/>
+       		<result column="EMPNAME" javaType="string" property="empName"/>
+       		<result column="ORGNAME" javaType="string" property="orgName"/>
+      </resultMap>
+    
+    
+    <!-- 分页查询-->
+    <select id="queryProdUserInfoList" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForProdUserInfo">
+     	select  
+     		a.sysid,a.user_id, a.user_name,a.prod_id,a.prod_name,
+     		 <!--DECODE(a.prod_layer,'1','单账户','2','系列账户','3','总账户')  prod_layer,-->
+     		a.prod_layer, a.insert_time 
+ 		from T_PROD_USER_INFO  a where 1=1
+    	<isNotNull prepend="AND" property="userName">
+          	A.USER_NAME like '%'||#userName#||'%' 
+       	</isNotNull>
+    
+    	<isNotNull prepend="AND" property="prodName">
+          	A.PROD_NAME like '%'||#prodName#||'%' 
+       	</isNotNull>
+    </select>
+    
+    
+    
+    <!--查询产品信息列表-->
+   <select id="queryProductList" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForProduct">
+	    select   
+		    A.PROD_ID,
+			A.PROD_LAYER,
+			A.PROD_NAME,
+			A.PROD_PARENT,
+			A.PROD_PARENT_NAME,
+			A.INSERTTIME,
+			A.UPDATETIME,
+			A.PROD_ORDER
+		from A001_PROD_GROUP_INFO A 
+		WHERE A.PROD_ID not in (select B.prod_id from T_PROD_USER_INFO B where B.user_id =#userId#)
+ 		<isNotNull prepend="AND" property="prodName">
+          	A.PROD_NAME like '%'||#prodName#||'%' 
+       	</isNotNull>
+        <isNotNull prepend="AND" property="prodParentName">
+          	A.PROD_PARENT_NAME like '%'||#prodParentName#||'%' 
+       	</isNotNull>
+       	<isNotNull prepend="AND" property="prodParent">
+          	A.PROD_PARENT like '%'||#prodParent#||'%' 
+       	</isNotNull>
+       
+   </select>
+    
+    
+    
+     <!--查询产品信息列表-->
+   <select id="queryUserList" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForEmployee">
+		SELECT A.EMPID,A.EMPCODE,A.EMPNAME,B.ORGNAME FROM ORG_EMPLOYEE A LEFT JOIN ORG_ORGANIZATION B ON A.ORGID=B.ORGID
+		WHERE 1=1
+		<isNotNull prepend="AND" property="empCode">
+			A.EMPCODE=#empCode# 
+		</isNotNull>
+		<isNotNull prepend="AND" property="empName">
+		 	A.Empname like '%'||#empName#||'%' 
+		</isNotNull>
+		<isNotNull prepend="AND" property="orgName">
+			B.ORGNAME like '%'||#orgName#||'%' 
+		</isNotNull>
+   </select>
+   
+   
+    
+</sqlMap>

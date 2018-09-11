@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:罗倔怀 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="SequelInsMap">
+        <result column="L_SERIAL_NO" javaType="String" property="lSerialNo"/>
+        <result column="L_DATE" javaType="String" property="lDate"/>
+        <result column="L_HG_DATE" javaType="String" property="lFirstSettleDate"/>
+        <result column="L_FUND_ID" javaType="String" property="lFundId"/>
+        <result column="L_BASECOMBI_ID" javaType="String" property="lBasecombiId"/>
+        <result column="L_REDEEM_DAYS" javaType="String" property="lRedeemDays"/>
+        <result column="L_SETTLE_SPEED" javaType="String" property="lSettleSpeed"/>
+        <result column="L_REDEEM_LAWDATE" javaType="String" property="lHgDate"/>
+        <result column="L_REDEEM_LIQUIDATE" javaType="String" property="lSecondSettleDate"/>
+        <result column="L_SETTLE_DATE" javaType="String" property="lSettleDate"/>
+        <result column="C_MARKET_NO" javaType="String" property="cMarketNo"/>
+        <result column="VC_SEAT_ID" javaType="String" property="vcSeatId"/>
+        <result column="VC_STOCKHOLDER_ID" javaType="String" property="vcStockholderId"/>
+        <result column="vc_hg_code" javaType="String" property="vcHgCode"/><!--申报代码（此处理解为回购代码）-->
+		<result column="vc_hg_code_name" javaType="String" property="vcHgCodeName"/><!--申报名称-->
+        <result column="VC_INTER_CODE" javaType="String" property="vcInterCode"/>
+        <result column="C_STOCK_TYPE" javaType="String" property="cStockType"/>
+        <result column="C_ENTRUST_DIRECTION" javaType="String" property="cEntrustDirection"/>
+        <result column="L_DEAL_AMOUNT" javaType="String" property="lDealAmount"/>
+        <result column="EN_DEAL_PRICE" javaType="String" property="enHgRatio"/>
+        <result column="EN_DEAL_BALANCE" javaType="String" property="enDealBalance"/>
+        <result column="EN_REDEEM_INTEREST" javaType="String" property="enRedeemInterest"/>
+        <result column="EN_FEE" javaType="String" property="enFee"/>
+        <result column="L_ENTRUST_SERIAL_NO" javaType="String" property="lEntrustSerialNo"/>
+        <result column="L_REPORT_TIME" javaType="String" property="lReportTime"/>
+        <result column="C_FROZEN_FLAG" javaType="String" property="cFrozenFlag"/>
+        <result column="C_REDEAL_FLAG" javaType="String" property="cRedealFlag"/>
+        <result column="L_REDEAL_DATE" javaType="String" property="lRedealDate"/>
+        <result column="L_OPERATOR_NO" javaType="String" property="lOperatorNo"/>
+        <result column="C_PURPOSE_TYPE" javaType="String" property="cPurposeType"/>
+        <result column="C_REDEAL_AVAILABLE_FLAG" javaType="String" property="cRedealAvailableFlag"/>
+        <result column="EN_FIRST_PRICE" javaType="String" property="enFirstPrice"/>
+        <result column="EN_FIRST_BOND_INTEREST" javaType="String" property="enFirstBondInterest"/>
+        <result column="EN_MATURE_PRICE" javaType="String" property="enMaturePrice"/>
+        <result column="EN_MATURE_BOND_INTEREST" javaType="String" property="enMatureBondInterest"/>
+        <result column="EN_INTEREST_PAYMENT_BALANCE" javaType="String" property="enInterestPaymentBalance"/>
+        <result column="L_BUSIN_AMOUNT" javaType="String" property="lBusinAmount"/>
+        <result column="EN_NOW_INTEREST" javaType="String" property="enNowInterest"/>
+        <result column="VC_CONTRACT_NO" javaType="String" property="vcContractNo"/>
+        <result column="L_YEAR_DAYS" javaType="String" property="lYearDays"/>
+        <result column="EN_HG_BALANCE" javaType="String" property="enHgBalance"/>
+        <result column="VC_RIVAL_SEAT" javaType="String" property="vcRivalSeat"/>
+        <result column="L_RIVAL_ID" javaType="String" property="lRivalId"/>
+        <result column="ZY_VC_INTER_CODE" javaType="String" property="zyVcInterCode"/>
+        <result column="ZY_VC_INTER_Name" javaType="String" property="zyVcInterName"/>
+        <result column="C_INVEST_TYPE" javaType="String" property="cInvestType"/>
+        <result column="EN_RATIO" javaType="String" property="enRatio"/>
+        <result column="L_MORTAGAGE_AMOUNT" javaType="String" property="lMortagageAmount"/>
+        <result column="VC_RIVALTRADER_ID" javaType="String" property="vcRivaltraderId"/>
+        <result column="c_closure" javaType="String" property="cClosure"/>
+        <result column="vc_trader_name" javaType="String" property="vcTraderName"/>
+        <result column="MorFundId" javaType="String" property="morfundid"/>
+        <result column="MorBaseId" javaType="String" property="morbaseid"/>
+        <result column="l_daily_instruction_no" javaType="String" property="lDailyInstructionNo"/>
+        <result column="rival_name" javaType="String" property="rivalName"/>
+        <result column="vc_fund_name" javaType="String" property="vcFundName"/>
+        <result column="vc_fund_code" javaType="String" property="vcFundCode"/>
+        <result column="vc_combi_no" javaType="String" property="vcCombiNo"/>
+        <result column="vc_combi_name" javaType="String" property="vcCombiName"/>
+        <result column="vc_pledge_code" javaType="String" property="vcPledgeCode"/>
+        <result column="vc_pledge_code_name" javaType="String" property="vcPledgeCodeName"/>
+        <result column="en_pledge_ratio" javaType="String" property="enPledgeRatio"/>
+        <result column="en_pledge_amount" javaType="String" property="enPledgeAmount"/>
+    </resultMap>
+    <!-- 续作指令查询 start -->
+    <select id="querySequelIns" parameterClass="commonj.sdo.DataObject" resultMap="SequelInsMap">
+    select 
+    g.vc_report_code vc_pledge_code, 
+                g.vc_stock_name vc_pledge_code_name,
+                D.en_ratio en_pledge_ratio,
+                D.l_mortagage_amount en_pledge_amount,
+       e.vc_fund_name,
+       e.vc_fund_code,
+       f.vc_combi_no,
+       f.vc_combi_name, 
+       A.L_SERIAL_NO, 
+       A.L_DATE, 
+       A.L_HG_DATE,
+       A.L_FUND_ID,
+       A.L_BASECOMBI_ID,
+       A.L_REDEEM_DAYS, 
+       A.L_SETTLE_SPEED, 
+       A.L_REDEEM_LAWDATE, 
+       A.L_REDEEM_LIQUIDATE, 
+       A.L_SETTLE_DATE, 
+       A.C_MARKET_NO,
+       A.VC_SEAT_ID,
+       A.VC_STOCKHOLDER_ID,
+       B.VC_REPORT_CODE vc_hg_code,
+       B.vc_stock_name vc_hg_code_name,
+       A.VC_INTER_CODE,
+       A.C_STOCK_TYPE,
+       A.C_ENTRUST_DIRECTION,
+       A.L_DEAL_AMOUNT,
+       A.EN_DEAL_PRICE,
+       A.EN_DEAL_BALANCE,
+       A.EN_REDEEM_INTEREST,
+       A.EN_FEE,
+       A.L_ENTRUST_SERIAL_NO,
+       A.L_REPORT_TIME,
+       A.C_FROZEN_FLAG,
+       A.C_REDEAL_FLAG,
+       A.L_REDEAL_DATE,
+       A.L_OPERATOR_NO,
+       A.C_PURPOSE_TYPE,
+       A.C_REDEAL_AVAILABLE_FLAG,
+       A.EN_FIRST_PRICE,
+       A.EN_FIRST_BOND_INTEREST,
+       A.EN_MATURE_PRICE,
+       A.EN_MATURE_BOND_INTEREST,
+       A.EN_INTEREST_PAYMENT_BALANCE,
+       A.L_BUSIN_AMOUNT,
+       A.EN_NOW_INTEREST,
+       A.VC_CONTRACT_NO,
+       A.L_YEAR_DAYS,
+       (A.EN_DEAL_BALANCE + A.EN_REDEEM_INTEREST) EN_HG_BALANCE,
+       A.VC_RIVAL_SEAT,
+       A.L_RIVAL_ID,
+       D.VC_INTER_CODE ZY_VC_INTER_CODE,
+       D.VC_INTER_CODE ZY_VC_INTER_Name,
+       D.C_INVEST_TYPE,
+       D.EN_RATIO,
+       D.L_MORTAGAGE_AMOUNT,
+       A.VC_RIVALTRADER_ID,
+       decode(nvl(i.c_instruction_status, '0'), '0', '0', '1') c_closure,
+       j.vc_trader_name,
+       D.L_FUND_ID MorFundId,
+       D.L_BASECOMBI_ID MorBaseId,
+	   i.l_daily_instruction_no,
+	   o.vc_name rival_name
+  from trade.tstockinfo B,
+       trade.thgregister A,
+       trade.THGMORTAGAGE D,
+	   trade.ttraderival o,
+	   trade.tfundinfo e,
+	   trade.tcombi f,
+	   trade.tstockinfo g,
+       (select t.* from trade.trivaltrader t where t.l_org_id = 0) j,
+       (select y.vc_origin_contract_no,
+               x.c_instruction_status,
+               x.l_daily_instruction_no
+          from trade.tinstruction x, trade.tinstructionstock y
+         where x.l_daily_instruction_no = y.l_daily_instruction_no
+           and x.l_index_daily_modify = y.l_index_daily_modify
+           and x.c_instruction_status in ('1', '7')) i
+		   
+ where b.L_DATE = A.L_DATE
+   and B.VC_INTER_CODE = A.VC_INTER_CODE
+   and A.L_SERIAL_NO = D.L_SERIAL_NO
+   and i.vc_origin_contract_no(+) = a.vc_contract_no
+   and A.C_MARKET_NO = '1'
+   and a.l_rival_id = j.l_rival_id(+)
+   and A.vc_rivaltrader_id = j.vc_trader_id(+)
+   and A.C_ENTRUST_DIRECTION in ('15', '16')
+   and A.l_rival_id = o.l_rival_id
+   and A.l_fund_id = e.l_fund_id
+   and A.l_basecombi_id = f.l_combi_id
+   and d.vc_inter_code = g.vc_inter_code
+   and (select count(*)
+          from trade.TOPFUNDRIGHT
+         where trade.TOPFUNDRIGHT.l_basecombi_id = a.l_basecombi_id
+           and trade.TOPFUNDRIGHT.c_layer = '3'
+           and trade.TOPFUNDRIGHT.l_operator_no = 1000
+           and instr(trade.TOPFUNDRIGHT.vc_rights, '1') > 0) > 0
+   and D.c_effect_status = '1'
+        <isNotNull property="lSettleDate"> <!--回购到期日期限制-->
+            and A.L_REDEEM_LIQUIDATE &lt;= to_number(#lSettleDate#)
+        </isNotNull>
+        <isNotNull property="fundId"> <!--产品ID-->
+            and e.vc_fund_code = #fundId#
+        </isNotNull>
+        <isNotNull property="vcCombiName"> <!--组合ID-->
+          and f.vc_combi_no = #vcCombiName#
+     </isNotNull>
+     <isNotNull property="startDate"> <!--开始日期-->
+          and a.l_redeem_liquidate &gt;= #startDate#
+     </isNotNull>
+     <isNotNull property="endDate"> <!--结束日期-->
+          and a.l_redeem_liquidate &lt;= #endDate#
+     </isNotNull>
+     <isNotNull property="cEntrustDirection"> <!--委托方向-->
+          and a.c_entrust_direction = #cEntrustDirection#
+     </isNotNull>
+    </select>
+    <!-- 续作指令查询 end -->
+    <resultMap class="commonj.sdo.DataObject" id="THGREGISTERMap">
+        <result column="l_serial_no" javaType="String" property="lSerialNo"/><!--流水序号-->
+		<result column="l_fund_id" javaType="String" property="lFundId"/><!--产品ID-->
+		<result column="l_hg_date" javaType="String" property="lHgDate"/><!--回购日期-->
+		<result column="vc_fund_name" javaType="String" property="vcFundName"/><!--产品名称-->
+		<result column="l_basecombi_id" javaType="String" property="lBasecombiId"/><!--组合ID-->
+		<result column="vc_combi_name" javaType="String" property="vcCombiName"/><!--组合名称-->
+		<result column="vc_rival_seat" javaType="String" property="vcRivalSeat"/><!--对手席位-->
+		<result column="vc_seat_name" javaType="String" property="vcSeatName"/><!--席位名称-->
+		<result column="en_hg_ratio" javaType="String" property="enHgRatio"/><!--回购利率-->
+		<result column="en_hg_balance" javaType="String" property="enHgBalance"/><!--回购金额（成交金额）-->
+		<result column="en_redeem_interest" javaType="String" property="enRedeemInterest"/><!--回购利息-->
+		<result column="l_redeem_days" javaType="String" property="lRedeemDays"/><!--回购天数-->
+		<result column="vc_inter_code" javaType="String" property="vcInterCode"/><!--O32证券内码-->
+		<result column="vc_hg_code" javaType="String" property="vcHgCode"/><!--申报代码（此处理解为回购代码）-->
+		<result column="vc_hg_code_name" javaType="String" property="vcHgCodeName"/><!--申报名称-->
+		<result column="l_first_settle_date" javaType="String" property="lFirstSettleDate"/><!--首次结算日期-->
+		<result column="l_second_settle_date" javaType="String" property="lSecondSettleDate"/><!--到期结算日期-->
+		<result column="c_entrust_direction" javaType="String" property="cEntrustDirection"/><!--委托方向-->
+		<result column="l_pledge_fund_id" javaType="String" property="lPledgeFundId"/><!--抵押券所属产品ID-->
+		<result column="l_pledge_basecombi_id" javaType="String" property="lPledgeBasecombiId"/><!--抵押券所属组合ID-->
+		<result column="c_pledge_invest_type" javaType="String" property="cPledgeInvestType"/><!--投资类型-->
+		<result column="vc_pledge_inter_code" javaType="String" property="vcPledgeInterCode"/><!--抵押券证券内码-->
+		<result column="en_pledge_ratio" javaType="String" property="enPledgeRatio"/><!--质押比率-->
+		<result column="en_pledge_amount" javaType="String" property="enPledgeAmount"/><!--质押数量-->
+		<result column="c_mortagage_side" javaType="String" property="cMortagageSide"/><!--履约保证提交方-->
+		<result column="vc_pledge_code" javaType="String" property="vcPledgeCode"/><!--质押券代码-->
+		<result column="vc_pledge_code_name" javaType="String" property="vcPledgeCodeName"/><!--质押券名称-->
+		<result column="vc_entrust_name" javaType="String" property="vcEntrustName"/><!--委托方向名称-->
+		<result column="vc_contract_no" javaType="String" property="vcContractNo"/><!--合同序号-->
+		<result column="l_rival_id" javaType="String" property="lRivalId"/><!--交易对手ID-->
+		<result column="vc_rivaltrader_id" javaType="String" property="vcRivaltraderId"/><!--对手交易员id-->
+		<result column="vc_trader_name" javaType="String" property="vcTraderName"/><!--对手交易员名称-->
+		<result column="c_redeal_flag" javaType="String" property="cRedealFlag"/><!--购回处理标志-->
+		<result column="l_daily_instruction_no" javaType="String" property="lDailyInstructionNo"/><!--指令序号-->
+		<result column="rival_name" javaType="String" property="rivalName"/><!--交易对手名称-->
+		<result column="vc_fund_code" javaType="String" property="vcFundCode"/><!--产品名称-->
+		<result column="vc_combi_no" javaType="String" property="vcCombiNo"/><!--产品名称-->
+		<result column="en_contract_balance" javaType="String" property="enContractBalance"/><!--到期结算金额-->
+		<result column="vc_pledge_combi_no" javaType="String" property="vcPledgeCombiNo"/><!--抵押券所属组合代码-->
+		<result column="vc_pledge_combi_name" javaType="String" property="vcPledgeCombiName"/><!--抵押券所属组合名称-->
+		
+    </resultMap>
+    <select id="queryRefundingIns" parameterClass="commonj.sdo.DataObject" resultMap="THGREGISTERMap">
+        	select distinct a.l_serial_no,
+                a.l_fund_id,
+                a.l_hg_date,
+                e.vc_fund_name,
+                e.vc_fund_code,
+                a.l_basecombi_id,
+                f.vc_combi_no,
+                f.vc_combi_name,
+                a.vc_rival_seat,
+                d.vc_seat_name,
+                a.en_deal_price en_hg_ratio,
+                a.en_deal_balance en_hg_balance,
+                a.en_redeem_interest,
+                a.l_redeem_days,
+                a.vc_inter_code,
+                c.vc_report_code vc_hg_code,
+                c.vc_stock_name vc_hg_code_name,
+                a.l_hg_date l_first_settle_date,
+                a.l_redeem_liquidate l_second_settle_date,
+                a.c_entrust_direction,
+                b.l_fund_id l_pledge_fund_id,
+                b.l_basecombi_id l_pledge_basecombi_id,
+                f2.vc_combi_no vc_pledge_combi_no,
+                f2.vc_combi_name vc_pledge_combi_name,
+                b.c_invest_type c_pledge_invest_type,
+                b.vc_inter_code vc_pledge_inter_code,
+                b.en_ratio en_pledge_ratio,
+                b.l_mortagage_amount en_pledge_amount,
+                b.c_mortagage_side,
+                g.vc_report_code vc_pledge_code,
+                g.vc_stock_name vc_pledge_code_name,
+                a.c_entrust_direction vc_entrust_name,
+                a.vc_contract_no,
+                (a.en_deal_balance + a.en_redeem_interest) en_contract_balance,
+                decode(nvl(i.c_instruction_status, '0'), '0', '0', '1') c_closure,
+                decode(sign(a.l_redeem_lawdate - h.l_init_date),
+                       -1,
+                       '1',
+                       '0') c_expired,
+                a.l_rival_id,
+                o.vc_name rival_name,
+                a.vc_rivaltrader_id,
+                j.vc_trader_name,
+                a.c_redeal_flag, 
+				i.l_daily_instruction_no
+  from trade.thgregister a,
+       trade.thgmortagage b,
+       trade.tstockinfo c,
+       trade.tseat d,
+       trade.tfundinfo e,
+       trade.tcombi f,
+       trade.tcombi f2,
+       trade.tstockinfo g,
+       trade.tsysteminfo h,
+       trade.ttraderival o,
+       (select y.vc_origin_contract_no,
+               x.c_instruction_status,
+               x.l_daily_instruction_no
+          from trade.tinstruction x, trade.tinstructionstock y
+         where x.l_daily_instruction_no = y.l_daily_instruction_no
+           and x.l_index_daily_modify = y.l_index_daily_modify
+           and x.c_instruction_status in ('1', '7')) i,
+       (select t.* from trade.trivaltrader t where t.l_org_id = 0) j
+ where a.l_serial_no = b.l_serial_no
+   and a.vc_inter_code = c.vc_inter_code
+   and a.l_fund_id = e.l_fund_id
+   and b.l_basecombi_id = f2.l_combi_id
+   and a.l_basecombi_id = f.l_combi_id
+   and b.vc_inter_code = g.vc_inter_code
+   and a.l_rival_id = o.l_rival_id
+   and i.vc_origin_contract_no(+) = a.vc_contract_no
+   and b.c_effect_status = '1'
+   and b.c_status = '1'
+   and a.vc_rival_seat = d.vc_seat_id(+)
+   and a.l_rival_id = j.l_rival_id(+)
+   and a.vc_rivaltrader_id = j.vc_trader_id(+)
+   and instr(',15,16,', a.c_entrust_direction) > 0
+   and a.c_market_no = '1'
+   and (select count(*)
+          from trade.TOPFUNDRIGHT
+         where TOPFUNDRIGHT.l_basecombi_id = a.l_basecombi_id
+           and TOPFUNDRIGHT.c_layer = '3'
+           and TOPFUNDRIGHT.l_operator_no = 1000
+           and instr(TOPFUNDRIGHT.vc_rights, '1') > 0) > 0
+   and i.vc_origin_contract_no is null
+   and a.c_redeal_flag = '0'
+   	<isNotNull property="lSettleDate"> <!--回购日期限制-->
+   	and a.l_hg_date &lt; to_number(#lSettleDate#)
+   and a.L_REDEEM_LIQUIDATE &gt; to_number(#lSettleDate#)
+     </isNotNull>
+     <isNotNull property="fundId"> <!--产品代码-->
+          and  e.vc_fund_code = #fundId#
+     </isNotNull>
+     <isNotNull property="vcCombiName"> <!--组合ID-->
+          and f.vc_combi_no = #vcCombiName#
+     </isNotNull>
+     <isNotNull property="startDate"> <!--开始日期-->
+          and a.l_redeem_liquidate &gt;= #startDate#
+     </isNotNull>
+     <isNotNull property="endDate"> <!--结束日期-->
+          and a.l_redeem_liquidate &lt;= #endDate#
+     </isNotNull>
+     <isNotNull property="cEntrustDirection"> <!--委托方向-->
+          and a.c_entrust_direction = #cEntrustDirection#
+     </isNotNull>
+    </select>
+    <resultMap class="commonj.sdo.DataObject" id="lSerialNoMap">
+        <result column="L_SERIAL_NO" javaType="String" property="lSerialNo"/>
+    </resultMap>
+    <select id="querylSerialNo" parameterClass="java.lang.String" resultMap="lSerialNoMap">
+	    select l_serial_no from  t_ats_inquiry_result_instruct where l_serial_no in ($lSerialNoes$)
+    </select>
+</sqlMap>

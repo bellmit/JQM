@@ -1,0 +1,10 @@
+<mapping>
+	<method name="exchangeSecondOrderIssued">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+	<method name="exchangeSecondOrderModify">
+		<parameter index="0" name="BondOrder" />
+		<parameter index="-1" name="result" />
+	</method>
+</mapping>

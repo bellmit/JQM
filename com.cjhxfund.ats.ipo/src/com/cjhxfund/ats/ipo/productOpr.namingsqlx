@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:侯志勇 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="investmentProduct">
+        <result column="L_PRODUCT_NO" javaType="long" property="lProductNo"/> <!-- 主键 -->
+        <result column="VC_RATION_PRODUCT_CODE" javaType="string" property="vcRationProductCode"/>
+        <result column="VC_RATION_PRODUCT_NAME" javaType="string" property="vcRationProductName"/>
+        <result column="VC_RATION_PRODUCT_TYPE" javaType="string" property="vcRationProductType"/>
+        <result column="VC_ASSOCIATION_CODE" javaType="string" property="vcAssociationCode"/>
+        <result column="VC_STOCK_ACCOUNT_SH" javaType="string" property="vcStockAccountSh"/>
+        <result column="VC_STOCK_ACCOUNT_SZ" javaType="string" property="vcStockAccountSz"/>
+        <result column="VC_STOCK_ACCOUNT_SZ_NAME" javaType="string" property="vcStockAccountSzName"/>
+        <result column="VC_ASSET_TYPE" javaType="string" property="vcAssetType"/>
+        <result column="VC_RECORD_TYPE" javaType="string" property="vcRecordType"/>
+        <result column="VC_RECORD_REMARK" javaType="string" property="vcRecordRemark"/>     
+    </resultMap>
+    
+    <!-- 查询所有投顾参与及主动管理的产品列表 -->
+    <select id="queryProductByTrade" parameterClass="commonj.sdo.DataObject" resultMap="investmentProduct">
+    	SELECT T1.L_PRODUCT_NO,
+    		T1.VC_RATION_PRODUCT_CODE,
+    		T1.VC_RATION_PRODUCT_NAME,
+    		T1.VC_RATION_PRODUCT_TYPE,
+    		T1.VC_ASSOCIATION_CODE,
+    		T1.VC_STOCK_ACCOUNT_SH,
+    		T1.VC_STOCK_ACCOUNT_SZ,
+    		T1.VC_STOCK_ACCOUNT_SZ_NAME,
+    		T1.VC_ASSET_TYPE,
+    		T1.VC_RECORD_TYPE,
+    		T1.VC_RECORD_REMARK
+    	FROM T_ATS_IPO_PRODUCT_INFO T1 
+    	WHERE T1.VC_RATION_PRODUCT_TYPE='01' 
+    		AND T1.VC_JOIN_TYPE = '00'
+    	UNION ALL
+    	SELECT T2.L_PRODUCT_NO,
+    		T2.VC_RATION_PRODUCT_CODE,
+    		T2.VC_RATION_PRODUCT_NAME,
+    		T2.VC_RATION_PRODUCT_TYPE,
+    		T2.VC_ASSOCIATION_CODE,
+    		T2.VC_STOCK_ACCOUNT_SH,
+    		T2.VC_STOCK_ACCOUNT_SZ,
+    		T2.VC_STOCK_ACCOUNT_SZ_NAME,
+    		T2.VC_ASSET_TYPE,
+    		T2.VC_RECORD_TYPE,
+    		T2.VC_RECORD_REMARK
+    	FROM T_ATS_IPO_PRODUCT_INFO T2 
+    	WHERE T2.VC_RATION_PRODUCT_TYPE='00' AND T2.VC_JOIN_TYPE = '00'
+    	AND T2.VC_RATION_PRODUCT_CODE IN 
+    		(SELECT T.VC_RATION_PRODUCT_CODE 
+    			FROM T_ATS_IPO_PRODUCT_INFO T,T_ATS_IPO_INSTRUCT_PRODUCT P 
+        		WHERE T.VC_RATION_PRODUCT_CODE=P.VC_RATION_PRODUCT_CODE 
+        		AND P.VC_PRODUCT_PARTICIPANTION='00'
+        		AND P.L_INSTRUCT_NO=#lInstructNo#)
+    </select>
+	
+	<!-- 查询所有参与的产品列表 -->
+	<select id="queryProductByParticipant" parameterClass="commonj.sdo.DataObject" resultMap="investmentProduct">
+		SELECT T.L_PRODUCT_NO,
+    		T.VC_RATION_PRODUCT_CODE,
+    		T.VC_RATION_PRODUCT_NAME,
+    		T.VC_RATION_PRODUCT_TYPE,
+    		T.VC_ASSOCIATION_CODE,
+    		T.VC_STOCK_ACCOUNT_SH,
+    		T.VC_STOCK_ACCOUNT_SZ,
+    		T.VC_STOCK_ACCOUNT_SZ_NAME,
+    		T.VC_ASSET_TYPE,
+    		T.VC_RECORD_TYPE,
+    		T.VC_RECORD_REMARK 
+    	FROM T_ATS_IPO_PRODUCT_INFO T,T_ATS_IPO_INSTRUCT_PRODUCT P 
+        WHERE T.VC_RATION_PRODUCT_CODE=P.VC_RATION_PRODUCT_CODE 
+        	AND P.L_INSTRUCT_NO=#lInstructNo# 
+        	AND P.VC_PRODUCT_PARTICIPANTION='00'
+	</select>
+	
+	
+	<!-- 查询投顾产品列表 -->
+	<select id="queryProductByInvestment" parameterClass="commonj.sdo.DataObject" resultMap="investmentProduct">
+    	SELECT T1.L_PRODUCT_NO,
+    		T1.VC_RATION_PRODUCT_CODE,
+    		T1.VC_RATION_PRODUCT_NAME,
+    		T1.VC_RATION_PRODUCT_TYPE,
+    		T1.VC_ASSOCIATION_CODE,
+    		T1.VC_STOCK_ACCOUNT_SH,
+    		T1.VC_STOCK_ACCOUNT_SZ,
+    		T1.VC_STOCK_ACCOUNT_SZ_NAME,
+    		T1.VC_ASSET_TYPE,
+    		T1.VC_RECORD_TYPE,
+    		T1.VC_RECORD_REMARK
+    	FROM T_ATS_IPO_PRODUCT_INFO T1 
+    	WHERE T1.VC_RATION_PRODUCT_TYPE=#rationType#
+    </select>
+    <!-- 查询所有未被剔除的主动管理的产品 -->
+    <select id="queryProductAllNotJoin" parameterClass="commonj.sdo.DataObject" resultMap="investmentProduct">
+    	SELECT T1.L_PRODUCT_NO,
+    		T1.VC_RATION_PRODUCT_CODE,
+    		T1.VC_RATION_PRODUCT_NAME,
+    		T1.VC_RATION_PRODUCT_TYPE,
+    		T1.VC_ASSOCIATION_CODE,
+    		T1.VC_STOCK_ACCOUNT_SH,
+    		T1.VC_STOCK_ACCOUNT_SZ,
+    		T1.VC_STOCK_ACCOUNT_SZ_NAME,
+    		T1.VC_ASSET_TYPE,
+    		T1.VC_RECORD_TYPE,
+    		T1.VC_RECORD_REMARK
+    	FROM T_ATS_IPO_PRODUCT_INFO T1 
+    	WHERE T1.VC_RATION_PRODUCT_TYPE='01' 
+    	OR T1.VC_RATION_PRODUCT_CODE IN 
+    		(SELECT T.VC_RATION_PRODUCT_CODE 
+    			FROM T_ATS_IPO_PRODUCT_INFO T,T_ATS_IPO_INSTRUCT_PRODUCT P 
+        		WHERE T.VC_RATION_PRODUCT_CODE=P.VC_RATION_PRODUCT_CODE 
+        		AND P.VC_PRODUCT_PARTICIPANTION='00' 
+        		AND T.VC_RATION_PRODUCT_TYPE='00' 
+        		AND P.L_INSTRUCT_NO=#lInstructNo#)
+    </select>
+
+	<resultMap class="commonj.sdo.DataObject" id="productMarketValue">
+        <result column="OBJECT_NAME" javaType="string" property="objectName"/> <!-- 配售对象名称 -->
+        <result column="OBJECT_ID" javaType="string" property="objectId"/><!-- 配售对象编码 -->
+        <result column="ASSOCI_ID" javaType="string" property="associId"/><!-- 协会编码-->
+        <result column="ACCOUNT_SZ" javaType="string" property="accountSz"/><!-- 深市证券账户 -->
+        <result column="ACCOUNT_SH" javaType="string" property="accountSh"/><!-- 沪市证券账户-->
+        <result column="ASSET_VALUE" javaType="double" property="assetValue"/><!-- T-1日资产总值 -->
+        <result column="MARKET_VALUE_SZ" javaType="double" property="marketValueSz"/><!-- 深市基准日前20日日均市值 -->
+        <result column="MARKET_VALUE_SH" javaType="double" property="marketValueSh"/> <!-- 沪市基准日前20日日均市值 -->
+        <result column="ASSET_NET_VALUE" javaType="double" property="assetNetValue"/> <!-- 基金资产净值 -->
+        <result column="PROD_END_DTE" javaType="DATE" property="prodEndDate" /><!-- 产品到期日 -->
+        <result column="SEAT_SZ" javaType="string" property="seatSz" /><!-- 深圳主席位号 -->
+        <result column="PROD_CODE" javaType="string" property="prodCode" /><!-- 产品代码 --> 
+        <result column="PROD_NAME" javaType="string" property="prodName" /><!-- 产品简称 -->  
+    </resultMap>
+    
+    <select id="queryProductMarketValue" parameterClass="commonj.sdo.DataObject" resultMap="productMarketValue">
+    	SELECT AIL.PRID,
+    		AIL.OBJECT_NAME,  
+    		translate(AIL.OBJECT_ID,chr(13)||chr(10),',') as OBJECT_ID,
+    		AIL.ASSOCI_ID,
+    		AIL.ACCOUNT_SZ,
+    		AIL.ACCOUNT_SH,
+       		AIL.ASSET_VALUE,
+       		AIL.MARKET_VALUE_SZ,
+       		AIL.MARKET_VALUE_SH,
+       		AIL.PROD_END_DTE,
+       		AIL.SEAT_SZ,
+       		AIL.ASSET_NET_VALUE,
+       		AIL.PROD_CODE,
+       		AIL.PROD_NAME  
+		FROM DW.A004_IPO_LIMIT AIL 
+		WHERE AIL.PRID=TO_CHAR(TO_DATE(#currentDate#,'YYYYMMDD'),'YYYYMMDD')
+		<isNotNull property="vcRationProductCode">
+ 			AND translate(OBJECT_ID,chr(13)||chr(10),',') IN ($vcRationProductCode$)
+ 		</isNotNull>
+ 		<isNotNull property="rationCode">
+ 			AND translate(object_id,chr(13)||chr(10),',')=#rationCode#
+ 		</isNotNull>
+ 		<isNotNull property="prodCode">
+ 			AND PROD_CODE IN ($prodCode$)
+ 		</isNotNull>
+ 		<isNotNull property="sortField">
+ 			order by $sortField$
+ 		</isNotNull>
+ 		<isNotNull property="sortOrder">
+ 			$sortOrder$
+ 		</isNotNull>
+    </select>
+    
+    
+     <select id="queryProductMarketValue2" parameterClass="commonj.sdo.DataObject" resultMap="productMarketValue">
+    	SELECT AIL.PRID,
+    		AIL.OBJECT_NAME,  
+    		translate(AIL.OBJECT_ID,chr(13)||chr(10),',') as OBJECT_ID,
+    		AIL.ASSOCI_ID,
+    		AIL.ACCOUNT_SZ,
+    		AIL.ACCOUNT_SH,
+       		AIL.ASSET_VALUE,
+       		AIL.MARKET_VALUE_SZ,
+       		AIL.MARKET_VALUE_SH,
+       		AIL.PROD_END_DTE,
+       		AIL.SEAT_SZ,
+       		AIL.ASSET_NET_VALUE,
+       		AIL.PROD_CODE,
+       		AIL.PROD_NAME  
+		FROM DW.A004_IPO_LIMIT2 AIL
+		WHERE AIL.PRID=TO_CHAR(TO_DATE(#currentDate#,'YYYYMMDD'),'YYYYMMDD')
+		<isNotNull property="vcRationProductCode">
+ 			AND translate(OBJECT_ID,chr(13)||chr(10),',') IN ($vcRationProductCode$)
+ 		</isNotNull>
+ 		<isNotNull property="rationCode">
+ 			AND translate(OBJECT_ID,chr(13)||chr(10),',')=#rationCode#
+ 		</isNotNull>
+ 		<isNotNull property="prodCode">
+ 			AND PROD_CODE IN ($prodCode$)
+ 		</isNotNull>
+ 		<isNotNull property="sortField">
+ 			order by $sortField$
+ 		</isNotNull>
+ 		<isNotNull property="sortOrder">
+ 			$sortOrder$
+ 		</isNotNull>
+    </select>
+    
+    
+    
+    <resultMap class="commonj.sdo.DataObject" id="purchaseInfo">
+        <result column="VC_RATION_PRODUCT_CODE" javaType="string" property="vcRationProductCode"/> <!-- 配售对象编码 -->
+        <result column="VC_RATION_PRODUCT_NAME" javaType="string" property="vcRationProductName"/><!-- 配售对象名称 -->
+        <result column="VC_RATION_PRODUCT_TYPE" javaType="string" property="vcRationProductType"/><!-- 配售对象类型-->
+        <result column="VC_ASSOCIATION_CODE" javaType="string" property="vcAssociationCode"/><!-- 协会编码 -->
+        <result column="VC_STOCK_ACCOUNT_SH" javaType="string" property="vcStockAccountSh"/><!-- 沪市证券账户-->
+        <result column="VC_STOCK_ACCOUNT_SZ" javaType="string" property="vcStockAccountSz"/><!-- 深市证券账户 -->
+        <result column="VC_STOCK_ACCOUNT_SZ_NAME" javaType="string" property="vcStockAccountSzName"/><!-- 深市证券账户名称 -->
+        <result column="VC_ASSET_TYPE" javaType="string" property="vcAssetType"/> <!-- 资产类别 -->
+        <result column="VC_RECORD_REMARK" javaType="string" property="vcRecordRemark"/> <!-- 备案备注 -->
+        <result column="L_INSTRUCT_PRODUCT_NO" javaType="long" property="lInstructProductNo" /><!-- 指令产品关联主键 -->
+        <result column="L_INSTRUCT_NO" javaType="long" property="lInstructNo" /><!-- 指令编号 --> 
+        <result column="VC_PRODUCT_PARTICIPANTION" javaType="string" property="vcProductParticipantion" /><!-- 产品参与类型 -->  
+	    <result column="L_PURCHASE_NO" javaType="long" property="lPurchaseNo" /><!-- 指令申购主键 -->
+	    <result column="EN_PURCHASE_PRICE" javaType="double" property="enPurchasePrice" /><!-- 申报价格 -->
+	    <result column="EN_PURCHASE_NUMBER" javaType="double" property="enPurchaseNumber" /><!-- 申购数量（万股） -->
+	    <result column="EN_PURCHASE_MONEY" javaType="double" property="enPurchaseMoney" /><!-- 申购金额（万元） -->
+	    <result column="EN_PURCHASE_MONEY_RATE" javaType="double" property="enPurchaseMoneyRate" /><!-- 申购金额占净值比例 -->
+	    <result column="EN_DISTRIBUTION_RATE" javaType="double" property="enDistributionRate" /><!-- 预计获配占净值比例 -->
+	    <result column="EN_RESERVE_MONEY" javaType="double" property="enReserveMoney" /><!-- 预留金额（万元） -->
+	    <result column="L_LOCK_TIME" javaType="long" property="lLockTime" /><!-- 锁定期 -->
+	    <result column="L_END_TIME" javaType="long" property="lEndTime" /><!-- 完成时间 -->
+	    <result column="VC_COMPLIANCE_STATE" javaType="string" property="vcComplianceState" /><!-- 风控状态 -->
+	    <result column="VC_COMPLIANCE_REMARK" javaType="string" property="vcComplianceRemark" /><!-- 不合规备注 -->
+	    <result column="EN_PURCHASE_BEFORE_NUMBER" javaType="double" property="enPurchaseBeforeNumber" /><!-- 申报数量（万股）  初始指令数量 -->
+    </resultMap>
+    
+    <!-- 查询申购信息 -->
+    <select  id="queryPurchaseInfo" parameterClass="commonj.sdo.DataObject" resultMap="purchaseInfo">
+	    SELECT P.L_PRODUCT_NO,
+			P.VC_RATION_PRODUCT_CODE,
+			P.VC_RATION_PRODUCT_NAME,
+			P.VC_RATION_PRODUCT_TYPE,
+			P.VC_ASSOCIATION_CODE,
+			P.VC_STOCK_ACCOUNT_SH,
+			P.VC_STOCK_ACCOUNT_SZ,
+			P.VC_STOCK_ACCOUNT_SZ_NAME,
+			P.VC_ASSET_TYPE,
+			P.VC_RECORD_REMARK,
+			INP.L_INSTRUCT_PRODUCT_NO,
+			INP.L_INSTRUCT_NO,
+			INP.VC_PRODUCT_PARTICIPANTION,
+			PUC.L_PURCHASE_NO,
+			PUC.EN_PURCHASE_PRICE,
+			PUC.EN_PURCHASE_NUMBER,
+			PUC.EN_PURCHASE_MONEY,
+			PUC.EN_PURCHASE_MONEY_RATE,
+			PUC.EN_DISTRIBUTION_RATE,
+			PUC.EN_RESERVE_MONEY,
+			PUC.L_LOCK_TIME,
+			PUC.L_END_TIME,
+			PUC.VC_COMPLIANCE_STATE,
+			PUC.VC_COMPLIANCE_REMARK ,
+			EN_PURCHASE_BEFORE_NUMBER
+		FROM T_ATS_IPO_PRODUCT_INFO P,
+			T_ATS_IPO_INSTRUCT_PRODUCT INP,
+			T_ATS_IPO_INSTRUCT_PURCHASE PUC 
+		WHERE PUC.VC_RATION_PRODUCT_CODE=P.VC_RATION_PRODUCT_CODE 
+			AND PUC.VC_RATION_PRODUCT_CODE=INP.VC_RATION_PRODUCT_CODE 
+			AND PUC.L_INSTRUCT_NO=INP.L_INSTRUCT_NO
+			AND INP.VC_PRODUCT_PARTICIPANTION != '01'
+			AND PUC.L_INSTRUCT_NO=#lInstructNo# 
+		<isNotNull property="vcProductParticipantion"><!-- 参与类型 -->
+    		AND INP.VC_PRODUCT_PARTICIPANTION=#vcProductParticipantion#
+    	</isNotNull>
+    	<isNotNull property="vcComplianceState"><!-- 参与类型 -->
+    		AND PUC.VC_COMPLIANCE_STATE=#vcComplianceState#
+    	</isNotNull>
+    		ORDER BY INP.VC_PRODUCT_PARTICIPANTION
+    </select>
+    
+    
+    <!-- 查询申购信息，用于风控提交之后的环节 -->
+    <select  id="queryPurchaseInfo2" parameterClass="commonj.sdo.DataObject" resultMap="purchaseInfo">
+	    SELECT P.L_PRODUCT_NO,
+			P.VC_RATION_PRODUCT_CODE,
+			P.VC_RATION_PRODUCT_NAME,
+			P.VC_RATION_PRODUCT_TYPE,
+			P.VC_ASSOCIATION_CODE,
+			P.VC_STOCK_ACCOUNT_SH,
+			P.VC_STOCK_ACCOUNT_SZ,
+			P.VC_STOCK_ACCOUNT_SZ_NAME,
+			P.VC_ASSET_TYPE,
+			P.VC_RECORD_REMARK,
+			INP.L_INSTRUCT_PRODUCT_NO,
+			INP.L_INSTRUCT_NO,
+			INP.VC_PRODUCT_PARTICIPANTION,
+			PUC.L_PURCHASE_NO,
+			PUC.EN_PURCHASE_PRICE,
+			PUC.EN_PURCHASE_NUMBER,
+			PUC.EN_PURCHASE_MONEY,
+			PUC.EN_PURCHASE_MONEY_RATE,
+			PUC.EN_DISTRIBUTION_RATE,
+			PUC.EN_RESERVE_MONEY,
+			PUC.L_LOCK_TIME,
+			PUC.L_END_TIME,
+			PUC.VC_COMPLIANCE_STATE,
+			PUC.VC_COMPLIANCE_REMARK ,
+			EN_PURCHASE_BEFORE_NUMBER
+		FROM T_ATS_IPO_PRODUCT_INFO P,
+			T_ATS_IPO_INSTRUCT_PRODUCT INP,
+			T_ATS_IPO_INSTRUCT_PURCHASE PUC 
+		WHERE PUC.VC_RATION_PRODUCT_CODE=P.VC_RATION_PRODUCT_CODE 
+			AND PUC.VC_RATION_PRODUCT_CODE=INP.VC_RATION_PRODUCT_CODE 
+			AND PUC.L_INSTRUCT_NO=INP.L_INSTRUCT_NO
+			AND PUC.L_INSTRUCT_NO=#lInstructNo# 
+		<isNotNull property="vcProductParticipantion"><!-- 参与类型 -->
+    		AND INP.VC_PRODUCT_PARTICIPANTION=#vcProductParticipantion#
+    	</isNotNull>
+    	<isNotNull property="vcComplianceState"><!-- 参与类型 -->
+    		AND PUC.VC_COMPLIANCE_STATE=#vcComplianceState#
+    	</isNotNull>
+    		ORDER BY INP.VC_PRODUCT_PARTICIPANTION
+    </select>
+   
+</sqlMap>

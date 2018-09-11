@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:杨敏 -->
+<sqlMap>
+   <!--定义返回值类型-->
+   <resultMap class="commonj.sdo.DataObject" id="fileResultMap">
+        <result column="L_ATTACH_ID" javaType="int" property="lAttachId"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="VC_WHETHER_INDIA" javaType="string" property="vcWhetherIndia"/>
+        <result column="VC_ANNEX_SEAL" javaType="string" property="vcAnnexSeal"/>
+        <result column="WORKITEMNAME" javaType="string" property="workitemname"/>
+        <result column="VC_USER_ID" javaType="string" property="vcUserId"/>
+        <result column="empcode" javaType="string" property="empcode"/>
+        <result column="empname" javaType="string" property="empname"/>
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="C_WHETHER_ARCHIVING" javaType="string" property="cWhetherArchiving"/>
+     </resultMap>
+     
+     <resultMap class="commonj.sdo.DataObject" id="fileNoProcessMap">
+        <result column="L_ATTACH_ID" javaType="int" property="lAttachId"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="VC_VERSION_NO" javaType="string" property="vcVersionNo"/>
+        <result column="VC_USER_ID" javaType="string" property="vcUserId"/>
+        <result column="empcode" javaType="string" property="empcode"/>
+        <result column="empname" javaType="string" property="empname"/>
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+     </resultMap>
+     
+     <resultMap class="commonj.sdo.DataObject" id="fileResultMapLuRu">
+        <result column="L_ATTACH_ID" javaType="int" property="lAttachId"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="VC_WHETHER_INDIA" javaType="string" property="vcWhetherIndia"/>
+        <result column="VC_ANNEX_SEAL" javaType="string" property="vcAnnexSeal"/>
+        
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="C_WHETHER_ARCHIVING" javaType="string" property="cWhetherArchiving"/>
+     </resultMap>
+     
+     <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="L_ATTACH_ID" javaType="string" property="lAttachId"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="VC_WHETHER_INDIA" javaType="string" property="vcWhetherIndia"/>
+        <result column="VC_ANNEX_SEAL" javaType="string" property="vcAnnexSeal"/>
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+     </resultMap>
+     
+     
+     <resultMap class="com.cjhxfund.ats.fm.comm.comm.TAtsAttachInfo" id="resultMap1">
+        <result column="L_ATTACH_ID" javaType="string" property="lAttachId"/>
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachBIZType"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_STATE" javaType="string" property="vcAttachState"/>
+        <result column="D_CREATE_TIME" javaType="Date" property="dCreateTime"/>
+        <result column="VC_USER_ID" javaType="string" property="vcUserId"/>
+        <result column="VC_FILE_ID" javaType="string" property="vcFileId"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="L_PROCESS_INST_ID" javaType="int" property="lProcessInstId"/>
+        <result column="L_APRV_INFO_ID" javaType="int" property="lAprvInfoId"/>
+        <result column="L_WORK_ITEM_ID" javaType="int" property="lWorkItemId"/>
+        <result column="VC_WHETHER_INDIA" javaType="string" property="vcWhetherIndia"/>
+        <result column="VC_ANNEX_SEAL" javaType="string" property="vcAnnexSeal"/>
+        <result column="VC_WHETHER_FAX" javaType="string" property="vcWhetherFax"/>
+        <result column="VC_VERSION_NO" javaType="string" property="vcVersionNo"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+        <result column="VC_PROCESS_TYPE" javaType="string" property="vcProcessType"/>
+        <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/>
+        <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/>
+        <result column="L_INVEST_NO" javaType="int" property="lInvestNo"/>
+        <result column="VC_STOCK_CODE" javaType="string" property="vcStockCode"/>
+        <result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+        <result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/>
+        <result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/>
+        <result column="VC_STOCK_NAME_FULL" javaType="string" property="vcStockNameFull"/>
+     </resultMap>
+     
+     <resultMap class="com.cjhxfund.ats.fm.comm.comm.TAtsAttachInfo" id="resultMap2">
+        <result column="L_ATTACH_ID" javaType="string" property="lAttachId"/>
+        <result column="L_BIZ_ID" javaType="string" property="lBizId"/>
+        <result column="VC_ATTACH_BIZ_TYPE" javaType="string" property="vcAttachBizType"/>
+        <result column="VC_ATTACH_NAME" javaType="string" property="vcAttachName"/>
+        <result column="VC_ATTACH_ADD" javaType="string" property="vcAttachAdd"/>
+        <result column="VC_ATTACH_STATE" javaType="string" property="vcAttachState"/>
+        <result column="D_CREATE_TIME" javaType="Date" property="dCreateTime"/>
+        <result column="VC_USER_ID" javaType="string" property="vcUserId"/>
+        <result column="VC_FILE_ID" javaType="string" property="vcFileId"/>
+        <result column="VC_ATTACH_SIZE" javaType="string" property="vcAttachSize"/>
+        <result column="L_PROCESS_INST_ID" javaType="int" property="lProcessInstId"/>
+        <result column="L_APRV_INFO_ID" javaType="int" property="lAprvInfoId"/>
+        <result column="L_WORK_ITEM_ID" javaType="int" property="lWorkItemId"/>
+        <result column="VC_WHETHER_INDIA" javaType="string" property="vcWhetherIndia"/>
+        <result column="VC_ANNEX_SEAL" javaType="string" property="vcAnnexSeal"/>
+        <result column="VC_WHETHER_FAX" javaType="string" property="vcWhetherFax"/>
+        <result column="VC_VERSION_NO" javaType="string" property="vcVersionNo"/>
+        <result column="VC_ATTACH_TYPE" javaType="string" property="vcAttachType"/>
+     </resultMap>
+     
+     <resultMap id="fileResult" class="java.util.HashMap">
+		  <result property="sysid" column="L_ATTACH_ID"/>
+		  <result property="name" column="VC_ATTACH_NAME"/>
+		  <result property="attachSize" column="VC_ATTACH_SIZE"/>
+		  <result property="vcAttachType" column="VC_ATTACH_TYPE"/>
+		  <result property="vcAttachAdd" column="VC_ATTACH_ADD"/>
+		  <result property="vcUserId" column="VC_USER_ID"/>
+		  <result property="vcUserName" column="VC_USER_NAME"/>
+		  <result property="dCreateTime" javaType="Date" column="D_CREATE_TIME"/>
+	</resultMap>
+     
+     
+   <!-- 查询附件列表 -->
+    <select id="queryAttachmentList"  parameterClass="java.util.Map" resultMap="fileResultMap">
+    	select info.*,wf.workitemname,emp.empcode,emp.empname from T_ATS_ATTACH_INFO info,wfworkitem wf,org_employee emp
+        where info.l_work_item_id = wf.workitemid and info.vc_user_id=emp.empcode and info.l_biz_id=#bizId# 
+        and info.vc_version_no = '1'
+        <isNotNull property="processinstid"> 
+       	  and info.l_process_inst_id = '$processinstid$'
+        </isNotNull> 
+      	<isNotNull property="workItemID">
+        	and info.l_work_item_id = #workItemID# 
+      	</isNotNull>
+      	<isNotNull property="annexseal">
+        	and info.vc_annex_seal != #annexseal# 
+      	</isNotNull>
+      	<isNotNull property="attachBusType">
+        	and info.vc_attach_biz_type = #attachBusType#      
+      	</isNotNull>
+      	
+      	<isNotNull property="activitydefid">
+      	   union all
+           select info.*,wf.workitemname from T_ATS_ATTACH_INFO info,wfworkitem wf
+      	   where info.l_work_item_id = wf.workitemid and wf.activitydefid=#activitydefid# and info.l_process_inst_id=#processinstid#
+      	</isNotNull>
+
+    </select>
+    <!-- 查询无流程附件 -->
+    <select id="queryAttachListNoProcess"  parameterClass="java.util.Map" resultMap="fileNoProcessMap">
+    	select info.*,emp.empcode,emp.empname from T_ATS_ATTACH_INFO info,org_employee emp
+        where info.vc_user_id=emp.empcode 
+        and info.l_biz_id=#bizId# 
+        and info.vc_version_no = '1'
+       	and info.l_process_inst_id = '0'
+      	<isNotNull property="attachBusType">
+        	and info.vc_attach_biz_type = #attachBusType#      
+      	</isNotNull>
+
+    </select>
+    
+    
+    <!-- 查询附件列表  录入界面专用-->
+     <select id="queryAttachmentListLuRu"  parameterClass="java.util.Map" resultMap="fileResultMapLuRu">
+    	select * from T_ATS_ATTACH_INFO info
+        where info.l_biz_id=#bizId# 
+        and info.vc_version_no = '1'
+    </select>
+    
+     <!-- 查询附件个数（根据流程逻辑ID）-->
+    <select id="getAttachCount"  parameterClass="java.util.Map" resultClass="java.lang.String">
+    	select count(1) from t_ats_attach_info t where t.l_biz_id = #lbizid#
+    </select>
+    
+    <!-- 附件查询 add by shihao-->
+    <select id="getAttachInfos"  parameterClass="java.util.Map" resultMap="fileResult">
+    	(select L_ATTACH_ID,VC_ATTACH_NAME,VC_ATTACH_SIZE,VC_ATTACH_ADD,VC_ATTACH_TYPE,D_CREATE_TIME,
+    		VC_USER_ID, 
+    		(select e.empname from org_employee e where e.userid=vc_user_id) VC_USER_NAME
+    	from T_ATS_ATTACH_INFO 
+        where 1 = 1
+        <isNotNull property="bizId"> 
+       	   and l_biz_id=#bizId# 
+        </isNotNull>
+         <isNotNull property="attachBusType"> 
+       	   and VC_ATTACH_BIZ_TYPE in ($attachBusType$) 
+        </isNotNull> 
+         <isNotNull property="attachType"> 
+       	   and VC_ATTACH_TYPE=#attachType# 
+        </isNotNull>
+        )
+        <isNotNull property="lStockInvestNo">
+        union
+        (select L_ATTACH_ID,VC_ATTACH_NAME,VC_ATTACH_SIZE,VC_ATTACH_ADD,VC_ATTACH_TYPE,D_CREATE_TIME,
+    		VC_USER_ID, 
+    		(select e.empname from org_employee e where e.userid=vc_user_id) VC_USER_NAME
+    	from T_ATS_ATTACH_INFO 
+        where 1 = 1         
+       	   and L_STOCK_INVEST_NO=#lStockInvestNo# 
+        )
+        </isNotNull>
+    </select>
+    
+   <!-- 删除附件信息 -->
+    <delete id="deleteAttachment" parameterClass="java.util.Map">
+		delete from T_ATS_ATTACH_INFO info where info.L_ATTACH_ID in ($lAttachId$)
+	</delete>
+	 <!-- 附件查询 add by shihao-->
+    <select id="getAttachInfosByIds"  parameterClass="java.util.Map" resultMap="resultMap">
+    	select *
+    	from T_ATS_ATTACH_INFO 
+        where l_attach_id in ($lAttachId$)
+    </select>
+	<!-- 查询最新的审批意见-->
+    <select id="queryApproveInfo"  parameterClass="java.util.Map" resultClass="com.cjhxfund.ats.fm.comm.comm.TAtsApproveInfo">
+    	select * from (select * from t_ats_approve_info aa where aa.l_process_inst_id=#processInstId#  order by aa.d_create_time desc) where   rownum = 1
+    </select>
+    
+	
+    <!--胥思明： 不同条件下查询附件列表 -->
+    <select id="queryAttachInfo"  parameterClass="java.util.Map" resultMap="resultMap1">
+    	select distinct
+		      t.l_attach_id,        
+		      t.l_biz_id,      
+		      p.VC_PROCESS_TYPE,
+		      p.VC_PRODUCT_CODE,
+		      p.VC_PRODUCT_NAME,
+		      p.L_INVEST_NO,
+		      p.VC_STOCK_CODE,
+		      p.VC_STOCK_NAME,
+		      (SELECT st.vc_stocktype_name from t_ats_stock_type_define st WHERE  st.vc_stock_type=p.VC_STOCK_TYPE) VC_STOCK_TYPE,
+		      p.VC_PAYMENT_PLACE,
+		      p.VC_STOCK_NAME_FULL,   
+		      t.vc_attach_biz_type, 
+		      t.vc_attach_name,    
+		      t.vc_attach_add,      
+		      t.vc_attach_state, 
+		      t.d_create_time,  
+		      t.vc_user_id,        
+		      t.vc_file_id,      
+		      t.vc_attach_size,    
+		      t.l_process_inst_id, 
+		      t.l_aprv_info_id,    
+		      t.l_work_item_id,     
+		      t.vc_whether_india, 
+		      t.vc_annex_seal,     
+		      t.vc_whether_fax,     
+		      t.vc_version_no,      
+		      t.vc_attach_type
+		     from T_ATS_ATTACH_INFO t left join t_ats_biz_process p
+		     on t.l_process_inst_id = p.l_process_inst_id
+		  where 1 = 1
+        <isNotNull property="vcStockNameFull"> 
+		        AND p.VC_STOCK_NAME_FULL like '%'||#vcStockNameFull#||'%'
+        </isNotNull>
+        <isNotNull property="vcAttachName"> 
+		        AND t.VC_ATTACH_NAME like '%'||#vcAttachName#||'%'
+        </isNotNull>
+        <isNotNull property="vcProductName"> 
+		        AND p.VC_PRODUCT_NAME like '%'||#vcProductName#||'%'
+        </isNotNull>
+        <isNotNull property="vcStockCode"> 
+		        AND p.VC_STOCK_CODE like '%'||#vcStockCode#||'%'
+        </isNotNull>
+        <isNotNull property="vcStockName"> 
+		        AND p.VC_STOCK_NAME like '%'||#vcStockName#||'%'
+        </isNotNull>
+        <isNotNull property="vcPaymentPlace"> 
+		        AND p.VC_PAYMENT_PLACE = #vcPaymentPlace#
+        </isNotNull>
+        <isNotNull property="vcProcessType"> 
+		        AND p.VC_PROCESS_TYPE = #vcProcessType#
+        </isNotNull>
+        <isNotNull property="vcUserId"> 
+		        AND t.VC_USER_ID like '%'||#vcUserId#||'%'
+        </isNotNull> 
+      	<isNotNull property="dCreateTime">
+        	and t.D_CREATE_TIME = to_date('$dCreateTime$','yyyy-MM-dd hh24:mi:ss')
+      	</isNotNull>
+      	<isNotNull property="vcAttachState">
+        	and t.VC_ATTACH_STATE = #vcAttachState#      
+      	</isNotNull>
+      	<isNotNull property="vcAttachType">
+        	and t.VC_ATTACH_TYPE = #vcAttachType#
+      	</isNotNull>
+		  <isNotNull property="sortField">
+		  		order by $sortField$ 
+		  </isNotNull>
+		  <isNotNull property="sortOrder">
+		  		 $sortOrder$ 
+		  </isNotNull>
+    </select>
+	
+	<select id="querySubAttachInfo" parameterClass="java.util.Map" resultMap="resultMap2">
+    	select distinct
+		      t.l_attach_id,        
+		      t.l_biz_id,      
+		      t.vc_attach_biz_type, 
+		      t.vc_attach_name,    
+		      t.vc_attach_add,      
+		      t.vc_attach_state, 
+		      t.d_create_time,  
+		      t.vc_user_id,        
+		      t.vc_file_id,      
+		      t.vc_attach_size,    
+		      t.l_process_inst_id, 
+		      t.l_aprv_info_id,    
+		      t.l_work_item_id,     
+		      t.vc_whether_india, 
+		      t.vc_annex_seal,     
+		      t.vc_whether_fax,     
+		      t.vc_version_no,      
+		      t.vc_attach_type
+		     from T_ATS_ATTACH_INFO t
+		  where 1 = 1
+        <isNotNull property="lBizId"> 
+			AND t.l_biz_id = #lBizId#
+        </isNotNull>
+        <isNotNull property="attachBusType"> 
+			AND t.VC_ATTACH_BIZ_TYPE = #attachBusType#
+        </isNotNull>
+        <isNotNull property="vcAttachType"> 
+			AND t.VC_ATTACH_TYPE = #vcAttachType#
+        </isNotNull>
+			AND t.l_attach_id = #lAttachId#
+    </select>
+    
+    <select id="getAttachIdByProductId" parameterClass="string" resultMap="resultMap">
+    	select a.* from t_ats_attach_info a right join (select t.vc_print_attach_id from t_ats_product_info t where l_product_id=#lProductId#) t on a.l_attach_id = t.vc_print_attach_id
+    </select>
+</sqlMap>

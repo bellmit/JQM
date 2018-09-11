@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="GB2312"?>
+<root>
+	<!-- Excel导出规则配置 -->
+	<module name="EXPORT_EXCEL">
+		<!-- 导出规则：字段英文名,字段中文名,业务字典（没有则为null）,字段数据类型-->
+		
+	    <!-- 新债跟踪导出Excel配置文件开始 -->
+		<group name="STOCK_ISSUE_TRACE_EXCEL_EXPORT">
+			<configValue key="rule">lProcessInstId,流程编号,null,String;dApplicationTime,业务时间,null,Date;vcProductName,产品名称,null,String;vcStockName,债券简称,null,String;vcStocktypeName,债券类别,null,String;enInterestRate,投标利率（%）,null,String;enInvestBalance,投标金额,null,String;vcMainUnderwriter,主承销商,null,String;cFaxStatus,传真签收情况,ATS_FAX_STATUS,String;enCouponRate,中标利率,null,String;isWinTheBidding,是否中标,null,String;cApplyAuthStatusStr,投标指令有效性,null,String;dPaymentDate,缴款日期,null,String;vcProcessTypeStr,流程类别,null,String;enBallotPrice,发行价格,null,String;enPayFaceValueStr,缴款面值,null,String;enPaymentMoney,缴款金额,null,String;t0jyky,头寸可用情况,null,String;lFixValidStatusStr,Fix发送状态,null,String;cTransferMoneyStr,划款情况,null,String;vcTransactionType,交易方式,ATS_FM_PAYMENT,String;vcBusinessObject,交易对手方,null,String;cPaymentAuthStatusStr,缴款授权状态,null,String;vcContactInfo,联系人与联系电话,null,String;vcTrackNumber,快递单号,null,String;vcRemark,备注,null,String;vcArchiveStatusStr,归档完成情况,null,String;workitemname,当前节点,null,String;</configValue>
+	    </group>
+	    <!-- 新债跟踪导出Excel配置文件结束 -->
+		
+	    <!-- 交易员交接管理导出Excel配置文件开始 -->
+		<group name="PRODUCT_TRANSFER_EXCEL_EXPORT">
+			<configValue key="rule">VC_BOND_CODE,产品代码,null,String;VC_BOND_ID,产品编号,null,String;VC_BOND_NAME,产品名称,null,String;VC_BOND_TRADER_EXPORT,债券交易员,null,String;VC_TEMP_BOND_TRADER_EXPORT,临时债券交易员,null,String;VC_STOCK_TRADER_EXPORT,股票交易员,null,String;VC_TEMP_STOCK_TRADER_EXPORT,临时股票交易员,null,String;VC_VALUATION_MANAGER,估值经理,null,String;VC_CUSTODIAN,委托人,null,String;VC_INVESTMENT_ADVISER,投顾,null,String;VC_CUSTOMER_MANAGER,客户经理,null,String;VC_PROJECT_MANAGER,项目经理,null,String;VC_INVESTMENT_MANAGER,投资经理,null,String;VC_CURRENCY_RECEPTION,本币前台号,null,String;VC_DISTRIBUTE_RULE,分发规则,ATS_PT_DISTRIBUTE_RULE,String;VC_CD_TRADE,CD交易,ATS_PT_CD_TRADE,String;VC_CURRENCY_TRADER,本币系统-交易员,ATS_PT_CURRENCY_TRADER,String;VC_CURRENCY_ACCOUNT_INFO,本币系统-账户信息,ATS_PT_CURRENCY_ACCOUNT_INFO,String;VC_INTEREST_RATE_SWAP,利率互换交易,ATS_PT_INTEREST_RATE_SWAP,String;D_PRODUCT_ESTABLISH,产品成立日期,null,String;VC_PRODUCT_CLEAR_STATUS,产品清算状态,ATS_PT_IS_CLEAR,String;VC_PRODUCT_ASCRIPTION,产品归属（交易内部）,ATS_PT_PRODUCT_ASCRIPTION,String;VC_PRODUCT_TYPE,产品类型,ATS_PT_PRODUCT_TYPE,String;VC_BUG_TYPE,业务类型,ATS_PT_BUG_TYPE,String;VC_COOPERATE_TYPE,合作模式,ATS_PT_COOPERATE_TYPE,String;VC_INVEST_TYPE,产品投资管理类型,ATS_PT_INVEST_TYPE,String;VC_PRODUCT_PROPERTY,产品属性,null,String;VC_PREP_FROZE,备付金冻结,null,String;VC_PRODUCT_MIX,产品结构,null,String;VC_EXCHANGES,交易所,null,String;VC_INTERBANK,银行间,null,String;VC_NAITIONAL_DEBT,国债期货,null,String;VC_IRS,IRS,null,String;VC_OTHER,其他（深交所协议回购/CDS等）,null,String;VC_TRAD_HABIT,交易习惯,null,String;VC_NEGATIVE_POSIITON,负头寸,null,String;VC_SPECIAL_NEED,特殊需求,null,String;IS_DOZEN_NEW,是否打新,ATS_PT_IS_DOZEN_NEW,String;VC_SPECIAL_PROVISION,关联交易特别规定,null,String;</configValue>
+	    </group>
+	    <!-- 交易员交接管理导出Excel配置文件结束 -->
+	    
+	    <!-- 交易员信息管理导出Excel配置文件开始 -->
+		<group name="JYY_MSG_EXCEL_EXPORT">
+			<configValue key="rule">VC_USER_ID,登录名,null,String;VC_NAME,交易员名称,null,String;VC_TYPE,交易员类型,ATS_PT_DEALER,String;VC_ATTACH,归属,ATS_JYY_SS,String;VC_QQ,QQ,null,String;VC_EMAIL,邮箱,null,String;VC_PHONE,联系电话,null,String;VC_FIXED_PHONE,座机,null,String;VC_BB_PHONE,本币前台号,null,String;VC_POST_STATE,在岗状态,ATS_ORG_STATE,String;</configValue>
+	    </group>
+	    <!-- 交易员信息管理导出Excel配置文件结束 -->
+	    
+	    <!-- 产品交接信息管理导出Excel配置文件开始 -->
+		<group name="PRODUCT_TRANSFER_INFO_EXCEL_EXPORT">
+			<configValue key="rule">VC_BOND_ID,产品编号,null,String;VC_BOND_CODE,产品代码,null,String;VC_BOND_NAME,产品名称,null,String;VC_TYPE,交接类型,ATS_PT_JG_TYPE,String;D_START_DAY_EXPORT,交接开始时间,null,String;D_END_DAY_EXPORT,交接结束时间,null,String;AUTHOR_NAME,授权人,null,String;PASSIVE_AUTHOR_NAME,被授权人,null,String;VC_REMARK,注意事项,null,String;VC_REVIEW_STATE,复核状态,ATS_PT_FH_STATUS,String;VC_REVIEWOR_NAME,复核人,null,String;VC_REVIEW_REMARK,复核意见,null,String;D_REVIEW_DATE_EXPORT,复核时间,null,String;D_CREATE_TIME_EXPORT,创建时间,null,String;</configValue>
+	    </group>
+	    <!-- 产品交接信息管理导出Excel配置文件结束 -->
+    
+    	<!-- 招行新债导出Excel配置文件开始 -->
+		<group name="STOCK_ISSUE_INFO_ZH_EXCEL_EXPORT">
+			<configValue key="rule">vcStockName,债券简称,null,String;cIsIntention,投资意向,null,String;vcIssuerNameFull,发行人全称,null,String;vcStocktypeName,债券分类,null,String;vcIssueType,公募/私募,issueType,String;enIssueBalance,发行规模（亿）,null,String;enExistLimite,期限（年）,null,String;vcMainUnderwriter,主承销商,null,String;cIssueAppraise,主体评级,issuerRating,String;cBondAppraise,债项评级,creditRating,String;lIssueBeginDate,招标日,null,String;vcRemarks,备注,null,String;</configValue>
+	    </group>
+	    <!-- 招行新债导出Excel配置文件结束 -->
+    	
+    	
+	</module>
+</root>

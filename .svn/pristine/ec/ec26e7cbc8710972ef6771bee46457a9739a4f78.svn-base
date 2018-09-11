@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:谭凯 -->
+<!-- author:基础数据 -->
+<sqlMap>
+    
+    <!-- 新债基础信息 resultMap 字段类型是按照excel文档顺序排序配置-->
+    
+    <resultMap class="com.cjhxfund.ats.fm.comm.comm.TAtsStockIssueInfo" id="resultMapForNewStockInfo">
+    	<result column="C_MARKET_NO" javaType="string" property="cMarketNo"/>
+    	<result column="VC_PAYMENT_PLACE" javaType="string" property="vcPaymentPlace"/>
+    	<result column="VC_INTER_CODE" javaType="string" property="vcInterCode"/>
+    	<result column="VC_STOCK_CODE" javaType="string" property="vcStockCode"/>
+    	<result column="VC_STOCK_NAME" javaType="string" property="vcStockName"/>
+    	<result column="VC_STOCK_NAME_FULL" javaType="string" property="vcStockNameFull"/>
+    	<result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/>
+    	<result column="EN_EXIST_LIMITE" javaType="double" property="enExistLimite"/>
+    	<result column="EN_ISSUE_BALANCE" javaType="double" property="enIssueBalance"/>
+    	<result column="C_BOND_APPRAISE" javaType="string" property="cBondAppraise"/>
+    	<result column="VC_BOND_APPRAISE_ORGAN" javaType="string" property="vcBondAppraiseOrgan"/>
+    	<result column="L_ISSUER_ID" javaType="double" property="lIssuerId"/>
+    	<result column="VC_ISSUER_NAME" javaType="string" property="vcIssuerName"/>
+    	<result column="VC_ISSUE_PROPERTY" javaType="string" property="vcIssueProperty"/>
+    	<result column="C_ISSUE_APPRAISE" javaType="string" property="cIssueAppraise"/>
+    	<result column="VC_ISSUE_APPRAISE_ORGAN" javaType="string" property="vcIssueAppraiseOrgan"/>
+    	<result column="VC_INDUSTRY" javaType="string" property="vcIndustry"/>
+    	<result column="VC_PROVINCE" javaType="string" property="vcProvince"/>
+    	<result column="L_GUARANTOR_ID" javaType="double" property="lGuarantorId"/>
+    	<result column="VC_GUARANTOR_NAME" javaType="string" property="vcGuarantorName"/>
+    	<result column="VC_GUARANTOR_SUMMARY" javaType="string" property="vcGuarantorSummary"/>
+    	<result column="L_ISSUE_POST_DATE" javaType="double" property="lIssuePostDate"/>
+    	<result column="L_ISSUE_BEGIN_DATE" javaType="double" property="lIssueBeginDate"/>
+    	<result column="L_PAY_DATE" javaType="double" property="lPayDate"/>
+    	<result column="L_PUBLISH_DATE" javaType="double" property="lPublishDate"/>
+    	<result column="L_BEGINCAL_DATE" javaType="double" property="lBegincalDate"/>
+    	<result column="L_ENDINCAL_DATE" javaType="double" property="lEndincalDate"/>
+    	<result column="C_INTEREST_TYPE" javaType="string" property="cInterestType"/>
+    	<result column="C_PAY_INTEREST_TYPE" javaType="string" property="cPayInterestType"/>
+    	<result column="EN_PAY_INTEVAL" javaType="double" property="enPayInteval"/>
+    	<result column="EN_FACE_RATE" javaType="double" property="enFaceRate"/>
+    	<result column="C_BID_TYPE" javaType="string" property="cBidType"/>
+    	<result column="C_PAY_TYPE" javaType="string" property="cPayType"/>
+    	<result column="VC_SPECIAL_TEXT" javaType="string" property="vcSpecialText"/>
+    	<result column="VC_MAIN_UNDERWRITER" javaType="string" property="vcMainUnderwriter"/>
+    	<result column="VC_DEPUTY_UNDERWRITER" javaType="string" property="vcDeputyUnderwriter"/>
+    	<result column="C_UNDERWRITE_TYPE" javaType="string" property="cUnderwriteType"/>
+    	<result column="VC_GROUP_UNDERWRITER" javaType="string" property="vcGroupUnderwriter"/>
+    	<result column="L_NEXT_EXERCISE_DATE" javaType="double" property="lNextExerciseDate"/>
+    	<result column="C_IS_SMALL_RAISED" javaType="string" property="cIsSmallRaised"/>
+    	<result column="C_IS_HAVE_SALEBACK" javaType="string" property="cIsHaveSaleback"/>
+    	<result column="D_BID_LIMIT_TIME" javaType="string" property="dBidLimitTime"/>
+    	<result column="C_IS_HAVE_BUYBACK" javaType="string" property="cIsHaveBuyback"/>
+    	<result column="EN_RESALE_YEAR" javaType="double" property="enResaleYear"/>
+    	<result column="EN_REDEMPTION_YEAR" javaType="double" property="enRedemptionYear"/>
+    </resultMap>
+    
+   	<!--交易对手信息 resultMap-->
+    <resultMap class="com.cjhxfund.cjapi.CJAPIData.TradeRivalInfoVo" id="resultMapForTradeRivalInfo">
+    	<result column="L_RIVAL_ID" javaType="string" property="vcTradeRival"/>
+    	<result column="VC_NAME" javaType="string" property="vcTradeRivalName"/>
+    </resultMap>
+    
+    <!-- 机构组合产品信息 resultMap -->
+    <resultMap class="com.cjhxfund.cjapi.CJAPIData.CombProductInfoVo" id="resultMapForOrgCombPrdInfo">
+	    <result column="VC_PRODUCT_CODE" javaType="string" property="vcProductCode"/>
+	    <result column="VC_PRODUCT_NAME" javaType="string" property="vcProductName"/>
+	    <result column="VC_COMBI_NO" javaType="string" property="vcCombiNo"/>
+    	<result column="VC_COMBI_NAME" javaType="string" property="vcCombiName"/>
+    </resultMap>
+    
+    <!-- 估值  resultMap -->
+    <resultMap class="com.cjhxfund.cjapi.CJAPIData.AppraisementInfoVo" id="resultMapForAppraisementInfo">
+    	<result column="VC_TGR" javaType="string" property="vcOrdName"/>
+    	<result column="VC_CODE" javaType="string" property="vcProductCode"/>
+    	<result column="VC_NAME" javaType="string" property="vcProductName"/>
+    	<result column="VC_KMMC" javaType="Decimal" property="enNetAssetValue"/>
+    	<result column="D_YWRQ" javaType="string" property="vcValuationDate"/>
+    </resultMap>
+    
+    <!-- 表值域信息  resultMap -->
+    <resultMap class="commonj.sdo.DataObject" id="domainValueMap">
+        <result column="VC_STOCK_TYPE" javaType="string" property="vcFieldCode"/>
+        <result column="VC_STOCKTYPE_NAME" javaType="string" property="vcFieldValue"/>
+    </resultMap>
+    
+    <!-- 获取存表值域信息 -->
+    <select id="queryDomainValue" parameterClass="commonj.sdo.DataObject" resultMap="domainValueMap">
+    	<![CDATA[
+	    	SELECT T.VC_STOCK_TYPE,T.VC_STOCKTYPE_NAME FROM T_ATS_STOCK_TYPE_DEFINE T 
+  		]]>
+  	</select>
+   
+ 
+  	<!-- 新债基础信息查询 by author:liangjilong-->
+    <select id="queryNewStockInfo" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForNewStockInfo">
+            SELECT A.C_MARKET_NO,
+            A.VC_PAYMENT_PLACE,
+            A.VC_INTER_CODE,
+            A.VC_STOCK_CODE,
+            A.VC_STOCK_NAME,
+            A.VC_STOCK_NAME_FULL,
+            A.VC_STOCK_TYPE,
+            A.EN_EXIST_LIMITE,
+            A.EN_ISSUE_BALANCE,
+            A.C_BOND_APPRAISE,
+            A.VC_BOND_APPRAISE_ORGAN,
+            A.L_ISSUER_ID,
+            A.VC_ISSUER_NAME,
+            A.VC_ISSUE_PROPERTY,
+            A.C_ISSUE_APPRAISE,
+            A.VC_ISSUE_APPRAISE_ORGAN,
+            A.VC_INDUSTRY,
+            A.VC_PROVINCE,
+            A.L_GUARANTOR_ID,
+            A.VC_GUARANTOR_NAME,
+            A.VC_GUARANTOR_SUMMARY,
+            A.L_ISSUE_POST_DATE,
+            A.L_ISSUE_BEGIN_DATE,
+            A.L_PAY_DATE,
+            A.L_PUBLISH_DATE,
+            A.L_BEGINCAL_DATE,
+            A.L_ENDINCAL_DATE,
+            A.C_INTEREST_TYPE,
+            A.C_PAY_INTEREST_TYPE,
+            A.EN_PAY_INTEVAL,
+            A.EN_FACE_RATE,
+            A.C_BID_TYPE,
+            A.C_PAY_TYPE,
+            A.VC_SPECIAL_TEXT,
+            A.VC_MAIN_UNDERWRITER,
+            A.VC_DEPUTY_UNDERWRITER,
+            A.C_UNDERWRITE_TYPE,
+            A.VC_GROUP_UNDERWRITER,
+            A.L_NEXT_EXERCISE_DATE,
+            A.C_IS_SMALL_RAISED,
+            A.C_IS_HAVE_SALEBACK,
+            TO_CHAR(A.D_BID_LIMIT_TIME, 'YYYYMMDD:HH24mmss') D_BID_LIMIT_TIME,
+            A.C_IS_HAVE_BUYBACK,
+            A.EN_RESALE_YEAR,
+            A.EN_REDEMPTION_YEAR
+       from T_ATS_STOCK_ISSUE_INFO A
+      WHERE A.C_STATUS = '2'
+        and (A.L_ISSUE_BEGIN_DATE > TO_NUMBER(to_char(sysdate, 'yyyyMMdd')) OR
+            A.L_ISSUE_BEGIN_DATE IS NULL OR A.L_ISSUE_BEGIN_DATE = 0)
+        and (A.l_pay_date > TO_NUMBER(to_char(sysdate, 'yyyyMMdd')) OR
+            A.l_pay_date IS NULL OR A.l_pay_date = 0)
+            
+        <isNotNull prepend="AND" property="vcStockCode">
+	         A.VC_STOCK_CODE =#vcStockCode#
+	    </isNotNull>
+      	<isNotNull prepend="AND" property="vcStockName">
+	         A.VC_STOCK_NAME like '%'||#vcStockName#||'%' 
+	    </isNotNull>
+	    <isNotNull prepend="AND" property="vcStockNameFull">
+	         A.VC_STOCK_NAME_FULL like '%'||#vcStockNameFull#||'%' 
+	    </isNotNull>
+	    <isNotNull prepend="AND" property="vcStockType">
+	         A.VC_STOCK_TYPE like '%'||#vcStockType#||'%' 
+	    </isNotNull>
+	    <isNotNull prepend="AND" property="lIssueBeginDate">
+	         A.L_ISSUE_BEGIN_DATE like '%'||#lIssueBeginDate#||'%' 
+	    </isNotNull>
+       <!-- <isNotNull prepend="AND" property="lDate">
+	         A.L_DATE = #lDate#
+	    </isNotNull>-->
+	    <!-- <isNull prepend="AND" property="lDate">
+	         A.L_DATE = to_char(sysdate,'yyyyMMdd')
+	    </isNull>-->
+      
+    </select> 
+    
+  	<!-- 新债基础信息查询 by author:liangjilong-->
+    <select id="queryNewStockInfoByStockCode" parameterClass="java.util.Map" resultMap="resultMapForNewStockInfo">
+        SELECT 
+			A.C_MARKET_NO,
+			A.VC_PAYMENT_PLACE,
+			A.VC_INTER_CODE,
+			A.VC_STOCK_CODE,
+			A.VC_STOCK_NAME,		
+			A.VC_STOCK_NAME_FULL,
+			A.VC_STOCK_TYPE,
+			A.EN_EXIST_LIMITE,	
+			A.EN_ISSUE_BALANCE,
+			A.C_BOND_APPRAISE,
+			A.VC_BOND_APPRAISE_ORGAN,	
+			A.L_ISSUER_ID,	
+			A.VC_ISSUER_NAME,
+			A.VC_ISSUE_PROPERTY,
+			A.C_ISSUE_APPRAISE,
+			A.VC_ISSUE_APPRAISE_ORGAN,
+			A.VC_INDUSTRY,
+			A.VC_PROVINCE,
+			A.L_GUARANTOR_ID,
+			A.VC_GUARANTOR_NAME,
+			A.VC_GUARANTOR_SUMMARY,
+			A.L_ISSUE_POST_DATE,
+			A.L_ISSUE_BEGIN_DATE,
+			A.L_PAY_DATE,
+			A.L_PUBLISH_DATE,
+			A.L_BEGINCAL_DATE,
+			A.L_ENDINCAL_DATE,
+			A.C_INTEREST_TYPE,
+			A.C_PAY_INTEREST_TYPE,
+			A.EN_PAY_INTEVAL,
+			A.EN_FACE_RATE,
+			A.C_BID_TYPE,
+			A.C_PAY_TYPE,
+			A.VC_SPECIAL_TEXT,
+			A.VC_MAIN_UNDERWRITER,	
+			A.VC_DEPUTY_UNDERWRITER,
+			A.C_UNDERWRITE_TYPE,
+			A.VC_GROUP_UNDERWRITER,
+			A.L_NEXT_EXERCISE_DATE,
+			A.C_IS_SMALL_RAISED,
+			A.C_IS_HAVE_SALEBACK,
+			TO_CHAR(A.D_BID_LIMIT_TIME , 'YYYY-MM-DD HH24:mm:ss') D_BID_LIMIT_TIME,
+			A.C_IS_HAVE_BUYBACK,
+			A.EN_RESALE_YEAR,
+			A.EN_REDEMPTION_YEAR 
+		 from T_ATS_STOCK_ISSUE_INFO  A  WHERE 1=1 AND  A.VC_STOCK_CODE =#vcStockCode#
+	     
+       
+      
+    </select> 
+ 
+ 
+  	<!-- 交易对手信息查询 by author:liangjilong -->
+    <select id="queryTradeRivalInfo" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForTradeRivalInfo">
+      	SELECT A.L_RIVAL_ID , A.VC_NAME  FROM trade.TTRADERIVAL A where 1=1
+      	<isNotNull prepend="AND" property="vcTradeRival">
+	         A.VC_RIVAL_CODE =#vcTradeRival#
+	    </isNotNull>
+      	<isNotNull prepend="AND" property="vcTradeRivalName">
+	         A.VC_NAME like '%'||#vcTradeRivalName#||'%' 
+	    </isNotNull>
+    </select>
+    
+    
+  	<!-- 机构组合产品信息查询 
+  	    author:liangjilong
+  	    date: 2016-11-21
+  	    TI.VC_FUND_CODE,
+		TI.VC_FUND_NAME,
+  	 -->
+    <select id="queryOrgCombPrdInfo" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForOrgCombPrdInfo">
+	  	select prd.vc_product_code,prd.vc_product_name,cb.vc_combi_no,cb.vc_combi_name from t_ats_product_info prd ,t_ats_combi_info cb 
+	  	where prd.l_product_id=cb.l_product_id and prd.vc_corpor_belong_to='GMS'	  	
+   
+    </select>
+    
+     <select id="getOrgCombPrdInfo" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForOrgCombPrdInfo">
+	  	select prd.vc_product_code,
+		       prd.vc_product_name,
+		       cb.vc_combi_no,
+		       cb.vc_combi_name
+		  from t_ats_product_info prd, t_ats_combi_info cb
+		 where prd.l_product_id = cb.l_product_id
+		   and prd.vc_product_code=#vcProductCode#
+		   and cb.vc_combi_no=#vcCombiNo#
+    </select>
+    
+  	<!-- 估值查询 by author:liangjilong 
+  		to_date(to_char(sysdate-1,'yyyyMMdd'),'yyyy-MM-dd') 这句代码的意思就是说，
+  		获取当前日期时间的前一天,并格式成yyyy-MM-dd进行作为条件查询
+  	-->
+    <select id="queryAppraisementInfo" parameterClass="commonj.sdo.DataObject" resultMap="resultMapForAppraisementInfo">
+		    SELECT 
+		    	FTI.VC_TGR,
+		      	FTI.VC_CODE,
+		       	FTI.VC_NAME,
+		       	replace(FTG.VC_KMMC,',','') VC_KMMC,
+		        to_char(FTG.D_YWRQ,'yyyyMMdd') D_YWRQ
+		  	FROM stage.FA_TFUNDINFO FTI, stage.FA_TTMP_H_GZB FTG  
+		  	WHERE  
+		  		FTI.L_FUNDID = FTG.L_ZTBH AND FTG.VC_KMDM = '基金单位净值：'  
+		  		<!-- by luwenxing 2017年1月23日09:56:55
+		  	 AND FTG.D_YWRQ = to_date(to_char(sysdate-1,'yyyyMMdd'),'yyyy-MM-dd') 
+		  	 -->
+		  	<isNotNull prepend="AND" property="vcOrdName">
+		   		FTI.VC_TGR like #vcOrdName#||'%'
+		 	</isNotNull>
+		 	
+		 	<isNotNull prepend="AND" property="vcProductCode">
+		   		FTI.VC_CODE=#vcProductCode#
+		 	</isNotNull>
+		 	<isNotNull prepend="AND" property="vcProductName">
+		   		FTI.VC_NAME like '%'||#vcProductName#||'%' 
+		 	</isNotNull>
+		 	<isNotNull prepend="AND" property="enNetAssetValue">
+		   		FTG.VC_KMMC=#enNetAssetValue#
+		 	</isNotNull>
+		 	<isNotNull prepend="AND" property="vcValuationDate">
+		   		FTG.D_YWRQ=to_date(#vcValuationDate#,'yyyy-MM-dd') 
+		 	</isNotNull>
+    </select>
+ 
+   
+</sqlMap>

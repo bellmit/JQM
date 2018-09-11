@@ -1,0 +1,253 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="false"%>
+<%@page import="com.eos.data.datacontext.UserObject"%>
+<%@page import="com.cjhxfund.ats.fm.commonUtil.DateUtil" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@include file="/common/js/commscripts.jsp" %>
+<!-- 
+  - Author(s): caikf
+  - Date: 2018-05-21 14:12:07
+  - Description:
+-->
+<head>
+<title>导入Excel数据</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" src="<%=request.getContextPath() %>/fm/comm/fileupload/js/swfupload.js"></script>
+</head>
+<body>
+
+ <div style="width:100%;height:100%; "  id="dataform1" borderStyle="border:solid 1px #aaa;">
+
+	  <iframe id="prodIfm" name="prodIfmName" width="590"  height="30px" frameborder="no" border="0" marginwidth="0" marginheight="0" scolling="no" ></iframe>
+	  
+	  <!-- 动态获取表内容 -->
+	  <div class="description" style="margin-top:10px; height:440px;overflow: auto; ">
+		 <table style="background-color:#f0f0f0; width:100%;" border="0px"  >
+			 <tr><td colspan="5">&nbsp;&nbsp;当前设置的导入模式：</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execl导入从当前工作表导入,支持(*.xls;*.xlsx)!</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;数据库表：</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ORACLE数据库表：ORACLE数据库表名&nbsp;&nbsp;&nbsp;&nbsp; 表名：T_ATS_STOCK_ISSUE_INFO</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;字段要求：</td></tr>
+			 <tr>
+			 	 <td width="100">&nbsp;&nbsp;去重字段组合</td>
+				 <td width="200">字段名称</td>
+				 <td width="80">XLS</td>
+				 <td width="80">是否必填</td>
+				 <td>说明</td>
+			 </tr>
+			 <tr id="targetElement" style="width:100%"><td colspan="5"><hr/></td></tr>
+		     
+			 <tr style="width:100%"><td colspan="5"><hr/></td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;注意：</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;1.EXCEL文件以【XLS】对应的字段顺序匹配。</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;2.EXCEL文件第一行：字段名称不能为空，第二行开始：具体数据。</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;3.EXCEL文件数据中间不能有【空行】。</td></tr>
+			 <tr><td colspan="5">&nbsp;&nbsp;4.对于必填字段，要求必需填写，否则导入当条数据失败；</td></tr>
+        	 <tr><td colspan="5">&nbsp;&nbsp;5.对于可填字段，当导入新增记录时，如果不填，将按说明信息中默认值代替；</td></tr>
+        	<tr><td colspan="5">&nbsp;&nbsp;</td><td></td></tr>
+		 </table>
+	 </div>
+
+  </div>
+ 
+	 <div id="footer" class="nui-toolbar" style="padding:0px; width:100%;" borderStyle="border:0;">
+		<table width="100%">
+			<tr>
+				<td style="text-align:center;" >
+					<span style="display:inline-block;width:25px;"></span>
+					<a class='nui-button' plain='false' iconCls="icon-cancel" onclick="onCancel()">取消</a>
+				</td>
+			</tr>
+		</table>
+	</div>	
+	  
+	<script type="text/javascript">
+    	nui.parse();
+    	
+    	//加载导入列说明
+    	loadFieldDesc("STOCK_ISSUE_INFO_ZH");
+    	
+    	var form = new nui.Form("#dataform1");
+    	$("#prodIfm").attr("src","<%=request.getContextPath() %>/fm/comm/fileupload/singleFileUpload.jsp");
+    	
+    	var templetDownload = "onUpload";//模板下载
+    	var func = "onUploadSuccess";	//上传成功的回调函数
+    	var startUploadfunc = "startUpload";	//校验方法
+    	
+    	var UpSuccessBizParm=new Array();//params中按顺序给 逻辑流参数赋值.所以 Fdata 参数必须在回调逻辑流的第一位，其他参数必须按照数组顺序赋值，否则会出现赋值混乱，可为空
+		UpSuccessBizParm[0]='STOCK_ISSUE_INFO_ZH'; //第一个参数为模板CODE
+
+		var UpSuccessBiz="com.cjhxfund.ats.fm.instr.StockIssueInfoBiz.importStockIssueInfo";//上传回调逻辑流全名称 逻辑流名称+逻辑构建全称，不可和回调函数名同时为空
+    
+    	//上传回调函数
+    	function onUploadSuccess(e) {
+			form.unmask();
+			if(e.result==null){
+				nui.alert("导入失败,请检查数据！");
+				prodIfmName.window.clearFileupload();
+			}else{
+				var rtnCode = e.result[0];
+				var rtnMsg = e.result[1];
+				var dataMap = e.result[2];
+				if(rtnCode == "-1"){
+					if(null == rtnMsg || "" == rtnMsg){
+						nui.alert(rtnMsg);
+					}else{
+						nui.alert("导入失败,请检查数据！");
+					}
+					prodIfmName.window.clearFileupload();
+					return;
+				}
+				
+				if(nui.decode(dataMap)){
+					form.unmask();
+					mini.open({
+						url: nui.context + "/fm/comm/fileupload/importExcelByTempletMsg.jsp",
+						title: "导入返回的结果信息", width: 500, height: 500,
+						overflow:"hidden",
+						onload: function () {
+								var iframe = this.getIFrameEl();
+						        iframe.contentWindow.SetData(dataMap);
+							},
+						ondestroy: function (action) {	
+						  		prodIfmName.window.clearFileupload();
+					  		} 
+					});
+				}
+			}
+		}
+    
+	    function onUploadError(e) {
+	         nui.alert("上传失败：" + e.serverData);
+	         prodIfmName.window.clearFileupload();
+	    }
+
+		//上传校验方法
+	    function startUpload(fileupload) {
+	        form.loading();//加载遮罩
+	        var excelName = fileupload.text;
+			if(excelName == ""){
+				form.unmask();
+		        nui.alert("请选择一个导入文件！", "", function(){});
+		        return false;
+			}
+			
+			var index = excelName.lastIndexOf(".");
+			var suffix = excelName.substring(index,excelName.length);
+		    if(suffix != ".xls" && suffix!=".xlsx"){
+				form.unmask();
+				nui.alert("文件格式必须为：*.xls 或 *.xlsx");
+				return;
+			}
+			return true;
+		}
+    
+    	//模板下载
+		function onUpload(){
+	        window.location.href = "com.cjhxfund.ats.fm.baseinfo.importDebtIssueFile.flow?type=3";
+	    }
+    
+	    function onCancel(){
+			CloseWindow("cancel");
+	    }
+         
+        //关闭窗口
+     	function CloseWindow(action) {
+	        if (window.CloseOwnerWindow){
+		        return window.CloseOwnerWindow(action);
+	        }
+	        else window.close();
+		}
+    
+    	//动态加载列说明
+	    function loadFieldDesc(vcTempletCode){
+	    	nui.ajax({
+				url : "com.cjhxfund.ats.fm.comm.common.queryExcelTemplet.biz.ext",
+				type : 'POST',
+				data : {vcTempletCode:vcTempletCode},
+				cache : false,
+				async: true,
+				contentType : 'text/json',
+				success : function(text) {
+					//console.log(text);
+					var returnJson = nui.decode(text);
+					if(returnJson.exception==null && returnJson.templets!=null){
+						var targetElement = document.getElementById("targetElement");
+						for(var i=returnJson.templets.length; i>0; i--){
+							//配置信息
+							var lTempletId = returnJson.templets[i-1].lTempletId;
+							var vcFieldName = returnJson.templets[i-1].vcFieldName;
+							var vcColumnName = returnJson.templets[i-1].vcColumnName;
+							var cAllowNull = returnJson.templets[i-1].cAllowNull;
+							var vcFieldDesc = returnJson.templets[i-1].vcFieldDesc;
+							var cFieldRepeat = returnJson.templets[i-1].cFieldRepeat;
+							
+							//去重字段
+							var cFieldRepeatTD = document.createElement('td');
+							var checked = cFieldRepeat=="1" ? "checked" : "";
+							var checkbox = '<input type="checkbox" onchange="fieldRepeatChange(this, '+lTempletId+')" '+checked+'>';
+							cFieldRepeatTD.align = 'center';
+							cFieldRepeatTD.innerHTML = checkbox;
+							//字段名
+							var vcFieldNameTD = document.createElement('td');
+							vcFieldNameTD.innerHTML = vcFieldName;
+							//excel列名（A/B/C等）：页面显示
+							var vcColumnNameTD = document.createElement('td');
+							vcColumnNameTD.innerHTML = vcColumnName + "列";
+							//是否允许为空
+							var cAllowNullTD = document.createElement('td');
+							cAllowNullTD.innerHTML = cAllowNull=="0" ? "必填" : "可填";
+							//字段说明
+							var vcFieldDescTD = document.createElement('td');
+							vcFieldDescTD.innerHTML = vcFieldDesc;
+							
+							//动态添加tr行
+							var tr = document.createElement('tr');
+							tr.appendChild(cFieldRepeatTD);
+							tr.appendChild(vcFieldNameTD);
+							tr.appendChild(vcColumnNameTD);
+							tr.appendChild(cAllowNullTD);
+							tr.appendChild(vcFieldDescTD);
+							//新增行
+							insertAfter(tr, targetElement);
+						}
+					}
+				}
+		 	});
+	    }
+	    
+	    function insertAfter(newElement, targetElement){  
+		    var parent = targetElement.parentNode;  
+		    if (parent.lastChild == targetElement) {  
+		        // 如果最后的节点是目标元素，则直接添加。因为默认是最后  
+		        parent.appendChild(newElement);  
+		    } else {  
+		        //如果不是，则插入在目标元素的下一个兄弟节点 的前面。也就是目标元素的后面  
+		        parent.insertBefore(newElement, targetElement.nextSibling);  
+		    }  
+		} 
+		
+		//去重字段值变化事件
+		function fieldRepeatChange(obj, lTempletId){
+			var templet = {lTempletId:lTempletId, cFieldRepeat:"0"};
+			if(obj.checked){
+				templet.cFieldRepeat = "1";
+			}
+			saveExcelTemplet(templet);
+		}
+		
+		//保存导入模板
+		function saveExcelTemplet(templet){
+			nui.ajax({
+				url : "com.cjhxfund.ats.fm.comm.common.saveExcelTemplet.biz.ext",
+				type : 'POST',
+				data : {templet:templet},
+				cache : false,
+				async: true,
+				contentType : 'text/json'
+			});
+		}
+    </script>
+</body>
+</html>

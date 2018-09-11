@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:周靖  备注：下拉列表查询-->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+    	<result column="VC_BUSIN_FLAG" javaType="string" property="vcBusinFlag"/>
+        <result column="VC_BUSIN_CAPTION" javaType="string" property="vcBusinCaption"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="bondCodeResultMap">
+        <result column="VC_STOCK_CODE" javaType="string" property="vcStockCode"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="vcMarket">
+        <result column="VC_MARKET" javaType="string" property="vcMarket"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="propertyUnitNumber">
+        <result column="VC_ASSET_CODE" javaType="string" property="vcAssetCode"/>
+        <result column="VC_ASSET_NAME" javaType="string" property="vcAssetName"/>
+    </resultMap>
+    <!--业务类别-->
+    <select id="vocationalWorkType" parameterClass="java.lang.String" resultMap="resultMap">
+    	select t.VC_BUSIN_FLAG,t.VC_BUSIN_CAPTION
+		  from T_ATS_CONF_CASHSTOCKFLOW_FLAG t
+		 where t.vc_busin_caption like '%'||#typeName#||'%'
+		   and t.vc_busin_flag in ('1ZQMR_3','1ZQMC_4','1RZHG_5','1RQHG_6','1RZGH_7','1RQGH_8','1RZHG_15','1RQHG_16','1RZGH_17','1RQGH_18')
+    </select>
+    <!--证券代码-->
+    <select id="bondCode" parameterClass="java.lang.String" resultMap="bondCodeResultMap">
+    	Select t.VC_STOCK_CODE
+		  from T_ATS_FUND_SETMT_TRACE t
+		 where t.VC_STOCK_CODE like '%'|| #bondCode# ||'%'
+    </select>
+    <!--交易市场-->
+    <select id="vcMarket" parameterClass="java.lang.String" resultMap="vcMarket">
+    	Select t.VC_MARKET
+		  from T_ATS_FUND_SETMT_TRACE t
+		 where t.VC_MARKET like '%'||#vcMarket#||'%'
+    </select>
+    <!--资产单元编号-->
+    <select id="assetCode" parameterClass="java.lang.String" resultMap="propertyUnitNumber">
+    	Select DISTINCT t.VC_ASSET_CODE,t.VC_ASSET_NAME
+		  from T_ATS_FUND_SETMT_TRACE t
+		 where t.VC_ASSET_CODE like '%'||#vcAssetCode#||'%'
+    </select>
+</sqlMap>

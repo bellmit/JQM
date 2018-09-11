@@ -1,0 +1,146 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="false" %>
+<%@include file="/common.jsp" %>
+<!-- 标签 -->
+<%@ taglib uri="http://eos.primeton.com/tags/html" prefix="h"%>
+<%@ taglib uri="http://eos.primeton.com/tags/eos" prefix="e"%>
+<%@ taglib uri="http://eos.primeton.com/tags/webcomp" prefix="w"%>
+<%@ taglib uri="http://eos.primeton.com/tags/richweb" prefix="r"%>
+<%@ taglib uri="https://www.cjhxfund.com/main/index"  prefix="privilege" %>
+
+<!-- project common style -->
+<link id="css_icon" rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/coframe/org/css/org.css"/>
+<style>
+	.search-condition .table td{ height:0px;  line-height:0px;}
+</style>
+<script type="text/javascript">
+
+	   /*
+		*杨敏嵌入2016-11-14    重写ajax方法实现异步请求session过期时跳转登录页面
+		*注意：该方法引用后不能再引用其他的有关ajax定义或者库引用。该方法原理是 重写原有的ajax使用，从而监控拦截到ajax请求。
+		*/
+    	// 备份jquery的ajax方法    
+	    var _ajax=$.ajax;
+	    // 重写ajax方法，先判断登录在执行success函数   
+	    $.ajax=function(opt){ 
+	        var _success = opt && opt.success || function(a, b){};  
+	        var _opt = $.extend(opt, {  
+	            success:function(data, textStatus){  
+	                // 如果后台将请求重定向到了登录页，则data里面存放的就是登录页的源码，这里需要找到data是登录页的证据(标记) 
+	                var a=nui.decode(data).exception+"";
+	                if(a!="undefined"){
+	                	a=nui.decode(data).exception.message;
+	                	if(a.indexOf('session失效') != -1) {
+	                		 
+		                   nui.alert("会话超时，请重新登录！","",function (){
+		                  	window.location.href="<%= request.getContextPath() %>/coframe/auth/login/login.jsp";
+		                  }); 
+		                  //暂停3秒 自动跳转登录页面
+		                  setTimeout(function () { 
+						        window.location.href="<%= request.getContextPath() %>/coframe/auth/login/login.jsp";
+						   }, 2000); 
+		                  return;
+		                }else if(a.indexOf('并发') != -1){
+		                	nui.alert("请求并发啦~，请重新打开界面！");
+		                }
+	                }
+	                _success(data, textStatus);    
+	            },error:function (jqXHR, error, errorThrown){
+	            	if(nui.decode(jqXHR).status == 0){
+	            		return;
+	            	}
+	            	//统一处理ajax 请求异常
+	            	if(jqXHR.status == 200){
+	            		nui.alert("请求并发啦~，请重新打开界面！");
+	            		return;
+	            	}else{
+	            		nui.alert("网络异常，请刷新 页面~");
+	            	}	
+	            }  
+	        });  
+	        _ajax(_opt);  
+	    }; 
+	var userId = "<%= userId %>";
+	var userName = "<%= userName %>";
+	var operatorId = "<%=operatorId %>";
+	
+	//跨页多选选择表格获取基金产品
+	function ButtonClickGetFundName(buttonEditObj, queryUserType){
+		var queryUserTypeTemp = "All";
+		if(queryUserType!=null && queryUserType!=""){
+			queryUserTypeTemp = queryUserType;
+		}
+        nui.open({
+            url: "<%=request.getContextPath() %>/fm/comm/productInfoList.jsp?queryUserType=" + queryUserTypeTemp,
+            title: "产品列表",
+            width: 450,
+            height: 380,
+            onload:function(){
+                var iframe = this.getIFrameEl();
+                var fundCodes = buttonEditObj.getValue();
+                var fundNames = buttonEditObj.getText();
+               
+                var data = {
+                   fundCodes:fundCodes,
+                   fundNames:fundNames
+                };
+                iframe.contentWindow.SetData(data);
+            },
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = nui.clone(data);
+                    buttonEditObj.setValue(data.fundCode);
+                    buttonEditObj.setText(data.fundName);
+                }
+            }
+        });
+	}
+	
+	//清空多选下拉框值
+    function onCloseClickValueEmpty(e){
+    	var obj = e.sender;
+	    obj.setText("");
+	    obj.setValue("");
+    }
+    
+  
+	//将NULL转换为空字符串
+	function changeNull(str){
+		if(str==null || str=="null" || typeof(str) == "undefined"){
+			return "";
+		}
+		return str;
+	}
+	
+	//js中文转码
+	var GB2312UnicodeConverter = {
+        ToUnicode: function (str) {
+            return escape(str).toLocaleLowerCase().replace(/%u/gi, '\\u'); 
+        },
+        ToGB2312: function (str) {
+            return unescape(str.replace(/\\u/gi, '%u')); 
+        }
+    };
+    
+	//屏蔽按退格键(backspace)导致的页面回退到登录界面问题
+  		document.onkeydown = function(e){
+  			var ev = e || window.event; //获取event对象 
+            var obj = ev.target || ev.srcElement; //获取事件源 
+            var t = obj.type || obj.getAttribute('type'); //获取事件源类型 
+            //获取作为判断条件的事件类型 
+            var vReadOnly = obj.readOnly;
+            var vDisabled = obj.disabled;
+            //处理undefined值情况 
+            vReadOnly = (vReadOnly == undefined) ? false : vReadOnly;
+            vDisabled = (vDisabled == undefined) ? true : vDisabled;
+            //当敲Backspace键时，事件源类型为密码或单行、多行文本的， 
+            //并且readOnly属性为true或disabled属性为true的，则退格键失效 
+            var flag1 = ev.keyCode == 8 && (t == "password" || t == "text" || t == "textarea") && (vReadOnly == true || vDisabled == true);
+            //当敲Backspace键时，事件源类型非密码或单行、多行文本的，则退格键失效 
+            var flag2 = ev.keyCode == 8 && t != "password" && t != "text" && t != "textarea";
+            //判断 
+            if (flag2 || flag1) return false;
+		}
+	
+</script>

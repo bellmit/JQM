@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:罗倔怀 -->
+<sqlMap>
+        <!--查询所有交易对手 start-->
+    <resultMap class="commonj.sdo.DataObject" id="traderMap">
+        <result column="L_RIVAL_ID" javaType="string" property="lRivalId"/>
+        <result column="VC_NAME" javaType="string" property="vcName"/>
+        <result column="VC_ALL_NAME" javaType="string" property="vcAllName"/>
+        <result column="VC_RIVAL_CODE" javaType="string" property="vcRivalCode"/>
+        <result column="vc_issuer_name" javaType="string" property="vcIssuerName"/>
+        <result column="vc_full_name" javaType="string" property="vcIssuerFullname"/>
+    </resultMap>
+    <resultMap class="commonj.sdo.DataObject" id="bankAccount">
+        <result column="VC_BANK_NAME" javaType="string" property="vcBankName"/>
+        <result column="VC_ACCOUNT" javaType="string" property="vcAccount"/>
+        <result column="VC_ACCOUNT_NAME" javaType="string" property="vcAccountName"/>
+        <result column="VC_PAY_NO" javaType="string" property="vcPayNo"/>
+        <result column="VC_ID" javaType="string" property="vcId"/>
+        <result column="C_BUSIN_CLASS" javaType="string" property="cBusinClass"/>
+        <result column="L_ORG_ID" javaType="int" property="lOrgId"/>
+    </resultMap>
+    <select id="queryAllTraderSql" parameterClass="commonj.sdo.DataObject" resultMap="traderMap">
+        select a.L_RIVAL_ID,
+		       a.VC_NAME,
+		       a.VC_ALL_NAME,
+		       a.VC_RIVAL_CODE,
+		       b.vc_issuer_name,
+		       b.vc_full_name
+		  from trade.TTRADERIVAL a
+		  left join trade.tissuer b
+		    on (a.l_issuer_id = b.l_issuer_id)
+    </select>
+    <!--查询所有交易对手 end-->
+    
+    <!--删除所有交易对手 start-->
+    <delete id="deleteAllTraderSql" parameterClass="commonj.sdo.DataObject">
+        delete from TTRADERIVALPINYIN
+    </delete>
+    <!--删除所有交易对手 end-->
+
+    <!--根据拼音字段模糊查询交易对手 start-->
+    <resultMap class="commonj.sdo.DataObject" id="traderPinyinMap">
+        <result column="VC_NAME" javaType="string" property="vcName"/>
+        <result column="VC_RIVAL_CODE" javaType="string" property="vcRivalCode"/>
+        <result column="vc_issuer_name" javaType="string" property="vcIssuerName"/>
+        <result column="vc_pinyin" javaType="string" property="vcPinyin"/>
+        
+    </resultMap>
+    <select id="queryTraderByNumSql" parameterClass="commonj.sdo.DataObject" resultMap="traderPinyinMap">
+        select VC_NAME,VC_RIVAL_CODE,vc_issuer_name,vc_pinyin from TTRADERIVALPINYIN
+        where
+  	  <isNotNull property="vcPinyin">
+  	   vc_rival_code like '%'||#vcPinyin#||'%' and
+		</isNotNull>   
+		rownum &lt; 100
+		order by vc_rival_code asc
+    </select>
+    <select id="queryTraderByEnSql" parameterClass="commonj.sdo.DataObject" resultMap="traderPinyinMap">
+		select VC_NAME, VC_RIVAL_CODE, vc_issuer_name,vc_pinyin
+		  from TTRADERIVALPINYIN
+		  <isNotNull property="vcPinyin">
+  	     where vc_pinyin like #vcPinyin#||'%'
+		union
+		select VC_NAME, VC_RIVAL_CODE, vc_issuer_name,vc_pinyin
+		  from TTRADERIVALPINYIN
+		 where vc_pinyin like '%'||#vcPinyin#||'%'
+		   and vc_pinyin not like #vcPinyin#||'%'
+		   and rownum  &lt; (100 - (select count(1)
+                              from TTRADERIVALPINYIN
+                             where vc_pinyin like #vcPinyin#||'%'))
+		  </isNotNull>
+    </select>
+    <select id="queryTraderByCnSql" parameterClass="commonj.sdo.DataObject" resultMap="traderPinyinMap">
+    	select VC_NAME, VC_RIVAL_CODE, vc_issuer_name,vc_pinyin
+		  from TTRADERIVALPINYIN
+		  <isNotNull property="vcPinyin">
+  	     where vc_name like #vcPinyin#||'%'
+		union
+		select VC_NAME, VC_RIVAL_CODE, vc_issuer_name,vc_pinyin
+		  from TTRADERIVALPINYIN
+		 where vc_name like '%'||#vcPinyin#||'%'
+		   and vc_name not like #vcPinyin#||'%'
+		   and rownum  &lt; (100 - (select count(1)
+                              from TTRADERIVALPINYIN
+                             where vc_name like #vcPinyin#||'%'))
+		  </isNotNull>
+    </select>
+    <!--根据拼音字段模糊查询交易对手 end-->
+    <!--查询交易对手代码是否存在 start-->
+    <resultMap class="commonj.sdo.DataObject" id="isTraderExistMap">
+        <result column="VC_RIVAL_CODE" javaType="string" property="vcRivalCode"/>
+    </resultMap>
+    <select id="isTraderExistSql" parameterClass="string" resultMap="isTraderExistMap">
+        select VC_RIVAL_CODE from TTRADERIVALPINYIN
+        where VC_RIVAL_CODE = #vcRivalCode#
+    </select>
+    <!--查询交易对手代码是否存在 end-->
+    
+    <!--查询证券是否已关注 start-->
+    <resultMap class="commonj.sdo.DataObject" id="bondWhetherAttention">
+        <result column="bondState" javaType="string" property="bondState"/>
+    </resultMap>
+    <select id="queryAttentionState" parameterClass="commonj.sdo.DataObject" resultMap="bondWhetherAttention">
+	    select *
+		  from t_ats_tstock_follow t
+		 where t.vc_user_id = #vcUserId#
+		   and t.vc_stock_code = #vcStockCode#
+		   and t.vc_exchange = #vcExchange#
+    </select>
+    <!--查询证券是否已关注 end-->
+    
+    <!--查询O32对手方账户 start-->
+    <select id="queryO32BankAccount"  resultMap="bankAccount">
+	  select A.VC_BANK_NAME, 
+			 A.VC_ACCOUNT, 
+			 A.VC_ACCOUNT_NAME, 
+			 A.VC_PAY_NO, 
+			 A.VC_ID, 
+			 A.C_BUSIN_CLASS, 
+			 A.L_ORG_ID 
+			 FROM trade.TBANKACCOUNT A 
+			 WHERE (A.C_BUSIN_CLASS &lt;&gt; '!' OR A.VC_SUB_TYPE &lt;&gt; '-1') 
+			 AND C_BUSIN_CLASS IN ('2', 'C', 'D', 'G', 'N', 'P') 
+			 order by A.vc_ID
+    </select>
+    <!--查询O32对手方账户 end-->
+     
+</sqlMap>

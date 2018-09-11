@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:侯志勇 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="approveResult">
+        <result column="L_APPROVE_ID" javaType="long" property="lApproveId"/>
+        <result column="L_PROCESS_INST_ID" javaType="string" property="lProcessInstId"/>
+        <result column="L_WORK_ITEM_ID" javaType="string" property="lWorkItemId"/>
+        <result column="L_ACTIVITY_INST_ID" javaType="string" property="lActivityInstId"/>
+        <result column="L_USER_ID" javaType="string" property="lUserId"/>
+        <result column="VC_USER_CODE" javaType="string" property="vcUserCode"/>
+        <result column="VC_USER_NAME" javaType="string" property="vcUserName"/>
+        <result column="VC_OPERATE_TYPE" javaType="string" property="vcOperateType"/>
+        <result column="VC_COMMENTS" javaType="string" property="vcComments"/>
+        <result column="VC_WORK_ITEM_NAME" javaType="string" property="vcWorkItemName"/>
+        <result column="PROCESSINSTNAME" javaType="string" property="processInstName"/>
+    </resultMap>
+    <select id="queryApproveInfo" parameterClass="commonj.sdo.DataObject" resultMap="approveResult">
+		SELECT T.L_APPROVE_ID,
+			T.L_PROCESS_INST_ID,
+			T.L_WORK_ITEM_ID,
+			T.VC_ACTIVITY_DEF_ID,
+			T.L_ACTIVITY_INST_ID,
+			T.L_USER_ID,
+			T.VC_USER_CODE,
+			T.VC_USER_NAME,
+			T.VC_OPERATE_TYPE,
+			T.VC_COMMENTS,
+			T.VC_WORK_ITEM_NAME,
+			WP.PROCESSINSTNAME 
+		FROM T_ATS_APPROVE_INFO T,WFPROCESSINST WP 
+		WHERE T.L_PROCESS_INST_ID=WP.PROCESSINSTID 
+		<isNotNull property="processInstID">
+ 			and WP.PROCESSINSTID = #processInstID# 
+ 		</isNotNull>
+ 		<isNotNull property="activityInstId">
+ 			and T.L_ACTIVITY_INST_ID = #activityInstId# 
+ 		</isNotNull>
+ 		<isNotNull property="activityInstIds">
+ 			and T.L_ACTIVITY_INST_ID IN ($activityInstIds$)  
+ 		</isNotNull>
+    </select>
+</sqlMap>

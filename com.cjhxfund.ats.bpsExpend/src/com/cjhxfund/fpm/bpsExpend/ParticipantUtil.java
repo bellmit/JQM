@@ -1,0 +1,240 @@
+package com.cjhxfund.fpm.bpsExpend;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.gocom.components.coframe.tools.JDBCUtil;
+
+import com.eos.foundation.data.DataObjectUtil;
+import com.eos.foundation.database.DatabaseExt;
+import com.eos.foundation.database.DatabaseUtil;
+import com.eos.system.annotation.Bizlet;
+import com.eos.workflow.api.IWFWorkItemManager;
+import com.eos.workflow.omservice.WFParticipant;
+import com.eos.workflow.omservice.WIParticipantInfo;
+import com.primeton.workflow.api.WFServiceException;
+
+import commonj.sdo.DataObject;
+
+/**
+ * 参与者工具类 主要处理和流程引擎对接的java对象
+ * @author zengjing
+ *
+ */
+public class ParticipantUtil {
+	
+	/**
+	 * 
+	 * @param participantStr  empid 字符串 eg:121,123,1301
+	 * @return
+	 */
+	@Bizlet("转换参与者对象")
+	public static WFParticipant[] transWFParticipants4Empids(String empidStr){
+		String[] empidArr = empidStr.split(",");
+		
+		WFParticipant[] participants = new WFParticipant[empidArr.length];
+		for(int i=0;i<empidArr.length;i++){
+			if(empidArr[i]!=null&&!"".equals(empidArr[i])){
+				DataObject emp = DataObjectUtil.createDataObject("com.cjhxfund.fpm.bpsExpend.coframe.OrgEmployee");
+				emp.set("empid", Integer.parseInt(empidArr[i]));
+				DatabaseUtil.expandEntity("default", emp);
+				WFParticipant participant = new WFParticipant();
+				participant.setId(emp.getString("empid"));
+				participant.setName(emp.getString("empname"));
+				participant.setTypeCode("emp");
+				participants[i] = participant;
+			}
+		}
+		return participants;
+	}
+	
+	
+	/**
+	 *
+	 * @param participant数据实体
+	 * @return
+	 */
+	@Bizlet("participant数据实体转换成participant类")
+	public static WFParticipant[] transWFParticipants4partiSDO(DataObject[] dataObjs){
+		int length = dataObjs.length;
+		WFParticipant[] participants = new WFParticipant[length];
+		for(int i=0;i<dataObjs.length;i++){
+			WFParticipant participant = new WFParticipant();
+			participant.setId(dataObjs[i].getString("id"));
+			participant.setName(dataObjs[i].getString("name"));
+			participant.setTypeCode("emp");
+			participants[i] = participant;
+		}
+		return participants;
+	}
+	
+	/**
+	 * @param dataObjs
+	 * @return
+	 */
+	@Bizlet("获取参与者数组人员名称字符串")
+	public static String getWFParticipantsNames(WFParticipant[] participants){
+		String participantNames = "";
+		for(int i=0;i<participants.length;i++){
+			participantNames += participants[i].getName();
+			if(i<participants.length-1){
+				participantNames += ",";
+			}
+		}
+		return participantNames;
+	}
+	
+	/**
+	 * 
+	 * @param empStrs eg:[{zhangsan,张三},{lisi,李四}]
+	 * @return
+	 */
+	@Bizlet("根据数字转换参与者对象")
+	public static WFParticipant[] transWFParticipants4EmpSelected(String[] empArr){
+	    int length = empArr.length;
+		WFParticipant[] participants = new WFParticipant[length];
+		for(int i=0;i<length;i++){
+			if(empArr[i].indexOf(",")!=-1){
+				String[] emps = empArr[i].split(",");
+				if(emps.length>1&&emps[0]!=""&&emps[0]!=null){
+					WFParticipant participant = new WFParticipant();
+					participant.setId(emps[0]);
+					participant.setName(emps[1]);
+					participant.setTypeCode("emp");
+					participants[i] = participant;
+				}
+			}
+		}	
+		
+		return participants;
+	}
+	
+	@Bizlet("去除当前抄送人员数组中重复发送的收信人")
+	public static WFParticipant[] pickRepeatReceiver(WFParticipant[] participants){
+		List<WFParticipant> participantList = new ArrayList<WFParticipant>(); 
+		//去空
+		for(int i = 0;i < participants.length; i++){
+			if(participants[i]==null||"".equals(participants[i])) continue;
+			participantList.add(participants[i]);
+		}
+		WFParticipant[] noNullPart = (WFParticipant[])participantList.toArray(new WFParticipant[participantList.size()]);
+		
+		//去重
+		ArrayList<WFParticipant> result = new ArrayList<WFParticipant>();
+		 
+		for(WFParticipant temp: noNullPart){
+		    if(Collections.frequency(result, temp) < 1) result.add(temp);
+		}
+		
+		return (WFParticipant[])result.toArray(new WFParticipant[result.size()]);
+	}
+	
+	@Bizlet("去除当前抄送人员数组中下一工作项重复发送的收信人")
+	public static WFParticipant[] pickRepeatReceiverByWorkItem(WFParticipant[] participants,DataObject[] workItems){
+		List<WFParticipant> participantList = new ArrayList<WFParticipant>();
+		if(participants!=null&&participants.length!=0&&workItems!=null&&workItems.length!=0){
+			int pLength = participants.length;
+			int wLength = workItems.length;
+			participantList.addAll(Arrays.asList(participants));
+			for(int i = 0;i < wLength;i++){
+				List<WIParticipantInfo> wp = new ArrayList<WIParticipantInfo>();
+				try {
+					Long workItemID = workItems[i].getLong("workItemID");
+					IWFWorkItemManager workItemManager = ServiceFactory.getWFWorkItemManager();
+					wp =  workItemManager.queryWorkItemParticipantInfo(workItemID);
+				} catch (WFServiceException e) {
+					e.printStackTrace();
+				}
+				if(wp!=null&&"role".equals(wp.get(0).getTypeCode())){
+					String partiname = workItems[i].getString("partiName");
+					DataObject qroleTemp = DataObjectUtil.createDataObject("com.cjhxfund.fpm.bpsExpend.coframe.VRoleemp");//实例化数据对象
+					qroleTemp.set("roleName", partiname);
+					DataObject[] qrole = DatabaseUtil.queryEntitiesByTemplate("default", qroleTemp);
+					for(int k = 0;k < qrole.length;k++){
+						for(int j = 0;j < pLength;j++){
+							String a = participants[j].getId();
+							String b = qrole[k].getString("empid");
+							if( b.contains(a)){
+								participantList.remove(participants[j]);
+							}
+						}
+					}
+				}
+				else{
+					for(int j = 0;j < pLength;j++){
+						String a = participants[j].getId();
+						String b = workItems[i].getString("participant");
+						if( b.contains(a)){
+							participantList.remove(participants[j]);
+						}
+					}
+				}
+			}
+			return (WFParticipant[])participantList.toArray(new WFParticipant[participantList.size()]);
+		}
+		return participants;
+	}
+	
+	
+	@Bizlet("判断工作项处理人并拼接选中的转办人")
+	public static DataObject[] concatWorkItemAndReassign(DataObject part,DataObject workItem,String userId){
+		DataObject[] newPart=null;
+		String participantName = workItem.getString("partiName");
+		String participantId = workItem.getString("participant");
+		if(!"".equals(participantName)&&participantName.indexOf("|")>-1){//工作项参与人设置为多人时
+			String[] nameStrs = participantName.split("\\|");
+			String[] idStrs = participantId.split("\\|");
+			newPart = new DataObject[nameStrs.length];
+			for(int i=0;i<nameStrs.length;i++){
+				DataObject obj = DataObjectUtil.createDataObject("com.eos.workflow.data.WFParticipant");
+				if(idStrs[i].equals(userId)){
+					obj.setString("id",part.getString("id"));
+					obj.setString("name",part.getString("name"));
+					obj.setString("typeCode","emp");
+					newPart[i]=obj;
+					continue;
+				}
+				obj.setString("id",idStrs[i]);
+				obj.setString("name",nameStrs[i]);
+				obj.setString("typeCode","emp");
+				newPart[i]=obj;
+			}
+		} else {//不是设置为多人，则可能为单个处理人或单个角色
+			DataObject role = DataObjectUtil.createDataObject("com.cjhxfund.fpm.bpsExpend.coframe.CapRole");
+			role.setString("roleName", participantName);
+			DatabaseUtil.expandEntityByTemplate("default", role, role);//根据处理人名称查询是否为角色
+			if(role.get("roleId")!=null && !"".equals(role.getString("roleId"))){//是角色
+				DataObject[] roleAuths;
+				//视图只查询EMP的角色
+				DataObject roleAuth = DataObjectUtil.createDataObject("com.cjhxfund.fpm.bpsExpend.coframe.VpartyAuth");
+				roleAuth.setString("roleId", role.getString("roleId"));
+				roleAuths = DatabaseUtil.queryEntitiesByTemplate("default", roleAuth);
+				newPart = new DataObject[roleAuths.length];
+				for(int i=0;i<roleAuths.length;i++){//替换掉转办人
+					DataObject obj = DataObjectUtil.createDataObject("com.eos.workflow.data.WFParticipant");
+					if(roleAuths[i].getString("partyId").equals(userId)){
+						obj.setString("id",part.getString("id"));
+						obj.setString("name",part.getString("name"));
+						obj.setString("typeCode","emp");
+						newPart[i]=obj;
+						continue;
+					}
+					obj.setString("id",roleAuths[i].getString("partyId"));
+					obj.setString("name",roleAuths[i].getString("empname"));
+					obj.setString("typeCode","emp");
+					newPart[i]=obj;
+				}
+			} else {//不是角色，则工作项只设置了一个处理人
+				newPart = new DataObject[1];
+				DataObject obj = DataObjectUtil.createDataObject("com.eos.workflow.data.WFParticipant");
+				obj.setString("id",part.getString("id"));
+				obj.setString("name",part.getString("name"));
+				obj.setString("typeCode","emp");
+				newPart[0]=obj;
+			}
+		}
+		return newPart;
+	}
+}

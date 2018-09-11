@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:陈迪 -->
+<sqlMap>
+    <resultMap class="com.cjhxfund.commonUtil.dataBase.TAtsBizOperateCount" id="mapUserOperateCount">
+        <result column="l_date" javaType="string" property="lDate"/>
+        <result column="vc_biz_name" javaType="string" property="vcBizName"/>
+        <result column="l_count" javaType="string" property="lCount"/>
+    </resultMap>
+    <!-- 统计前一天每一种业务使用总数start -->
+    <select id="queryUserOperateCount" parameterClass="commonj.sdo.DataObject" resultMap="mapUserOperateCount">
+    	select to_char(t.t_operate_time, 'yyyyMMdd') l_date,
+		       t.vc_biz_name,
+		       count(*) l_count
+		  from t_ats_user_operate_log t
+		 where to_char(t.t_operate_time, 'yyyyMMdd') = to_char(sysdate-1, 'yyyyMMdd')
+	  group by (to_char(t.t_operate_time, 'yyyyMMdd'), vc_biz_name)
+	  order by l_date desc
+    </select>
+    <!-- 统计前一天每一种业务使用总数end -->
+    
+    <!-- 查询用户操作记录start -->
+    <resultMap class="commonj.sdo.DataObject" id="mapUserOprlist">
+        <result column="l_operate_id" javaType="string" property="lOperateId"/>
+        <result column="l_user_id" javaType="string" property="lUserId"/>
+        <result column="vc_user_id" javaType="string" property="vcUserId"/>
+        <result column="vc_biz_name" javaType="string" property="vcBizName"/>
+        <result column="t_operate_time" javaType="Date" property="tOperateTime"/>
+    </resultMap>
+    <select id="queryUserOprList" parameterClass="commonj.sdo.DataObject" resultMap="mapUserOprlist">
+    	select t.l_operate_id,
+    		   t.l_user_id,
+    		   t.vc_user_id,
+    		   t.vc_biz_name,
+    		   t.t_operate_time
+		  from t_ats_user_operate_log t
+		 where 1 = 1
+         <isNotNull property="vcUserId"><!--用户帐号-->
+           and t.vc_user_id like '%'||#vcUserId#||'%'
+         </isNotNull>
+         <isNotNull property="vcBizName"><!--业务名称-->
+           and t.vc_biz_name like '%'||#vcBizName#||'%'
+         </isNotNull>
+         <isNotNull property="tOperateTime1"><!--操作时间-->
+           and t.t_operate_time &gt;= to_timestamp(#tOperateTime1#,'yyyy-MM-dd hh24:mi:ss')
+         </isNotNull>
+         <isNotNull property="tOperateTime2"><!--操作时间-->
+           and t.t_operate_time  &lt;= to_timestamp(#tOperateTime2#,'yyyy-MM-dd hh24:mi:ss')
+         </isNotNull>
+      order by t.t_operate_time desc
+    </select>
+    <!-- 查询用户操作记录end -->
+    
+    <!-- 查询业务使用统计表start -->
+    <resultMap class="commonj.sdo.DataObject" id="mapUserOprCountList">
+        <result column="l_date" javaType="string" property="lDate"/>
+        <result column="vc_biz_name" javaType="string" property="vcBizName"/>
+        <result column="l_count" javaType="string" property="lCount"/>
+    </resultMap>
+    <select id="queryUserOprCountList" parameterClass="commonj.sdo.DataObject" resultMap="mapUserOprCountList">
+    	select t.l_date,
+		       t.vc_biz_name,
+		       t.l_count
+		  from t_ats_biz_operate_count t
+         where 1 = 1
+         <isNotNull property="vcBizName"><!--业务名称-->
+           and t.vc_biz_name like '%'||#vcBizName#||'%'
+         </isNotNull>
+         <isNotNull property="lDate1"><!--业务日期-->
+           and to_date(t.l_date,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#lDate1#,'yyyy-MM-dd hh24:mi:ss')
+         </isNotNull>
+         <isNotNull property="lDate2"><!--业务日期-->
+           and to_date(t.l_date,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#lDate2#,'yyyy-MM-dd hh24:mi:ss')
+         </isNotNull>
+         order by t.l_date desc
+    </select>
+    <!-- 查询业务使用统计表end -->
+    
+    <!-- 查询业务映射值start -->
+    <select id="queryBizMapping" parameterClass="commonj.sdo.DataObject" resultClass="String">
+    	select t.vc_biz_key
+	  	  from t_ats_biz_mapping t
+	 	 where t.vc_biz_name = #vcBizName#
+    </select>
+    <!-- 查询业务映射值end -->
+    
+     <!--查询系统参数公测功能模块-->
+	 <select id="queryTrialFuncDict" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		select a.param_key id,a.param_name text
+		from zhfwpt_param_conf a where a.istrial ='1'
+	 </select>
+	 
+	 <!--查询系统参数公测功能模块-->
+	 <select id="queryTrialUser" parameterClass="java.util.Map" resultClass="commonj.sdo.DataObject"> 
+		select a.L_TRIAL_ID
+		from T_ATS_TRIAL_USER a
+		where 1 = 1
+         <isNotNull property="userid">
+           and a.VC_USER_ID =#userid#
+         </isNotNull>
+         <isNotNull property="funcode">
+           and a.VC_TRIAL_FUN_CODE =#funcode#
+         </isNotNull>
+	 </select>
+</sqlMap>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:luwenxing -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    
+    <resultMap class="commonj.sdo.DataObject" id="resultMapForORGEmployee">
+        <result column="USERID" javaType="string" property="userId"/>
+        <result column="OPERATORID" javaType="string" property="operatorId"/>
+    </resultMap>
+    
+    <!--查询所有检测参数-->
+    <select id="queryORGEmployeeAll"  parameterClass="java.util.Map" resultMap="resultMapForORGEmployee">
+   		SELECT
+		      ltrim(rtrim(A.USERID)) USERID,
+		      ltrim(rtrim(A.OPERATORID)) OPERATORID
+		FROM ORG_EMPLOYEE A
+		WHERE 1=1 AND  A.USERID =#vcSenderSubId#
+    </select>
+
+</sqlMap>

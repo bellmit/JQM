@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:侯志勇 -->
+<sqlMap>
+    <resultMap class="commonj.sdo.DataObject" id="ipoResult">
+        <result column="L_DATE" javaType="long" property="lDate"/> <!-- 日期 -->
+        <result column="VC_INTER_CODE" javaType="string" property="vcInterCode"/> <!-- 债券内码 -->
+        <result column="VC_ISSUER_NO" javaType="string" property="vcIssuerNo"/> <!-- 发行人编号 -->
+        <result column="VC_ISSUER_NAME" javaType="string" property="vcIssuerName"/> <!-- 发行人名称 -->
+        <result column="VC_LEAD_UNDERWRITER_NO" javaType="string" property="vcLeadUnderwriterNo"/><!-- 主承销商编号 -->
+        <result column="VC_LEAD_UNDERWRITER_NAME" javaType="string" property="vcLeadUnderwriterName"/><!-- 主承销商名称 -->
+        <result column="VC_COMPANY_ID" javaType="string" property="vcCompanyId"/><!-- 公司ID -->
+        <result column="VC_COMPANY_NAME" javaType="string" property="vcCompanyName"/><!-- 公司名称 -->
+        <result column="VC_PURCHASE_CODE" javaType="string" property="vcPurchaseCode"/><!-- 申购代码 -->
+        <result column="EN_ISSUE_NUMBER" javaType="double" property="enIssueNumber"/><!-- 发行数量（万股） -->
+        <result column="EN_BEFORE_ISSUER_NUMBER" javaType="double" property="enBeforeIssuerNumber"/><!-- 发行前数量（万股） -->
+        <result column="EN_TOTAL_EQUITY" javaType="double" property="enTotalEquity"/><!-- 发行后总股本（万股） -->
+        <result column="EN_OFFLINE_ISSUE_UPPER_NUMBER" javaType="double" property="enOfflineIssueUpperNumber"/> <!-- 网下发行上限（万股） -->
+        <result column="EN_OFFLINE_UNDER_NUMBER" javaType="double" property="enOfflineUnderNumber"/><!-- 网下申购下限（万股） -->
+        <result column="EN_PURCHASE_SIZE" javaType="double" property="enPurchaseSize"/><!-- 申购步长 -->
+        <result column="L_OFFLINE_PURCHASE_DATE" javaType="long" property="lOfflinePurchaseDate"/><!-- 网下申购日 -->
+        <result column="VC_PLATE" javaType="string" property="vcPlate"/><!-- 上市板 -->
+        <result column="VC_ISSUER_TYPE" javaType="string" property="vcIssuerType"/><!-- 发行方式 -->
+        <result column="VC_WIND_INDUSTRY_TYPE" javaType="string" property="vcWindIndustryType"/><!-- WIND行业分类 -->
+        <result column="VC_STOCK_TYPE" javaType="string" property="vcStockType"/><!-- 证券类型 -->
+        <result column="VC_EXCHANGE_NO" javaType="string" property="vcExchangeNo"/><!-- 所属交易所编号 -->
+        <result column="VC_EXCHANGE_NAME" javaType="string" property="vcExchangeName"/><!-- 所属交易所名称 -->
+        <result column="L_PROSPECTUS_NOTICE_DATE" javaType="long" property="lProspectusNoticeDate"/><!-- 招股公告日 -->
+        <result column="L_INQUIRY_START_DATE" javaType="long" property="lInquiryStartDate"/><!-- 初步询价起始日 -->
+        <result column="L_ISSUER_NOTICE_DATE" javaType="long" property="lIssuerNoticeDate"/><!-- 发行公告日 -->
+        <result column="L_IPO_NOTICE_DATE" javaType="long" property="lIpoNoticeDate"/><!-- 上市公告日 -->
+        <result column="EN_OFFLINE_UPPER_NUMBER" javaType="double" property="enOfflineUpperNumber"/> <!-- 网下申购上限（万股） -->
+        <result column="L_IPO_DATE" javaType="long" property="lIpoDate"/><!-- 上市日期 -->
+        <result column="EN_MARKET_VALUE_THRESHOLD" javaType="double" property="enMarketValueThreshold" /><!-- 网下市值询价门槛（万元） -->
+        <result column="VC_PROCESS_FLAG" javaType="long" property="vcProcessFlag" /><!-- 流程是否已存在（0表示不存在，非0表示存在） -->
+    </resultMap>
+    <select id="queryIPOInfoByWind" parameterClass="commonj.sdo.DataObject" resultMap="ipoResult">
+    	SELECT 
+    		T1.L_DATE,  
+    		T1.VC_INTER_CODE,
+    		T1.VC_ISSUER_NO,
+    		T1.VC_ISSUER_NAME,
+    		T1.VC_LEAD_UNDERWRITER_NO,
+    		T1.VC_LEAD_UNDERWRITER_NAME,
+    		T1.VC_COMPANY_ID,
+    		T1.VC_COMPANY_NAME,
+    		T1.VC_PURCHASE_CODE,
+    		T1.EN_ISSUE_NUMBER,
+    		T1.EN_BEFORE_ISSUER_NUMBER,
+    		T1.EN_TOTAL_EQUITY,
+    		T1.EN_OFFLINE_ISSUE_UPPER_NUMBER,
+    		T1.EN_OFFLINE_UNDER_NUMBER,
+    		T1.EN_PURCHASE_SIZE,
+    		T1.L_OFFLINE_PURCHASE_DATE,
+    		T1.VC_PLATE,
+    		T1.VC_ISSUER_TYPE,
+    		T1.VC_WIND_INDUSTRY_TYPE,
+    		T1.VC_STOCK_TYPE,
+    		T1.VC_EXCHANGE_NO,
+    		T1.VC_EXCHANGE_NAME,
+    		T1.L_PROSPECTUS_NOTICE_DATE,
+    		T1.L_INQUIRY_START_DATE,
+    		T1.L_ISSUER_NOTICE_DATE,
+    		T1.L_IPO_NOTICE_DATE,
+    		T1.EN_OFFLINE_UPPER_NUMBER,
+    		T1.L_IPO_DATE,
+    		T1.EN_MARKET_VALUE_THRESHOLD,
+    		NVL(T2.L_INSTRUCT_NO,0) AS VC_PROCESS_FLAG
+    		
+    	FROM ISP.IPO_STOCKINFO_WIND T1 LEFT JOIN T_ATS_IPO_INSTRUCT_INFO T2 
+    	ON T1.VC_ISSUER_NO=T2.VC_PURCHASE_CODE AND T1.L_PROSPECTUS_NOTICE_DATE = T2.L_CREATE_DATE
+    	WHERE  1=1 
+    	AND T1.L_INQUIRY_START_DATE IS NOT NULL 
+    	<!--AND INSTR(T1.VC_LEAD_UNDERWRITER_NAME,'第一创业')=0 -->
+    	AND INSTR(T1.VC_ISSUER_TYPE,'网下询价')>0
+    	<isNotNull property="lProspectusNoticeDate">
+			AND T1.L_PROSPECTUS_NOTICE_DATE=#lProspectusNoticeDate#    		
+    	</isNotNull>
+    	<!-- 上述主要用于定时器自动启动招股日为当天的新股流程 -->
+    	<!-- 下述主要用于流程启动页面手工启动流程需要展示的新股数据 -->
+    	<isNotNull property="lProspectusNoticeDate1">
+			AND T1.L_PROSPECTUS_NOTICE_DATE>=#lProspectusNoticeDate1#    		
+    	</isNotNull> 
+    	<isNotNull property="vcIssuerNo">
+ 			AND T1.VC_ISSUER_NO = #vcIssuerNo# 
+ 		</isNotNull>
+ 		<isNotNull property="vcIssuerName">
+ 			AND T1.VC_ISSUER_NAME like '%'||#vcIssuerName#||'%' 
+ 		</isNotNull>
+ 		<isNotNull property="vcLeadUnderwriterName">
+ 			AND T1.VC_LEAD_UNDERWRITER_NAME like '%'||#vcLeadUnderwriterName#||'%' 
+ 		</isNotNull> 
+    	<isNotNull property="sortField">
+ 			ORDER BY $sortField$ 
+ 		</isNotNull>
+ 		<isNotNull property="sortOrder">
+ 			$sortOrder$ 
+ 		</isNotNull> 
+    </select>
+  
+     
+</sqlMap>

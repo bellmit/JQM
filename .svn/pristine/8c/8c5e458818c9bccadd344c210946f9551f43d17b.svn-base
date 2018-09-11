@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- author:黄燕 -->
+<sqlMap>
+    <parameterMap class="commonj.sdo.DataObject" id="parameterMap">
+        <parameter javaType="date" jdbcType="DATE" property="dateType"/>
+    </parameterMap>
+    <resultMap class="commonj.sdo.DataObject" id="resultMap">
+        <result column="TYPEID" javaType="string" property="typeId"/>
+    </resultMap>
+    <resultMap class="com.eos.foundation.DictEntry" id="detailResult">
+        <result column="dictid" javaType="string" property="Dictid"/>
+        <result column="dictname" javaType="string" property="Dictname"/>
+    </resultMap>
+    <!--根据名称查询数据字典-->
+    <select id="getDictid" parameterClass="java.util.HashMap" resultMap="detailResult">
+        select dictid, dictname
+	    from eos_dict_entry
+	   where 1=1
+	   <isNotNull property="dicttypeid">
+		  		and dicttypeid = #dicttypeid# 
+		  </isNotNull>
+	   <isNotNull property="dictname">
+		  		and dictname = #dictname# 
+		  </isNotNull>
+  	</select>
+  	
+</sqlMap>
